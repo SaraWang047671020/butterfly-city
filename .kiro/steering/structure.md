@@ -1,0 +1,72 @@
+---
+inclusion: always
+---
+
+# Project Structure
+
+## Layout
+
+```
+butterflycity/
+├── .kiro/
+│   ├── steering/              # product, tech, structure, simulation, neutrality
+│   └── specs/                 # feature specs (requirements, design, tasks)
+├── data/
+│   ├── raw/                   # downloaded open data (large files gitignored)
+│   ├── SOURCES.md             # source, year, and license for every field
+│   └── DOWNLOAD.md            # how to obtain raw files that are not committed
+├── scripts/                   # local Node scripts: data/raw -> public/data
+├── public/
+│   └── data/
+│       ├── districts.json
+│       ├── history.json
+│       ├── events.json
+│       └── params.json
+├── src/
+│   ├── main.ts                # app entry; wires modules together
+│   ├── types/                 # shared types (District, Quarter, PolicySet, Event...)
+│   ├── data/                  # fetch + validate public/data JSON
+│   ├── simulation/            # pure simulation engine (see simulation.md)
+│   │   ├── engine.ts          # step(state, policies, events, params) -> next state
+│   │   ├── rules/             # one file per rule
+│   │   ├── budget.ts          # allocation and budget validation
+│   │   ├── lag.ts             # delayed policy effects pipeline
+│   │   ├── migration.ts       # inter-district population movement
+│   │   ├── ghosts.ts          # thresholds -> ghosts per district
+│   │   └── explain.ts         # cause breakdown for "Why?" views
+│   ├── game/                  # turn flow, fast-forward stops, policy timeline
+│   ├── narrative/             # fixed text templates for citizen updates
+│   ├── save/                  # localStorage, save code export/import, validation
+│   ├── ui/
+│   │   ├── map/               # SVG map (d3-geo)
+│   │   ├── panels/            # policy controls, district detail, citizen, events
+│   │   ├── explain/           # "Why?" breakdown views
+│   │   ├── ending/            # your city vs. real city comparison
+│   │   └── effects/           # risk escalation visuals, reduced-motion fallbacks
+│   └── styles/
+│       ├── tokens.css         # design tokens from the approved design proposal
+│       └── ...                # component styles
+├── tests/                     # mirrors src/ (e.g., tests/simulation/budget.test.ts)
+├── index.html
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── README.md
+```
+
+## Module boundaries
+
+- `src/simulation/` is pure. It never imports from `src/ui/`, `src/game/`, `src/save/`, or `src/data/`, never touches the DOM, and performs no I/O. All data arrives as arguments.
+- `src/data/` is the only place that fetches files from `public/data/`.
+- `src/game/` orchestrates turns by calling the engine. It holds no simulation formulas.
+- `src/ui/` renders state and dispatches user actions. It holds no simulation logic.
+- `src/narrative/` turns simulation output into text using fixed templates only.
+- `scripts/` runs in Node only and is never imported by `src/`.
+
+## Conventions
+
+- Files: `kebab-case.ts`. Types and interfaces: `PascalCase`. Functions and variables: `camelCase`.
+- Districts are keyed by their official administrative code. Romanized names are display data only.
+- Quarters are represented as a single typed value (e.g., `"2015Q1"` or an index 0–43), used consistently everywhere.
+- Visual values (colors, spacing, fonts, motion durations) live as CSS custom properties in `src/styles/tokens.css`. Do not hard-code them in components.
+- All code comments, UI strings, and documentation in English.
