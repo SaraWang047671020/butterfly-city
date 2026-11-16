@@ -11,7 +11,7 @@ inclusion: always
 - **UI**: no UI framework. Plain DOM APIs and SVG.
 - **Map projection**: `d3-geo` (import only what is needed).
 - **Testing**: Vitest; property-based tests with fast-check.
-- **Runtime / package manager**: Node 22 LTS, npm.
+- **Runtime / package manager**: Node 26 LTS, npm. Scripts in `scripts/` are TypeScript run directly by Node (type stripping), so they use only erasable syntax (no `enum`, `namespace`, or parameter properties).
 - **Hosting**: GitHub Pages, fully static. No backend, no login. Vite `base` is `/butterflycity/`.
 
 ## Dependency policy

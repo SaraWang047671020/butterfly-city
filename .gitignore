@@ -1,0 +1,6 @@
+﻿# Raw open data downloads (see data/DOWNLOAD.md)
+data/raw/
+
+
+# Dependencies
+node_modules/

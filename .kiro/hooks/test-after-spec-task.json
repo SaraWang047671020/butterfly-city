@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Run tests after spec task",
+      "trigger": "PostTaskExec",
+      "description": "After each spec task finishes, run npm test (vitest --run, single run) and report a summary of any failures to the user.",
+      "action": {
+        "type": "agent",
+        "prompt": "A spec task just finished. Run `npm test` from the repository root (it runs `vitest --run` once; never use watch mode). If it exits with code 0, say in one line that all tests passed and give the test count. If it fails, tell the user in Traditional Chinese: how many tests failed, and for each failing test the file, the test name, and the key assertion or error message (expected vs. received, or the first error line). Keep the summary short, do not paste the full log, and do not try to fix the failures unless the user asks."
+      }
+    }
+  ]
+}
