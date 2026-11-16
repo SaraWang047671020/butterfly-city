@@ -8,6 +8,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest --run",
+    "backtest": "node scripts/backtest.ts",
     "data": "node scripts/build-data.ts",
     "data:download": "node scripts/download.ts",
     "data:check": "node scripts/check.ts"

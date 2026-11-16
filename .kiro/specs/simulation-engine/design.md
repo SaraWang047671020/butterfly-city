@@ -13,6 +13,8 @@ start    = Baseline value          if the indicator is in history.json
 bound    = limit to the allowed range and round counts (the Bound_Adjustment Cause records the difference)
 ```
 
+The Derived_Baseline of rent burden and mean commute time uses no effect parameter, so it is the same in all three Scenarios. The Derived_Baseline **Ghost count** uses the commute-time threshold and its share, which are ranged effect parameters (Requirements 10.8, 19.2), so it is computed per Scenario from that Scenario's own parameter table (Requirement 19.8).
+
 Every tool delta is computed from a **Policy_Difference** (player value minus real value), never from the player's absolute value. When every difference is 0, every delta is `0` or `-0`, and `start + 0 === start`, so the zero-delta identity (Requirement 3) holds exactly and not only within a tolerance.
 
 ### Public functions
@@ -45,6 +47,8 @@ The engine implements 3 of the 5 tools: social housing construction, commuter pa
 - **Signed zero.** `x + (-0) === x` and `0 === -0`. A delta of `negativeElasticity × 0` is `-0`, which passes `=== 0` and leaves `baseline + delta === baseline`.
 - **Key order.** JavaScript enumerates integer-like keys in ascending order and other keys in insertion order. The engine does not rely on either for caller-supplied objects (Requirement 16.5).
 - **fast-check 4.10.2** (already installed, pinned) prints the failing property, the shrunk counterexample, the seed and the path in its failure message, which satisfies Requirement 17.9 without extra code ([fast-check runners](https://fast-check.dev/docs/core-blocks/runners/)).
+- **Parameter metadata.** Every Parameter carries a research `status` (`verified`, `check`, `secondary`, `gap`), an `estimated` marker with a method note for `secondary` and `gap` values, and an `assumption` text for a `gap` value (Requirements 14.10 to 14.12). The cited default values come from `data/research/RESEARCH-NOTES.md` section 2 (see "Cited default values" below). The engine copies status, `estimated` and `range` into every Cause link (Requirement 14.11).
+- **Events carry no modifier in the MVP.** Interest-rate events are narrative only (research notes, Decision 3; Requirement 11.9). `events.ts` keeps the modifier mechanism, and only synthetic test events exercise it.
 - **Tooling.** `tsconfig.json` has `erasableSyntaxOnly` (no `enum`, `namespace` or parameter properties), `noUncheckedIndexedAccess`, and already includes `src`. `package.json` has `typecheck` and `test` but no `backtest` script; this spec adds one (Requirement 20.7).
 
 ## Requirement conflicts
@@ -70,6 +74,11 @@ Requirement 9.8 sets the migration Cause of population to persons moved in minus
 
 Requirement 8.9 asks for committed spending equal to the Annual_Budget "for every year from 2015 to the last computed year". In a year whose quarters are not all computed yet, the real charges of the later quarters are not committed, so the equality cannot hold. This design satisfies 8.9 for every year whose quarters (up to 2025Q4 or the last quarter of the track) are all computed. For the last, partly computed year it guarantees `committed ≤ Annual_Budget`. The Annual_Budget itself does not depend on the target quarter, because it is computed from every quarter present in the Real_Policy_Track.
 
+## Model limitations
+
+- **One commute matrix for all quarters.** The engine takes a single `CommuteMatrix` (`{codes, minutes}`) for the whole run. The MVP uses one fixed matrix that represents the 2025Q4 rail network for every quarter from 2015Q1 to 2025Q4. The mean commute time and the migration weights therefore do not reflect rail openings during 2015–2025 (for example the Circular Line, the Danhai LRT, the Ankeng LRT and the Wanda–Zhonghe–Shulin extensions). Differences in commute time between quarters come only from the Baseline and from policy effects, not from network changes.
+- **Possible later extension: a matrix per quarter.** This would change the `CommuteMatrix` type (keyed by quarter), validation step 4 (checking each matrix against the Baseline district codes), `derived.ts` (mean commute time `T_d` and `T0` per quarter) and `migration.ts` (weights per quarter). The data pipeline would also have to produce one matrix per network state.
+
 ## Architecture
 
 ### Module layout
@@ -85,7 +94,7 @@ src/
     ├── errors.ts                # EngineError constructors and codes
     ├── quarter.ts               # parse, index, next, offset, year of a QuarterKey
     ├── numeric.ts               # roundHalfUp, clamp, apportion, splitBySchedule
-    ├── params.ts                # parameter access, ParameterSpec checks, scenarioTable
+    ├── params.ts                # parameter access, ParameterSpec checks, metadata checks (status, estimated, assumption), scenarioTable
     ├── validate.ts              # stage-0 checks; returns the first error
     ├── registry.ts              # RULE_REGISTRY: 3 tool rules and 7 indicator rules
     ├── derived.ts               # Derived_Baseline: households, renter shares, rent burden, commute time
@@ -147,7 +156,7 @@ The order is fixed so the same inputs always give the same error (Requirements 1
 
 1. Target Quarter_Key form and range (1.3), or `state.quarter !== 2025Q4` for `step` (1.4).
 2. Duplicate Rule_Registry ids (16.6).
-3. Parameter_Table: every parameter that the registry rules, the Migration_Rule, the Ghost rule, the limits and the budget require. All issues are collected and sorted by parameter id, then problem. A non-empty list returns one `parameters-invalid` error (7.8, 7.9, 8.8, 9.9, 10.4, 14.2–14.6, 18.8).
+3. Parameter_Table: every parameter that the registry rules, the Migration_Rule, the Ghost rule, the limits and the budget require, including the metadata checks (`status`, `estimated`, `assumption`). All issues are collected and sorted by parameter id, then problem. A non-empty list returns one `parameters-invalid` error (7.8, 7.9, 8.8, 9.9, 10.4, 14.2–14.6, 14.10–14.12, 18.8).
 4. Commute_Matrix (9.10).
 5. Baseline coverage and values, earliest quarter first, then lowest District_Code (2.7, 15.2).
 6. Real_Policy_Track and Player_Policy_Timeline entries for every rule field (15.2, 16.7).
@@ -179,14 +188,15 @@ quarterYear(q: QuarterKey): number;
 Each rule declares the parameters it uses as `ParameterSpec` values. `validate.ts` checks the specs, and rules read values only through `scalar(params, id)`, so a rule cannot read a parameter it did not declare.
 
 ```ts
-type ParameterRole = 'effect' | 'derivation' | 'lag' | 'cost' | 'schedule' | 'limit' | 'ceiling' | 'ghost-size';
+type ParameterRole = 'effect' | 'derivation' | 'lag' | 'cost' | 'schedule' | 'limit' | 'ceiling' | 'ghost-size' | 'reference';
 type ParameterCheck =
   | { kind: 'finite' } | { kind: 'non-negative' } | { kind: 'positive' } | { kind: 'share' }
+  | { kind: 'unit-share' }                        // finite, greater than 0, at most 1; a `range` must lie inside 0 to 1 (Requirement 4.14)
   | { kind: 'integer'; min: number; max: number } | { kind: 'schedule' };
 interface ParameterSpec { id: string; role: ParameterRole; check: ParameterCheck; optional?: boolean }
 ```
 
-`scenarioTable(params, 'central' | 'low' | 'high')` returns a new table. Every `effect` parameter that has a `range` takes `range.low` or `range.high`. Every other role keeps `value` (Requirement 19.2). The input table is never changed.
+`scenarioTable(params, 'central' | 'low' | 'high')` returns a new table. Every `effect` parameter that has a `range` takes `range.low` or `range.high`. Every other role keeps `value` (Requirement 19.2), including `socialHousing.unitCost` (which has a `range` that is only shown in Cause links, Requirement 4.12), the fixed Ghost definitions and the reference parameters. The six ranged effect parameters in this spec are `socialHousing.rentPerUnit`, `socialHousing.rentRatio`, `commuterPass.elasticity`, `rentSubsidy.passThrough`, `ghost.commuteThreshold` and `ghost.shareCommuteWithin`. For `socialHousing.rentRatio`, `rentSubsidy.passThrough` and `commuterPass.elasticity`, `low` is the strongest response (Requirements 4.14, 5.11, 6.12). The input table is never changed.
 
 #### Required parameters
 
@@ -194,36 +204,81 @@ Ids containing `<city>`, `<code>`, `<quarter>` or `<year>` expand to one scalar 
 
 | Id | Role | Check | Used for | Req |
 |---|---|---|---|---|
-| `socialHousing.lag` | lag | integer 12–20 | Lag | 7.2, 7.9 |
-| `socialHousing.unitCost` | cost | positive | charges | 4.8 |
+| `socialHousing.lag` | lag | integer 0–43, `estimated` method note naming the NLMA portal derivation | Lag | 7.2, 7.8, 7.9 |
+| `socialHousing.unitCost` | cost | positive; `range` allowed, not varied between Scenarios | charges | 4.8, 4.12 |
 | `socialHousing.costSchedule` | schedule | schedule | charge spread | 4.8, 7.7 |
-| `socialHousing.rentPerUnit` | effect | finite | rent per unit of stock difference | 4.6 |
-| `commuterPass.lag`, `rentSubsidy.lag` | lag | integer 0–43 | Lag | 7.1 |
+| `socialHousing.rentPerUnit` | effect | finite; `range` | rent per unit of stock difference (spillover) | 4.6, 4.11 |
+| `socialHousing.rentRatio` | effect | unit-share (finite, greater than 0, at most 1; `range` inside 0 to 1); `range` | rent of a Housed_Household as a share of market rent | 4.14, 4.15, 4.16 |
+| `commuterPass.lag`, `rentSubsidy.lag` | lag | integer 0–43 | Lag | 7.1, 7.8 |
 | `commuterPass.unitCost`, `rentSubsidy.unitCost` | cost | positive | charges | 8.2, 8.8 |
 | `commuterPass.price.<city>.<quarter>` | derivation | non-negative | pass price, upper limit | 5.1 |
-| `commuterPass.elasticity` | effect | finite | MRT entries, passes sold | 5.3, 5.6 |
-| `rentSubsidy.passThrough` | effect | share, optional | rent effect of the subsidy | 6.6, 6.7 |
+| `commuterPass.elasticity` | effect | finite; `range` | MRT entries, passes sold | 5.3, 5.6, 5.11 |
+| `rentSubsidy.passThrough` | effect | share, optional; `range` | rent effect of the subsidy | 6.6, 6.7, 6.12 |
+| `rentSubsidy.nationalBudget`, `rentSubsidy.nationalHouseholds` | reference | non-negative, optional | none; reference only, never a city Budget_Ceiling | 6.13 |
 | `<tool>.costSchedule` for the two subsidy tools | schedule | schedule, optional | charge spread when present | 7.7 |
-| `housing.dwellingSize` | derivation | positive | rent burden, pass-through | 2.6 |
-| `housing.householdSize.<city>` | derivation | positive | household count | 6.4, 6.11 |
-| `housing.renterRate.<city>` | derivation | share | renter households and shares | 6.3 |
+| `housing.dwellingSize` | derivation | positive | Reference_Dwelling_Size S: rent burden, pass-through, `k_d` | 2.6 |
+| `housing.householdSize.<city>` | derivation | positive | household count, persons of a household group | 4.16, 6.4, 6.11 |
+| `housing.renterRate.<city>` | derivation | share | renter households and shares | 4.17, 6.3 |
 | `commute.jobShare.<code>` | derivation | share, the 41 sum to 1 ± 1e-9 | mean commute time | 2.5 |
 | `migration.threshold` | effect | non-negative | out-movement test | 9.1 |
 | `migration.share`, `migration.exitShare` | effect | share | out-movement, exits | 9.1, 9.4 |
 | `migration.weightTime`, `migration.weightBurden`, `migration.weightCost` | effect | non-negative, the first two positive | allocation weights | 9.3 |
 | `migration.commuteCostPerMinute` | derivation | non-negative | monthly commute cost of a district pair | 5.5 |
 | `ghost.size` | ghost-size | integer ≥ 1 | Ghost_Size | 10.2 |
-| `ghost.rentThreshold`, `ghost.commuteThreshold` | derivation | non-negative | cited definition of the base shares | 10.2 |
-| `ghost.shareRent`, `ghost.shareCommute`, `ghost.shareBoth` | derivation | share, `shareBoth ≤ min(other two)` | base shares above the thresholds | 10.2 |
-| `ghost.sensitivityRent`, `ghost.sensitivityCommute` | effect | non-negative | change of the share per percentage point and per minute | 10.1 |
+| `ghost.rentThreshold` | derivation | non-negative; no `range` allowed (fixed definition, 50 percent) | cited definition of the rent base share | 10.2 |
+| `ghost.atRiskThreshold` | derivation | optional (30 percent); not required, not validated, never read by any rule | display layer only | 10.7 |
+| `ghost.commuteThreshold` | effect | non-negative; `range` (45 to 60 minutes, `value` 60) | commute base share, varied between Scenarios | 10.2, 10.8, 19.2 |
+| `ghost.shareRent`, `ghost.shareBoth` | derivation | share, `shareBoth ≤ min(shareRent, 1 − shareCommuteWithin.high)` | base shares of the rent group and of the overlap | 10.2 |
+| `ghost.shareCommuteWithin` | effect | share; `range` whose `low` is the share within 45 minutes and `high` the share within 60 minutes | commute base share `bC = 1 − value`, varied between Scenarios | 10.2, 10.8, 19.2 |
+| `ghost.sensitivityRent` | effect | share (finite, 0 to 1) | Rent_Sensitivity: share of a group's persons who cross the 50 percent threshold per percentage point of burden change of that group; status `gap` with an `assumption` until a source exists (Open Question 27) | 10.1, 10.2 |
+| `ghost.sensitivityCommute` | effect | non-negative | change of the commute share per minute | 10.1 |
 | `limit.<tool>.<field>.lowerFactor`, `.upperFactor` | limit | non-negative ≤ 1; finite ≥ 1 | Policy_Limit | 18.1, 18.8 |
 | `limit.<tool>.<field>.upperMin`, `.min`, `.max` | limit | non-negative, optional; an absolute limit must include every real value | Policy_Limit | 18.1, 18.8 |
 | `budget.ceiling.<tool>.<year>` | ceiling | non-negative integer, optional | Budget_Ceiling | 18.5 |
-| each Event modifier `parameterId` | effect | non-negative | Event modifier | 11.2, 11.5 |
+| each Event modifier `parameterId` | effect | non-negative | Event modifier. The MVP `params.json` has none (11.9); only synthetic test tables add them. | 11.2, 11.5, 11.9 |
 
 Fields with limits are `socialHousing.unitsStarted`, `commuterPass.subsidy` (only `lowerFactor` is required, because the upper limit is the pass price, Requirement 18.2), `rentSubsidy.households` and `rentSubsidy.amount`. The factor parameters are required, and `params.json` carries the default values 0 and 2 with the source "game default, `simulation.md`", so no default literal appears in `src/simulation/` (Requirement 14.1).
 
 For the two subsidy tools the setting is already in TWD, so the unit cost is TWD of budget per TWD of subsidy. Its cited value is 1 unless a sourced administration overhead exists. No supported tool has a legitimate zero unit cost (Requirement 8.8).
+
+#### Parameter metadata checks (Requirements 14.10 to 14.12)
+
+`validate.ts` runs these checks on every required parameter, after the value checks, and adds each failure to the same issue list:
+
+| Condition | Issue problem code |
+|---|---|
+| `status` missing | `status-missing` |
+| `status` not one of `verified`, `check`, `secondary`, `gap` | `status-unknown` |
+| `status` is `secondary` or `gap` and `estimated` is absent | `estimated-missing` |
+| `estimated.method` empty or whitespace-only | `estimated-method-empty` |
+| `status` is `gap`, the parameter has a `value`, and `assumption` is absent or blank | `assumption-missing` |
+| `socialHousing.lag` has no `estimated` marker whose method note names the NLMA portal derivation (the note must contain the text `NLMA`) | `lag-derivation-missing` |
+| `ghost.rentThreshold` has a `range` | `range-not-allowed` |
+
+A `gap` parameter that the rule treats as optional (for example `rentSubsidy.passThrough`) is accepted when absent (Requirements 6.7, 14.12). The social housing Lag has no 12 to 20 check: any integer from 0 to 43 is accepted (Requirements 7.2, 17.12).
+
+#### Cited default values
+
+These are the default values of `params.json`. Each keeps its source link from `data/research/RESEARCH-NOTES.md`. The engine reads them only through the Parameter_Table.
+
+| Id | low / value / high | Status | Varied between Scenarios | Source |
+|---|---|---|---|---|
+| `socialHousing.rentPerUnit` | −2.5% / 0 / +6.5% of nearby sale price, converted to TWD per m² per month per unit (conversion method documented) | `secondary`, `estimated` | yes | Diamond and McQuade (2019), JPE 127(3) |
+| `socialHousing.rentRatio` | 0.5 / 0.8 / 0.9 (`low` is the strongest effect) | `secondary`, `estimated`, `assumption`: Taipei City and New Taipei City social housing rent rules still to be checked | yes | RESEARCH-NOTES 2b (tenant rent about 80 percent of market rent; disadvantaged households 50 to 70 percent) |
+| `ghost.sensitivityRent` | share per percentage point, 0 to 1; no `range` | `gap`, `estimated`, `assumption` (no source yet, Open Question 27) | no | none yet |
+| `socialHousing.unitCost` | 5,450,000 / 7,800,000 / 8,600,000 TWD per dwelling | `secondary`, `estimated` | no (`value` always; range shown in Cause links) | Three Taipei projects (notes 2a) |
+| `socialHousing.lag` | derived median of NLMA portal projects, whole quarters | `estimated`, method names the NLMA derivation | no | NLMA portal data (`DATA-CHECK.md` item 5) |
+| `commuterPass.elasticity` | −0.5 / −0.3 / −0.2 (`low` is the stronger response; the range ends are read from Litman's table) | `check` | yes | Simpson–Curtin rule; Litman (VTPI) |
+| `rentSubsidy.passThrough` | 0.16 / 0.50 / 0.78 | `secondary`, `estimated` | yes | Fack 2006, Gibbons and Manning 2006, Bérard 2023 (notes 2c) |
+| `rentSubsidy.nationalBudget` | 30,000,000,000 TWD per year | `verified` | no | TechNews 2022-06-30 |
+| `rentSubsidy.nationalHouseholds` | 500,000 households | `verified` | no | TechNews 2022-06-30 |
+| `ghost.rentThreshold` | 50 percent of income, no range | `verified` | no | HUD severely burdened |
+| `ghost.atRiskThreshold` | 30 percent of income, no range, optional | `verified` | no, ignored by the engine | HUD burdened |
+| `ghost.commuteThreshold` | 45 / 60 / 60 minutes one way | `secondary`, `estimated` | yes | TVBS survey report (notes 2f) |
+
+The elasticity range is listed with `low` = −0.5 and `high` = −0.2 so that `low ≤ value ≤ high` (Requirement 14.4). The `low` Scenario is therefore the strongest ridership response. In the same way `low` is the strongest effect for `socialHousing.rentRatio` (0.5, the lowest rent paid by a Housed_Household) and the strongest subsidy benefit for `rentSubsidy.passThrough` (0.16, the smallest landlord share). `ghost.sensitivityRent` is not ranged in the default table, so it is the same in all three Scenarios.
+
+The national rent subsidy figures are reference parameters of role `reference`. No rule, limit or ceiling reads them (Requirement 6.13).
 
 ### Rule_Registry and rule interfaces (`registry.ts`)
 
@@ -258,6 +313,16 @@ interface ToolEffects {
   deltas: Record<IndicatorId, Record<DistrictCode, number>>;
   links: Record<IndicatorId, CauseLinks>;
   commuteCostDelta?: Record<DistrictCode, number>;   // TWD per month, by origin district (Requirement 5.5)
+  ghostGroups?: Record<DistrictCode, readonly GhostGroupContribution[]>;   // rent-group contributions to the Ghost count (Requirements 4.16, 6.14, 10.1)
+}
+// One entry per Rent_Group_Source of a district. The Ghost rule collects the entries of all registry tools
+// and groups them by `source`, so it never reads a tool's internals by id.
+interface GhostGroupContribution {
+  source: 'housed' | 'spillover' | 'subsidy';
+  persons: number;           // persons in the group
+  burdenChangePp: number;    // burden change of the group in percentage points (display and Cause detail)
+  personPp: number;          // persons × burdenChangePp in totals form, computed by the rule; exactly 0 at zero differences
+  links: CauseLinks;
 }
 
 interface IndicatorRule {
@@ -281,10 +346,15 @@ Notation for quarter `t`: `L` is the tool's Lag, `real(·)` and `player(·)` the
 - District level, stock effect, field `unitsStarted` (integer, limit scope city-year).
 - Difference: `Δ_d(q) = player.unitsStarted_d(q) − real.unitsStarted_d(q)`, recorded for every district, including 0 and negative values (4.3).
 - A difference committed in `q` matures in `q + L`. From then, the carried stock difference `X_d` includes it in every later quarter (4.4). Entries with `q + L` after 2025Q4 stay in the pipeline (4.5).
+- **Direct path (Requirements 4.13 to 4.17).** `X_d` houses `X_d` renter households (a negative `X_d` returns households to the market). With `ρ` = `socialHousing.rentRatio`, `R_d` the Baseline rent, `M_d = R_d + rentPerUnit × X_d` the simulated market rent, `Hr_d` the renter households and `k_d = S ÷ (I_d ÷ 12) × 100`, a Housed_Household pays `ρ × M_d`, and its burden is `ρ × M_d × k_d` percent (for example 24 percent in the worked test below).
 - Effects in `t`:
   - `socialHousingStock`: `+X_d`.
-  - `rent`: `rentPerUnit × X_d`, linked to `socialHousing.rentPerUnit` and `socialHousing.lag` (4.6).
-  - `rentBurden`: `rent delta × k_d` (a rent change changes the burden, Decision D3).
+  - `rent`: spillover only, `rentPerUnit × X_d`, linked to `socialHousing.rentPerUnit` and `socialHousing.lag` (4.6). The central value of `rentPerUnit` is 0, so the central Scenario has a rent effect of exactly 0 through this channel and only `low` (−2.5 percent) and `high` (+6.5 percent) differ (4.11). The central rent burden effect comes from the direct term below (Open Question 26).
+  - `rentBurden`, one Social_Housing_Tool Cause with two terms (4.15): the direct term `X_d × (ρ × M_d − R_d) × k_d ÷ Hr_d`, and the spillover term `(rentPerUnit × X_d) × k_d` (a rent change changes the burden, Decision D3). Links: `socialHousing.rentRatio`, `socialHousing.rentPerUnit`, `housing.dwellingSize` and the household income Source_Id.
+  - The social housing tool Causes also link `socialHousing.unitCost`, so its `range` and status reach the "Why?" view (4.12).
+  - `ghostGroups`, two entries per district: `housed` with `persons = X_d × householdSize_city` and `burdenChangePp = (ρ × M_d − R_d) × k_d`, and `spillover` with `persons = Hr_d × householdSize_city` (the renter persons of the district) and `burdenChangePp = (rentPerUnit × X_d) × k_d`. Each carries `personPp = persons × burdenChangePp`. At zero differences `X_d` is 0, so every `personPp` is exactly 0 (Requirement 3.4).
+- A positive `X_d` above `Hr_d` returns `households-exceed-renters` with `where: 'social-housing'`, the District_Code, the Quarter_Key and both numbers (4.17).
+- Event modifiers scale only the `rent` and `rentBurden` deltas listed in `modifiable`. They do not scale `ghostGroups`. The MVP has no real modifier (Requirement 11.9), so the two never differ in real data.
 - Charge in `q`: `real = roundHalfUp(Σ_d real.unitsStarted × unitCost)` and `difference = roundHalfUp(Σ_d Δ_d × unitCost)`. Both are spread by `socialHousing.costSchedule`. A charge falling after 2025Q4 is recorded in 2025Q4 (4.8).
 - A Baseline stock plus `X_d` below 0 returns `stock-negative` (4.9). A rent below 0 is limited to 0 with a Bound_Adjustment (4.7).
 
@@ -307,13 +377,17 @@ Notation for quarter `t`: `L` is the tool's Lag, `real(·)` and `player(·)` the
 - Derived counts from `derived.ts`, all from the Baseline and fixed parameters:
   - households `H_d = P_d ÷ householdSize_city`
   - renter households `Hr_d = H_d × renterRate_city`
-  - renter share `s_d = Hr_d ÷ Σ_{e in city} Hr_e`, which sums to 1 per city (6.3)
-- Effects in `t`, with `q = t − L`: the allocated difference is `a_d = Δ_c(q) × s_d`.
-  - direct `rentBurden`: `−a_d ÷ (H_d × I_d ÷ 12) × 100` (6.4)
-  - `rent`: `passThrough × a_d ÷ (Hr_d × S)` (6.6), exactly 0 without the parameter (6.7)
-  - `rentBurden`: the rent effect also adds `rent effect × k_d` to the same delta (Decision D3)
+  - renter share `s_d = Hr_d ÷ Σ_{e in city} Hr_e`, which sums to 1 per city and is 0 for a district with `Hr_d = 0` (6.3, 6.11)
+  - monthly income `m_d = I_d ÷ 12` and the rent-to-burden factor `k_d = S ÷ m_d × 100` (percentage points of burden per TWD per m² per month); renter persons `Hr_d × householdSize_city` (all four are shared with the social housing rule and the Ghost rule)
+- Effects in `t`, with `q = t − L`: the allocated difference is `a_d = Δ_c(q) × s_d`, `m_d = I_d ÷ 12` the monthly income and `k_d = S ÷ m_d × 100`.
+  - direct `rentBurden`: `−a_d ÷ (Hr_d × m_d) × 100` (6.4). The denominator is the renter households, not all households.
+  - `rent`: `passThrough × a_d ÷ (Hr_d × S)` (6.6), exactly 0 without the parameter (6.7). The average market rent effect is unchanged by the denominator fix.
+  - `rentBurden` follow-on: `(rent delta) × k_d = passThrough × a_d ÷ (Hr_d × m_d) × 100` (Decision D3).
+  - Net burden change: `−(1 − passThrough) × a_d ÷ (Hr_d × m_d) × 100`, which is 0 or negative for `a_d ≥ 0` and `passThrough ≤ 1`. Both terms are recorded in the Rent_Subsidy_Tool Cause of `rentBurden`.
+  - `ghostGroups`, one `subsidy` entry per district in totals form: `personPp = −(1 − passThrough) × a_d ÷ m_d × 100 × householdSize_city`, which equals recipient persons times the per-household change `−(1 − passThrough) × (a_d ÷ recipients) ÷ m_d × 100` without dividing by the recipient count. `persons = householdSize_city × s_d × player.households` and `burdenChangePp = personPp ÷ persons` (0 when `persons` is 0). Market renters outside the recipient group get no group entry from the pass-through (6.14). At zero differences `a_d` is 0, so `personPp` is exactly 0.
+  - Why the earlier denominator was wrong: with all households `H_d = Hr_d ÷ renterRate`, the net change was `a_d × 100 ÷ m_d × (passThrough ÷ Hr_d − 1 ÷ H_d)`, which is positive whenever `renterRate < passThrough`. With the central `passThrough` of 0.5 and a renter rate of 0.4, extra subsidy would have raised the district's average burden, because the follow-on rent increase hits all renters (`Hr_d`) while the direct relief was spread over all households. With `Hr_d` in both terms the factor is `(passThrough − 1) ÷ Hr_d`, so the central Scenario lowers the burden of subsidized households and the Ghost count does not rise (Requirement 6.14, Open Question 29).
 - Charge in `q`: `real = roundHalfUp(real.households × real.amount × 3 × unitCost)` and `difference = roundHalfUp(Δ × 3 × unitCost)` (6.8).
-- Subsidized households above the city's renter households return `households-exceed-renters` (6.9). A missing or non-positive divisor returns `derived-input-invalid` (6.11).
+- Subsidized households above the city's renter households return `households-exceed-renters` with `where: 'rent-subsidy'` (6.9). A missing or non-positive income divisor (`m_d`) returns `derived-input-invalid` (6.11). The city difference is allocated only among districts with `Hr_d > 0`, with shares renormalised over those districts; a district with `Hr_d = 0` gets allocation 0 and zero deltas. A non-zero city difference with `Hr_d = 0` in every district of the city returns `derived-input-invalid` for `renterHouseholds`; a zero city difference never does (6.11).
 
 ### Indicators (`derived.ts` and `rules/`)
 
@@ -327,7 +401,7 @@ Notation for quarter `t`: `L` is the tool's Lag, `real(·)` and `player(·)` the
 | `population` | count | Baseline `population` | none in this spec (each Cause is 0); migration Cause |
 | `ghostCount` | count | Derived Ghost count | Ghost group Causes (10.6) |
 
-The Derived_Baseline rent burden is limited to 0–100 as part of its definition, so a district whose raw ratio is above 100 starts at 100 with a Bound_Adjustment of 0. Its Baseline Cause links `housing.dwellingSize` and the Source_Ids of `rent` and `householdIncome`.
+The Derived_Baseline rent burden `rent × S ÷ (I ÷ 12) × 100` is limited to 0–100 as part of its definition, so a district whose raw ratio is above 100 starts at 100 with a Bound_Adjustment of 0. Its Baseline Cause links `housing.dwellingSize` and the Source_Ids of `rent` and `householdIncome`. `derived.ts` also provides, per district and quarter, the household count `H_d`, the renter households `Hr_d`, the renter persons `Hr_d × householdSize_city`, the monthly income `m_d` and `k_d`, so the three tool rules and the Ghost rule use one definition of each. The Derived_Baseline rent-group base `R0 = P0 × ghost.shareRent` is computed in `ghosts.ts`.
 
 ### Lag pipeline (`lag.ts`, Requirement 7)
 
@@ -418,6 +492,8 @@ v_j = v_{j−1} × m_{e_j}               (m is the value of the modifier's param
 EventCause(e_j) = v_j − v_{j−1}
 ```
 
+The MVP has no real Event with a modifier and `params.json` has no Event modifier parameter, so with real data this stage changes nothing and no Event Cause appears (Requirement 11.9). The mechanism stays in `events.ts` and is exercised only by synthetic Events whose modifier parameters the tests add to a synthetic Parameter_Table. Interest-rate events are narrative only.
+
 The tool Cause keeps `u`. The Event Causes hold the changes, so `u + Σ Event Causes = v_n` (11.4). An Event Cause is listed only when its absolute value is above the tolerance of 13.3 (13.2), so with zero deltas no Event Cause appears. An Event's affected indicators, cited magnitude and type are never read by any computation (11.7).
 
 ### Migration_Rule (`migration.ts`, Requirement 9)
@@ -432,25 +508,38 @@ Inputs for quarter `t`: Baseline populations `P_d` (the start-of-quarter populat
 
 All origins use the same start-of-quarter snapshot, and per-origin results are summed in ascending code order, so processing order cannot change the counts (9.6). `Σ out = Σ in + Σ exits` holds by construction (9.4). The population Cause is `net_d`, moved in minus moved out, with links to the threshold, share, weight and exit-share parameters (9.8).
 
+Helping-direction note (Property 29): in the central Scenario, moving one tool in the helping direction never raises a district's rent burden above its Derived_Baseline value. Social housing with more units gives a direct term `X_d × (ρ × M_d − R_d) × k_d ÷ Hr_d ≤ 0` (with `ρ ≤ 1` and `M_d = R_d` because the central `rentPerUnit` is 0), rent subsidy gives a net change `≤ 0` (`passThrough ≤ 1`), and the commuter pass changes no burden. So `B − B0 ≤ 0` is never above the non-negative migration threshold, the Migration_Rule moves nobody, and `D = 0` in these runs. Migration can only add displaced residents in the harmful direction or in the `low` and `high` Scenarios.
+
 The subtraction of `K_o` is the same for every destination of one origin, so apart from the floor at 0 it does not change the relative weights. This follows Requirement 5.5 as written (origin scope, Open Question 15). A destination or either-end scope would change the allocation more and needs a change of Requirement 5.5.
 
 ### Ghosts (`ghosts.ts`, Requirement 10)
 
-For a district with population `P` (after migration), reported rent burden `B`, mean commute time `T` and displaced `D`, and the Derived_Baseline values `P0`, `B0`, `T0`. With base shares `bR`, `bC`, `bO` and Ghost_Size `G`:
+For a district with population `P` (after migration), mean commute time `T` and displaced `D`, the Derived_Baseline values `P0`, `T0`, base shares `bR = ghost.shareRent`, `bC = 1 − ghost.shareCommuteWithin`, `bO = ghost.shareBoth`, Ghost_Size `G`, Rent_Sensitivity `σ = ghost.sensitivityRent`, and the rent-group contributions `g ∈ ghostGroups(d)` collected from the registry tools (`source`, `personPp`). The rent group uses the fixed 50 percent definition (`ghost.rentThreshold`, no range). The commute group uses `ghost.commuteThreshold` and `ghost.shareCommuteWithin` as read from the table of the running Scenario (60 minutes in `central`, 45 in `low`, 60 in `high`). The at-risk threshold (30 percent) is never read (Requirement 10.7). The district-average rent burden `B` no longer drives `R` (it still drives migration):
 
 ```
-sR = clamp(bR + sensitivityRent    × (B − B0), 0, 1)
+R0 = P0 × bR
+R  = clamp(R0 + σ × Σ_g personPp_g, 0, P)           per group: σ × persons_g × burdenChangePp_g (Requirements 4.16, 6.14, 10.1)
+sR = P === 0 ? 0 : R ÷ P
 sC = clamp(bC + sensitivityCommute × (T − T0), 0, 1)
 sO = clamp(bO + (sR − bR) × bC + (sC − bC) × bR, 0, min(sR, sC))
-R = P × sR      C = P × sC      O = P × sO
-ghost = P === 0 ? 0 : floor((R + C − O + D) ÷ G)
+C = P × sC      O = P × sO
+q     = (R + C − O + D) ÷ G
+ghost = P === 0 ? 0 : floor(q + ε × max(1, |q|))      ε = GHOST_FLOOR_TOLERANCE = 1e-9 (constants.ts)
 ```
 
-The Derived_Baseline Ghost count is the same function at `(P0, B0, T0, D = 0)`. Both calls use one function, so with zero deltas they evaluate the same expression on the same numbers (3.3).
+The tolerance exists because `bC = 1 − ghost.shareCommuteWithin` is not exact in floating point (for example `1 − 0.8 = 0.19999999999999996`), so a sum that is an exact multiple of `G` in real arithmetic can land a few ulps below the integer and floor one too low. Both `computeGhostValues` and `derivedGhostCount` use the same expression, so the zero-delta identity (3.3) is unaffected.
 
-Cause_Breakdown (10.6): the Baseline Cause is the derived count. Four group Causes follow: the rent-burden group `(R − R0) ÷ G`, the commute-time group `(C − C0) ÷ G`, the overlap `−(O − O0) ÷ G` and the displacement `D ÷ G`, each linked to the parameter ids it uses. The Bound_Adjustment is the reported count minus the sum of the other Causes, which covers the floor and the zero-population rule.
+The Derived_Baseline Ghost count is the same function at `(P0, T0, D = 0)` with an empty group list and the same Scenario table, so `R = R0` there. Both calls use one function, so with zero differences every `personPp` is exactly 0, `R0 + σ × 0 === R0`, and both calls evaluate the same expression on the same numbers (3.3). Because `bC` depends on the Scenario, the Derived_Baseline Ghost count differs between Scenarios, and `derived.ts` receives the Scenario's table (19.8).
+
+The groups are the three Rent_Group_Sources: `housed` (Housed_Households of the social housing stock difference), `spillover` (market renters affected by the social housing rent spillover) and `subsidy` (rent subsidy recipients). Market renters outside the recipient group get no group entry from the rent subsidy pass-through (Requirement 6.14).
+
+Monotonicity (10.8): a lower commute threshold gives a smaller `ghost.shareCommuteWithin` and so a larger `bC` and `C` at equal inputs. `validate.ts` checks `shareBoth ≤ min(shareRent, 1 − shareCommuteWithin.high)`, the smallest base commute share in the range, so `sO = bO` in every Scenario at zero deltas and the zero-delta Ghost count is non-decreasing in `bC`. The `low` Scenario Ghost count is then at least the `high` Scenario one at zero deltas (17.12).
+
+Cause_Breakdown (10.6): the Baseline Cause is the derived count. Six group Causes follow, in this order: three rent-group Causes `σ × Σ personPp_g ÷ G` for the sources `housed` (id `ghost-rent-housed`), `spillover` (`ghost-rent-spillover`) and `subsidy` (`ghost-rent-subsidy`), the commute-time group `(C − C0) ÷ G`, the overlap `−(O − O0) ÷ G` and the displacement `D ÷ G`, each linked to the parameter ids it uses (the rent groups link `ghost.sensitivityRent` and the parameters of their `links`). The Bound_Adjustment is the reported count minus the sum of the other Causes, which covers the floor, the clamp of `R` to 0 to `P` and the zero-population rule. Each rent-group Cause is exactly 0 when its Policy_Differences are 0, so Requirements 3.3 and 3.4 hold.
 
 ### Cause breakdowns (`explain.ts`, Requirement 13)
+
+Cause links (13.7): every Cause other than the Bound_Adjustment links at least one Parameter id or Source_Id, including a tool Cause whose contribution is 0. A tool rule may report links only for the indicators it acts on. Before the indicator rules run, `engine.ts` fills every registry indicator that a tool reports no (or empty) links for with the tool's Lag parameter id (`lagParameterId`) and the Baseline Source_Ids of that indicator, since the Lag decides when any difference of the tool could reach the indicator. Likewise a migration Cause without links (every indicator except population) links the `migration.*` Parameter ids. Event Causes are only listed above the tolerance (13.2).
 
 ```ts
 interface CauseDraft {
@@ -458,7 +547,7 @@ interface CauseDraft {
   tools: readonly (Contribution & { tool: ToolId })[];   // one per registry tool, in registry order
   events: readonly (Contribution & { eventId: string })[];
   migration: Contribution;
-  groups?: readonly Contribution[];                      // Ghost groups, replace tools, events and migration
+  groups?: readonly (Contribution & { groupId: string })[];   // Ghost count only: housed, spillover, subsidy, commute, overlap, displacement; replace tools, events and migration
 }
 function finish(draft): { value: number; breakdown: CauseBreakdown }
 ```
@@ -474,15 +563,17 @@ bound         = value − pre
 
 When `pre` is already valid, `value` is the same number as `pre` and `bound` is exactly 0 (12.5).
 
-Order of Causes: Baseline, one Cause per registry tool (always present, 13.2), Event Causes above tolerance in event-list order, migration, Bound_Adjustment. Ghost count: Baseline, the four groups, Bound_Adjustment.
+Order of Causes: Baseline, one Cause per registry tool (always present, 13.2), Event Causes above tolerance in event-list order, migration, Bound_Adjustment. Ghost count: Baseline, the three rent-group Causes (housed households, social housing spillover, rent subsidy recipients), commute group, overlap, displacement, Bound_Adjustment (Requirement 10.6). A rent-group Cause is present even when its contribution is 0.
 
-Each Cause except the Bound_Adjustment carries `parameterIds`, `sourceIds` and `ranges` (the `low` and `high` values and sources of every ranged parameter it used, 14.8). Every id must exist in the Parameter_Table or the Baseline source registry (13.7). A rule or Event that names a missing id fails stage 0 (13.8).
+Each Cause except the Bound_Adjustment carries `parameterIds`, `sourceIds` and `parameters`. `parameters` has one entry per parameter id used, with its `status`, its `estimated` marker and, where present, its `range` with the `low` and `high` values and sources (14.8, 14.11). `explain.ts` copies these fields from the Parameter_Table when it builds the Cause, so the "Why?" view needs no second lookup. Every id must exist in the Parameter_Table or the Baseline source registry (13.7). A rule or Event that names a missing id fails stage 0 (13.8).
 
 ### Scenario range (`runRange`, Requirement 19)
 
+The names `central`, `low` and `high` are internal to the Engine (Requirement 19.9). For `socialHousing.rentRatio`, `rentSubsidy.passThrough` and `commuterPass.elasticity`, `low` is the strongest response, so the interface can label the Scenarios by meaning (for example "strong response" and "weak response"). Those labels belong to the interface spec and are out of scope here.
+
 `runRange` runs `central`, `low` and `high` on three tables from `scenarioTable`, in that order, with no shared mutable state. It returns the three state lists and, for each quarter, indicator and district, a Result_Range `{ min, central, max }` where `min` and `max` are `Math.min` and `Math.max` of the three values, so `min ≤ central ≤ max` holds whichever Scenario gives the lowest value (19.3, 19.6). The Cause_Breakdowns returned are those of the `central` run (19.4). On failure it returns the first Engine_Error with the Scenario name and the quarter (19.1).
 
-Lag, unit costs, schedules, limits, ceilings, Annual_Budgets and Ghost_Size are identical in the three runs. The charge for a commuter pass difference uses the elasticity (Requirement 5.6), which is an effect parameter, so a difference charge can differ between Scenarios and one Scenario can fail the budget check while the others pass. This is the behaviour of Requirements 5.6 and 19.2 as written, and `runRange` reports it as an error with the Scenario name.
+Lag, unit costs, schedules, limits, ceilings, Annual_Budgets, the fixed Ghost definitions and Ghost_Size are identical in the three runs. The commute-time threshold and its share (`ghost.commuteThreshold`, `ghost.shareCommuteWithin`) are ranged effect parameters and do differ, so the Derived_Baseline Ghost count, and with it the Ghost count at zero deltas, can differ between Scenarios and the zero-delta Result_Range of the Ghost count may have `min < max` (19.8). Every other indicator has `min === central === max` at zero deltas (19.5). The charge for a commuter pass difference uses the elasticity (Requirement 5.6), which is an effect parameter, so a difference charge can differ between Scenarios and one Scenario can fail the budget check while the others pass. This is the behaviour of Requirements 5.6 and 19.2 as written, and `runRange` reports it as an error with the Scenario name.
 
 ### Backtest (`scripts/backtest.ts`, Requirement 20)
 
@@ -498,10 +589,12 @@ flowchart LR
   CH --> REP[report.ts: docs/BACKTEST.md]
 ```
 
-- **Case file** fields: `id`, `tool`, `change` (`field`, `cities`, `firstQuarter`, `before`, `after`), `indicator`, `areas`, `evaluationQuarters`, `observed` (`value`, `source`, `method`, `period`, `comparisonPeriod`, `confounders`), `tolerances` (`ratioLow` 0.5, `ratioHigh` 2) and `parametersChangedAfterOutcome` (empty means "validation", otherwise "calibration", 20.6). The observed TPASS value is calculated from `history.json` by the formula of Requirement 20.2 and written into the case file before the simulated effect is computed. The evaluation quarters are also fixed in the file.
+- **Case file** fields: `id`, `tool`, `change` (`field`, `cities`, `firstQuarter`, `before`, `after`), `indicator`, `areas`, `evaluationQuarters`, `observed`, `tolerances` (`ratioLow` 0.5, `ratioHigh` 2) and `parametersChangedAfterOutcome` (empty means "validation", otherwise "calibration", 20.6). `observed` holds no number. It holds the calculation spec `{ source: 'history.json', indicator: 'mrtEntries', cities, comparisonYear, postQuarters, preQuarters, method, confounders }`, and a `secondaryContext` list for news figures. For TPASS: `comparisonYear` 2019, `postQuarters` `['Q3','Q4']`, `preQuarters` `['Q1','Q2']` of the change year 2023, and confounders "incomplete ridership recovery after COVID-19" and "Ankeng LRT opening on 2023-02-10". The evaluation quarters (2023Q3, 2023Q4) and the tolerances are fixed in the file, and `compute.ts` computes the observed effect before it calls the engine (Requirement 20.2).
+- **Observed effect (20.2).** `compute.ts` reads `mrtEntries` from `history.json` for every district of Taipei and New Taipei and computes `(E2023(Q3)+E2023(Q4) − E2019(Q3)−E2019(Q4)) − (E2023(Q1)+E2023(Q2) − E2019(Q1)−E2019(Q2))`, where `E` is the city total. Nothing is entered by hand. The year 2022 is not used: `cases.ts` rejects a case whose comparison year is 2022 or lies inside 2020 to 2022. A `null` or missing value in a compared quarter makes the case "not computed" with the district and quarter.
+- **News figures (20.10).** The Taipei Metro +22 percent (first month) and New Taipei Metro +24 percent (2023) figures sit in `observed.secondaryContext` with their sources. `report.ts` prints them under a "Secondary context, not used in any check" heading, and no code path in `compute.ts` reads them.
 - **Computation (20.3).** The counterfactual track holds the changed field at its value before the change from the first quarter of the change (for TPASS: pass price NT$ 1,280, subsidy 0). It is passed as the Real_Policy_Track, and the adapter writes the NT$ 1,280 price into the `commuterPass.price.<city>.<quarter>` parameters. The actual real track is passed as the Player_Policy_Timeline (subsidy NT$ 80). The simulated effect is the sum of the commuter pass Cause contributions in the `mrtEntries` breakdowns over the compared districts and quarters, as a Result_Range from `runRange`. The engine is called with `budgetMode: 'record'` (conflict C1) and an empty event list, so the sum is the full effect of the change. All Policy_Limits apply relative to the counterfactual track.
 - **Checks (20.4).** Direction (central effect has the sign of the observed effect), magnitude ratio (central ÷ observed within `ratioLow` to `ratioHigh`) and range (observed lies between the minimum and maximum).
-- **Report (20.5).** One section per case with the fields of 20.5, neutral wording, fixed decimals, LF line endings, the engine version (`ENGINE_VERSION` in `engine.ts`) and a SHA-256 of `params.json` as the Parameter_Table version (Node `crypto`, in the script only). The output is byte-identical for identical inputs (20.7).
+- **Report (20.5, 20.10).** One section per case with the fields of 20.5 (the observed effect is printed with its four quarter sums, the comparison year and the confounders), neutral wording, fixed decimals, LF line endings, the engine version (`ENGINE_VERSION` in `engine.ts`) and a SHA-256 of `params.json` as the Parameter_Table version (Node `crypto`, in the script only). The output is byte-identical for identical inputs (20.7).
 - **Exit codes.** 0 when every case was computed, whether "met" or "not met" (20.7). A case that cannot be computed is written as "not computed" with its reason, and the exit code is non-zero (20.9). Until `params.json` and the matrix exist (Open Question 2), the TPASS case is "not computed: missing input".
 
 ## Data Models
@@ -517,13 +610,18 @@ type AreaKey = DistrictCode | CityName;
 
 interface Citation { readonly citation: string; readonly url: string }
 interface ParameterRange { readonly low: number; readonly high: number; readonly lowSource: Citation; readonly highSource: Citation }
+type ParameterStatus = 'verified' | 'check' | 'secondary' | 'gap';
+interface Estimated { readonly method: string }
 interface ScalarParameter {
   readonly kind: 'scalar'; readonly value: number; readonly unit: string; readonly source: Citation;
-  readonly range?: ParameterRange; readonly estimated?: { readonly method: string };
+  readonly status: ParameterStatus;                    // 14.10; required, checked in stage 0
+  readonly range?: ParameterRange; readonly estimated?: Estimated;   // estimated required for secondary and gap
+  readonly assumption?: string;                        // required for a gap parameter that has a value (14.12)
 }
 interface ScheduleParameter {
   readonly kind: 'schedule'; readonly offsets: readonly number[]; readonly shares: readonly number[];
   readonly unit: string; readonly source: Citation;
+  readonly status: ParameterStatus; readonly estimated?: Estimated; readonly assumption?: string;
 }
 type ParameterTable = Readonly<Record<string, ScalarParameter | ScheduleParameter>>;
 
@@ -576,11 +674,16 @@ The pass price (`commuterPassPrice`) becomes the parameters `commuterPass.price.
 type ValueKind = 'count' | 'bounded' | 'non-negative';
 interface Cause {
   readonly kind: 'baseline' | 'tool' | 'event' | 'migration' | 'ghost-group' | 'bound';
-  readonly id: string;                              // 'baseline', tool id, event id, 'migration', group id, 'bound'
+  readonly id: string;                              // 'baseline', tool id, event id, 'migration', 'bound', or a Ghost group id:
+                                                    // 'ghost-rent-housed', 'ghost-rent-spillover', 'ghost-rent-subsidy', 'ghost-commute', 'ghost-overlap', 'ghost-displaced'
   readonly contribution: number;
   readonly parameterIds: readonly string[];         // sorted
   readonly sourceIds: readonly string[];            // sorted
-  readonly ranges: readonly { readonly parameterId: string; readonly range: ParameterRange }[];
+  readonly parameters: readonly CauseParameter[];   // one per parameter id used, sorted by id (14.8, 14.11)
+}
+interface CauseParameter {
+  readonly parameterId: string; readonly status: ParameterStatus;
+  readonly estimated?: Estimated; readonly range?: ParameterRange;
 }
 interface CauseBreakdown {
   readonly indicator: IndicatorId; readonly district: DistrictCode; readonly quarter: QuarterKey;
@@ -615,8 +718,17 @@ interface EngineError {
   readonly code: EngineErrorCode;
   readonly message: string;                                   // English, developer-facing, names every offending value
   readonly details: Readonly<Record<string, string | number | boolean | null>>;
-  readonly issues?: readonly { readonly parameterId: string; readonly problem: string }[];  // parameters-invalid only, sorted
+  readonly issues?: readonly { readonly parameterId: string; readonly problem: ParameterProblem }[];  // parameters-invalid only, sorted
 }
+// The value, range and bound problems keep their codes from Requirements 14.3 to 14.5.
+// 14.10 to 14.12 add: status-missing, status-unknown, estimated-missing, estimated-method-empty,
+// assumption-missing, lag-derivation-missing (7.9) and range-not-allowed (10.2).
+// The social housing Lag has no 12 to 20 problem code any more.
+type ParameterProblem =
+  | 'missing' | 'non-finite' | 'unit-empty' | 'source-empty' | 'range-invalid' | 'value-outside-range'
+  | 'out-of-bounds' | 'schedule-invalid' | 'limit-invalid' | 'group-invalid'
+  | 'status-missing' | 'status-unknown' | 'estimated-missing' | 'estimated-method-empty'
+  | 'assumption-missing' | 'lag-derivation-missing' | 'range-not-allowed';
 type StepResult  = { ok: true; state: SimState } | { ok: false; error: EngineError };
 type RunResult   = { ok: true; states: readonly SimState[] } | { ok: false; error: EngineError; quarter: QuarterKey | null };
 type RangeResult = { ok: true; central: readonly SimState[]; low: readonly SimState[]; high: readonly SimState[];
@@ -627,6 +739,8 @@ type RangeResult = { ok: true; central: readonly SimState[]; low: readonly SimSt
 ## Correctness Properties
 
 *A property is a characteristic or behavior that should hold true across all valid executions of a system-essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+
+Properties 25 to 28 are separate from Properties 18, 20, 23 and 24 because each names a test in Requirement 17.12 or 19.8. Properties 25 and 26 narrow Property 20 to the Lag and metadata rules, and Property 27 is the real-data case of Property 18. Property 29 is the helping-direction test of Requirement 17.13.
 
 Reflection on redundancy: the zero-delta criteria (2.3, 2.4, 3.2–3.6, 8.9, 13.10) are one property. The bound, rounding and breakdown criteria (12.3–12.5, 12.7, 13.1–13.6) are one property, with the cause-sum property of Requirement 17.1 as its core. The individual lag criteria (2.2, 4.3–4.5, 7.3–7.6) are one property. The per-input error criteria are one invalid-input property and one parameter-validation property. Properties that Requirement 17 names as separate tests stay separate even where they overlap.
 
@@ -676,15 +790,15 @@ Reflection on redundancy: the zero-delta criteria (2.3, 2.4, 3.2–3.6, 8.9, 13.
 
 ### Property 8: Cause breakdowns are complete and sum to the value
 
-*For any* accepted run, each Sim_State has exactly one Cause_Breakdown per registry indicator and district. Each breakdown other than Ghost count has one Baseline Cause equal to the Baseline or Derived_Baseline value, one Cause per registry tool, Event Causes only above the tolerance, one migration Cause and one Bound_Adjustment. The contributions sum to the reported value within `1e-9 × max(1, |value|)`, the non-baseline contributions sum to the reported value minus the Baseline value, and the Bound_Adjustment equals the reported value minus the pre-bound value (0 when nothing was limited or rounded, negative at the upper bound, positive at the lower bound).
+*For any* accepted run, each Sim_State has exactly one Cause_Breakdown per registry indicator and district. Each breakdown other than Ghost count has one Baseline Cause equal to the Baseline or Derived_Baseline value, one Cause per registry tool, Event Causes only above the tolerance, one migration Cause and one Bound_Adjustment. The Ghost count breakdown has the Baseline Cause, the three rent-group Causes (housed households, social housing spillover, rent subsidy recipients), the commute group, the overlap, the displacement and one Bound_Adjustment. The contributions sum to the reported value within `1e-9 × max(1, |value|)`, the non-baseline contributions sum to the reported value minus the Baseline value, and the Bound_Adjustment equals the reported value minus the pre-bound value (0 when nothing was limited or rounded, negative at the upper bound, positive at the lower bound).
 
 **Validates: Requirements 2.1, 12.3, 12.4, 12.5, 12.7, 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.11**
 
 ### Property 9: Every Cause links to known parameters and sources
 
-*For any* accepted run, every Cause other than the Bound_Adjustment links at least one Parameter id or Source_Id. Every linked Parameter id exists in the Parameter_Table, every linked Source_Id exists in the Baseline source registry, and every ranged parameter a Cause uses appears in its `ranges` with the table's `low`, `high` and sources.
+*For any* accepted run, every Cause other than the Bound_Adjustment links at least one Parameter id or Source_Id. Every linked Parameter id exists in the Parameter_Table, every linked Source_Id exists in the Baseline source registry, and every parameter a Cause uses appears in its `parameters` with the table's `status` and `estimated` marker, and, where the table has a `range`, with its `low`, `high` and sources.
 
-**Validates: Requirements 5.8, 13.7, 14.8, 14.9**
+**Validates: Requirements 5.8, 13.7, 14.8, 14.9, 14.11**
 
 ### Property 10: Migration conserves population
 
@@ -712,9 +826,9 @@ Reflection on redundancy: the zero-delta criteria (2.3, 2.4, 3.2–3.6, 8.9, 13.
 
 ### Property 14: Tool effects follow their formulas
 
-*For any* Baseline district values, parameters and active differences, the unmodified tool deltas equal reference formulas written independently in the test. These are the social housing rent delta `rentPerUnit × stock difference`, the commuter pass MRT delta `Baseline MRT × elasticity × (−Δ ÷ N)`, rent subsidy allocations that sum over a city to the city difference within 1e-9 relative tolerance, the rent burden delta `−a ÷ (H × I ÷ 12) × 100`, and the pass-through rent delta `passThrough × a ÷ (Hr × S)`, which is 0 without the parameter.
+*For any* Baseline district values, parameters and active differences, the unmodified tool deltas equal reference formulas written independently in the test. These are the social housing rent delta `rentPerUnit × stock difference`, the housed-household burden `ρ × M × S ÷ (I ÷ 12) × 100` with `M = Baseline rent + rentPerUnit × X`, the social housing rent burden delta `X × (ρ × M − R) × k ÷ Hr + rentPerUnit × X × k`, the commuter pass MRT delta `Baseline MRT × elasticity × (−Δ ÷ N)`, rent subsidy allocations that sum over a city to the city difference within 1e-9 relative tolerance, the rent subsidy burden delta `−(1 − passThrough) × a ÷ (Hr × I ÷ 12) × 100` (direct term `−a ÷ (Hr × I ÷ 12) × 100` plus the follow-on `passThrough × a ÷ (Hr × I ÷ 12) × 100`), and the pass-through rent delta `passThrough × a ÷ (Hr × S)`, which is 0 without the parameter. A positive stock difference above the district's renter households returns `households-exceed-renters` with `where: 'social-housing'`.
 
-**Validates: Requirements 4.6, 5.3, 5.9, 6.3, 6.4, 6.6, 6.7**
+**Validates: Requirements 4.6, 4.13, 4.15, 4.17, 5.3, 5.9, 6.3, 6.4, 6.6, 6.7**
 
 ### Property 15: Charges follow the reference cost model
 
@@ -724,9 +838,9 @@ Reflection on redundancy: the zero-delta criteria (2.3, 2.4, 3.2–3.6, 8.9, 13.
 
 ### Property 16: Ghost counts follow their formula
 
-*For any* district values (population at least 0, burdens, commute times, displaced count) and valid Ghost parameters, the Ghost count is a non-negative integer equal to the reference formula, is 0 when the population is 0, and its Causes (Baseline, four groups and Bound_Adjustment) sum to the Ghost count within the tolerance of Requirement 13.3.
+*For any* district values (population at least 0, a list of rent-group contributions with sources `housed`, `spillover` and `subsidy`, commute times, displaced count) and valid Ghost parameters (including `ghost.sensitivityRent` of 0 and above 0), the Ghost count is a non-negative integer equal to the reference formula `floor((R + C − O + D) ÷ G)` with `R = clamp(R0 + σ × Σ personPp, 0, P)`, is 0 when the population is 0, and its Causes (Baseline, three rent-group Causes, commute group, overlap, displacement and Bound_Adjustment) sum to the Ghost count within the tolerance of Requirement 13.3. With an empty or all-zero group list, `R = R0` exactly.
 
-**Validates: Requirements 10.1, 10.3, 10.5, 10.6**
+**Validates: Requirements 10.1, 10.3, 10.5, 10.6, 4.16, 6.14**
 
 ### Property 17: Event modifiers decompose exactly
 
@@ -748,9 +862,9 @@ Reflection on redundancy: the zero-delta criteria (2.3, 2.4, 3.2–3.6, 8.9, 13.
 
 ### Property 20: Parameter validation lists every issue in a fixed order
 
-*For any* valid Parameter_Table and any non-empty set of required parameters corrupted with defects (removed, non-finite value, blank unit or source, `low > high`, `value` outside its range, a Lag outside 0–43 or a social housing Lag outside 12–20, a unit cost at or below 0, a share outside 0–1, a Ghost_Size below 1, a Cost_Schedule that does not sum to 1, a limit factor on the wrong side of 1, an absolute limit that excludes a real value), `run` returns exactly one `parameters-invalid` error whose issue list contains exactly the corrupted ids, sorted by id and then problem, and the same list for a permuted table.
+*For any* valid Parameter_Table and any non-empty set of required parameters corrupted with defects (removed, non-finite value, blank unit or source, `low > high`, `value` outside its range, a Lag outside 0–43, a social housing Lag without the NLMA derivation note, a unit cost at or below 0, a share outside 0–1, a Ghost_Size below 1, a Cost_Schedule that does not sum to 1, a limit factor on the wrong side of 1, an absolute limit that excludes a real value), `run` returns exactly one `parameters-invalid` error whose issue list contains exactly the corrupted ids, sorted by id and then problem, and the same list for a permuted table.
 
-**Validates: Requirements 2.8, 7.8, 7.9, 8.8, 9.9, 10.4, 14.2, 14.3, 14.4, 14.5, 14.6, 18.8**
+**Validates: Requirements 2.8, 7.8, 7.9, 8.8, 9.9, 10.4, 10.2, 14.2, 14.3, 14.4, 14.5, 14.6, 18.8**
 
 ### Property 21: Input order and unused parameters do not change results
 
@@ -766,15 +880,45 @@ Reflection on redundancy: the zero-delta criteria (2.3, 2.4, 3.2–3.6, 8.9, 13.
 
 ### Property 23: Scenario tables vary only ranged effect parameters
 
-*For any* valid Parameter_Table, `scenarioTable(p, 'low')` and `scenarioTable(p, 'high')` differ from `p` only in `effect` parameters that have a `range`, which take `low` and `high`. Every Lag, cost, schedule, limit, ceiling, Ghost_Size and derivation parameter keeps its `value`, and `low ≤ value ≤ high` holds for every ranged parameter of an accepted table.
+*For any* valid Parameter_Table, `scenarioTable(p, 'low')` and `scenarioTable(p, 'high')` differ from `p` only in `effect` parameters that have a `range`, which take `low` and `high`. In this spec these are exactly six: `socialHousing.rentPerUnit`, `socialHousing.rentRatio`, `commuterPass.elasticity`, `rentSubsidy.passThrough`, `ghost.commuteThreshold` and `ghost.shareCommuteWithin`. `ghost.sensitivityRent` has no `range` and keeps its `value`. Every Lag, cost (also one with a `range`, such as `socialHousing.unitCost`), schedule, limit, ceiling, Ghost_Size, fixed Ghost definition (`ghost.rentThreshold`, `ghost.atRiskThreshold`), reference and derivation parameter keeps its `value`, and `low ≤ value ≤ high` holds for every ranged parameter of an accepted table.
 
-**Validates: Requirements 7.1, 19.2, 19.5**
+**Validates: Requirements 7.1, 19.2, 19.5, 4.12**
 
 ### Property 24: The Result_Range contains the central result
 
-*For any* valid inputs for which `runRange` succeeds, every Result_Range has `min ≤ central ≤ max`, `central` equals the value of the `central` run, `min` and `max` are the minimum and maximum of the three Scenario values, and the returned Cause_Breakdowns are those of the `central` run. When the Player_Policy_Timeline equals the Real_Policy_Track, all three Scenarios return values `===` the Baseline or Derived_Baseline values, so `min === central === max` everywhere.
+*For any* valid inputs for which `runRange` succeeds, every Result_Range has `min ≤ central ≤ max`, `central` equals the value of the `central` run, `min` and `max` are the minimum and maximum of the three Scenario values, and the returned Cause_Breakdowns are those of the `central` run. When the Player_Policy_Timeline equals the Real_Policy_Track, all three Scenarios return values `===` the Baseline or Derived_Baseline values, so `min === central === max` for every indicator except the Ghost count. The Ghost count in each Scenario is `===` the Derived_Baseline Ghost count computed with that Scenario's own table (Property 28), and its range may have `min < max`.
 
 **Validates: Requirements 19.1, 19.3, 19.4, 19.5, 19.6**
+
+### Property 25: Social housing Lag accepts the whole 0–43 range
+
+*For any* integer Lag from 0 to 43 on `socialHousing.lag`, with an `estimated` marker whose method note names the NLMA derivation, and otherwise valid inputs, `run` returns no `parameters-invalid` error for that Lag, and a Lag of 12 to 20 is treated like any other value. *For any* integer outside 0–43, or a non-integer, `run` returns a `parameters-invalid` error naming `socialHousing.lag`.
+
+**Validates: Requirements 7.2, 7.8, 17.12**
+
+### Property 26: Parameter status and estimate rules
+
+*For any* valid Parameter_Table and any required parameter, removing `status`, giving it a value outside the four allowed values, setting `status` to `secondary` or `gap` without an `estimated` marker or with a blank method note, setting `status` to `gap` with a `value` and no `assumption`, or removing the NLMA derivation note from `socialHousing.lag` makes `run` return one `parameters-invalid` error whose issue list contains exactly those parameter ids with the matching problem codes. A table in which every `secondary` and `gap` parameter has its `estimated` marker and every `gap` value has an `assumption` returns no such issue, and an absent optional `gap` parameter is accepted.
+
+**Validates: Requirements 7.9, 14.10, 14.11, 14.12, 17.12**
+
+### Property 27: Real-style events add no Event Cause
+
+*For any* event list of 0 to 10 real-style Events (no modifier) and a Parameter_Table without Event modifier parameters, and *for any* valid Player_Policy_Timeline, `run` returns Sim_States deep-equal to the run with an empty event list, and no Cause_Breakdown contains an Event Cause.
+
+**Validates: Requirements 11.1, 11.6, 11.7, 11.9, 17.12**
+
+### Property 28: Ghost count follows the Scenario threshold
+
+*For any* valid inputs with a Player_Policy_Timeline equal to the Real_Policy_Track, in each Scenario the Ghost count of every district and quarter is `===` the Derived_Baseline Ghost count computed with that Scenario's own `ghost.commuteThreshold` and `ghost.shareCommuteWithin`, and the Ghost Cause_Breakdown has a zero for every non-Baseline Cause. *For any* district inputs and valid Ghost parameters, the commute group size `C` of the `low` Scenario (threshold 45) is at least that of the `high` Scenario (threshold 60), and the zero-delta Ghost count of the `low` Scenario is at least that of the `high` Scenario.
+
+**Validates: Requirements 10.8, 19.2, 19.8, 17.12**
+
+### Property 29: Helping direction never raises the Ghost count (central Scenario)
+
+*For any* valid inputs in the `central` Scenario, and *for any* one Policy_Tool whose player value is moved away from the Real_Policy_Track value in the direction that helps renters (social housing: more units started in a district-quarter; rent subsidy: more households or a higher amount in a city-quarter, with `passThrough ≤ 1`; commuter pass: a higher subsidy), with every other tool equal to the Real_Policy_Track, the Ghost count of every district and quarter is not greater than the Ghost count of the zero-delta run with the same other inputs. For the commuter pass the Ghost count is equal to the zero-delta run, because mean commute time has no tool Cause in this spec. The test may pass `options.budgetMode = 'record'` so that budget and ceiling rejections do not discard cases. Policy_Limits stay enforced, cases rejected by a Policy_Limit or another precondition error are discarded, and at least 20 of the 100 cases are accepted runs. The migration note in the Migration_Rule section explains why `D = 0` here.
+
+**Validates: Requirements 4.18, 6.14, 17.13**
 
 ## Error Handling
 
@@ -793,14 +937,14 @@ Reflection on redundancy: the zero-delta criteria (2.3, 2.4, 3.2–3.6, 8.9, 13.
 | `no-later-quarter` | `step` on 2025Q4 | `quarter` | 1.4 |
 | `registry-duplicate` | two rules share an id | `id` | 16.6 |
 | `rule-reference-missing` | a rule names an absent field or id | `rule`, `missing` | 13.8, 16.7 |
-| `parameters-invalid` | any parameter check fails | `issues[]` | 7.8, 7.9, 8.8, 9.9, 10.4, 14.2–14.6, 15.6, 18.8 |
+| `parameters-invalid` | any parameter check fails, including missing or unknown `status`, missing `estimated` or method note, `gap` without `assumption`, a social housing Lag without the NLMA derivation note, a Lag outside 0–43 | `issues[]` (each with a `ParameterProblem` code) | 7.8, 7.9, 8.8, 9.9, 10.4, 14.2–14.6, 14.10–14.12, 15.6, 18.8 |
 | `commute-matrix-invalid` | size, code order, negative, non-finite, diagonal | `rows`, `columns` or `origin`, `destination`, `reason` | 9.10, 15.5 |
 | `baseline-missing`, `baseline-invalid` | absent, or `null`, non-finite or negative cell | `indicator`, `district`, `quarter` | 2.7, 15.2 |
 | `track-missing` | absent entry in a track | `input`, `district` or `city`, `quarter` | 15.2 |
 | `policy-value-invalid` | negative, fractional count, non-finite, unknown district, subsidy above price | `tool`, `field`, `area`, `quarter`, `value` | 4.2, 5.2, 5.10, 6.10, 15.1 |
 | `limit-exceeded` | player value outside its Policy_Limit | `tool`, `field`, `area`, `period`, `value`, `side`, `limit`, `parameterId` | 18.4 |
 | `real-net-price-zero` | real price above 0 and real net price 0 | `city`, `quarter` | 5.4 |
-| `households-exceed-renters` | subsidized households above renter households | `city`, `quarter`, `households`, `renters` | 6.9 |
+| `households-exceed-renters` | subsidized households above renter households (`where: 'rent-subsidy'`), or a positive social housing stock difference above the district's renter households (`where: 'social-housing'`) | `where`, `city` or `district`, `quarter`, `households`, `renters` | 4.17, 6.9 |
 | `derived-input-invalid` | missing or non-positive divisor | `id`, `district`, `quarter` | 6.11 |
 | `event-reference-unknown` | unknown indicator, tool, quarter or parameter | `event`, `value` | 11.3, 13.8 |
 | `event-invalid` | modifier non-finite, below 0, outside range; first quarter after last | `event`, `value` | 11.5 |
@@ -828,12 +972,12 @@ Reflection on redundancy: the zero-delta criteria (2.3, 2.4, 3.2–3.6, 8.9, 13.
 | Generator | Shape |
 |---|---|
 | `arbBaseline` | The 41 District_Codes with cities. 1–8 consecutive quarters from 2015Q1. Population 0–500,000, household income 300,000–3,000,000, rent 100–2,000, MRT entries 0–20,000,000 (some 0), stock 0–20,000. |
-| `arbParams` | Every required parameter. A parameter with a `range` is drawn from `[low, high]`, others use `value` (17.4). Lags within their allowed ranges, including 0 for the flow tools and 12 and 20 for social housing. Cost_Schedules with 1–8 offsets. |
+| `arbParams` | Every required parameter, each with a `status` from the four values. `secondary` and `gap` parameters always get an `estimated` marker, `gap` values get an `assumption`, and `socialHousing.lag` gets the NLMA method note. The Ghost parameters include the ranged `ghost.commuteThreshold` (45–60) and `ghost.shareCommuteWithin`, a `shareBoth` that satisfies the validation bound, and a `ghost.sensitivityRent` that is 0 in some cases and above 0 in others. `socialHousing.rentRatio` is drawn from its `range` inside (0, 1]. A parameter with a `range` is drawn from `[low, high]`, others use `value` (17.4). Lags 0–43 for every tool, including 0 and values below, inside and above 12 to 20 for social housing. Cost_Schedules with 1–8 offsets. |
 | `arbCommuteMatrix` | 41×41 finite non-negative minutes with a zero diagonal. |
 | `arbRealTrack` | Real tool values per quarter, including pass price 0 and positive. |
-| `arbPlayerTimeline` | Per quarter one of: all zero, equal to real, the largest accepted value, or a value inside the limits, each with non-zero probability (17.5). A "reallocation" mode lowers one tool to pay for another, so the budget is met often. |
-| `arbEvents` | 0–10 Events with known ids and quarters, 0–3 modifiers each, modifier values inside their ranges. |
-| `arbDefect` | One injected defect from Property 19 or 20 at a random position. |
+| `arbPlayerTimeline` | Per quarter one of: all zero, equal to real, the largest accepted value, or a value inside the limits, each with non-zero probability (17.5). A "reallocation" mode lowers one tool to pay for another, so the budget is met often. A "helping-direction" mode (Property 29) moves exactly one tool field of one district or city and quarter in the direction that helps renters and keeps every other value equal to the Real_Policy_Track. |
+| `arbEvents` | Two modes. Real-style: 0–10 Events with known ids and quarters and no modifier. Synthetic: 0–10 Events with 0–3 modifiers each, whose modifier parameters (`test.modifier.<n>`) are added to the generated table, with values inside their ranges. The two modes are never mixed with real `params.json`. |
+| `arbDefect` | One injected defect from Property 19, 20 or 26 at a random position, including status and estimate defects. |
 
 Properties 4 and 5 accept the listed error codes as valid outcomes. A counter in each test asserts that at least 20 of the 100 cases were accepted runs, so the in-run checks are exercised.
 
@@ -864,15 +1008,24 @@ Properties 4 and 5 accept the listed error codes as valid outcomes. A counter in
 | `input-order` | 21 | 16.5 |
 | `run-prefix` | 22 | 3.7 |
 | `scenario-table` | 23 | 17.10 (19.5) |
-| `range-contains-central` | 24 | 17.10 (19.6) |
+| `range-contains-central` | 24 | 17.10 (19.6), 19.5, 19.8 |
+| `social-housing-lag` | 25 | 17.12 (7.2) |
+| `parameter-status` | 26 | 17.12 (14.10–14.12) |
+| `events-real-style` | 27 | 17.12 (11.9) |
+| `ghost-scenarios` | 28 | 17.12 (10.8, 19.8) |
+| `helping-direction` | 29 | 17.2, 17.13 (4.18, 6.14) |
 
 ### Example-based tests
 
 Each asserts values written as literals and worked out by hand from small inputs. Counts match exactly, and other values match within an absolute difference of 1e-9 (17.8).
 
 - **One test per rule file** in `tests/simulation/rules/`. For example, social housing commits +100 units in 2015Q1 with Lag 12 and `rentPerUnit = −0.002`, and expects stock +100 and rent −0.2 in 2018Q1 and nothing in 2017Q4. Commuter pass uses price 1,280, real subsidy 0, player subsidy 80, elasticity −0.3, Baseline entries 1,000,000 and Lag 0, and expects `1,000,000 × −0.3 × (−80 ÷ 1,280) = 18,750`. The indicator rule tests check start values and derived formulas.
+- **Hand-worked tests of Requirement 17.14** (`tests/simulation/rules/ghost-directions.test.ts`), central Scenario, one district, Lag 0, no migration. Shared inputs: population `P = 100,000`, household size 2.5, so `H = 40,000`; renter rate 0.4, so `Hr = 16,000`; Baseline rent `R = 600` TWD per m² per month, `S = 30` m², household income 720,000 per year, so `m = 60,000` and `k = 30 ÷ 60,000 × 100 = 0.05` pp per TWD per m²; Derived_Baseline burden `600 × 0.05 = 30` percent; `ghost.shareRent` 0.1, `ghost.shareCommuteWithin` 0.8 (`bC = 0.2`), `ghost.shareBoth` 0.04, `ghost.sensitivityRent` 0.01 per pp, `G = 1,000`; `rentRatio` 0.8, `rentPerUnit` 0, `passThrough` 0.5. Baseline: `R0 = 10,000`, `C = 20,000`, `O = 4,000`, so the zero-delta Ghost count is `floor(26,000 ÷ 1,000) = 26`.
+  - **(a) Social housing, +200 units (`X = 200`).** `M = 600`; housed rent `0.8 × 600 = 480`; housed burden `480 × 0.05 = 24` percent (equals `ρ × M × S ÷ m × 100`). Per-household change `(480 − 600) × 0.05 = −6` pp; persons `200 × 2.5 = 500`; `personPp = −3,000`. District burden change `200 × (−120) × 0.05 ÷ 16,000 = −0.075` pp (29.925 percent). `R = 10,000 + 0.01 × (−3,000) = 9,970`; `sR = 0.0997`; `sO = 0.04 + (0.0997 − 0.1) × 0.2 = 0.03994`, `O = 3,994`. Ghost `floor((9,970 + 20,000 − 3,994) ÷ 1,000) = floor(25.976) = 25 < 26`. Causes: housed `−0.03`, spillover 0, overlap `+0.006`, Bound_Adjustment `−0.976`.
+  - **(b) Rent subsidy, central pass-through 0.5, renter rate 0.4 (below 0.5).** Allocated difference `a = 4,800,000` TWD per month (for example 1,600 households at 3,000 TWD). Direct burden change `−4,800,000 ÷ (16,000 × 60,000) × 100 = −0.5` pp; rent delta `0.5 × 4,800,000 ÷ (16,000 × 30) = 5` TWD per m²; follow-on `5 × 0.05 = +0.25` pp; net `−0.5 × 0.5 = −0.25` pp (the old `H` denominator would have given `−0.2 + 0.25 = +0.05` pp). Ghost group: `personPp = −0.5 × 4,800,000 ÷ 60,000 × 100 × 2.5 = −10,000` (4,000 recipient persons × `−2.5` pp). `R = 10,000 − 100 = 9,900`; `sO = 0.04 + (−0.001) × 0.2 = 0.0398`, `O = 3,980`. Ghost `floor((9,900 + 20,000 − 3,980) ÷ 1,000) = floor(25.92) = 25 ≤ 26`.
+  - **(c) Social housing, −200 units (`X = −200`, Baseline stock at least 200).** Per-household change `−6` pp, persons `−500`, `personPp = +3,000`; `R = 10,030`; `sO = 0.04 + 0.0003 × 0.2 = 0.04006`, `O = 4,006`. Ghost `floor((10,030 + 20,000 − 4,006) ÷ 1,000) = floor(26.024) = 26 ≥ 26`.
 - **Migration**: one origin above the threshold, three destinations, exact allocation by largest remainder, the exit count, and the commute cost term.
-- **Lag, budget, ghosts, events and validation**: Q1 rollover (8.7), a schedule charge after 2025Q4, the city-year lower limit checked only for complete years, an inactive commuter pass (5.10), `real-net-price-zero`, `households-exceed-renters`, `stock-negative`, `non-finite` from an overflowing coefficient, unknown event references, `no-later-quarter`, a duplicate registry id, a missing rule reference, and a Ghost count for zero population.
+- **Lag, budget, ghosts, events and validation**: Q1 rollover (8.7), a schedule charge after 2025Q4, the city-year lower limit checked only for complete years, an inactive commuter pass (5.10), `real-net-price-zero`, `households-exceed-renters`, `stock-negative`, `non-finite` from an overflowing coefficient, unknown event references, `no-later-quarter`, a duplicate registry id, a missing rule reference, and a Ghost count for zero population. The tests of Requirement 17.12 are: a table without `status`, or with `gap` and no `assumption`, returns `parameters-invalid` with `status-missing` or `assumption-missing`; a social housing Lag of 11 and of 21 is accepted; a table without Event modifier parameters with a real-style event list gives zero Event Causes; and the `low` (45 minutes) Scenario Ghost count at zero deltas is at least the `high` (60 minutes) one, worked out by hand from small shares.
 - **44-quarter zero-delta** (`zero-delta-44.test.ts`, 3.1): a fixed synthetic 44-quarter Baseline, `run` to 2025Q4 returns 44 Sim_States equal to the Baseline.
 - **Extensibility** (`extensibility.test.ts`, 16.4): a stub tool added through `options.registry` appears as a Cause in the breakdowns it affects, and the zero-delta property still holds with it.
 - **Static purity scan** (`purity.test.ts`; 1.6–1.8, 2.6, 14.1, 16.1): reads the files of `src/simulation/` and fails on forbidden imports, on `document`, `window`, `fetch`, `localStorage`, `Date`, `performance` and `Math.random`, on a top-level `let` or `var`, and on numeric literals in `rules/` other than 0, 1, 3, 4, 12 and 100. It also checks that each `rules/` file exports exactly one rule.
@@ -881,7 +1034,7 @@ Each asserts values written as literals and worked out by hand from small inputs
 ### Backtest tests
 
 - `backtest-report.test.ts` (20.8) recomputes every case and compares the numbers with `docs/BACKTEST.md`. When `public/data/` or `params.json` is missing, the recomputation gives "not computed: missing input" and the test compares that text, so it passes and still detects a stale report.
-- Unit tests for `scripts/backtest/report.ts` check byte-identical output and LF line endings. Unit tests for `compute.ts` use fixture inputs to check the counterfactual track, the `budgetMode: 'record'` call and the three checks.
+- Unit tests for `scripts/backtest/report.ts` check byte-identical output and LF line endings. Unit tests for `compute.ts` use fixture inputs to check the counterfactual track, the `budgetMode: 'record'` call and the three checks. Further tests check the observed-effect formula of Requirement 20.2 on a fixture `history.json` with hand-worked numbers, that `cases.ts` rejects a comparison year of 2022, that a `null` compared value gives "not computed", and that changing a news figure in `secondaryContext` changes no computed number (20.10).
 
 ### Why property tests fit
 
@@ -903,3 +1056,28 @@ Each open question in `requirements.md` uses its stated default or the decision 
 | D8 | Commute cost | `migration.commuteCostPerMinute` gives the monthly cost of a district pair, so the commuter pass reduction of Requirement 5.5 has a cost to reduce. |
 | D9 | Backtest events | The backtest uses an empty event list, so the simulated effect is the full tool effect and the Policy_Tool Cause sum of 20.3 is the whole change. |
 | D10 | Package script | `npm run backtest` is added as `node scripts/backtest.ts` (Requirement 20.7). |
+| D11 | Commute base share | The commute base share is stored as `ghost.shareCommuteWithin` (share within the threshold) with `bC = 1 − value`. Stored as "share above the threshold", the `low` Scenario (45 minutes) would have the larger share and `low ≤ value ≤ high` (Requirement 14.4) would fail. `ghost.commuteThreshold` and `ghost.shareCommuteWithin` are paired by convention: the `low` of each belongs to 45 minutes. Requirement 10.2 says "share above each threshold", so its wording needs a note. |
+| D12 | Commuter pass elasticity range | Requirement 5.11 gives `low` −0.2 and `high` −0.5 with `value` −0.3, which breaks `low ≤ value ≤ high` (14.4). The table holds `low` −0.5 and `high` −0.2. The requirement text needs the same swap. |
+| D13 | Metadata errors | Status, estimate and assumption failures use `parameters-invalid` with new `ParameterProblem` codes, so no new `EngineErrorCode` is added. |
+| D14 | Backtest observed value | The observed TPASS effect is computed by `compute.ts` on every run from `history.json`, and the case file holds only the calculation spec. |
+| D15 | Reference parameters | The national rent subsidy figures have role `reference` and no rule reads them (Requirement 6.13). |
+| D16 | Ghost groups through the registry | Tool rules return `ghostGroups` (`source`, `persons`, `burdenChangePp`, `personPp`, `links`) in `ToolEffects`. The Ghost rule sums `personPp` over the groups of all registry tools and never reads a tool by id. A stub tool may add groups without a change to `ghosts.ts`. |
+| D17 | Totals form for groups | Each group carries `personPp = persons × burdenChangePp` computed by the rule, so the subsidy group needs no recipient count and every group term is exactly 0 at zero differences. |
+| D18 | Social housing renter check | A positive stock difference above the district's renter households reuses `households-exceed-renters` with a `where` detail (`'social-housing'` or `'rent-subsidy'`). No new `EngineErrorCode` is added (Requirement 4.17). |
+| D19 | New unit-share check | `ParameterCheck` gains `unit-share` for `socialHousing.rentRatio` (greater than 0, at most 1, `range` inside 0 to 1). A failure uses the existing `out-of-bounds` problem code (Requirement 4.14). |
+| D20 | Events and groups | Event modifiers scale the `rent` and `rentBurden` deltas of a tool but not its `ghostGroups`. The MVP has no real modifier (Requirement 11.9), so this has no effect on real data. |
+| D21 | Scenario labels | `central`, `low` and `high` stay internal. The interface labels the Scenarios by meaning, which is out of scope here (Requirement 19.9). |
+
+### Open Questions 23 to 31
+
+| # | Design consequence |
+|---|---|
+| 23 | Social housing Lag is any integer from 0 to 43 with an NLMA derivation note. The 12–20 check and its error are removed (Property 25). |
+| 24 | Every Parameter has a `status`, with `estimated` and `assumption` checks in stage 0 (Property 26) and status in every Cause link (Property 9). |
+| 25 | `ghost.atRiskThreshold` is an optional, unvalidated parameter that no rule reads. There is no at-risk Output_Indicator. |
+| 26 | The spillover rent effect stays 0 in the central Scenario. The direct channel (Housed_Households pay `rentRatio × market rent`) is modelled in the social housing rule and gives the central burden effect (Decision D16 for the Ghost groups). |
+| 27 | `ghost.sensitivityRent` is a required effect parameter with status `gap` and an `assumption`, until a source is found. It is not ranged. |
+| 28 | `socialHousing.rentRatio` has status `secondary`, `estimated`, with RESEARCH-NOTES 2b as proxy source and an assumption note that the Taipei and New Taipei rules are still to be checked. The check against those rules is a data task. |
+| 29 | The rent subsidy burden denominator is the renter households (`Hr_d`). The net central burden change is `−(1 − passThrough) × a ÷ (Hr × m) × 100`, and the Ghost count does not rise (Property 29). |
+| 30 | Scenario names stay internal (Decision D21). |
+| 31 | No at-risk Output_Indicator is added. `ghost.atRiskThreshold` stays optional, unvalidated and never read. |
