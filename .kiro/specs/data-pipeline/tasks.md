@@ -149,38 +149,38 @@ The order follows the design: shared helpers first, then the district file and e
     - **Property 15: MRT quarterly entries respect opening dates and annual totals**
     - **Validates: Requirements 11.4, 11.5, 11.7, 11.9, 11.10, 11.13, 11.14**
 
-- [ ] 10. Social housing completions and stock
+- [x] 10. Social housing completions and stock
   - [x] 10.1 Implement `parsers/social-housing.ts` and `indicators/social-housing.ts`
     - List and detail JSON with completion (`strEndDate`) and start (`strStartDate`) dates; de-duplication by `setupplan_guid`; completions and stock including stock before 2015; exclusions printed with guid, reason, units and per-city totals; stop on an invalid `household_num`
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7_
-  - [-] 10.2 Write property test for social housing
+  - [x] 10.2 Write property test for social housing
     - **Property 18: Social housing completions, stock and deduplication**
     - **Validates: Requirements 13.1, 13.2, 13.3, 13.4, 13.7**
 
-- [ ] 11. Policy raw sources, parsers and committed tables
-  - [-] 11.1 Add the `policy` download source in `scripts/sources/`
+- [x] 11. Policy raw sources, parsers and committed tables
+  - [x] 11.1 Add the `policy` download source in `scripts/sources/`
     - Fetch the four raw files into `data/raw/policy/housing/` (E3010 6_1_3 and 6_3_1 JSON, data.gov.tw 169800 and 6742 CSV); record the exact URLs; document the command in `data/DOWNLOAD.md`
     - _Requirements: 2.3, 14.1_
-  - [-] 11.2 Create the committed tables in `data/config/`
+  - [x] 11.2 Create the committed tables in `data/config/`
     - `holding-tax-rates.csv`, `commuter-pass-products.csv` and `sublease-phases.csv` with the columns and values in the design, a source on every row, and the statutory House Tax Act rows
     - _Requirements: 12.8, 12.9, 12.10, 12.12_
-  - [ ] 11.3 Implement `parsers/rent-subsidy.ts`, `parsers/house-tax.ts` and `parsers/policy-tables.ts`
+  - [x] 11.3 Implement `parsers/rent-subsidy.ts`, `parsers/house-tax.ts` and `parsers/policy-tables.ts`
     - ROC quarter headers (`104Q1` → 2015Q1), city labels, comma-separated numbers; MOF 6742 labels such as `90年/ 新北市(改制後)`; row checks of the committed tables with table path, row number and reason
     - Fixture and missing-column tests for each parser, and one example test for a table row whose date is not later than the previous row
     - _Requirements: 2.4, 12.15, 18.1, 18.2_
-  - [ ] 11.4 Write property test for effective-dated lookup
+  - [x] 11.4 Write property test for effective-dated lookup
     - **Property 16: Effective-dated lookup**
     - **Validates: Requirements 12.9, 12.10, 12.12, 12.13, 12.15**
 
-- [ ] 12. Policy track builders and the policy track file
-  - [ ] 12.1 Implement the builders in `scripts/pipeline/policy/`
-    - `social-housing-starts.ts`, `rent-subsidy.ts` (with the 1,000–10,000 guard), `sublease.ts` (phase spread by day to the next phase start of the same channel), `holding-tax.ts` (two rate series and the even split of house tax revenue) and `commuter-pass.ts` (price, subsidy 0 by definition, passes sold from the 9.24 million cumulative figure)
+- [x] 12. Policy track builders and the policy track file
+  - [x] 12.1 Implement the builders in `scripts/pipeline/policy/`
+    - `social-housing-starts.ts`, `rent-subsidy.ts` (with the 1,000–10,000 guard), `sublease.ts` (phase spread by day to the next phase start of the same channel), `holding-tax.ts` (two rate series and the even split of house tax revenue) and `commuter-pass.ts` (price, subsidy 0 by definition, passes sold from the lower bound of more than 5.15 million passes to 2019-10-31 (Newtalk, 2019-11-27, quoting the Taipei City Department of Transportation), spread over 564 days and split by population, with the daily rate held afterwards; Property 33 checks the exact 5,150,000 over 2018Q2 to 2019Q4)
     - Add the policy Method_Entries; 0 before each program starts; `DataError` naming the series, district or city and quarter when no value can be produced
     - _Requirements: 12.4, 12.5, 12.6, 12.7, 12.8, 12.9, 12.10, 12.11, 12.12, 12.13, 12.14_
-  - [ ] 12.2 Implement `scripts/pipeline/policy-file.ts`
+  - [x] 12.2 Implement `scripts/pipeline/policy-file.ts`
     - Series in the fixed order, values rounded to their decimals, one Source_Id per Track_Record, embedded Source_Entries and Method_Entries
     - _Requirements: 12.1, 12.2, 12.3_
-  - [ ] 12.3 Write property tests for the policy builders
+  - [x] 12.3 Write property tests for the policy builders
     - **Property 17: Sublease phase spread conserves the counted totals**
     - **Validates: Requirements 12.8, 12.13**
     - **Property 31: Social housing starts bucketing, de-duplication and exclusion**
@@ -190,29 +190,29 @@ The order follows the design: shared helpers first, then the district file and e
     - **Property 33: House tax and commuter passes sold conserve their totals**
     - **Validates: Requirements 12.11, 12.12**
 
-- [ ] 13. Schema validator and history file assembly
-  - [ ] 13.1 Implement `src/data/validate.ts`
+- [x] 13. Schema validator and history file assembly
+  - [x] 13.1 Implement `src/data/validate.ts`
     - `validateDistrictsFile`, `validateHistoryFile` and `validatePolicyTrackFile` with the rules in the design's validator tables; collect every error with file, JSON path, rule and message; run on in-memory objects before serialization
     - Example tests in `tests/data/`: one valid file of each type; a missing field, a wrong type, an unknown district code and an out-of-range quarter per file; 40 districts; percentages of exactly 0 and 100; `null` with a `missing-reason` method passes and with an estimation method fails
     - _Requirements: 3.4, 3.5, 3.9, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 12.2, 12.3, 14.3, 14.4, 14.5, 14.7, 16.1, 16.2, 16.3, 16.4, 16.5, 18.3, 18.4_
-  - [ ] 13.2 Implement `scripts/pipeline/history-file.ts`
+  - [x] 13.2 Implement `scripts/pipeline/history-file.ts`
     - Indicators in the fixed order, values rounded once at assembly, embedded Source_Entries and Method_Entries referenced by the file
     - _Requirements: 4.1, 4.9, 4.10, 14.2_
-  - [ ] 13.3 Write property tests for validation and round trip
+  - [x] 13.3 Write property tests for validation and round trip
     - **Property 20: The validator detects every injected defect**
     - **Validates: Requirements 3.1, 3.4, 3.5, 3.9, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 12.2, 12.3, 14.3, 14.4, 14.5, 14.7, 16.1, 16.2, 16.3, 16.4, 16.5**
     - **Property 21: Serialize, parse and validate round trip**
     - **Validates: Requirements 16.10, 16.11, 16.12**
 
-- [ ] 14. Transactional writer and full build wiring
-  - [ ] 14.1 Implement `scripts/pipeline/write.ts`
+- [x] 14. Transactional writer and full build wiring
+  - [x] 14.1 Implement `scripts/pipeline/write.ts`
     - Snapshot, stage to `<target>.pipeline-tmp`, commit in the order districts → history → policy-track → sources, roll back on any stage or commit failure, injected `WriteFs` for tests
     - _Requirements: 2.5, 16.6, 16.7, 16.8_
-  - [ ] 14.2 Wire every step into `run.ts`
+  - [x] 14.2 Wire every step into `run.ts`
     - Preflight, districts, each indicator, the policy track, history and policy-track assembly, validation of all files, and the write step; one summary line per indicator and per policy series; non-fatal notes after success
     - Runner tests: a failing step stops later steps and prints its name; validation errors prevent any call to the injected `WriteFs`; the summary is printed
     - _Requirements: 1.1, 1.4, 1.5, 16.5, 16.6, 16.7_
-  - [ ] 14.3 Write property tests for the writer and the full build
+  - [x] 14.3 Write property tests for the writer and the full build
     - **Property 23: Output is independent of input order and does not mutate inputs**
     - **Validates: Requirements 2.6, 3.6, 4.10, 15.2, 17.1, 17.2, 17.6**
     - **Property 25: Transactional write restores the previous state on failure**
@@ -220,20 +220,20 @@ The order follows the design: shared helpers first, then the district file and e
     - **Property 30: Summary counts match the file**
     - **Validates: Requirements 1.4**
 
-- [ ] 15. SOURCES.md, banned-term check and final build
-  - [ ] 15.1 Implement `scripts/pipeline/banned-terms.ts` and the term lists
+- [x] 15. SOURCES.md, banned-term check and final build
+  - [x] 15.1 Implement `scripts/pipeline/banned-terms.ts` and the term lists
     - `data/config/banned-terms.txt` and `data/config/banned-terms-exempt.txt` seeded from `neutrality.md`; Latin terms on word boundaries, case-insensitive; CJK terms as substrings; exempt phrases ignored
     - _Requirements: 15.6, 15.9_
-  - [ ] 15.2 Implement `scripts/pipeline/sources-doc.ts` and add the render and check steps to `run.ts`
+  - [x] 15.2 Implement `scripts/pipeline/sources-doc.ts` and add the render and check steps to `run.ts`
     - The nine sections in the design's order, including the policy series section with the share of estimated Track_Records, each method's assumption and the data that would replace it, every committed table row, and the known data gaps (items 1, 2a, 2b, 3b, 4, 7, 10); no date, path or environment value in the text
     - Rendering tests for the notice, the disclosure sentence, reference districts, MRT notes, the policy series section, data gaps and the Wikipedia attribution format
     - _Requirements: 9.6, 11.12, 12.11, 12.12, 12.16, 15.1, 15.2, 15.3, 15.4, 15.5, 15.7, 15.8, 15.9_
-  - [ ] 15.3 Write property tests for SOURCES.md and the banned-term check
+  - [x] 15.3 Write property tests for SOURCES.md and the banned-term check
     - **Property 28: SOURCES.md covers every referenced source and method**
     - **Validates: Requirements 15.3, 15.4**
     - **Property 29: Banned-term detection**
     - **Validates: Requirements 15.6, 15.9**
-  - [ ] 15.4 Run the full build and confirm
+  - [x] 15.4 Run the full build and confirm
     - Run `npm run data` on the local `data/raw/`, then run it once in PowerShell and once in Git Bash and compare the hashes of the four outputs; run `npx vitest --run` and `npm run typecheck` and report both exit codes
     - _Requirements: 1.2, 2.2, 17.1, 18.7_
 

@@ -356,7 +356,8 @@ Openings in Taipei and New Taipei, 2015-01-01 – 2025-12-31 (New Taipei DORTS r
 | 北北基桃 1280 公共運輸定期票 | 2018-04-16 (made permanent 2020-04-16; sales ended 2023-06-30) | NT$1,280 / 30 days | Taipei Metro chronicle; Taipei DOT annual report 2020 (PDF) |
 | TPASS 基北北桃都會通 | 2023-07-01 | NT$1,200 / 30 days | Taipei Metro TPASS page |
 
-- Usage: 9.24 M 1280 passes sold by the end of 2020, peak of 320,000 valid passes per day (Taipei DOT annual report 2020).
+- Usage, basis used by the pipeline: the Taipei City Department of Transportation said that, as of the end of October 2019, more than 5.15 million commuter passes had been sold (Newtalk, 2019-11-27, https://newtalk.tw/news/view/2019-11-27/332324). This is a lower bound.
+- Earlier finding, not used (no source could be confirmed): 9.24 M 1280 passes sold by the end of 2020, peak of 320,000 valid passes per day (Taipei DOT annual report 2020).
 - Central subsidy paid per city (公路局 dataset 117697, quarterly PDFs, OGDL v1), year-to-date at Q4: Taipei 2023 NT$596.4 M, 2024 NT$2,145.9 M, 2025 NT$897.5 M; New Taipei 2023 NT$380.1 M, 2024 NT$1,364.7 M, 2025 NT$571.7 M. The 2025 drop is unexplained; check whether the 2025 Q4 file is complete.
 - ⚠️ **Gaps**: no official TPASS card or user counts, no local-government share of the cost, no confirmed start date for TPASS 2.0 rewards. tpass.gov.tw blocks scripts.
 - Per `product.md`, TPASS is a central-government **event**; the player tool is the city's own commuter subsidy relative to it.

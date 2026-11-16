@@ -238,6 +238,6 @@ export const POLICY_SERIES_SPECS: readonly PolicySeriesSpec[] = [
     kind: 'count',
     decimals: 0,
     description: 'Commuter passes sold in the quarter; 0 before the first pass product.',
-    sources: ['policy/taipei-dot-2020', 'population/ris-odrp014'],
+    sources: ['policy/taipei-dot-2019', 'population/ris-odrp014'],
   },
 ];

@@ -8,6 +8,7 @@ import { aggregateOd, parseIndex } from '../../scripts/sources/mrt.ts';
 import { districtsInRentStats, readTenure } from '../../scripts/sources/rent.ts';
 import { rocSlashDateYear } from '../../scripts/sources/social-housing.ts';
 import { mergeByName } from '../../scripts/sources/stations.ts';
+import { countLines, e3010Url, validateE3010 } from '../../scripts/sources/policy.ts';
 import { linesOf, makeOds } from './helpers.ts';
 
 describe('income districtTotals', () => {
@@ -118,5 +119,26 @@ describe('small parsers', () => {
     const merged = mergeByName(rows);
     expect(merged.map((m) => m.ids)).toEqual([['BL12', 'R10'], ['K9', 'Y07']]);
     expect(rows[0]!.ids).toEqual(['BL12']);
+  });
+});
+
+describe('policy source helpers', () => {
+  it('builds the E3010 query URL the site script sends', () => {
+    const url = new URL(e3010Url({ kind: '6_3', table: '6_3_1', from: '111Q4', to: '114Q4' }));
+    expect(url.origin + url.pathname).toBe('https://pip.moi.gov.tw/Publicize/Info/E30Query');
+    expect(Object.fromEntries(url.searchParams)).toEqual({
+      dataScope: '全國縣市統計資訊', f01: '6', f02: '6_3', f03: '6_3_1', f04: '111Q4', f05: '114Q4', location: 'A-F-',
+    });
+  });
+
+  it('rejects E3010 responses without a table', () => {
+    const body = (v: unknown) => Buffer.from(JSON.stringify(v));
+    expect(validateE3010(body({ resultTable: null }))).toBeDefined();
+    expect(validateE3010(Buffer.from('<html>'))).toBeDefined();
+    expect(validateE3010(body({ resultTable: [['縣市', '104Q1'], ['台北市', '1']] }))).toBeUndefined();
+  });
+
+  it('counts non-empty lines', () => {
+    expect(countLines('a\r\nb\n\n')).toBe(2);
   });
 });

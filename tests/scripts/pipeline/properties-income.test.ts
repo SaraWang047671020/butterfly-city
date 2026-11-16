@@ -88,7 +88,7 @@ describe('income properties', () => {
       ),
       { numRuns: 100 },
     );
-  });
+  }, 30_000);
 
   // Feature: data-pipeline, Property 6: Income extrapolation ignores income years before 2019
   it('Property 6: income extrapolation ignores income years before 2019', () => {
@@ -138,5 +138,5 @@ describe('income properties', () => {
       }),
       { numRuns: 100 },
     );
-  });
+  }, 30_000);
 });

@@ -78,6 +78,12 @@ describe('parsePopulationJson (ris.gov.tw layout with district_code)', () => {
     ]);
   });
 
+  it('ignores a byte-order mark inside the first key (as in the real ODRP014 files)', () => {
+    const json = '[{"\uFEFFstatistic_yyymm":"10703","district_code":"63000010002","site_id":"臺北市松山區","village":"莊敬里","people_total":"5531"},'
+      + '{"statistic_yyymm":"10703","district_code":"63000010003","site_id":"臺北市松山區","village":"某里","people_total":"10"}]';
+    expect(parsePopulationJson(json, 'pop.json').map((r) => r.peopleTotal)).toEqual([5531, 10]);
+  });
+
   it('reads real-shaped ODRP014 rows (household, sex and single-age columns present)', () => {
     const json = JSON.stringify([
       {

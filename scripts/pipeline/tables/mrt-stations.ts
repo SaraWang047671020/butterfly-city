@@ -28,17 +28,27 @@
  *    first file (2015-01), so it was open before 2015-01-01. The Songshan Line sections opened 2014-11-15 are
  *    covered by this value: they are open for all of 2015 and 2016.
  *
- * Basis of the comparable stations (Requirement 11.8): the nearest Taipei Metro station that was open for all of
- * 2015 and 2016 (has a daily column in all 24 files), by great-circle distance between TDX station points, computed
- * once with a local script on 2026-11 data and entered here. Distances (km): 大坪林 0.00, 十四張 -> 大坪林 1.39,
- * 秀朗橋 -> 南勢角 1.59, 景平 -> 南勢角 0.76, 景安 0.00, 中和 -> 景安 1.32, 橋和 -> 景安 1.88, 中原 -> 板橋 2.26,
- * 板新 -> 板橋 0.97, 板橋 0.25, 新埔民生 -> 新埔 0.32, 頭前庄 0.00, 幸福 -> 頭前庄 1.13, 新北產業園區 -> 先嗇宮 2.06.
+ * Basis of the comparable stations (Requirement 11.8), chosen by `chooseComparable` (mrt-comparable.ts) from the TDX
+ * station files and entered here (a test recomputes every choice). Only rows with shares can be comparable: rows with
+ * `opened: 'before-2015'` and a `dailyName` (open in all 24 daily files). Rule:
+ *  1. an ADJACENT station on the SAME line (previous or next TDX station ID of the line; branch links Xiaobitan G03A
+ *     to G03, Xinbeitou R22A to R22, Luzhou O50 to O12) that has shares. If both neighbours qualify, the smaller
+ *     distance by TDX coordinates wins (tie: lower station code);
+ *  2. only when no adjacent same-line station has shares, the nearest station by TDX coordinates that has shares.
+ * A row belongs to one line (its suffix, or its station's line for Circular Line rows). A transfer station's row on
+ * another line is not "adjacent same line". All 14 Circular Line (Y) rows have only Y-line neighbours, and those have
+ * no shares (the line opened 2020-01-31), so rule 2 selected all 14 and rule 1 none. The values equal the earlier
+ * nearest-station choice, so no `comparable` changed. Rule 2 distances (km) are in `comparableKm`: 大坪林Y 0.00,
+ * 十四張 -> 大坪林 1.39, 秀朗橋 -> 南勢角 1.59, 景平 -> 南勢角 0.76, 景安Y 0.00, 中和 -> 景安 1.32, 橋和 -> 景安 1.88,
+ * 中原 -> 板橋 2.26, 板新 -> 板橋 0.97, 板橋Y 0.25, 新埔民生 -> 新埔 0.32, 頭前庄Y 0.00, 幸福 -> 頭前庄 1.13,
+ * 新北產業園區 -> 先嗇宮 2.06. The Dingpu row (opened 2015-07-06) has shares from 2016 only and is never a comparable.
  *
  * Not in the table (no annual row): Danhai LRT, Ankeng LRT and Sanying Line (Requirement 11.12), the Airport MRT
  * (outside the transit coverage), and the Xinyi Line station 廣慈/奉天宮, which is in the TDX files but has no row
  * in the annual series 2014–2025.
  */
 import { DataError } from '../errors.ts';
+import type { ComparableRule } from './mrt-comparable.ts';
 
 export interface MrtRowEntry {
   /** Row name as in the annual series, e.g. "板橋Y", "南京復興BR". */
@@ -51,6 +61,10 @@ export interface MrtRowEntry {
   readonly opened: string;
   /** Station whose seasonal shares are borrowed (Requirement 11.8). */
   readonly comparable?: string;
+  /** Rule that selected `comparable`: adjacent station on the same line, or nearest by distance (`chooseComparable`). */
+  readonly comparableRule?: ComparableRule;
+  /** Distance in km from the row's TDX point to the comparable's TDX point. */
+  readonly comparableKm?: number;
 }
 
 /** Annual-series rows that are not stations (Requirement 11.3). */
@@ -69,8 +83,14 @@ function dingpu(name: string): MrtRowEntry {
   return { name, station: name, dailyName: name, opened: DINGPU_OPENED };
 }
 
-function circular(name: string, station: string, comparable: string): MrtRowEntry {
-  return { name, station, opened: CIRCULAR_OPENED, comparable };
+function circular(
+  name: string,
+  station: string,
+  comparable: string,
+  comparableRule: ComparableRule,
+  comparableKm: number,
+): MrtRowEntry {
+  return { name, station, opened: CIRCULAR_OPENED, comparable, comparableRule, comparableKm };
 }
 
 /** One entry per station row of the annual series, in the order of the series. */
@@ -192,20 +212,20 @@ export const MRT_ROWS: readonly MrtRowEntry[] = [
   before2015('三重國小', '三重國小'),
   before2015('迴龍', '迴龍'),
   before2015('丹鳳', '丹鳳'),
-  circular('大坪林Y', '大坪林', '大坪林'),
-  circular('十四張', '十四張', '大坪林'),
-  circular('秀朗橋', '秀朗橋', '南勢角'),
-  circular('景平', '景平', '南勢角'),
-  circular('景安Y', '景安', '景安'),
-  circular('中和', '中和', '景安'),
-  circular('橋和', '橋和', '景安'),
-  circular('中原', '中原', '板橋'),
-  circular('板新', '板新', '板橋'),
-  circular('板橋Y', '板橋', '板橋'),
-  circular('新埔民生', '新埔民生', '新埔'),
-  circular('頭前庄Y', '頭前庄', '頭前庄'),
-  circular('幸福', '幸福', '頭前庄'),
-  circular('新北產業園區', '新北產業園區', '先嗇宮'),
+  circular('大坪林Y', '大坪林', '大坪林', 'nearest', 0.00),
+  circular('十四張', '十四張', '大坪林', 'nearest', 1.39),
+  circular('秀朗橋', '秀朗橋', '南勢角', 'nearest', 1.59),
+  circular('景平', '景平', '南勢角', 'nearest', 0.76),
+  circular('景安Y', '景安', '景安', 'nearest', 0.00),
+  circular('中和', '中和', '景安', 'nearest', 1.32),
+  circular('橋和', '橋和', '景安', 'nearest', 1.88),
+  circular('中原', '中原', '板橋', 'nearest', 2.26),
+  circular('板新', '板新', '板橋', 'nearest', 0.97),
+  circular('板橋Y', '板橋', '板橋', 'nearest', 0.25),
+  circular('新埔民生', '新埔民生', '新埔', 'nearest', 0.32),
+  circular('頭前庄Y', '頭前庄', '頭前庄', 'nearest', 0.00),
+  circular('幸福', '幸福', '頭前庄', 'nearest', 1.13),
+  circular('新北產業園區', '新北產業園區', '先嗇宮', 'nearest', 2.06),
 ];
 
 export interface BorderStation {

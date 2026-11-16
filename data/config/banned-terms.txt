@@ -1,0 +1,52 @@
+# Banned terms for the generated data/SOURCES.md (neutrality.md).
+# One term per line. Blank lines and lines starting with # are ignored. UTF-8, LF.
+# Latin-script terms match case-insensitively on whole words. CJK terms match as substrings.
+# This list only names terms to keep out of the text. It makes no statement about anyone.
+
+# Loaded or judgmental wording
+failed
+disastrous
+brilliant
+finally
+
+# Political parties (English)
+Kuomintang
+KMT
+Democratic Progressive Party
+DPP
+Taiwan People's Party
+TPP
+New Power Party
+Taiwan Statebuilding Party
+New Party
+People First Party
+
+# Political parties (Chinese)
+國民黨
+民進黨
+民眾黨
+時代力量
+台灣基進
+新黨
+親民黨
+
+# Presidents of Taiwan, 2015-2025 (English)
+Ma Ying-jeou
+Tsai Ing-wen
+Lai Ching-te
+
+# Mayors of Taipei and New Taipei, 2015-2025 (English)
+Ko Wen-je
+Chiang Wan-an
+Eric Chu
+Chu Li-luan
+Hou You-yi
+
+# Presidents and mayors (Chinese)
+馬英九
+蔡英文
+賴清德
+柯文哲
+蔣萬安
+朱立倫
+侯友宜

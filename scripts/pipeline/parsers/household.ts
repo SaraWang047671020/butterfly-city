@@ -78,6 +78,11 @@ const MIGRATION_FIELDS = {
 
 type FieldSet = Readonly<Record<string, Field>>;
 
+/** The ris.gov.tw JSON files carry a byte-order mark inside the first key ("\ufeffstatistic_yyymm"); drop it. */
+function stripBom(name: string): string {
+  return name.replaceAll('\uFEFF', '');
+}
+
 const byCode = new Map(DISTRICTS.map((d) => [d.code, d]));
 
 /** 台 and 臺 are interchangeable in source files; the district table uses 臺. */
@@ -139,7 +144,7 @@ interface Table {
 
 function csvTable(text: string): Table {
   const [header, ...rest] = parseCsv(text);
-  const names = (header ?? []).map((h) => h.trim());
+  const names = (header ?? []).map((h) => stripBom(h).trim());
   const records = rest
     .map((cells, i) => ({ row: i + 2, cells }))
     .filter((r) => r.cells.length > 1 || (r.cells.length === 1 && r.cells[0] !== ''))
@@ -159,7 +164,7 @@ function jsonTable(text: string, file: string): Table {
   }
   const records = (data as Record<string, unknown>[]).map((r, i) => ({
     row: i + 1,
-    cells: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v === null || v === undefined ? undefined : String(v)])) as Record_,
+    cells: Object.fromEntries(Object.entries(r).map(([k, v]) => [stripBom(k), v === null || v === undefined ? undefined : String(v)])) as Record_,
   }));
   // Empty array: no header to check. The caller decides whether an empty month is an error (Requirement 5.6).
   return { header: records[0] ? Object.keys(records[0].cells) : [], records };

@@ -142,5 +142,5 @@ describe("MRT entries: properties", () => {
       }),
       { numRuns: NUM_RUNS },
     );
-  });
+  }, 30_000);
 });

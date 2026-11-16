@@ -190,7 +190,13 @@ export function buildMrtEntries(input: MrtInput): MrtResult {
         ]);
       }
       shares = ownShares(source, sums)!;
-      comparableNotes.push(`${row.name} (${row.station}): seasonal shares of ${comparable}`);
+      const how =
+        row.comparableRule === 'adjacent-line'
+          ? ', adjacent station on the same line'
+          : row.comparableRule === 'nearest'
+            ? `, nearest station by distance${row.comparableKm === undefined ? '' : ` (${row.comparableKm.toFixed(2)} km)`}`
+            : '';
+      comparableNotes.push(`${row.name} (${row.station}): seasonal shares of ${comparable}${how}`);
     }
     checkSharesSum(row, shares);
 
@@ -259,7 +265,8 @@ export function mergeStationPoints(files: readonly { readonly text: string; read
       if (typeof name !== 'string' || typeof lon !== 'number' || typeof lat !== 'number') {
         throw new ParseError(file, i + 1, ['StationName.Zh_tw', 'StationPosition.PositionLon/Lat'], Object.keys(s), 'station without name or point');
       }
-      const key = name.replace(/站$/, '');
+      // 車站 is part of the official name (台北車站, 鶯歌車站); a bare 站 suffix is dropped (頂埔站 -> 頂埔).
+      const key = name.endsWith('車站') ? name : name.replace(/站$/, '');
       if (!byName.has(key)) byName.set(key, { name: key, lon, lat });
     });
   }

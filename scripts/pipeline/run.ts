@@ -10,16 +10,32 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import type { DistrictsFile } from '../../src/types/data-files.ts';
+import type { DistrictsFile, HistoryFile, PolicyTrackFile } from '../../src/types/data-files.ts';
+import type { ValidationContext } from '../../src/data/validate.ts';
 import { PUBLIC_DATA, ROOT } from '../lib/paths.ts';
+import { bannedTermsStep } from './banned-terms.ts';
 import { createContext, type BuildContext, type Logger } from './context.ts';
+import { districtsStep } from './districts-file.ts';
 import { PipelineError } from './errors.ts';
 import type { DistrictShape } from './geo.ts';
+import { historyFileStep } from './history-file.ts';
+import { incomeStep } from './indicators/income.ts';
 import type { LvrLoad } from './indicators/lvr-input.ts';
-import type { RentReferenceInfo } from './indicators/rent.ts';
+import { migrationStep } from './indicators/migration.ts';
+import { mrtStep } from './indicators/mrt.ts';
+import { populationStep } from './indicators/population.ts';
+import { priceToIncomeStep } from './indicators/price-to-income.ts';
+import { rentStep, type RentReferenceInfo } from './indicators/rent.ts';
+import { salePriceStep } from './indicators/sale-price.ts';
 import type { CitySeries, DistrictSeries } from './indicators/series.ts';
-import type { ProjectExclusion, SocialHousingLoad } from './indicators/social-housing.ts';
+import { socialHousingStep, type ProjectExclusion, type SocialHousingLoad } from './indicators/social-housing.ts';
 import { fsCommittedExists, preflight } from './manifest.ts';
+import { policyFileStep } from './policy-file.ts';
+import { policyStep, type CommittedReader } from './policy/step.ts';
+import type { PolicyTrackSeries } from './policy/track.ts';
+import { sourcesDocStep } from './sources-doc.ts';
+import { validateStep } from './validate-step.ts';
+import { writeStep, type WriteFs } from './write.ts';
 
 /** Count of values and of estimated values for one indicator (Requirement 1.4). */
 export interface IndicatorSummary {
@@ -72,6 +88,16 @@ export interface BuildState {
   socialHousingCompletions?: DistrictSeries;
   socialHousingStock?: DistrictSeries;
   socialHousingExclusions?: readonly ProjectExclusion[];
+  /** Set by the policy track step (task 12.1): the ten real policy series. */
+  policyTrack?: PolicyTrackSeries;
+  /** Set by the policy file step (task 12.2): the assembled policy-track.json content. */
+  policyTrackFile?: PolicyTrackFile;
+  /** Set by the history file step (task 13.2): the assembled history.json content. */
+  historyFile?: HistoryFile;
+  /** Set by the SOURCES.md step (task 15.2): the full text of data/SOURCES.md. */
+  sourcesDoc?: string;
+  /** Lines about the policy track, e.g. social housing starts excluded from it (also added to `notes`). */
+  policyNotes?: readonly string[];
 }
 
 export interface Step {
@@ -123,8 +149,44 @@ export const PREFLIGHT_STEP: Step = {
   },
 };
 
-/** The fixed step list. Later tasks append their steps here in build-flow order. */
-export const DEFAULT_STEPS: readonly Step[] = [PREFLIGHT_STEP];
+export interface DefaultStepsOptions {
+  /** File operations of the write step. Default: node:fs. */
+  readonly writeFs?: WriteFs;
+  /** Reader of the committed tables in data/config/. Default: node:fs. */
+  readonly committedReader?: CommittedReader;
+  /** Replaces the validation context built from the registry (tests with synthetic files). */
+  readonly validationContext?: ValidationContext;
+}
+
+/**
+ * The fixed step list in build-flow order. Each step only reads state fields set by earlier steps:
+ * districts sets `shapes` (mrt); population feeds the policy track (commuter passes sold); social housing is
+ * loaded once and reused by the policy track; history and policy file assembly need all series.
+ */
+export function createDefaultSteps(options: DefaultStepsOptions = {}): readonly Step[] {
+  return [
+    PREFLIGHT_STEP,
+    districtsStep(),
+    populationStep(),
+    migrationStep(),
+    incomeStep(),
+    salePriceStep(),
+    priceToIncomeStep(),
+    rentStep(),
+    mrtStep(),
+    socialHousingStep(),
+    policyStep(options.committedReader),
+    historyFileStep(),
+    policyFileStep(),
+    validateStep(options.validationContext),
+    sourcesDocStep(options.committedReader),
+    bannedTermsStep(options.committedReader),
+    // Resolved at run time: write.ts imports this module, so `nodeFs` is not initialized yet at load time.
+    { name: 'write', run: (ctx, state) => writeStep(options.writeFs).run(ctx, state) },
+  ];
+}
+
+export const DEFAULT_STEPS: readonly Step[] = createDefaultSteps();
 
 export interface RunOptions {
   readonly steps?: readonly Step[];
@@ -171,6 +233,7 @@ export function runPipeline(options: RunOptions = {}): number {
   }
 
   for (const summary of state.summaries) logger.info(formatSummaryLine(summary));
-  for (const note of state.notes) logger.info(note);
+  // The social housing and policy track steps can report the same exclusion; print each note once.
+  for (const note of new Set(state.notes)) logger.info(note);
   return 0;
 }

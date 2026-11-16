@@ -65,7 +65,7 @@ scripts/
     ├── tables/
     │   ├── rent-reference.ts     # fixed reference-district assignments
     │   ├── cpi-series.ts         # city → CPI rent series assignment
-    │   └── mrt-stations.ts       # annual-series aliases, section opening dates, comparable stations, address districts
+    │   └── mrt-stations.ts       # annual-series aliases, section opening dates, comparable stations (chosen by mrt-comparable.ts), address districts
     ├── parsers/                  # pure: text/bytes → typed rows; throw ParseError
     │   ├── household.ts          # population and migration CSV/JSON (MOI, ris.gov.tw)
     │   ├── migration-annual.ts   # Taipei a05002802, New Taipei 124872
@@ -504,7 +504,7 @@ export interface PolicyTrackFile {
 | 7 | `houseTaxRevenue` | holdingTax | city | NT$ thousand per quarter | count | 0 | policy/mof-6742 |
 | 8 | `commuterPassPrice` | commuterPass | city | TWD per 30-day pass | non-negative | 0 | policy/trtc-products |
 | 9 | `commuterPassSubsidy` | commuterPass | city | TWD per 30-day pass | non-negative | 0 | policy/trtc-products |
-| 10 | `commuterPassesSold` | commuterPass | city | passes per quarter | count | 0 | policy/taipei-dot-2020, population/ris-odrp014 |
+| 10 | `commuterPassesSold` | commuterPass | city | passes per quarter | count | 0 | policy/taipei-dot-2019, population/ris-odrp014 |
 
 Series 1 is the only district-level series. The other nine are city-level because the sources publish them for the two cities only. Series 8 to 10 are 0 before the first pass product (2018-04-16).
 
@@ -676,7 +676,7 @@ One `SourceEntry` per dataset. The id prefix is the `scripts/download.ts` id tha
 | `policy/ntpc-ordinance` | New Taipei City Government | New Taipei house tax collection rules | URL of the legal text, one per row of `holding-tax-rates.csv` | 2017–2025 | not stated |
 | `policy/mof-6742` | MOF | 賦稅統計 house tax collections by county | https://data.gov.tw/dataset/6742 | 2015–2025 | OGDL v1.0 |
 | `policy/trtc-products` | Taipei Rapid Transit Corporation | Commuter pass products and prices | URL per row of `commuter-pass-products.csv` | 2018–2025 | not stated |
-| `policy/taipei-dot-2020` | Taipei City Department of Transportation | Commuter pass cumulative sales to 2020-12-31 | URL per row of `commuter-pass-products.csv` | 2018–2020 | not stated |
+| `policy/taipei-dot-2019` | Taipei City Department of Transportation (reported by Newtalk) | Commuter pass cumulative sales to 2019-10 (news report of 2019-11-27) | https://newtalk.tw/news/view/2019-11-27/332324 | 2018–2020 | not stated |
 
 For the rows of `policy/` sources whose URL is given as "per row", the registry entry takes the URL of the first row of the committed table that cites it, and SOURCES.md lists every row.
 
@@ -865,6 +865,8 @@ interface MrtRowEntry {
   readonly dailyName?: string;       // column name in the 2015–2016 daily files, when present
   readonly opened: string;           // ISO date of the row's line section, or "before-2015"
   readonly comparable?: string;      // station whose shares are borrowed (Requirement 11.8)
+  readonly comparableRule?: 'adjacent-line' | 'nearest';  // rule that selected it (see below)
+  readonly comparableKm?: number;    // TDX distance to the comparable, km
 }
 ```
 
@@ -877,6 +879,12 @@ district(station)   = districtAt(TDX point, shapes)                       point-
 share(row, k)       = mean over full years y ∈ {2015, 2016} of  Σ daily entries in quarter k of y / Σ daily entries in y
                       (a year is full when opened is "before-2015" or ≤ Jan 1 of y)
                       or share(comparable, k) when no full year exists
+                      comparable = chooseComparable(row): only rows with shares (opened "before-2015" and a dailyName) qualify.
+                        (1) an adjacent station on the same line (previous or next TDX station ID of the line;
+                            branches G03A-G03, R22A-R22, O50-O12); if both qualify, the smaller TDX distance, tie: lower code;
+                        (2) only when no adjacent same-line station has shares, the nearest station by TDX coordinates.
+                      A transfer station's row on another line is not "adjacent same line". The Circular Line rows
+                      (Y07–Y20) have only Y neighbours without shares, so all 14 use rule (2).
 check               | Σ_k share(row, k) − 1 | ≤ 1e-9, else stop
 
 entries(row, y)     = annual entries of row in year y
@@ -891,14 +899,16 @@ mrtEntries(d, q)    = Σ over rows r with district(station(r)) = d and r active 
 
 ```
 projects        = list rows with status 已完工, deduplicated by setupplan_guid (first in sorted file order)
-district(p)     = TownCode in nlma-portal-dashboard/{guid}.json
+district(p)     = District_Code mapped from CityCode + TownCode in nlma-portal-dashboard/{guid}.json,
+                  through the table in tables/social-housing-towns.ts (the portal's TownCode is a
+                  two-digit portal code such as 17, unique only together with CityCode A or F)
 quarter(p)      = quarter of strEndDate (ROC yyy/mm/dd + 1911)
 completions(d,q)= Σ household_num of projects with district d and quarter q
 stock(d,q)      = Σ household_num of projects with district d and completion date ≤ last day of q
                 = stockBefore2015(d) + Σ_{q' ≤ q} completions(d, q')
 ```
 
-Projects with an empty or unparseable date, no detail file, or a TownCode outside the 41 are excluded and printed with guid, reason, units and per-city total (Requirement 13.5). A `household_num` that is not a non-negative integer string stops the build (Requirement 13.6). All records `estimated: false`.
+Projects with an empty or unparseable date, no detail file, or a CityCode + TownCode pair that does not map to one of the 41 districts are excluded and printed with guid, reason, units and per-city total (Requirement 13.5). A `household_num` that is not a non-negative integer string stops the build (Requirement 13.6). All records `estimated: false`.
 
 #### Districts file (Requirement 3)
 
@@ -924,7 +934,7 @@ startQuarter(p)           = quarter of strStartDate (ROC yyy/mm/dd + 1911)
 socialHousingUnitsStarted(d, q) = Σ household_num of projects of any status with district d and startQuarter = q
 ```
 
-Projects with an empty or unparseable start date, no detail file or a TownCode outside the 41 are excluded and printed (Requirement 12.5). All records `estimated: false`.
+Projects with an empty or unparseable start date, no detail file or a CityCode + TownCode pair outside the 41 districts (portal-code table `tables/social-housing-towns.ts`) are excluded and printed (Requirement 12.5). All records `estimated: false`.
 
 **Rent subsidy** (series 3 and 4).
 
@@ -962,11 +972,12 @@ Rates read from a row are `estimated: false`.
 ```
 commuterPassPrice(c, q)   = price of the latest product of c with start_date ≤ last day of q, else 0        (observed)
 commuterPassSubsidy(c, q) = 0                                                                              (commuter-subsidy-definition)
-r0                        = 9,240,000 passes / 991 days            cumulative sales 2018-04-16 .. 2020-12-31
+r0                        = 5,150,000 passes / 564 days            "more than" 5.15 million sold 2018-04-16 .. 2019-10-31 (lower bound; Newtalk 2019-11-27)
 share(c, q)               = population(c, q) / (population(Taipei, q) + population(New Taipei, q))
-weight(c, q)              = r0 · activeDays(c, q) · share(c, q)     activeDays = days of q with price > 0
-commuterPassesSold        = apportion(9,240,000, weight over 2018Q2..2020Q4, both cities)
-                            round(weight(c, q)) for later quarters (the daily rate is held)                (commuter-passes-estimate)
+weight(c, q)              = r0 · activeDays(c, q) · share(c, q)     activeDays = days of q in 2018-04-16 .. 2019-10-31 with price > 0
+commuterPassesSold        = apportion(5,150,000, weight over 2018Q2..2019Q4, both cities)   (exact part, days up to 2019-10-31 only)
+                            + round(r0 · heldDays(c, q) · share(c, q))   heldDays = days of q after 2019-10-31 with price > 0 (the daily rate is held)
+                                                                                                   (commuter-passes-estimate)
 ```
 
 Both estimates are low-confidence assumptions (Decision D22). `commuterPassesSold` is 0 whenever `commuterPassPrice` is 0.
@@ -1196,7 +1207,7 @@ All properties below test pure functions with generated in-memory inputs. None r
 
 ### Property 33: House tax and commuter passes sold conserve their totals
 
-*For any* annual house tax totals (non-negative integers), the four quarters of each year are non-negative integers that sum to the annual total and differ from each other by at most 1; and *for any* populations and pass price tables, the passes sold of both cities over 2018Q2–2020Q4 sum to exactly 9,240,000, are non-negative integers, and are 0 in every quarter in which the price of the city is 0.
+*For any* annual house tax totals (non-negative integers), the four quarters of each year are non-negative integers that sum to the annual total and differ from each other by at most 1; and *for any* populations and pass price tables, the exact part of the passes sold of both cities over 2018Q2–2019Q4 (October 2019 as the last day) sum to exactly 5,150,000 (the held-rate part of the days after 2019-10-31 is added on top and excluded from the check), are non-negative integers, and are 0 in every quarter in which the price of the city is 0.
 
 **Validates: Requirements 12.11, 12.12**
 
@@ -1299,7 +1310,7 @@ Further decisions made in this design:
 | D19 | Registry in outputs | `history.json` and `districts.json` each embed the Source_Entries and Method_Entries they reference, so the app can show provenance without SOURCES.md. |
 | D20 | PM2.5 completeness | Removed with the air-quality indicator. |
 | D21 | Policy track file | A separate `public/data/policy-track.json`. Not `params.json`: that file holds simulation parameters and belongs to the simulation-engine spec. Not `history.json`: that file is a 41 × 44 baseline per indicator, and the engine takes the real policy track as a separate input. |
-| D22 | Commuter pass conventions | Price is the published product price. Subsidy is defined as 0 on top of it, because no local-government share is published. Passes sold are estimated from one cumulative figure (9.24 million to 2020-12-31), spread by day from 2018-04-16, split by population, with the later daily rate held. All three are low confidence and flagged. Needs user confirmation (Open Question 15 a, b). |
+| D22 | Commuter pass conventions | Price is the published product price. Subsidy is defined as 0 on top of it, because no local-government share is published. Passes sold are estimated from one lower bound ("more than 5.15 million" to 2019-10-31, Taipei City Department of Transportation as reported by Newtalk on 2019-11-27), spread by day over the 564 days from 2018-04-16, split by population, with the daily rate held after 2019-10-31 (so later quarters, including the 2023 TPASS change, are not observed). All three are low confidence and flagged. Needs user confirmation (Open Question 15 a, b). |
 | D23 | Sublease phase spread | Each phase total is spread by day to the next phase start of the same channel. The first phase start (2017-01-01) is assumed: the Taipei phase 1 total equals the sum of the Taipei yearly figures for 2017–2019 (17 + 687 + 462). Needs user confirmation (Open Question 15 e). |
 | D24 | Rent subsidy amount | The 2023 average per household-month is carried to every quarter, because no other year is published. A guard of 1,000–10,000 catches unit errors. Needs user confirmation (Open Question 15 c). |
 | D25 | Holding tax rates | Two series (lowest and highest tier). New Taipei before 2017-07-01 uses the statutory minimum, flagged as estimated. Needs user confirmation (Open Question 15 d). |

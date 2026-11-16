@@ -51,9 +51,32 @@ District boundaries are built into `public/data/districts.json` by `npm run data
 | `affordability` | MOI house-price-to-income ratio releases (PDF) | 11 MB | |
 | `air` | MOENV stations and hourly values per station | 55 MB per pollutant | Needs `MOENV_API_KEY`; 5,000 calls per day per key |
 | `boundaries` | MOI district boundary shapefile | 31 MB | |
+| `policy` | Rent subsidy households (MOI E3010 6_1_3, 6_3_1), subsidy amounts (data.gov.tw 169800), national tax revenue (MOF 6742) | 2.5 MB | E3010 endpoint is undocumented; 6742 changes monthly |
 
 Retrieved on 2026-11-11 for the first check. Re-running the scripts fetches the current version of each
 source; several of them (population, social housing, MRT, CPI) are updated monthly or live.
 
-**Not scripted yet**: the policy-tool files in `data/raw/policy/` (see DATA-CHECK.md item 10) were
-fetched by hand; their URLs are listed in DATA-CHECK.md.
+### Policy source (`policy`)
+
+```bash
+node scripts/download.ts policy            # fetch the four files below if missing
+node scripts/download.ts policy --force    # re-fetch all four
+node scripts/check.ts policy               # file sizes, cities, quarters, row counts
+```
+
+Retrieved on 2026-11-11 into `data/raw/policy/housing/`. The E3010 files are byte-identical to the earlier hand-fetched
+copies. `datagov-6742.csv` is updated monthly, so a re-fetch is larger than the first copy.
+
+| File | URL | License |
+|---|---|---|
+| `pip-e3010-6_1_3-taipei-newtaipei.json` | `https://pip.moi.gov.tw/Publicize/Info/E30Query?dataScope=全國縣市統計資訊&f01=6&f02=6_1&f03=6_1_3&f04=104Q1&f05=114Q4&location=A-F-` | not stated |
+| `pip-e3010-6_3_1-taipei-newtaipei.json` | `https://pip.moi.gov.tw/Publicize/Info/E30Query?dataScope=全國縣市統計資訊&f01=6&f02=6_3&f03=6_3_1&f04=111Q4&f05=114Q4&location=A-F-` | not stated |
+| `datagov-169800.csv` | `https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/76147D7F-A30A-446C-B6E2-C7F9B20D9920/resource/9817284B-AA54-46A9-9265-8C2396972E99/download` (from the data.gov.tw 169800 metadata) | OGDL v1 |
+| `datagov-6742.csv` | `https://web02.mof.gov.tw/njswww/webMain.aspx?sys=220&ym=9000&kind=21&type=5&funid=i0424&cycle=41&outmode=12&compmode=00&outkind=2&fldspc=0,30,&codspc0=0,39,40,3,&utf=1` (from the data.gov.tw 6742 metadata) | OGDL v1 |
+
+The E3010 query parameters are `f01` = table type, `f02` = table kind, `f03` = table id, `f04` / `f05` = first and last
+quarter (ROC year and quarter), `location` = city codes (A = Taipei, F = New Taipei). The endpoint is not documented;
+the parameters come from the site's own script (`data/raw/_meta/pip-info_e3010.js`).
+
+Other policy files in `data/raw/policy/housing/` (other data.gov.tw tables, house-tax laws and ordinances, the sublease
+PDF) were fetched by hand; their URLs are listed in DATA-CHECK.md.

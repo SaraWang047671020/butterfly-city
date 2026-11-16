@@ -86,6 +86,15 @@ describe('buildMrtEntries', () => {
     expect(result.comparableNotes).toEqual(['R3 (S3): seasonal shares of S1']);
   });
 
+  it('names the selection rule in the note', () => {
+    const rows2: MrtRowEntry[] = rows.map((r) =>
+      r.name === 'R3' ? { ...r, comparableRule: 'nearest', comparableKm: 1.5 } : r,
+    );
+    expect(buildMrtEntries({ ...base, rows: rows2 }).comparableNotes).toEqual([
+      'R3 (S3): seasonal shares of S1, nearest station by distance (1.50 km)',
+    ]);
+  });
+
   it('keeps the quarterly sum equal to the annual entries and excludes non-station rows', () => {
     expect(values(result, 'A').slice(0, 4).reduce((a, b) => a + b, 0)).toBe(1200);
     const total = Object.values(result.series).flatMap((s) => s.map((v) => v.value!)).reduce((a, b) => a + b, 0);
@@ -142,6 +151,14 @@ describe('mergeStationPoints', () => {
       { name: '頂埔', lon: 121.1, lat: 24.1 },
       { name: '永寧', lon: 121.2, lat: 24.2 },
     ]);
+  });
+});
+
+describe('mergeStationPoints names ending in 車站', () => {
+  it('keeps 台北車站 whole (the real TDX name) while dropping a bare 站 suffix', () => {
+    const s = (name: string) => ({ StationName: { Zh_tw: name }, StationPosition: { PositionLon: 121.5, PositionLat: 25.0 } });
+    const out = mergeStationPoints([{ text: JSON.stringify([s('台北車站'), s('頂埔站')]), file: 'a.json' }]);
+    expect(out.map((p) => p.name)).toEqual(['台北車站', '頂埔']);
   });
 });
 

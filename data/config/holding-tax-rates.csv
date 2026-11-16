@@ -1,0 +1,11 @@
+city,effective_date,lowest_rate,highest_rate,legal_text,article_or_version,source,url
+statutory,2014-06-06,1.5,3.6,房屋稅條例,Art. 5 (amended 2014-06-04),policy/house-tax-act,https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=G0340102
+statutory,2024-07-01,2.0,4.8,房屋稅條例,Art. 5 (amended 2024-01-03; in force 2024-07-01),policy/house-tax-act,https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=G0340102
+Taipei,2014-07-01,2.4,3.6,臺北市房屋稅徵收自治條例,Art. 4 (version 2014-11-03; in force from 2014-07-01),policy/taipei-ordinance,https://laws.gov.taipei/Law/LawSearch/LawArticleContent/FL006143?date=20141103
+Taipei,2017-07-01,2.4,3.6,臺北市房屋稅徵收自治條例,Art. 4 (version 2017-07-20; in force from 2017-07-01),policy/taipei-ordinance,https://laws.gov.taipei/Law/LawSearch/LawArticleContent/FL006143?date=20170720
+Taipei,2021-07-01,2.4,3.6,臺北市房屋稅徵收自治條例,Art. 4 (version 2021-06-01; in force from 2021-07-01),policy/taipei-ordinance,https://laws.gov.taipei/Law/LawSearch/LawArticleContent/FL006143?date=20210601
+Taipei,2024-07-01,3.2,4.8,臺北市房屋稅徵收自治條例,Art. 4 (version 2024-11-29; in force from 2024-07-01),policy/taipei-ordinance,https://laws.gov.taipei/Law/LawSearch/LawArticleContent/FL006143
+New Taipei,2017-07-01,2.4,2.4,新北市房屋稅徵收率自治條例,Art. 2 (enacted 2016-07-20; in force 2017-07-01),policy/ntpc-ordinance,https://web.law.ntpc.gov.tw/Scripts/FLAWDAT01.aspx?lncode=1C0030089
+New Taipei,2019-01-11,1.5,1.5,新北市房屋稅徵收率自治條例,Art. 2 (version 2019-01-09; in force 2019-01-11),policy/ntpc-ordinance,https://web.law.ntpc.gov.tw/Scripts/FLAWDAT01.aspx?lncode=1C0030089
+New Taipei,2023-08-30,1.5,3.6,新北市房屋稅徵收率自治條例,Art. 2 (version 2023-08-30; in force on promulgation),policy/ntpc-ordinance,https://web.law.ntpc.gov.tw/Scripts/FLAWDAT01.aspx?lncode=1C0030089
+New Taipei,2024-07-01,3.2,4.8,新北市房屋稅徵收率自治條例,Art. 2 (version 2025-02-26; in force from 2024-07-01),policy/ntpc-ordinance,https://web.law.ntpc.gov.tw/Scripts/FLAWDAT01.aspx?lncode=1C0030089

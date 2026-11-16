@@ -23,6 +23,22 @@
     "10.2 Write property test for social housing": {
       "status": "passed",
       "lastRunTimestamp": 1794800953615
+    },
+    "11.4 Write property test for effective-dated lookup": {
+      "status": "passed",
+      "lastRunTimestamp": 1794801900663
+    },
+    "13.3 Write property tests for validation and round trip": {
+      "status": "passed",
+      "lastRunTimestamp": 1794803474464
+    },
+    "14.3 Write property tests for the writer and the full build": {
+      "status": "passed",
+      "lastRunTimestamp": 1794804144985
+    },
+    "15.3 Write property tests for SOURCES.md and the banned-term check": {
+      "status": "passed",
+      "lastRunTimestamp": 1794804658167
     }
   },
   "executionHistory": {
@@ -498,6 +514,21 @@
         "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794800365991
+      },
+      {
+        "executionId": "a935175e-7836-478f-b1c6-27db10778e14",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794807383764
+      },
+      {
+        "executionId": "a935175e-7836-478f-b1c6-27db10778e14",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794807388942
+      },
+      {
+        "executionId": "a935175e-7836-478f-b1c6-27db10778e14",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794807809827
       }
     ],
     "9.2 Implement `indicators/mrt.ts`": [
@@ -561,6 +592,11 @@
         "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794800831875
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794801146185
       }
     ],
     "11.1 Add the `policy` download source in `scripts/sources/`": [
@@ -573,6 +609,11 @@
         "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794800832571
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794801146234
       }
     ],
     "11.2 Create the committed tables in `data/config/`": [
@@ -585,6 +626,11 @@
         "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794800833248
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794801146432
       }
     ],
     "11.3 Implement `parsers/rent-subsidy.ts`, `parsers/house-tax.ts` and `parsers/policy-tables.ts`": [
@@ -592,6 +638,16 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796840941
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794801151007
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794801344495
       }
     ],
     "11.4 Write property test for effective-dated lookup": [
@@ -599,6 +655,16 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796840956
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794801349053
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794801983151
       }
     ],
     "12.1 Implement the builders in `scripts/pipeline/policy/`": [
@@ -606,6 +672,31 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796840973
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794801349579
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794801983772
+      },
+      {
+        "executionId": "a935175e-7836-478f-b1c6-27db10778e14",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794807383709
+      },
+      {
+        "executionId": "a935175e-7836-478f-b1c6-27db10778e14",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794807388429
+      },
+      {
+        "executionId": "a935175e-7836-478f-b1c6-27db10778e14",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794807810526
       }
     ],
     "12.2 Implement `scripts/pipeline/policy-file.ts`": [
@@ -613,6 +704,16 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796840988
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794801990100
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794802179879
       }
     ],
     "12.3 Write property tests for the policy builders": [
@@ -620,6 +721,26 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796841002
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794802184658
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794802789948
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794802795454
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803145654
       }
     ],
     "13.1 Implement `src/data/validate.ts`": [
@@ -627,6 +748,26 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796841021
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794802185364
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794802790495
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794802794996
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803145738
       }
     ],
     "13.2 Implement `scripts/pipeline/history-file.ts`": [
@@ -634,6 +775,16 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796841036
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803150526
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803275191
       }
     ],
     "13.3 Write property tests for validation and round trip": [
@@ -641,6 +792,16 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796841052
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803279823
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803503861
       }
     ],
     "14.1 Implement `scripts/pipeline/write.ts`": [
@@ -648,6 +809,16 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796841070
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803280327
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803504210
       }
     ],
     "14.2 Wire every step into `run.ts`": [
@@ -655,6 +826,16 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796841089
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803508987
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803826173
       }
     ],
     "14.3 Write property tests for the writer and the full build": [
@@ -662,6 +843,16 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796841104
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803833021
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794804158147
       }
     ],
     "15.1 Implement `scripts/pipeline/banned-terms.ts` and the term lists": [
@@ -669,6 +860,16 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796841119
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803833688
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794804158619
       }
     ],
     "15.2 Implement `scripts/pipeline/sources-doc.ts` and add the render and check steps to `run.ts`": [
@@ -676,6 +877,16 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796841133
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794804163411
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794804556347
       }
     ],
     "15.3 Write property tests for SOURCES.md and the banned-term check": [
@@ -683,6 +894,16 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796841147
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794804561364
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794804669110
       }
     ],
     "15.4 Run the full build and confirm": [
@@ -690,6 +911,16 @@
         "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794796841162
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794804673621
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794805580279
       }
     ],
     "1. Shared numeric, interpolation and serialization helpers": [
@@ -753,6 +984,48 @@
         "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794800827406
+      }
+    ],
+    "10. Social housing completions and stock": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794801146203
+      }
+    ],
+    "11. Policy raw sources, parsers and committed tables": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794801983178
+      }
+    ],
+    "12. Policy track builders and the policy track file": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803145685
+      }
+    ],
+    "13. Schema validator and history file assembly": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794803503895
+      }
+    ],
+    "14. Transactional writer and full build wiring": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794804158171
+      }
+    ],
+    "15. SOURCES.md, banned-term check and final build": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794805580307
       }
     ]
   }

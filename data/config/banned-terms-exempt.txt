@@ -1,0 +1,5 @@
+# Exempt phrases for the banned-term check.
+# One phrase per line. Blank lines and lines starting with # are ignored. UTF-8, LF.
+# Add an official policy or dataset title here only when it contains a banned term.
+# A banned-term match is ignored when it lies inside one of these phrases on the same line
+# (case-insensitive). No registry title currently needs an entry.

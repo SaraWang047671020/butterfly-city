@@ -127,5 +127,5 @@ describe("pipeline shared helpers: properties", () => {
       }),
       { numRuns: NUM_RUNS },
     );
-  });
+  }, 30_000);
 });

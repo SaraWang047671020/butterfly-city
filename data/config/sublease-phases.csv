@@ -1,0 +1,19 @@
+city,channel,phase,start_date,total_units,as_of,source,url
+Taipei,city,1,2017-01-01,1166,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+Taipei,city,2,2020-01-16,614,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+Taipei,central,2,2020-01-16,578,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+Taipei,city,3,2021-05-31,1171,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+Taipei,central,3,2021-05-31,3876,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+Taipei,city,4,2023-07-03,1496,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+Taipei,central,4,2023-11-01,6944,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+Taipei,city,5,2025-10-01,272,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+Taipei,central,5,2025-10-01,4889,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+New Taipei,city,1,2017-01-01,906,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+New Taipei,city,2,2020-01-16,1642,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+New Taipei,central,2,2020-01-16,998,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+New Taipei,city,3,2021-05-31,2408,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+New Taipei,central,3,2021-05-31,8743,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+New Taipei,city,4,2023-07-03,5568,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+New Taipei,central,4,2023-11-01,20457,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+New Taipei,city,5,2025-10-01,1427,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7
+New Taipei,central,5,2025-10-01,14429,2026-10-31,policy/moi-b5010,https://pip.moi.gov.tw/Publicize/Info/B5010?mode=7

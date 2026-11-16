@@ -192,8 +192,8 @@ export const SOURCE_REGISTRY: readonly SourceEntry[] = [
     license: NOT_STATED, // cited only by the price-to-income validation note
   },
   // Policy sources. Where the design gives the URL as "per row of a committed table", the entry
-  // carries the agency page below. The real URL is replaced by the first cited row of the committed
-  // table when the `policy` download source and the tables record it (task 11).
+  // carries the first cited row's URL of the committed table (data/config/*.csv). policy/taipei-dot-2019 is a news report and has no
+  // table row, so it carries the URL of the report.
   {
     id: 'policy/moi-e3010',
     agency: MOI_PIP,
@@ -226,7 +226,7 @@ export const SOURCE_REGISTRY: readonly SourceEntry[] = [
     agency: 'Ministry of Finance',
     dataset: '房屋稅條例 (House Tax Act), rate range for other residential buildings',
     datasetEn: 'House Tax Act, rate range for other residential buildings',
-    url: 'https://www.mof.gov.tw/',
+    url: 'https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=G0340102',
     years: [2014, 2025],
     license: NOT_STATED,
   },
@@ -234,7 +234,7 @@ export const SOURCE_REGISTRY: readonly SourceEntry[] = [
     id: 'policy/taipei-ordinance',
     agency: 'Taipei City Government',
     dataset: 'Taipei house tax collection rules',
-    url: 'https://www.gov.taipei/',
+    url: 'https://laws.gov.taipei/Law/LawSearch/LawArticleContent/FL006143?date=20141103',
     years: [2015, 2025],
     license: NOT_STATED,
   },
@@ -242,7 +242,7 @@ export const SOURCE_REGISTRY: readonly SourceEntry[] = [
     id: 'policy/ntpc-ordinance',
     agency: 'New Taipei City Government',
     dataset: 'New Taipei house tax collection rules',
-    url: 'https://www.ntpc.gov.tw/',
+    url: 'https://web.law.ntpc.gov.tw/Scripts/FLAWDAT01.aspx?lncode=1C0030089',
     years: [2017, 2025],
     license: NOT_STATED,
   },
@@ -259,16 +259,16 @@ export const SOURCE_REGISTRY: readonly SourceEntry[] = [
     id: 'policy/trtc-products',
     agency: 'Taipei Rapid Transit Corporation',
     dataset: 'Commuter pass products and prices',
-    url: 'https://www.metro.taipei/',
+    url: 'https://www.metro.taipei/cp.aspx?n=B27E7BC8CBBCDA61',
     years: [2018, 2025],
     license: NOT_STATED,
   },
   {
-    id: 'policy/taipei-dot-2020',
-    agency: 'Taipei City Department of Transportation',
-    dataset: 'Commuter pass cumulative sales to 2020-12-31',
-    url: 'https://www.dot.gov.taipei/',
-    years: [2018, 2020],
+    id: 'policy/taipei-dot-2019',
+    agency: 'Taipei City Department of Transportation (reported by Newtalk)',
+    dataset: 'Commuter pass cumulative sales to 2019-10 (news report of 2019-11-27)',
+    url: 'https://newtalk.tw/news/view/2019-11-27/332324',
+    years: [2018, 2019],
     license: NOT_STATED,
   },
 ];
