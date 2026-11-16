@@ -8,9 +8,9 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest --run",
+    "data": "node scripts/build-data.ts",
     "data:download": "node scripts/download.ts",
-    "data:check": "node scripts/check.ts",
-    "data:boundaries": "node scripts/build-boundaries.ts"
+    "data:check": "node scripts/check.ts"
   },
   "devDependencies": {
     "@types/node": "26.6.6",

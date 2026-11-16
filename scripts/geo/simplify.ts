@@ -1,5 +1,5 @@
 /**
- * Topology-preserving polygon simplification (Douglasâ€“Peucker on shared arcs).
+ * Topology-preserving polygon simplification (Douglas?“Peucker on shared arcs).
  *
  * Simplifying each district on its own would move a shared border differently on each side and
  * leave gaps or overlaps between neighbors. Instead:
@@ -16,13 +16,13 @@ import type { Polygon, Position, Ring } from './shapefile.ts';
 import { signedArea } from './shapefile.ts';
 
 export interface SimplifyOptions {
-  /** Douglasâ€“Peucker tolerance in meters. */
+  /** Douglas?“Peucker tolerance in meters. */
   readonly toleranceMeters: number;
-  /** Coordinate decimals in the output (5 â‰ˆ 1 m). */
+  /** Coordinate decimals in the output (5 ??1 m). */
   readonly decimals: number;
 }
 
-const keyOf = ([x, y]: Position) => `${x.toFixed(7)},${y.toFixed(7)}`;
+export const keyOf = ([x, y]: Position) => `${x.toFixed(7)},${y.toFixed(7)}`;
 
 /** Open ring (drops the closing vertex when it repeats the first). */
 function open(ring: Ring): Position[] {
@@ -31,7 +31,7 @@ function open(ring: Ring): Position[] {
   return pts;
 }
 
-/** Douglasâ€“Peucker on a polyline in meters (equirectangular around the polyline's latitude). */
+/** Douglas?“Peucker on a polyline in meters (equirectangular around the polyline's latitude). */
 export function douglasPeucker(points: readonly Position[], toleranceMeters: number): Position[] {
   if (points.length <= 2) return [...points];
   const lat = (points[0]![1] * Math.PI) / 180;
@@ -92,7 +92,7 @@ export function simplifyTopology(features: readonly (readonly Polygon[])[], opti
   }
   const isJunction = (p: Position) => neighbors.get(keyOf(p))!.size !== 2;
 
-  // 2â€“3. Cut rings at junctions, simplify arcs canonically, and cache by arc signature.
+  // 2??. Cut rings at junctions, simplify arcs canonically, and cache by arc signature.
   const cache = new Map<string, Position[]>();
   const simplifyArc = (arc: Position[]): Position[] => {
     const keys = arc.map(keyOf);

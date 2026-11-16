@@ -7,13 +7,14 @@ import { income } from './income.ts';
 import { lvr } from './lvr.ts';
 import { macro } from './macro.ts';
 import { mrt } from './mrt.ts';
+import { policy } from './policy.ts';
 import { population } from './population.ts';
 import { rent } from './rent.ts';
 import { socialHousing } from './social-housing.ts';
 import { stations } from './stations.ts';
 import type { Source, SourceOptions } from './types.ts';
 
-export const SOURCES: readonly Source[] = [income, lvr, rent, population, mrt, stations, commute, socialHousing, macro, affordability, air, boundaries];
+export const SOURCES: readonly Source[] = [income, lvr, rent, population, mrt, stations, commute, socialHousing, macro, affordability, air, boundaries, policy];
 
 export interface Cli {
   readonly sources: readonly Source[];

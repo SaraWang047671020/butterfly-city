@@ -4,9 +4,11 @@
  * Monthly, village level (summed to districts):
  *   - population 2015-01..2017-12: data.gov.tw 32973 (CSV per month, "ODRP005")
  *   - migration  2015-12..2017-12: data.gov.tw 32975 (CSV per month, "ODRP002")
- *   - 2018-01..2025-12: ris.gov.tw open API, ODRP010 (population, to 2020-08), ODRP060 (population,
- *     from 2020-09), ODRP011 (migration). Months the API does not return are taken from the CSV
+ *   - 2018-01..2025-12: ris.gov.tw open API. Population: ODRP014 (village households and population
+ *     by age, with district code), only the last month of each quarter (2018-03 .. 2025-12).
+ *     Migration: ODRP011, every month. Months the API does not return are taken from the CSV
  *     resources of data.gov.tw 131138 (population) and 77144 (migration).
+ *   - ODRP010 and ODRP060 are NOT population: they hold births, deaths, marriages and divorces.
  * Annual per district (to cover migration 2015-01..2015-11):
  *   - Taipei DBAS statistics database, funid a05002802
  *   - New Taipei DBAS, data.gov.tw 124872 (unlabeled columns: percent3 = move-in, percent20 = move-out)
@@ -48,7 +50,10 @@ async function csvResourceFor(datasetId: number, yyymm: string): Promise<string 
   return meta.distribution.find((r) => r.resourceFormat === 'CSV' && r.resourceDescription.includes(yyymm))?.resourceDownloadUrl;
 }
 
-const populationApi = (yyymm: string) => (Number(yyymm) >= 10909 ? 'ODRP060' : 'ODRP010');
+/** Last month of each quarter from 2018-03 (ROC 10703) to 2025-12 (11412): the months ODRP014 is read for. */
+export function odrp014Months(): string[] {
+  return rocMonthsBetween(2018, 2025).filter((m) => Number(m.slice(3)) % 3 === 0);
+}
 
 async function downloadApiMonth(api: string, yyymm: string, force: boolean, fallbackDataset: number): Promise<void> {
   const files = COUNTIES.map((c) => dir(`${api}-${yyymm}-${c}.json`));
@@ -109,10 +114,8 @@ export const population: Source = {
       }
     }
     console.log('2018–2025 from the ris.gov.tw API (with CSV fallback for missing months):');
-    for (const yyymm of rocMonthsBetween(2018, 2025)) {
-      await downloadApiMonth(populationApi(yyymm), yyymm, force, 131138);
-      await downloadApiMonth('ODRP011', yyymm, force, 77144);
-    }
+    for (const yyymm of odrp014Months()) await downloadApiMonth('ODRP014', yyymm, force, 131138);
+    for (const yyymm of rocMonthsBetween(2018, 2025)) await downloadApiMonth('ODRP011', yyymm, force, 77144);
     console.log('Annual district migration (to cover 2015-01..2015-11):');
     logResult('Taipei a05002802', await downloadFile(
       'https://tsis.dbas.gov.taipei/statis/webMain.aspx?sys=220&ymf=10300&kind=21&type=0&funid=a05002802&cycle=4&outmode=12&compmode=0&outkind=1&deflst=2&nzo=1',
@@ -126,9 +129,9 @@ export const population: Source = {
       raw('population', 'taipei-131723.csv'), { force, validate: notHtml }));
   },
   async check() {
-    const report = (label: string, monthSources: (yyymm: string) => string[]) => {
+    const report = (label: string, months: string[], monthSources: (yyymm: string) => string[]) => {
       const gaps: string[] = [];
-      for (const yyymm of rocMonthsBetween()) {
+      for (const yyymm of months) {
         let found: Set<string> | null = null;
         for (const api of monthSources(yyymm)) {
           const f = districtsInMonth(api, yyymm);
@@ -137,11 +140,13 @@ export const population: Source = {
         if (!found) gaps.push(`${yyymm} (no file)`);
         else if (found.size < DISTRICTS.length) gaps.push(`${yyymm} (missing ${missingDistricts(found).map((d) => d.name).join(', ')})`);
       }
-      console.log(`${label}: ${rocMonthsBetween().length - gaps.length}/132 months have all 41 districts`);
+      console.log(`${label}: ${months.length - gaps.length}/${months.length} months have all 41 districts`);
       gaps.forEach((g) => console.log(`  gap ${g}`));
     };
-    report('Population', (m) => (Number(m) < 10701 ? ['ODRP005'] : [populationApi(m), 'ODRP010', 'ODRP060']));
-    report('Migration', (m) => (Number(m) < 10701 ? ['ODRP002'] : ['ODRP011']));
+    const all = rocMonthsBetween();
+    const populationMonths = [...all.filter((m) => Number(m) < 10701), ...odrp014Months()];
+    report('Population (ODRP005 to 2017-12, ODRP014 at quarter ends from 2018-03)', populationMonths, (m) => (Number(m) < 10701 ? ['ODRP005'] : ['ODRP014']));
+    report('Migration', all, (m) => (Number(m) < 10701 ? ['ODRP002'] : ['ODRP011']));
 
     const ntpc = raw('population', 'ntpc-124872.csv');
     if (fs.existsSync(ntpc)) {
