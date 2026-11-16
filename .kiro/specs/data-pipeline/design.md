@@ -27,8 +27,8 @@ It reuses the existing code: `scripts/lib/` (CSV parser, district table, ROC tim
 
 ### Research findings that shape the design
 
-- **Raw layouts checked on disk** (2026-11 download): the MOI district rent statistics ODS (`1140123全國行政區租金統計-修正.ods`) holds contract counts and the 25th, 50th and 75th percentile of monthly rent per contract, per district and housing type. It has **no mean**, so Requirement 9.4's "mean rent" is implemented as the 50th percentile of the `不分類` (all types) row (Decision D17).
-- **District adjacency** computed from the existing simplified boundaries (shared vertices): Pinglin borders only Shiding, Pingxi, Wulai and Shuangxi. All four have fewer than 30 rental records in DATA-CHECK.md item 2b, so Requirement 9.7 cannot be met for Pinglin as written (Decision D7).
+- **Raw layouts checked on disk** (2026-11 download): the MOI district rent statistics ODS (`1140123全國行政區租金統計-修正.ods`) holds contract counts and the 25th, 50th and 75th percentile of monthly rent per contract, per district and housing type. It has **no mean**, so Requirement 9.4 uses the median monthly rent, the 50th percentile of the `不分類` (all types) row (Decision D17).
+- **District adjacency** computed from the existing simplified boundaries (shared vertices): Pinglin borders only Shiding, Pingxi, Wulai and Shuangxi. All four have fewer than 30 rental records in DATA-CHECK.md item 2b, so Pinglin uses the second rule of Requirement 9.7, a district that borders one of its bordering districts (Decision D7).
 - **CPI rent series**: the Taipei DBAS CSV has the columns `統計期`, `基本分類`, `原始值[統計數值]`, `年增率[%]`, `縣市別代碼`; the DGBAS XML has `<Obs>` elements with `Item` `1.房租(指數基期：民國110年=100)`, `TIME_PERIOD` `YYYYMmm` and `TYPE` `原始值`.
 - **MRT annual series** columns: `統計期` (`103年`), `捷運站別`, `進站人次`, `出站人次`.
 - **DGBAS 9415** columns: `年`, `臺北市-元`, `新北市-元` (one row per year from 1998).
@@ -831,17 +831,17 @@ rent(d, q)     = rent(ref, q) · ratio(d)
 
 Proposed reference table (Decision D7). Record counts are from DATA-CHECK.md item 2b, which counted residential rentals with a looser filter; the build recounts with the qualifying filter and checks the table:
 
-| District | Records 2015–2025 | Reference | Borders it | Reference records | Ratio method |
+| District | Records 2015–2025 | Reference | Relation | Reference records | Ratio method |
 |---|---|---|---|---|---|
-| Shiding | 4 | Shenkeng | yes | 179 | sale-price |
-| Pinglin | 0 | Xindian | **no** (borders Shiding and Wulai, which both border Xindian) | > 1,000 | sale-price |
-| Shimen | 12 | Sanzhi | yes | 1,015 | sale-price |
-| Pingxi | 0 | Ruifang | yes | 208 | sale-price |
-| Shuangxi | 4 | Ruifang | yes | 208 | sale-price |
-| Gongliao | 8 | Ruifang | yes | 208 | rent-statistics |
-| Wulai | 0 | Xindian | yes | > 1,000 | sale-price |
+| Shiding | 4 | Shenkeng | borders it | 179 | sale-price |
+| Pinglin | 0 | Xindian | second rule: two borders away (Shiding and Wulai both border Pinglin and Xindian) | > 1,000 | sale-price |
+| Shimen | 12 | Sanzhi | borders it | 1,015 | sale-price |
+| Pingxi | 0 | Ruifang | borders it | 208 | sale-price |
+| Shuangxi | 4 | Ruifang | borders it | 208 | sale-price |
+| Gongliao | 8 | Ruifang | borders it | 208 | rent-statistics |
+| Wulai | 0 | Xindian | borders it | > 1,000 | sale-price |
 
-Neighbours were chosen for similar settlement type (rural or semi-rural New Taipei districts) among bordering same-city districts with at least 30 records. The build stops if a district below 30 has no entry, or its reference is in another city, does not border it, or has fewer than 30 records (Requirement 9.8). Entries for districts that turn out to have 30 or more records are not used and are printed as a note. SOURCES.md lists each used entry with its method, record count and ratio (Requirement 9.6).
+Neighbours were chosen for similar settlement type (rural or semi-rural New Taipei districts) among bordering same-city districts with at least 30 records. A district may use a district two borders away only when no bordering same-city district has 30 records (Requirement 9.7); the build checks this with `adjacency`, and SOURCES.md says that the second rule was used. The build stops if a district below 30 has no entry, or its reference is in another city, has fewer than 30 records, does not border it, or is not two borders away when a bordering district with 30 records exists (Requirement 9.8). Entries for districts that turn out to have 30 or more records are not used and are printed as a note. SOURCES.md lists each used entry with its method, record count and ratio (Requirement 9.6).
 
 #### House-price-to-income ratio (Requirement 10)
 
@@ -1280,7 +1280,7 @@ Each open question from requirements.md uses its stated default unless noted. Th
 | D4 | Indicator list | 10 district and 2 city indicators (table above), plus the 10 policy series of `policy-track.json` (Policy series table). | History file |
 | D5 | Annual-to-quarterly interpolation | Mean-preserving, slope-limited piecewise-linear (minmod). | Interpolation |
 | D6 | Thin-cell thresholds and pooling | Rent: 30 records over 2015–2025. Sales: fewer than 10 sales in a district-quarter → symmetric window expanded one quarter at a time until it holds 10 sales or covers all 44 quarters. | Sale price, rent |
-| D7 | Reference districts | Fixed table above. **Conflict**: Pinglin has no bordering same-city district with 30 records, so Requirement 9.7 as written stops the build. Proposed amendment to 9.7: "shares a border with the district, or, when no bordering district qualifies, borders a district that borders it". With it, Pinglin → Xindian. The user should approve the amendment or choose another rule. | Rent |
+| D7 | Reference districts | Fixed table above. Decided 2026-11-11: Requirement 9.7 allows a district that borders one of the district's bordering districts when no bordering same-city district has 30 records. Pinglin → Xindian. | Rent |
 | D8 | Price-to-income level | City level only. MOI PDFs are not parsed; validation uses the optional hand-entered table. | Price-to-income |
 | D9 | PM2.5 without a station | Removed with the air-quality indicator when the scope narrowed to 5 policy tools. | none |
 | D10 | Border stations | Point-in-polygon; SOURCES.md lists point and address districts. | MRT |
@@ -1295,7 +1295,7 @@ Further decisions made in this design:
 |---|---|---|
 | D15 | Source_Id format | `<download-id>/<dataset>`. Policy sources use the prefix `policy/`, the id of the download source that fetches their raw files. Requirement 14.1 needs one agency per Source_Entry, but one download id (for example `population`) covers several agencies. The prefix keeps the link to `node scripts/download.ts <download-id>` that the glossary asks for. |
 | D16 | Rent estimate flag | All rent values are `estimated: true` (see Rent). Requirement 9 does not state the flag for districts with enough records; the glossary's definition of the flag decides it. |
-| D17 | "Mean rent" in Requirement 9.4 | The MOI rent statistics publish no mean. The design uses the 50th percentile of the `不分類` row, edition 1140123. Requirement 9.4's wording should change from "mean rent" to "median rent". |
+| D17 | Median rent in Requirement 9.4 | The MOI rent statistics publish no mean. Decided 2026-11-11: Requirement 9.4 uses the 50th percentile of the `不分類` row, edition 1140123. |
 | D18 | MRT activation | Per annual-series row, so a station that gains a line (Banqiao, Dapinglin and other Circular Line transfers) counts the new row only from its opening quarter. |
 | D19 | Registry in outputs | `history.json` and `districts.json` each embed the Source_Entries and Method_Entries they reference, so the app can show provenance without SOURCES.md. |
 | D20 | PM2.5 completeness | Removed with the air-quality indicator. |
@@ -1307,4 +1307,4 @@ Further decisions made in this design:
 | D26 | Committed policy tables | Holding tax rates, commuter pass products and sublease phases are small hand-entered CSV tables with a source on every row, not parsed from HTML or PDF. The four raw policy files are fetched by a new `policy` download source, added in the tasks (they are hand-fetched today). |
 | D27 | Policy limits and budget | The lower and upper limit of each tool and the budget ceilings are simulation parameters in `params.json` (simulation-engine spec). This pipeline outputs only the real track. |
 
-D7 and D17 change requirement wording. If the user prefers, the requirements phase can be reopened to amend Requirements 9.4 and 9.7 before tasks are written.
+D7 and D17 were approved on 2026-11-11, and Requirements 9.4 and 9.7 were amended to match.
