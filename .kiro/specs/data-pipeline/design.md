@@ -5,7 +5,7 @@
 The data pipeline is one Node command, `npm run data`, that turns the raw open data in `data/raw/` and a small set of committed tables into four outputs:
 
 - `public/data/districts.json`: the 41 districts with city, romanized name, land area, centroid and simplified boundary geometry.
-- `public/data/history.json`: the real quarterly baseline, 2015Q1 to 2025Q4, for 10 district indicators and 2 city indicators, with an estimate flag and a method id on every estimated value. It also embeds the source registry and method list it references, so the web app can show provenance without parsing Markdown.
+- `public/data/history.json`: the real quarterly baseline, 2015Q1 to 2025Q4, for 11 district indicators and 2 city indicators, with an estimate flag and a method id on every estimated value. It also embeds the source registry and method list it references, so the web app can show provenance without parsing Markdown.
 - `public/data/policy-track.json`: the real quarterly track of the 5 player policy tools, 2015Q1 to 2025Q4, 10 series, each value with its source and an estimate flag (and a method id when estimated). It embeds its own source and method registry.
 - `data/SOURCES.md`: a generated document listing every source, every method, the reference-district table, the MRT station notes, the policy-series assumptions and the known data gaps.
 
@@ -83,7 +83,10 @@ scripts/
     │   ├── population.ts
     │   ├── migration.ts
     │   ├── income.ts
+    │   ├── lvr-input.ts          # shared lvr loader; totalPriceSales, the one 總價元 > 0 filter (Requirement 19.6)
+    │   ├── pooled-window.ts      # bucketing by district-quarter and the pooled-window median, shared by sale price and median total price
     │   ├── sale-price.ts
+    │   ├── median-total-price.ts # district median total price (Requirement 19)
     │   ├── rent.ts
     │   ├── price-to-income.ts
     │   ├── mrt.ts
@@ -129,6 +132,7 @@ flowchart TD
   B --> MIG[migration]
   INC[income: FIA relative + DGBAS city] --> HI[household income]
   LVR[lvr parsers: sales + rentals, dedupe 編號] --> SP[sale price]
+  LVR --> MTP["median total price<br/>shared total-price filter + pooled window"]
   LVR --> HPI[price-to-income]
   INC --> HPI
   LVR --> RENT[rent]
@@ -138,7 +142,7 @@ flowchart TD
   D --> MRT[MRT entries: point-in-polygon,<br/>seasonal split]
   SH[social housing completions + stock]
   PT[policy track: 5 tools,<br/>committed tables + MOI + NLMA + MOF] --> PF[policy-file: assemble + embed registry]
-  POP & MIG & HI & SP & RENT & HPI & MRT & SH --> H[history-file: assemble + embed registry]
+  POP & MIG & HI & SP & MTP & RENT & HPI & MRT & SH --> H[history-file: assemble + embed registry]
   D --> V
   H --> V[validate.ts: all files, all errors]
   PF --> V
@@ -292,9 +296,11 @@ export interface ValidationError {
   readonly message: string;
 }
 export interface ValidationContext {
-  readonly districtCodes: readonly string[]; // exactly the 41 codes
-  readonly quarters: readonly string[];      // exactly 2015Q1..2025Q4
-  readonly indicatorIds: readonly string[];  // ids in history.json, for the unique-name check of policy series
+  readonly districtCodes: readonly string[];   // exactly the 41 codes
+  readonly quarters: readonly string[];        // exactly 2015Q1..2025Q4
+  readonly indicatorIds: readonly string[];    // exactly these indicator ids, in this order, are expected in history.json
+                                               // (rule indicator-set); also the ids policy series must not reuse
+  readonly policySeriesIds: readonly string[]; // exactly these policy series ids are expected in policy-track.json
 }
 export function validateDistrictsFile(x: unknown, ctx: ValidationContext): ValidationError[];
 export function validateHistoryFile(x: unknown, ctx: ValidationContext): ValidationError[];
@@ -311,13 +317,14 @@ Checks for `history.json`:
 | `quarter-span` | `quarters` equals the 44 keys in order, no duplicates. Every series has exactly 44 records. |
 | `district-code` | Every district series object has exactly the 41 codes, no others. City series have exactly `Taipei` and `New Taipei`. |
 | `unique-id` | Indicator ids unique across district and city indicators; source ids and method ids unique. |
+| `indicator-set` | The `id`s of `indicators` equal `ctx.indicatorIds` exactly and in the same order (Requirement 4.11). A missing id is reported at `$.indicators`; an unexpected id, or an expected id at the wrong position, at `$.indicators[i].id`. The pipeline passes the ids of `INDICATOR_SPECS`; the web app will pass `HISTORY_INDICATOR_IDS` from `src/types/data-files.ts` (Decision D29). |
 | `description` | 1–200 characters. |
 | `finite` | Every non-null `value` is a finite number (`Number.isFinite`). |
 | `estimate` | `estimated` is a boolean. `true` → exactly one `method`; `false` → non-null `value` and no `method`. `null` value → `estimated: true` and a method whose `kind` is `missing-reason`. |
 | `method-ref`, `source-ref` | Every method id and source id referenced anywhere is defined in the embedded `methods` and `sources`. |
 | `source-entry` | Each source has non-empty agency, dataset, license; absolute `http`/`https` URL; four-digit years with `first ≤ last`. |
 | `credential` | No URL anywhere contains `api_key` (or another credential parameter) with a value other than `REDACTED`. |
-| `range` | By indicator `kind`: `count` → integer ≥ 0; `positive` → > 0; `non-negative` → ≥ 0; `percent` and `index-0-100` → 0 ≤ v ≤ 100. |
+| `range` | By indicator `kind`: `count` → integer ≥ 0; `positive` → > 0; `non-negative` → ≥ 0; `percent` and `index-0-100` → 0 ≤ v ≤ 100. `medianTotalPrice` is declared `positive` like `salePrice`, so a non-null value of 0 or below fails here with its JSON path, for example `$.indicators[6].series["65000200"][17].value` (Requirement 19.9). No indicator-specific code is added for it. |
 | `decimals` | `roundTo(value, decimals) === value`. |
 
 Checks for `districts.json`: required fields and types; exactly 41 entries in ascending code order with codes from the context; `city` ∈ {Taipei, New Taipei}; `areaKm2 > 0` with 2 decimals; centroid with 5 decimals inside the entry's geometry bounding box; geometry is `Polygon` or `MultiPolygon`; every ring closed with ≥ 4 positions; exterior rings clockwise and holes counterclockwise by the sign of the planar shoelace area (`signedArea` < 0 for clockwise, as in `scripts/geo/shapefile.ts`, reimplemented in `src/` because `src/` cannot import `scripts/`); coordinates with ≤ 5 decimals; every `sources` reference defined in the file's embedded `sources`.
@@ -370,6 +377,24 @@ export interface CityIndicator extends IndicatorBase {
   readonly series: Readonly<Record<CityName, readonly ValueRecord[]>>;     // 2 keys × 44 records
 }
 export type Indicator = DistrictIndicator | CityIndicator;
+
+/** Indicator ids of history.json in file order (Requirement 4.11): 11 district indicators, then 2 city indicators. */
+export const HISTORY_INDICATOR_IDS = [
+  'population',
+  'moveIn',
+  'moveOut',
+  'relativeMedianIncome',
+  'householdIncome',
+  'salePrice',
+  'medianTotalPrice',
+  'rent',
+  'mrtEntries',
+  'socialHousingCompletions',
+  'socialHousingStock',
+  'cityDisposableIncome',
+  'priceToIncomeRatio',
+] as const;
+export type HistoryIndicatorId = (typeof HISTORY_INDICATOR_IDS)[number];
 
 export interface SourceEntry {
   readonly id: string;            // "<download-id>/<dataset>", e.g. "income/fia-103066" (Decision D15)
@@ -474,7 +499,11 @@ export interface PolicyTrackFile {
 
 `districts` is an array sorted by `code`, each entry carrying its `code`. This satisfies "keyed by District_Code" (Requirement 3.1) and keeps the order explicit (Requirement 3.6). History series use objects keyed by code because the engine looks values up by code.
 
+`IndicatorBase.id` stays `string`, so the validator can type a parsed file before it knows the ids are right. `HISTORY_INDICATOR_IDS` and `HistoryIndicatorId` let the web app look up an indicator such as `medianTotalPrice` by a checked literal and pass the expected list to the validator. A registry test checks that `INDICATOR_SPECS.map((s) => s.id)` equals `HISTORY_INDICATOR_IDS` element by element, so the two lists cannot drift (Decision D29).
+
 ### Indicator list (fixed order)
+
+This is the order of Requirement 4.11 and of `INDICATOR_SPECS` and `HISTORY_INDICATOR_IDS`. `medianTotalPrice` was inserted after `salePrice` on 2026-11-16 (Requirement 19), so every later indicator moved down one position.
 
 | # | id | Level | Unit | Kind | Decimals | Sources |
 |---|---|---|---|---|---|---|
@@ -484,12 +513,30 @@ export interface PolicyTrackFile {
 | 4 | `relativeMedianIncome` | district | ratio to city median of district medians | positive | 4 | income/fia-103066 |
 | 5 | `householdIncome` | district | TWD per household per year | positive | 0 | income/fia-103066, income/dgbas-9415 |
 | 6 | `salePrice` | district | TWD per m² | positive | 0 | lvr/moi-25119 |
-| 7 | `rent` | district | TWD per m² per month | positive | 1 | lvr/moi-25118, macro/taipei-dbas-131822, macro/dgbas-6019, rent/moi-rent-stats |
-| 8 | `mrtEntries` | district | entries per quarter | count | 0 | mrt/trtc-133184, mrt/trtc-128683, stations/tdx-metro-station, boundaries/moi-7441 |
-| 9 | `socialHousingCompletions` | district | units per quarter | count | 0 | social-housing/nlma-portal |
-| 10 | `socialHousingStock` | district | units | count | 0 | social-housing/nlma-portal |
-| 11 | `cityDisposableIncome` | city | TWD per household per year | positive | 0 | income/dgbas-9415 |
-| 12 | `priceToIncomeRatio` | city | years of income | positive | 2 | lvr/moi-25119, income/dgbas-9415 |
+| 7 | `medianTotalPrice` | district | TWD per transaction | positive | 0 | lvr/moi-25119 |
+| 8 | `rent` | district | TWD per m² per month | positive | 1 | lvr/moi-25118, macro/taipei-dbas-131822, macro/dgbas-6019, rent/moi-rent-stats |
+| 9 | `mrtEntries` | district | entries per quarter | count | 0 | mrt/trtc-133184, mrt/trtc-128683, stations/tdx-metro-station, boundaries/moi-7441 |
+| 10 | `socialHousingCompletions` | district | units per quarter | count | 0 | social-housing/nlma-portal |
+| 11 | `socialHousingStock` | district | units | count | 0 | social-housing/nlma-portal |
+| 12 | `cityDisposableIncome` | city | TWD per household per year | positive | 0 | income/dgbas-9415 |
+| 13 | `priceToIncomeRatio` | city | years of income | positive | 2 | lvr/moi-25119, income/dgbas-9415 |
+
+Registry entry for `medianTotalPrice` in `registry/indicators.ts`, placed directly after `salePrice`:
+
+```ts
+{
+  id: 'medianTotalPrice',
+  level: 'district',
+  unit: 'TWD per transaction',
+  kind: 'positive',
+  decimals: 0,
+  description:
+    'Median total price of registered residential sales in the district. Divided by household income, it gives a district price-to-income figure.',
+  sources: ['lvr/moi-25119'],
+},
+```
+
+The description has 140 characters (Requirement 19.1 allows 1 to 200). The comment above `INDICATOR_SPECS` changes from "the 10 district indicators first" to "the 11 district indicators first", and the header comment of `history-file.ts` from "twelve indicator series" and "10 district indicators" to "thirteen" and "11".
 
 ### Policy series (fixed order, policy-track.json)
 
@@ -691,6 +738,7 @@ TDX's terms of use were not verified (DATA-CHECK.md gap 8); "not stated" is reco
 | `income-district-combination` | estimation | `householdIncome` | 2015Q1–2025Q4 |
 | `migration-2015-seasonal-split` | estimation | `moveIn`, `moveOut` | 2015Q1–2015Q4 |
 | `sale-price-pooled-window` | estimation | `salePrice` | thin cells only |
+| `median-total-price-pooled-window` | estimation | `medianTotalPrice` | thin cells only |
 | `rent-relative-cpi` | estimation | `rent` | 2015Q1–2025Q4, districts with ≥ 30 records |
 | `rent-reference-stats` | estimation | `rent` | reference districts covered by MOI rent statistics |
 | `rent-reference-sale-ratio` | estimation | `rent` | reference districts not covered by MOI rent statistics |
@@ -706,6 +754,26 @@ TDX's terms of use were not verified (DATA-CHECK.md gap 8); "not stated" is reco
 | `district-area`, `district-centroid`, `boundary-simplify` | estimation | districts.json fields | n/a |
 
 `MethodEntry.appliesTo` lists indicator ids or policy series ids. `MethodEntry.steps` hold the formulas below in plain English. A method whose `kind` is `missing-reason` would document a `null` value; none is defined because none is emitted.
+
+Registry entry for the new method in `registry/methods.ts`, placed directly after `sale-price-pooled-window`. Its steps carry the three statements Requirement 19.7 asks SOURCES.md to make (section 5 renders the steps):
+
+```ts
+{
+  id: 'median-total-price-pooled-window',
+  kind: 'estimation',
+  title: 'Median total price from a pooled window for thin cells',
+  inputs: ['lvr/moi-25119'],
+  steps: [
+    'Count the residential building sales of the district and quarter that pass the sale price filter and have a total price (總價元) greater than 0. The house-price-to-income ratio uses the same sales for its numerator.',
+    'When fewer than 10 such sales exist, widen the window to neighbouring quarters by the same rule as the sale price pooled window, counting only these sales.',
+    'Take the median total price of the pooled sales.',
+    'Dividing this value by the district household income indicator gives a district price-to-income figure; the pipeline publishes the numerator only.',
+  ],
+  appliesTo: ['medianTotalPrice'],
+  quarters: 'thin cells only',
+  setsEstimated: true,
+},
+```
 
 ### Per-indicator algorithms
 
@@ -763,7 +831,7 @@ householdIncome(d, q) = cityDisposableIncome(c, q) · relativeMedianIncome(d, q)
 - Method ids: `cityDisposableIncome` all `interp-annual-quarterly`; `relativeMedianIncome` 2015–2023 `interp-annual-quarterly`, 2024–2025 `income-relative-extrapolation`; `householdIncome` all `income-district-combination`. Every record is `estimated: true`.
 - Missing district total rows, non-positive medians (Requirement 7.8) and missing DGBAS years (Requirement 7.9) stop the build.
 
-#### Real-price registration parsing (shared by sale price, rent, price-to-income)
+#### Real-price registration parsing (shared by sale price, median total price, rent, price-to-income)
 
 `parsers/lvr.ts` reads each `{season}_{a|f}_lvr_land_{a|c}.csv`, skips the Chinese and English header rows, assigns the city from the file name, and returns typed records `{ id, districtCode | undefined, quarter | undefined, target, use, unitPrice, totalPrice, rent, area }`. A missing required column throws `ParseError` with row 1, the expected names and the found names (Requirement 2.4). Records are deduplicated by `編號` across all files of one kind, keeping the first in sorted file order (Requirement 8.6).
 
@@ -773,7 +841,7 @@ Qualifying filters:
 |---|---|---|
 | Target | `交易標的` ∈ {房地(土地+建物), 房地(土地+建物)+車位, 建物} | (rental files are building leases; no target filter) |
 | Use | `主要用途` contains 住家用 or 住宅 | same |
-| Value | `單價元平方公尺` > 0 (sale price); `總價元` > 0 also required for price-to-income | `總額元` > 0 and `建物總面積平方公尺` > 0 |
+| Value | `單價元平方公尺` > 0 (sale price); `總價元` > 0 also required for median total price and price-to-income, applied by `totalPriceSales` | `總額元` > 0 and `建物總面積平方公尺` > 0 |
 | Date | `交易年月日` 7-digit ROC date in 2015Q1–2025Q4 | `租賃年月日` same |
 | District | `鄉鎮市區` maps to one of the 41 | same |
 
@@ -800,6 +868,120 @@ Threshold and cap rationale (Decision D6):
 - A median of fewer than 10 prices moves by a large fraction of its value when one sale is added or removed.
 - A symmetric window keeps the pooled median centred on the target quarter.
 - No fixed cap: Pingxi has 9 sales in 44 quarters, so any cap below the full period would leave some Pingxi quarters with zero sales and stop the build. Without a cap, the worst case is that a district's thin quarters all share the full-period median, which is flat over time. SOURCES.md lists, per rural district, how many quarters used each window radius.
+
+Since Requirement 19, the bucketing and the window loop live in `indicators/pooled-window.ts` and `buildSalePrice` calls them with `pick = unitPrice`, `minCount = SALE_MIN_COUNT`, method `sale-price-pooled-window` and error code `no-sales-for-sale-price` (Decision D28). Its signature, result (`series`, `windowCounts`, `unrounded`) and error message stay as they are.
+
+#### Median total price (Requirement 19)
+
+```
+T(d, q)  = totalPrice of the sales in totalPriceSales(qualifying sales) with district d and transaction quarter q
+m(d, q)  = |T(d, q)|
+medianTotalPrice(d, q) = roundTo( median T(d, q), 0 )                      if m(d, q) ≥ 10           estimated: false
+                       = roundTo( median ∪_{q' ∈ W_r(q)} T(d, q'), 0 )      otherwise                 estimated: true, median-total-price-pooled-window
+W_r(q) and r as for the sale price, with the counts m(·) instead of n(·)
+```
+
+**Inputs.** The step reuses `state.lvrSales` (`state.lvrSales ??= loadLvr(ctx, 'sale')`), the same de-duplicated, filtered load that the sale price and price-to-income steps use. Requirement 19.2 names the input files, the building and residential-use filter, the unit-price condition, quarter bucketing, exclusions and `編號` de-duplication of Requirement 8.2–8.6; all of these are the existing `loadLvr` and `filterLvr`, so they are shared by construction.
+
+**Shared total-price filter** (`indicators/lvr-input.ts`, Decision D28):
+
+```ts
+/**
+ * Sales that count toward a median total price (Requirements 10.2, 19.2): qualifying sales (the sale price
+ * filter of Requirement 8.2-8.6 already applied) whose 總價元 is greater than 0 and that have a district and a
+ * quarter. The only implementation of this condition; the median total price and price-to-income builders
+ * both call it (Requirement 19.6).
+ */
+export function totalPriceSales(qualifying: readonly LvrRecord[]): LvrRecord[];
+```
+
+The predicate is `r.totalPrice > 0 && r.districtCode !== undefined && r.quarter !== undefined`. `parseLvrCsv` already stores 0 for an empty or non-numeric `總價元`, and `> 0` is false for `NaN`, so the predicate keeps exactly the records the current inline check in `buildPriceToIncome` keeps. `buildPriceToIncome` replaces its inline `!(r.totalPrice > 0) || …` check with a loop over `totalPriceSales(sales)`; its output does not change (Property 12 and the price-to-income unit tests guard this).
+
+To make Requirement 19.6 testable, the two groupings are exported as pure functions:
+
+```ts
+// indicators/median-total-price.ts
+/** District code -> 44 lists of 總價元, one per quarter, in input order. */
+export function districtTotalPriceCells(
+  sales: readonly LvrRecord[], districts: readonly CodeRef[], quarters: readonly Quarter[],
+): Map<string, number[][]>;          // = bucketByDistrictQuarter(totalPriceSales(sales), districts, quarters, (r) => r.totalPrice)
+
+// indicators/price-to-income.ts (extracted from buildPriceToIncome, which then calls it)
+/** "<city>|<quarter>" -> list of 總價元 of that city and quarter, in input order. */
+export function cityTotalPrices(
+  sales: readonly LvrRecord[], districts: readonly CityCode[], quarters: readonly Quarter[],
+): Map<string, number[]>;            // groups totalPriceSales(sales) by the city of the district
+```
+
+Both group the output of `totalPriceSales`, so the district cell `T(d, q)` is the part of the city cell `(city(d), q)` whose records have district `d` (Property 34).
+
+**Pooled window** (`indicators/pooled-window.ts`, Decision D28):
+
+```ts
+/** District code -> 44 lists of picked values, one per quarter, in input order. Records outside the districts or quarters are ignored. */
+export function bucketByDistrictQuarter(
+  records: readonly LvrRecord[], districts: readonly CodeRef[], quarters: readonly Quarter[],
+  pick: (r: LvrRecord) => number,
+): Map<string, number[][]>;
+
+export interface PooledWindowOptions {
+  readonly minCount: number;         // SALE_MIN_COUNT (10) for both indicators
+  readonly decimals: number;         // from the indicator's spec
+  readonly method: string;           // Method_Id written on pooled cells
+  readonly errorCode: string;        // DataError code when the widest window is empty
+}
+export interface PooledWindowSeries {
+  readonly records: ValueRecord[];   // 44 records
+  readonly unrounded: number[];      // 44 medians before rounding
+  readonly radiusCounts: Map<number, number>; // window radius -> number of quarters; radius 0 = own median
+}
+/** The window loop of buildSalePrice, unchanged, for one district's 44 cells. */
+export function pooledWindowSeries(
+  cells: readonly (readonly number[])[], quarters: readonly Quarter[], districtCode: string, options: PooledWindowOptions,
+): PooledWindowSeries;
+```
+
+The window for `medianTotalPrice` is decided by `m(d, q)`, the count of total-price sales, as Requirement 19.4 states, not by the sale price count `n(d, q)`. A record with a unit price but `總價元` = 0 counts in `n` and not in `m`, so in such a cell the two indicators can use different radii or flags. When every qualifying sale has `總價元` > 0, `m = n` and both indicators use the same radius and flag in every cell (Property 36). SOURCES.md lists the radii of both indicators so any difference is visible.
+
+**Builder** (`indicators/median-total-price.ts`):
+
+```ts
+export const TOTAL_PRICE_POOLED_METHOD = 'median-total-price-pooled-window';
+
+export interface MedianTotalPriceResult {
+  readonly series: DistrictSeries;
+  /** District code -> window radius -> number of quarters. Radius 0 is the district's own median. For SOURCES.md. */
+  readonly windowCounts: Map<string, Map<number, number>>;
+  /** Qualifying sales (sale price filter passed) excluded because 總價元 is not greater than 0. */
+  readonly zeroTotalPrice: number;
+}
+
+/** `sales` must be qualifying sales (filter applied, de-duplicated), as for buildSalePrice. */
+export function buildMedianTotalPrice(
+  sales: readonly LvrRecord[], districts: readonly CodeRef[], quarters: readonly Quarter[],
+): MedianTotalPriceResult;
+
+export function medianTotalPriceStep(): Step;   // name 'median-total-price'
+```
+
+- Decimals come from the `medianTotalPrice` spec (0), read the same way `saleDecimals()` reads the sale price spec. The builder rounds with `roundTo`; the history assembly rounds again, which leaves the value unchanged. A median of an even count of integers can end in .5, which `roundTo` rounds away from zero.
+- `minCount` is `SALE_MIN_COUNT`, imported from `sale-price.ts`, so Requirement 19.3 follows any change of the sale price threshold.
+- A widest window with no total-price sale throws `DataError('no-sales-for-median-total-price', 'district <code> <quarter>', ['no qualifying sales with a total price in <first>..<last>, the widest window'])` (Requirement 19.5). The runner then exits with code 1 and writes nothing, as for every `DataError`. This can happen for a district whose sales all have `總價元` = 0 even when its sale price builds; DATA-CHECK.md shows no such district.
+- The step sets `state.medianTotalPrice` and `state.medianTotalPriceWindowCounts`, and adds the note `median total price: <k> qualifying sales excluded, 總價元 not greater than 0`. It does not repeat the sale exclusion notes, which the sale price step already prints.
+- `run.ts`: `BuildState` gains `medianTotalPrice?: DistrictSeries` and `medianTotalPriceWindowCounts?: ReadonlyMap<string, ReadonlyMap<number, number>>`. `DEFAULT_STEPS` runs `medianTotalPriceStep()` directly after `salePriceStep()`. `historyFileStep` finds the series by the indicator id, as for every other indicator, so it needs no change.
+- No district price-to-income value is computed here. The game UI divides `medianTotalPrice(d, q)` by `householdIncome(d, q)` (Requirement 10.1).
+
+**SOURCES.md** (Requirements 19.7, 19.8). Most of it follows from the registries without new rendering code:
+
+- Section 2 (rounding per indicator) and section 3 (fields by output file) gain a `medianTotalPrice` row from `INDICATOR_SPECS`, with unit `TWD per transaction`, 0 decimals and the `lvr/moi-25119` Source_Entry (Requirement 15.3).
+- Section 5 (methods) renders `median-total-price-pooled-window` from the method registry, with the `總價元 > 0` condition, the shared window rule and the numerator role in its steps (Requirement 15.4).
+- Section 9: the `KNOWN_GAPS` row for item 2a in `sources-doc.ts` lists `fields: ['salePrice', 'medianTotalPrice']` and `methods: ['sale-price-pooled-window', 'median-total-price-pooled-window']`. The gap text and scope stay the same.
+- Section 9 also gains a table "Thin median total price cells" after "Thin sale price cells", rendered the same way from `medianTotalPriceWindowCounts` (the `SourcesDocInput` field of the same name, passed from `BuildState`). The intro line states that the window counts only sales with a total price greater than 0.
+
+**DATA-CHECK.md** is hand-written research, not generated, so the task edits it directly:
+
+- Item 2a: after "For these districts, a quarterly median price is not meaningful…", add: "The pipeline pools thin cells for two indicators with the same window rule: the sale price per square metre (`salePrice`, `sale-price-pooled-window`) and the median total price (`medianTotalPrice`, `median-total-price-pooled-window`). The counts above are for the unit-price filter; the median total price also requires `總價元` > 0."
+- Item 7: after "**No district-level values.**", add: "The pipeline publishes the city ratio only. It also publishes the district median total price (`medianTotalPrice`) with the same sale filter as the ratio's numerator; dividing it by the district household income gives a district figure that the MOI does not publish."
 
 #### Rent (Requirement 9)
 
@@ -848,7 +1030,7 @@ Neighbours were chosen for similar settlement type (rural or semi-rural New Taip
 priceToIncomeRatio(c, q) = roundTo( median{ 總價元 of qualifying sales in c, quarter q } / cityDisposableIncome(c, q), 2 )
 ```
 
-Qualifying sales use the sale filter above plus `總價元 > 0`. Fewer than 100 qualifying sales in a city-quarter stops the build (Requirement 10.4). Every record is `estimated: true` with `price-to-income-computed`; its method entry states the formula, the filter, the income source, and that the MOI ratio uses the same median-price and median-income definitions on its own sample.
+Qualifying sales use the sale filter above plus `總價元 > 0`, through the shared `totalPriceSales` helper that the median total price also uses (Requirement 19.6). Fewer than 100 qualifying sales in a city-quarter stops the build (Requirement 10.4). Every record is `estimated: true` with `price-to-income-computed`; its method entry states the formula, the filter, the income source, and that the MOI ratio uses the same median-price and median-income definitions on its own sample.
 
 Validation (Requirement 10.5–10.7): if `data/config/moi-price-to-income.csv` exists (columns `city,quarter,ratio,source_pdf`), each row is validated (city name, quarter in 2016Q3..2025Q4, positive ratio, no duplicate city and quarter; an invalid row stops the build). For each row the pipeline prints the computed ratio, the MOI ratio and the signed difference, then one line per city with the largest absolute difference. If the file is absent, it prints that the validation was skipped. The comparison never changes outputs or the exit code. The 2018Q3–Q4 combined release is entered as two rows with the same PDF.
 
@@ -996,7 +1178,7 @@ Both estimates are low-confidence assumptions (Decision D22). `commuterPassesSol
 6. Rent reference districts: district, reference, method, record count, ratio (Requirement 9.6).
 7. MRT notes: border stations with point district and address district; comparable stations; lines not included.
 8. Policy series: for each series its unit, sources, the share of estimated Track_Records, the assumption of each Method_Id and the data that would replace the estimate (Requirement 12.16), plus every row of the three committed tables with its source.
-9. Known data gaps: one row per DATA-CHECK.md gap that affects an output field (items 1, 2a, 2b, 3b, 4, 7, 10), with item number, affected fields, quarter range or districts, and Method_Id (Requirement 15.5).
+9. Known data gaps: one row per DATA-CHECK.md gap that affects an output field (items 1, 2a, 2b, 3b, 4, 7, 10), with item number, affected fields, quarter range or districts, and Method_Id (Requirement 15.5). Item 2a lists `salePrice` and `medianTotalPrice` (Requirement 19.8). The section ends with the window-radius tables for thin sale price cells and thin median total price cells.
 
 ### Banned-term check (`banned-terms.ts`)
 
@@ -1129,9 +1311,9 @@ All properties below test pure functions with generated in-memory inputs. None r
 
 ### Property 20: The validator detects every injected defect
 
-*For any* valid HistoryFile, DistrictsFile or PolicyTrackFile and any set of 1 to 5 defects injected at distinct locations (a removed required field, a wrong type, `NaN` or `±Infinity`, an unknown or duplicated district code, a quarter outside 2015Q1–2025Q4, a series of the wrong length, `estimated: true` without a method, `estimated: false` with a method, an unknown source or method id, a negative count, a percentage outside 0–100, a wrong ring winding, an unclosed ring, an unredacted `api_key`, a Track_Record whose source id is not defined, a negative count Track_Record), the validator reports at least one error for each defect, each with the JSON path of that defect, and reports no error for the unmodified file.
+*For any* valid HistoryFile, DistrictsFile or PolicyTrackFile and any set of 1 to 5 defects injected at distinct locations (a removed required field, a wrong type, `NaN` or `±Infinity`, an unknown or duplicated district code, a quarter outside 2015Q1–2025Q4, a series of the wrong length, `estimated: true` without a method, `estimated: false` with a method, an unknown source or method id, a negative count, a percentage outside 0–100, a wrong ring winding, an unclosed ring, an unredacted `api_key`, a Track_Record whose source id is not defined, a negative count Track_Record, an indicator removed from, added to or moved within `indicators` relative to `ctx.indicatorIds`), the validator reports at least one error for each defect, each with the JSON path of that defect, and reports no error for the unmodified file.
 
-**Validates: Requirements 3.1, 3.4, 3.5, 3.9, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 14.3, 14.4, 14.5, 12.2, 12.3, 14.7, 16.1, 16.2, 16.3, 16.4, 16.5**
+**Validates: Requirements 3.1, 3.4, 3.5, 3.9, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.11, 14.3, 14.4, 14.5, 12.2, 12.3, 14.7, 16.1, 16.2, 16.3, 16.4, 16.5**
 
 ### Property 21: Serialize, parse and validate round trip
 
@@ -1147,7 +1329,7 @@ All properties below test pure functions with generated in-memory inputs. None r
 
 ### Property 23: Output is independent of input order and does not mutate inputs
 
-*For any* set of parsed input records for the build (a small fixture-scale generator covering every indicator builder, every policy builder and the districts builder), building twice from the same records, and building from a shuffled copy of the record lists and file lists, produce byte-identical serialized outputs, and the input records are deep-equal before and after each build.
+*For any* set of parsed input records for the build (a small fixture-scale generator covering every indicator builder, including the median total price builder, every policy builder and the districts builder), building twice from the same records, and building from a shuffled copy of the record lists and file lists, produce byte-identical serialized outputs, and the input records are deep-equal before and after each build.
 
 **Validates: Requirements 2.6, 3.6, 4.10, 15.2, 17.1, 17.2, 17.6**
 
@@ -1211,6 +1393,24 @@ All properties below test pure functions with generated in-memory inputs. None r
 
 **Validates: Requirements 12.11, 12.12**
 
+### Property 34: Median total price and price-to-income count the same sales
+
+*For any* set of generated registration sale records across districts of both cities (random `交易標的`, `主要用途`, unit price, total price including 0, transaction date including invalid and out-of-range dates, district including unknown names, and duplicate `編號` values), after de-duplication and the sale filter: for every district `d` and quarter `q`, the multiset `districtTotalPriceCells(d, q)` equals the total prices of the records that pass the oracle predicate of Requirement 8.2–8.6 plus `總價元 > 0` with district `d` and quarter `q`; and for every city `c` and quarter `q`, the multiset `cityTotalPrices(c, q)` equals the union of `districtTotalPriceCells(d, q)` over the districts `d` of `c`.
+
+**Validates: Requirements 19.2, 19.6, 10.2**
+
+### Property 35: Median total price medians, thin-cell flags and pooled windows
+
+*For any* set of qualifying sales with random districts, quarters, positive unit prices and total prices that are 0 or positive integers (where each district has at least one sale with a positive total price), `buildMedianTotalPrice` returns 44 records for every district; every district-quarter with at least 10 sales with a positive total price has the median of their total prices (mean of the two middle values for even counts) rounded to 0 decimals, is not estimated and has no method; every other district-quarter is estimated with `median-total-price-pooled-window` and has the rounded median total price of the smallest symmetric window that holds at least 10 sales with a positive total price, or of all 44 quarters when no smaller window does; and sales with a total price of 0 change no value.
+
+**Validates: Requirements 19.1, 19.2, 19.3, 19.4**
+
+### Property 36: Median total price uses the sale price window rule
+
+*For any* set of qualifying sales in which every total price is positive (where each district has at least one sale), for every district and quarter, `buildMedianTotalPrice` and `buildSalePrice` report the same window radius and the same estimate flag, so their `windowCounts` maps are equal.
+
+**Validates: Requirements 19.4**
+
 ## Error Handling
 
 ### Error types (`errors.ts`)
@@ -1219,7 +1419,7 @@ All properties below test pure functions with generated in-memory inputs. None r
 |---|---|---|
 | `MissingInputsError` | preflight | One line per missing file: repository-relative path and `node scripts/download.ts <download-id>` (Requirement 2.3). |
 | `ParseError` | parsers | File path (plus `!entry` for ZIP members), 1-based row, expected columns, found columns (Requirement 2.4). |
-| `DataError` | indicator builders | The rule that failed and its subject: district code, city, quarter, month, station, project guid, values involved. Examples: Requirement 5.5, 5.6, 6.6, 6.7, 7.8, 7.9, 8.9, 9.8–9.10, 10.4, 10.6, 11.11, 12.14, 12.15, 13.6, 3.7, 3.8. |
+| `DataError` | indicator builders | The rule that failed and its subject: district code, city, quarter, month, station, project guid, values involved. Examples: Requirement 5.5, 5.6, 6.6, 6.7, 7.8, 7.9, 8.9, 9.8–9.10, 10.4, 10.6, 11.11, 12.14, 12.15, 13.6, 19.5, 3.7, 3.8. |
 | `ValidationFailedError` | validation step | All `ValidationError`s of all files, each as `<file> <JSON path>: <rule>: <message>` (Requirement 16.5). |
 | `BannedTermError` | banned-term step | Each term and line number (Requirement 15.9). |
 | `WriteError` | writer | The file whose write or rename failed, after rollback (Requirement 16.8). |
@@ -1246,7 +1446,7 @@ Classes use plain field declarations and constructor assignments, no parameter p
 
 ### Property-based tests
 
-- One test per property above, 33 in total, each configured with `{ numRuns: 100 }` or more.
+- One test per property above, 36 in total, each configured with `{ numRuns: 100 }` or more.
 - Each test carries a comment tag in the form `// Feature: data-pipeline, Property <n>: <property title>`.
 - Generators build in-memory records only. File-shaped generators (CSV text, JSON rows) are used where the property is about parsing, for example Property 9.
 - Generators for file-level properties (20, 21, 23) produce full-size files: 41 codes and 44 quarters, 1 to 3 indicators. That is about 5,000 records per case, fast enough for 100 runs.
@@ -1258,9 +1458,11 @@ Classes use plain field declarations and constructor assignments, no parameter p
 - **One missing-column test per parser** (Requirement 18.2), checking the row number and expected column names in the `ParseError`.
 - **Validator examples** (Requirement 18.3, 18.4): one valid in-memory file of each type is accepted; malformed objects cover a missing field, a wrong type, an unknown district code and an out-of-range quarter for each file, plus a district count of 40 for `districts.json`; each test asserts the exact JSON path. Boundary cases: percentages of exactly 0 and 100 pass; a `null` value with a `missing-reason` method passes, and with an estimation method it fails.
 - **Builder error cases**: each `DataError` listed under Error Handling has one example test (for example a district with zero sales in 11 years, a reference-table entry in another city, a CPI month missing, a misconfigured CPI mapping, an MRT row without an alias, a holding tax table row whose date is not later than the previous row, an invalid `household_num`).
+- **Median total price builder** (Requirement 19.10), each with an in-memory fixture of at most 50 rows and literal expected values: a district-quarter with exactly 10 sales (own median, not estimated); a district-quarter with fewer than 10 that uses a radius-1 window (estimated, `median-total-price-pooled-window`); a sale with `總價元` = 0 that is excluded while its unit price still counts for `salePrice`; an even count whose median is the mean of the two middle values, including a .5 result rounded away from zero; and a district whose widest window has no sale with a positive total price, which throws `no-sales-for-median-total-price` naming the district and quarter. One more example checks that `buildPriceToIncome` gives the same series as before the switch to `totalPriceSales` on the existing price-to-income fixtures.
+- **Indicator order** (Requirement 4.11): `INDICATOR_SPECS.map((s) => s.id)` equals the literal list of Requirement 4.11 and `HISTORY_INDICATOR_IDS`; the `medianTotalPrice` spec has unit `TWD per transaction`, kind `positive`, decimals 0, sources `['lvr/moi-25119']` and a description of 1 to 200 characters (Requirement 19.1, 19.9). Validator examples: a history file whose `indicators` miss one id, add one, or swap two fails with rule `indicator-set` at the expected path; a `medianTotalPrice` value of 0 and one of −1 fail with rule `range` at `$.indicators[6].series["<code>"][<i>].value` (Requirement 19.9).
 - **Fixed tables**: the month → source table for population (2017-12, 2018-03); the CPI series mapping; the reference table checked against a fixture adjacency.
 - **Runner**: a failing step stops later steps and prints its name; validation errors prevent any call to the injected `WriteFs`; the success summary is printed.
-- **Rendering**: SOURCES.md contains the generated-file notice, the disclosure sentence, the reference-district rows, the MRT notes, the policy series section, the data-gap rows and the Wikipedia attribution format.
+- **Rendering**: SOURCES.md contains the generated-file notice, the disclosure sentence, the reference-district rows, the MRT notes, the policy series section, the data-gap rows and the Wikipedia attribution format. Rendered from the real registries, it has a `medianTotalPrice` row in section 3 with the `lvr/moi-25119` entry, a `median-total-price-pooled-window` entry in section 5 whose text names `總價元`, the sale price window rule and the district household income indicator (Requirement 19.7), a 2a row in section 9 that lists both indicators and both pooled-window methods (Requirement 19.8), and the "Thin median total price cells" table.
 - **Static checks**: no file under `scripts/pipeline/` imports `scripts/lib/http.ts` or `scripts/lib/datagov.ts` or calls `fetch` (Requirement 2.1); the `data` npm script contains no `rm`, `cp`, `mkdir -p` or `VAR=value` syntax (Requirement 1.6); no test file reads from `data/raw/` (Requirement 18.8).
 
 ### Not unit-tested
@@ -1287,11 +1489,11 @@ Each open question from requirements.md uses its stated default unless noted. Th
 | D1 | Boundaries in `districts.json` | (a) Embed the geometry in `districts.json`. Stop writing `public/data/boundaries.geojson`. `build-boundaries.ts` and the `data:boundaries` npm script are retired; its simplification call and mismatched-edge check move into the pipeline. Removing the existing `boundaries.geojson` from the repository is a separate task step that needs the user's confirmation. | Districts file |
 | D2 | Schema validation library and location | Hand-written validator, no new dependency. Types in `src/types/data-files.ts`, validator in `src/data/validate.ts`, both pure and erasable, imported by the pipeline (scripts may import src; src may not import scripts). | Schema module |
 | D3 | Commute matrix and adjacency | Both deferred to a later spec. Adjacency is computed in memory only to check the rent reference table. | Districts file |
-| D4 | Indicator list | 10 district and 2 city indicators (table above), plus the 10 policy series of `policy-track.json` (Policy series table). | History file |
+| D4 | Indicator list | 11 district and 2 city indicators (table above), plus the 10 policy series of `policy-track.json` (Policy series table). `medianTotalPrice` was added on 2026-11-16 (Requirement 19). | History file |
 | D5 | Annual-to-quarterly interpolation | Mean-preserving, slope-limited piecewise-linear (minmod). | Interpolation |
 | D6 | Thin-cell thresholds and pooling | Rent: 30 records over 2015–2025. Sales: fewer than 10 sales in a district-quarter → symmetric window expanded one quarter at a time until it holds 10 sales or covers all 44 quarters. | Sale price, rent |
 | D7 | Reference districts | Fixed table above. Decided 2026-11-11: Requirement 9.7 allows a district that borders one of the district's bordering districts when no bordering same-city district has 30 records. Pinglin → Xindian. | Rent |
-| D8 | Price-to-income level | City level only. MOI PDFs are not parsed; validation uses the optional hand-entered table. | Price-to-income |
+| D8 | Price-to-income level | City level only. MOI PDFs are not parsed; validation uses the optional hand-entered table. Decided 2026-11-16: the district numerator `medianTotalPrice` is published (Requirement 19); the game UI divides it by `householdIncome`. | Price-to-income, median total price |
 | D9 | PM2.5 without a station | Removed with the air-quality indicator when the scope narrowed to 5 policy tools. | none |
 | D10 | Border stations | Point-in-polygon; SOURCES.md lists point and address districts. | MRT |
 | D11 | Missing values | The pipeline never emits `null`; every method chain yields a number or stops with a named error. The validator keeps `null` support per Requirement 4.8. | History file |
@@ -1316,5 +1518,7 @@ Further decisions made in this design:
 | D25 | Holding tax rates | Two series (lowest and highest tier). New Taipei before 2017-07-01 uses the statutory minimum, flagged as estimated. Needs user confirmation (Open Question 15 d). |
 | D26 | Committed policy tables | Holding tax rates, commuter pass products and sublease phases are small hand-entered CSV tables with a source on every row, not parsed from HTML or PDF. The four raw policy files are fetched by a new `policy` download source, added in the tasks (they are hand-fetched today). |
 | D27 | Policy limits and budget | The lower and upper limit of each tool and the budget ceilings are simulation parameters in `params.json` (simulation-engine spec). This pipeline outputs only the real track. |
+| D28 | Shared helpers for the median total price | Two extractions, both behaviour-preserving. (1) `totalPriceSales` in `lvr-input.ts` is the one implementation of `總價元 > 0`; `buildPriceToIncome` and `buildMedianTotalPrice` both call it. This one is needed for Requirement 19.6: with two inline copies, a later edit to one would break filter consistency without any type error. (2) The bucketing and window loop of `buildSalePrice` move to `pooled-window.ts`, and both district builders call them. This one is needed for Requirement 19.4 ("the same pooled window"), not for 19.6. The alternative is to copy the loop of about 20 lines into the new builder and rely on Property 36 to catch drift; one implementation is simpler to keep correct. Property 7, Property 12 and the existing sale price and price-to-income unit tests must pass unchanged after both extractions. |
+| D29 | Indicator order in the schema | `src/types/data-files.ts` exports `HISTORY_INDICATOR_IDS` and `HistoryIndicatorId`, and the validator gains the `indicator-set` rule against `ctx.indicatorIds`, mirroring `policy-series-set`. Requirement 4.11 fixes the order, and the game UI reads `medianTotalPrice` by id. `history-file.ts` already writes `INDICATOR_SPECS` order, so the rule only rejects a hand-edited or stale file. The existing validator test fixtures pass their own id list in `ctx.indicatorIds`, so they keep working. An injected defect that changes an indicator `id` (for example a duplicate id) now also produces an `indicator-set` error; Property 20 requires each defect to be reported at its path, which still holds. |
 
 D7 and D17 were approved on 2026-11-11, and Requirements 9.4 and 9.7 were amended to match.

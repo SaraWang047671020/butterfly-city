@@ -237,6 +237,97 @@ The order follows the design: shared helpers first, then the district file and e
     - Run `npm run data` on the local `data/raw/`, then run it once in PowerShell and once in Git Bash and compare the hashes of the four outputs; run `npx vitest --run` and `npm run typecheck` and report both exit codes
     - _Requirements: 1.2, 2.2, 17.1, 18.7_
 
+- [ ] 16. Shared total-price filter and pooled-window helper (Decision D28)
+  - [ ] 16.1 Add `totalPriceSales` to `scripts/pipeline/indicators/lvr-input.ts` and switch the price-to-income builder to it
+    - Predicate `r.totalPrice > 0 && r.districtCode !== undefined && r.quarter !== undefined`, with the doc comment from the design; this is the only implementation of `總價元 > 0` in the pipeline
+    - Extract `cityTotalPrices(sales, districts, quarters)` in `indicators/price-to-income.ts`: it groups `totalPriceSales(sales)` by `"<city>|<quarter>"` in input order. `buildPriceToIncome` calls it in place of its inline `!(r.totalPrice > 0) || …` check; its signature, result, error messages, the 100-sale halt and the MOI comparison note stay the same
+    - _Requirements: 10.2, 10.4, 19.2, 19.6_
+  - [ ] 16.2 Create `scripts/pipeline/indicators/pooled-window.ts` and switch the sale price builder to it
+    - `bucketByDistrictQuarter`, `PooledWindowOptions`, `PooledWindowSeries` and `pooledWindowSeries` as in the design; the window loop moves from `buildSalePrice` without changes to its logic
+    - `buildSalePrice` calls them with `pick = (r) => r.unitPrice`, `minCount = SALE_MIN_COUNT`, method `sale-price-pooled-window` and error code `no-sales-for-sale-price`; export `SALE_MIN_COUNT` from `sale-price.ts` if it is not exported yet. The signature, the result (`series`, `windowCounts`, `unrounded`) and the error message of `buildSalePrice` stay the same
+    - _Requirements: 8.1, 8.7, 8.8, 8.9, 19.4_
+  - [ ] 16.3 Check that `salePrice` and `priceToIncomeRatio` are unchanged after the refactor
+    - Run `sale-price.test.ts`, `price-to-income.test.ts` and Properties 7 and 12 in `properties-lvr.test.ts` without editing any of their fixtures or expected values; all must pass
+    - Add example tests in `price-to-income.test.ts` for `totalPriceSales` (total price 0, negative, `NaN`, missing district and missing quarter are excluded; input order is kept) and for `cityTotalPrices` (grouping by city and quarter, input order), plus one `buildPriceToIncome` case on the existing fixture with an added record whose `總價元` is 0, which leaves the literal expected series unchanged
+    - Add example tests in `sale-price.test.ts` for `bucketByDistrictQuarter` (records outside the districts or quarters are ignored) and `pooledWindowSeries` (own median, radius-1 window, full-period window, and an empty widest window that throws a `DataError` with the given error code)
+    - _Requirements: 8.1, 8.7, 8.8, 8.9, 10.2, 10.3, 18.1, 19.6_
+
+- [ ] 17. Median total price indicator and indicator ids
+  - [ ] 17.1 Add `HISTORY_INDICATOR_IDS` and `HistoryIndicatorId` to `src/types/data-files.ts`
+    - The 13 ids of Requirement 4.11 in order, `as const`, erasable syntax only; `IndicatorBase.id` stays `string`
+    - `tests/data/helpers.ts` defines its own 3-id fixture list with the same name. Keep its values; rename it to `FIXTURE_INDICATOR_IDS` (and update its users) if a test needs to import the new export next to it
+    - _Requirements: 4.11_
+  - [ ] 17.2 Add the `medianTotalPrice` spec and the `median-total-price-pooled-window` method to the registries
+    - `registry/indicators.ts`: the design's entry directly after `salePrice` (unit `TWD per transaction`, kind `positive`, decimals 0, source `lvr/moi-25119`, the 140-character description); the comment above `INDICATOR_SPECS` says 11 district indicators
+    - `registry/methods.ts`: the design's entry directly after `sale-price-pooled-window`, with its four steps (the `總價元 > 0` condition shared with the price-to-income numerator, the sale price window rule, the median, and the numerator role against the district household income indicator)
+    - Header comment of `history-file.ts`: "thirteen" indicator series and "11" district indicators
+    - _Requirements: 4.11, 14.2, 14.3, 19.1, 19.4, 19.7, 19.9_
+  - [ ] 17.3 Implement `scripts/pipeline/indicators/median-total-price.ts`
+    - `TOTAL_PRICE_POOLED_METHOD`, `districtTotalPriceCells` (`bucketByDistrictQuarter(totalPriceSales(sales), districts, quarters, (r) => r.totalPrice)`), `MedianTotalPriceResult` and `buildMedianTotalPrice`, as in the design
+    - The window is decided by `m(d, q)`, the count of total-price sales; `minCount` is the imported `SALE_MIN_COUNT`; decimals come from the `medianTotalPrice` spec; values are rounded with `roundTo`, so a .5 median rounds away from zero; `zeroTotalPrice` counts qualifying sales whose `總價元` is not greater than 0
+    - An empty widest window throws `DataError('no-sales-for-median-total-price', 'district <code> <quarter>', ['no qualifying sales with a total price in <first>..<last>, the widest window'])`; no fallback value
+    - No district price-to-income value is computed
+    - _Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.6_
+  - [ ] 17.4 Add `medianTotalPriceStep` and wire it into `run.ts`
+    - Step name `median-total-price` in `median-total-price.ts`; it reuses `state.lvrSales ??= loadLvr(ctx, 'sale')`, sets `state.medianTotalPrice` and `state.medianTotalPriceWindowCounts`, and adds the note `median total price: <k> qualifying sales excluded, 總價元 not greater than 0` without repeating the sale exclusion notes
+    - `BuildState` gains `medianTotalPrice?` and `medianTotalPriceWindowCounts?`; `DEFAULT_STEPS` runs the step directly after `salePriceStep()`; `historyFileStep` needs no change because it finds series by indicator id
+    - Update runner tests in `run.test.ts` and `run-full.test.ts` that list step names or count indicators (13 indicators, 11 district)
+    - _Requirements: 1.4, 4.1, 4.11, 19.1, 19.5_
+  - [ ] 17.5 Write the Requirement 19.10 example tests in `tests/scripts/pipeline/median-total-price.test.ts`
+    - In-memory fixtures of at most 50 rows with literal expected values: a district-quarter with exactly 10 sales (own median, not estimated, no method); a district-quarter with fewer than 10 that uses a radius-1 window (estimated, `median-total-price-pooled-window`); a sale with `總價元` = 0 that is excluded from `medianTotalPrice` while its unit price still counts for `salePrice`; an even count whose median is the mean of the two middle values, including a .5 result rounded away from zero; a district whose widest window has no sale with a positive total price, which throws `no-sales-for-median-total-price` naming the district and quarter
+    - One step test: the step sets both state fields and adds the exclusion note with the right count
+    - _Requirements: 18.1, 19.2, 19.3, 19.4, 19.5, 19.10_
+  - [ ] 17.6 Write property test for the shared total-price filter
+    - **Property 34: Median total price and price-to-income count the same sales**
+    - In `tests/scripts/pipeline/properties-total-price.test.ts`; generated records cover random `交易標的`, `主要用途`, unit price, total price including 0, invalid and out-of-range dates, unknown district names and duplicate `編號`; the oracle is the predicate of Requirements 8.2–8.6 plus `總價元 > 0`; compares `districtTotalPriceCells` with the oracle and `cityTotalPrices` with the union of the district cells of each city
+    - **Validates: Requirements 19.2, 19.6, 10.2**
+  - [ ] 17.7 Write property test for median total price values
+    - **Property 35: Median total price medians, thin-cell flags and pooled windows**
+    - In `tests/scripts/pipeline/properties-median-total-price.test.ts`; total prices are 0 or positive integers, and each district has at least one sale with a positive total price
+    - **Validates: Requirements 19.1, 19.2, 19.3, 19.4**
+  - [ ] 17.8 Write property test for the shared window rule
+    - **Property 36: Median total price uses the sale price window rule**
+    - In `tests/scripts/pipeline/properties-median-total-price.test.ts`; every total price is positive, and the `windowCounts` maps of `buildMedianTotalPrice` and `buildSalePrice` are equal
+    - **Validates: Requirements 19.4**
+
+- [ ] 18. Indicator-set validator rule (Decision D29)
+  - [ ] 18.1 Add the `indicator-set` rule to `validateHistoryFile` in `src/data/validate.ts`
+    - The `id`s of `indicators` equal `ctx.indicatorIds` exactly and in the same order; a missing id is reported at `$.indicators`, an unexpected id or an expected id at the wrong position at `$.indicators[i].id`; same structure as `policy-series-set`; update the comment on `ValidateContext.indicatorIds`
+    - Confirm that the pipeline's validation step passes `INDICATOR_SPECS.map((s) => s.id)`
+    - No `medianTotalPrice`-specific range code: the existing `positive` kind check covers Requirement 19.9
+    - _Requirements: 4.11, 16.5, 19.9_
+  - [ ] 18.2 Write validator and registry example tests
+    - `tests/data/validate.test.ts`: a history file whose `indicators` miss one id, add one, or swap two fails with rule `indicator-set` at the expected path; with the 13 ids of `HISTORY_INDICATOR_IDS`, a `medianTotalPrice` value of 0 and one of −1 fail with rule `range` at `$.indicators[6].series["<code>"][<i>].value`
+    - `tests/scripts/pipeline/registry.test.ts`: `INDICATOR_SPECS.map((s) => s.id)` equals the literal list of Requirement 4.11 and `HISTORY_INDICATOR_IDS` element by element; the `medianTotalPrice` spec has unit `TWD per transaction`, kind `positive`, decimals 0, sources `['lvr/moi-25119']` and a description of 1 to 200 characters; the `median-total-price-pooled-window` method follows `sale-price-pooled-window` and its steps name `總價元`
+    - Run Property 20 in `tests/data/properties-validation.test.ts`. If a defect that changes an indicator `id` now also produces an `indicator-set` error, allow that extra error while still requiring the defect's own path (Decision D29)
+    - _Requirements: 4.11, 16.5, 18.3, 18.4, 19.1, 19.9_
+
+- [ ] 19. Checkpoint - Ensure all tests pass
+  - Run `npx vitest --run` and `npm run typecheck`. Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 20. SOURCES.md rendering and DATA-CHECK.md
+  - [ ] 20.1 Update `scripts/pipeline/sources-doc.ts` and pass the window counts from `run.ts`
+    - The `KNOWN_GAPS` row for item 2a lists `fields: ['salePrice', 'medianTotalPrice']` and `methods: ['sale-price-pooled-window', 'median-total-price-pooled-window']`; its text and scope stay the same
+    - `SourcesDocInput` gains `medianTotalPriceWindowCounts`; section 9 gains the table "Thin median total price cells" after "Thin sale price cells", rendered the same way, with an intro line stating that the window counts only sales with a total price greater than 0; the render step in `run.ts` passes the field from `BuildState`
+    - Sections 2, 3 and 5 follow from the registries; check that no extra code is needed. The banned-term check must pass on the new text
+    - _Requirements: 15.3, 15.4, 15.6, 19.7, 19.8_
+  - [ ] 20.2 Write rendering tests in `tests/scripts/pipeline/sources-doc.test.ts`
+    - Rendered from the real registries: a `medianTotalPrice` row in section 3 with the `lvr/moi-25119` entry; a `median-total-price-pooled-window` entry in section 5 whose text names `總價元`, the sale price window rule and the district household income indicator; a 2a row in section 9 that lists both indicators and both pooled-window methods; the "Thin median total price cells" table
+    - Run Property 28 in `properties-sources-doc.test.ts` unchanged
+    - _Requirements: 15.3, 15.4, 19.7, 19.8_
+  - [ ] 20.3 Edit `data/DATA-CHECK.md` items 2a and 7
+    - Add the two sentences from the design: in item 2a after "For these districts, a quarterly median price is not meaningful…", and in item 7 after "**No district-level values.**". The file is hand-written, not generated; keep the wording neutral and free of the terms in `data/config/banned-terms.txt`
+    - _Requirements: 19.7, 19.8_
+
+- [ ] 21. Rebuild history.json and run the final checks
+  - [ ] 21.1 Rebuild `public/data/` and confirm the outputs
+    - `data/raw/` is gitignored. Before building, check that every input of the preflight manifest exists, in particular the real-price registration files under `data/raw/lvr/`. If any file is missing, stop without touching the outputs, report each missing path with its `node scripts/download.ts <download-id>` command from `data/DOWNLOAD.md` (the preflight `MissingInputsError` lists them), and leave this task open
+    - Run `npm run data` and confirm exit code 0
+    - Compare with the committed outputs (`git show HEAD:public/data/history.json` and the others), using a throwaway command that is not added to the repository: `history.json` has the 13 indicators of Requirement 4.11 in order, with `medianTotalPrice` at index 6 holding 41 × 44 records; the `salePrice` and `priceToIncomeRatio` series and every other existing indicator deep-equal the committed version; `districts.json` and `policy-track.json` are byte-identical; `data/SOURCES.md` differs only in the `medianTotalPrice` rows, the new method, the 2a gap row and the new thin-cell table
+    - Report the number of estimated `medianTotalPrice` cells and the count in the exclusion note
+    - Run `npx vitest --run` and `npm run typecheck` and report both exit codes
+    - _Requirements: 1.4, 4.10, 4.11, 16.6, 17.1, 18.7, 19.1_
+
 ## Task Dependency Graph
 
 ```json
@@ -273,12 +364,19 @@ The order follows the design: shared helpers first, then the district file and e
     { "id": 28, "tasks": ["14.3", "15.1"] },
     { "id": 29, "tasks": ["15.2"] },
     { "id": 30, "tasks": ["15.3"] },
-    { "id": 31, "tasks": ["15.4"] }
+    { "id": 31, "tasks": ["15.4"] },
+    { "id": 32, "tasks": ["16.1", "16.2", "17.1"] },
+    { "id": 33, "tasks": ["16.3", "17.2", "18.1"] },
+    { "id": 34, "tasks": ["17.3"] },
+    { "id": 35, "tasks": ["17.4", "17.6", "18.2"] },
+    { "id": 36, "tasks": ["17.5", "17.7", "20.1"] },
+    { "id": 37, "tasks": ["17.8", "20.2", "20.3"] },
+    { "id": 38, "tasks": ["21.1"] }
   ]
 }
 ```
 
-Tasks in the same wave touch different files. Tasks that add Method_Entries to `registry/methods.ts` or steps to `run.ts` are in different waves.
+Tasks in the same wave touch different files. Tasks that add Method_Entries to `registry/methods.ts` or steps to `run.ts` are in different waves. Tasks 17.3 and 17.4 both edit `median-total-price.ts`, and tasks 17.4 and 20.1 both edit `run.ts`, so each pair is in different waves.
 
 ## Notes
 
@@ -286,3 +384,6 @@ Tasks in the same wave touch different files. Tasks that add Method_Entries to `
 - Task 4 retires `build-boundaries.ts`. The user approved deleting `public/data/boundaries.geojson`, but only after checking that `districts.json` holds the boundaries of all 41 districts and that no other code reads `boundaries.geojson`.
 - The policy track assumptions in Decisions D22 to D25 (Open Question 15 of the requirements) are implemented with the stated defaults and flagged as estimated. If the user changes one, only task 11.2 or 12.1 changes.
 - The hook in `.kiro/hooks/test-after-spec-task.json` runs `npm test` after each task.
+- Tasks 16 to 21 implement Requirement 19 and Requirement 4.11 (added 2026-11-16 for the game-ui spec) with Decisions D28 and D29. The two extractions in task 16 must not change `salePrice` or `priceToIncomeRatio`: task 16.3 checks this with the existing tests, and task 21.1 checks it on the rebuilt `history.json`.
+- As in tasks 1 to 15, the test sub-tasks of tasks 16 to 21 are not marked optional, because the user asked for Properties 34 to 36, the Requirement 19.10 examples and the regression check.
+- Task 21.1 needs the gitignored raw files in `data/raw/`. Without them it stops and lists the missing files and their download commands from `data/DOWNLOAD.md`.
