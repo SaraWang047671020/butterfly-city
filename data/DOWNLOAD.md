@@ -23,7 +23,7 @@ node scripts/download.ts all               # everything except hourly MRT OD fil
 node scripts/download.ts lvr income        # selected sources
 node scripts/download.ts mrt --od=2025-12  # also aggregate one month of hourly MRT OD data
 node scripts/download.ts mrt --od=all      # all months (about 35 GB streamed, a few hours)
-node scripts/download.ts air --items=PM2.5,PM10
+node scripts/download.ts air --items=PM2.5,PM10   # no longer used by the data pipeline (air quality is out of scope)
 
 node scripts/check.ts all                  # coverage reports used in DATA-CHECK.md
 node scripts/build-boundaries.ts           # writes public/data/boundaries.geojson

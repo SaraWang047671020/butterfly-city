@@ -11,6 +11,8 @@ reproduced with the scripts in `scripts/` (see `data/DOWNLOAD.md`):
 
 Each section names its source id, e.g. `lvr`.
 
+> **Scope note (2026-11-11):** the project now has 5 policy tools: social housing, sublease, rent subsidy, holding tax and commuter pass subsidy. Section 8 (air quality) and sections 10.5 (MRT extension), 10.7 (TOD) and 10.8 (parks) describe data that is no longer used. They are kept as a record of what was checked.
+
 **Status legend**: ✅ usable as is · ⚠️ usable with a documented gap or workaround · ❌ no source found yet
 
 "OGDL v1" means 政府資料開放授權條款-第1版 (Open Government Data License, version 1.0), as stated on the
@@ -31,7 +33,7 @@ data.gov.tw dataset page.
 | 7 | House-price-to-income ratio | ⚠️ | City | Quarter | 2016 Q3 – 2025 Q4 (PDF); 2015 Q1 – 2016 Q2 not found | City only | Not stated on page |
 | 8 | Air-quality stations | ✅ | Station | Hour | Complete | 16/41 districts have a station | OGDL v1 |
 | 9 | District boundaries | ✅ | District polygon | 2025-03 edition | n/a | 41/41 | OGDL v1 |
-| 10 | Policy tools, real 2015–2025 values | ⚠️ | City (parks also district for Taipei) | Varies | Most tools covered; gaps in rent-subsidy amounts, New Taipei sublease by year, TOD cases, TPASS usage | n/a | Mostly OGDL v1; law and agency pages state none |
+| 10 | Policy tools, real 2015–2025 values | ⚠️ | City | Varies | Most tools covered; gaps in rent-subsidy amounts, New Taipei sublease by year, TPASS usage | n/a | Mostly OGDL v1; law and agency pages state none |
 | 11 | MRT / LRT stations → districts | ✅ | Station point | Current network | Must be filtered by opening date | 21/41 districts have a station in the 2025 network (23/41 including the Sanying Line, opened 2026) | OGDL v1 (TDX terms not verified) |
 | 12 | Commute-time inputs | ⚠️ | Station segment; district shares | Current network; 2020 | Rail network times yes; LRT times and a district OD matrix no | 41/41 for census shares | OGDL v1 (TDX terms not verified) |
 
@@ -245,7 +247,7 @@ All from Taipei Rapid Transit Corporation via data.taipei. License OGDL v1.
 - **License**: not stated on the page.
 - **Raw files** (source id `affordability`): `data/raw/affordability/moi-affordability-YYYYQn.pdf` (`2018Q3-2018Q4` for the combined release).
 
-## 8. Air-quality monitoring stations (Ministry of Environment)
+## 8. Air-quality monitoring stations (Ministry of Environment) (out of scope)
 
 - **Agency**: Ministry of Environment (環境部). License OGDL v1.
 - **Station list**: data.gov.tw 6075 空氣品質監測站基本資料, API `https://data.moenv.gov.tw/api/v2/aqx_p_07?api_key={KEY}&format=JSON`. 80 stations nationwide, with county, district, address and TWD97 coordinates.
@@ -328,7 +330,7 @@ Rates for residential property that is not owner-occupied:
 - The New Taipei law site states "未經允許不得複製". Cite it; do not copy the text.
 - ⚠️ **Gap**: New Taipei's non-owner-occupied rate from 2015 to 2017-06.
 
-### 10.5 MRT extension
+### 10.5 MRT extension (out of scope)
 
 Openings in Taipei and New Taipei, 2015-01-01 – 2025-12-31 (New Taipei DORTS route pages, `https://www.dorts.ntpc.gov.tw/about/route/{id}`; cross-checked with the Taipei Metro chronicle and Railway Bureau dataset 96918):
 
@@ -359,7 +361,7 @@ Openings in Taipei and New Taipei, 2015-01-01 – 2025-12-31 (New Taipei DORTS r
 - ⚠️ **Gaps**: no official TPASS card or user counts, no local-government share of the cost, no confirmed start date for TPASS 2.0 rewards. tpass.gov.tw blocks scripts.
 - Per `product.md`, TPASS is a central-government **event**; the player tool is the city's own commuter subsidy relative to it.
 
-### 10.7 TOD floor-area bonus
+### 10.7 TOD floor-area bonus (out of scope)
 
 | City | Rule | Dates | Size of bonus |
 |---|---|---|---|
@@ -368,7 +370,7 @@ Openings in Taipei and New Taipei, 2015-01-01 – 2025-12-31 (New Taipei DORTS r
 
 - ⚠️ **Gap**: no dataset of approved TOD cases or bonus floor area granted per year in either city. Before 2019 the real value is zero (no program).
 
-### 10.8 Parks, green space and street trees
+### 10.8 Parks, green space and street trees (out of scope)
 
 | Source | Content | Level / time | Coverage | Sample |
 |---|---|---|---|---|
@@ -384,7 +386,7 @@ Openings in Taipei and New Taipei, 2015-01-01 – 2025-12-31 (New Taipei DORTS r
 
 ### 10.9 Spending per tool
 
-`product.md` sets each year's budget to the real spending on the 8 tools. Spending found so far: MRT (Taipei 2015–2022, New Taipei 2016–2025, PDF), rent subsidy (2023 only), TPASS central subsidy (2023–2025). ⚠️ City budget execution reports (決算) by program have **not been checked yet**; they are the likely source for the remaining tools.
+`product.md` sets each year's budget to the real spending on the 5 tools (MRT, TOD and parks figures below are no longer used). Spending found so far: MRT (Taipei 2015–2022, New Taipei 2016–2025, PDF), rent subsidy (2023 only), TPASS central subsidy (2023–2025). ⚠️ City budget execution reports (決算) by program have **not been checked yet**; they are the likely source for the remaining tools.
 
 **Raw files**: `data/raw/policy/housing/`, `data/raw/policy/transit/`, `data/raw/policy/parks/` (115 files).
 

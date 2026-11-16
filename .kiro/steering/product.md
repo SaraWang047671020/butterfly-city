@@ -15,11 +15,13 @@ Built for Kiroween 2026, Costume Contest track. Solo developer.
 - **Users**: participatory budgeting voters; civics and general-education teachers and students.
 - **Positioning**: a *policy consequence previewer*. Existing budget simulators only count money. Butterfly City shows who gets left behind after the money is spent.
 - **Goals**: immersive, grounded in objective data, and genuinely educational.
+- **Focus**: housing affordability in the two cities: rent, purchase price, commute and displacement. All five policy tools act on it.
 
 ## Player role
 
-- The player is a fictional **joint mayor of Taipei and New Taipei**, controlling all 8 policy tools across both cities.
+- The player is a fictional **joint mayor of Taipei and New Taipei**, controlling all 5 policy tools across both cities.
 - Central-government policies (e.g., the New Youth Housing Loan, TPASS, central bank credit controls, interest rate changes) are **events**, not player controls.
+- The rail network (MRT and LRT openings) and TOD zoning rules follow real history. They are baseline data and, where relevant, event cards. The player does not control them.
 
 ## Modes
 
@@ -33,11 +35,11 @@ Built for Kiroween 2026, Costume Contest track. Solo developer.
 
 - Time only advances when the player presses **Next quarter** or **Fast-forward one year**.
 - Fast-forward automatically stops at major events.
-- Events are shocks only in the MVP; they do not present player choices.
+- Events do not present player choices in the MVP. In Historical mode an event's effect is already in the real baseline, so an event never adds to or subtracts from an indicator directly. It can only change how strongly the player's policy differences act, or it is shown as narrative and explanation (see `simulation.md`).
 - The player can adjust policies at any time. Every adjustment is recorded on a **policy timeline**.
 - Progress is saved in the browser so the player can continue the next day.
 
-## Policy tools (3 domains, 8 tools)
+## Policy tools (2 domains, 5 tools)
 
 | Domain | Tool |
 |---|---|
@@ -45,25 +47,24 @@ Built for Kiroween 2026, Costume Contest track. Solo developer.
 | Housing | Sublease and rental management program (包租代管) |
 | Housing | Rent subsidy |
 | Housing | Vacant / multiple-home holding tax |
-| Transit | MRT extension |
 | Transit | Commuter pass subsidy |
-| Transit | TOD floor-area bonus |
-| Environment | Parks, green space, and street trees |
 
-Each tool has: a cost at realistic magnitude, a time lag, primary effects, and cited parameter sources (see `simulation.md`).
+The scope was narrowed from an earlier plan of 8 tools to keep the focus on housing affordability. MRT extension, TOD floor-area bonus, and parks, green space and street trees were removed. Real MRT openings, TOD rules and environmental data may still appear in the real baseline or as event cards, but the player cannot change them.
+
+Each tool has: a cost at realistic magnitude, a time lag, primary effects, an allowed adjustment range, and cited parameter sources (see `simulation.md`).
 
 At the start, every tool is set to its **real historical value**. The player adjusts up or down from reality.
 
 ### Budget
 
-- One budget per year. The total equals the real historical spending on these 8 tools for that year.
-- The player can only reallocate within that total. The budget can never be overspent.
+- One budget per year. The total equals the real historical spending on these 5 tools for that year.
+- The player can only reallocate within that total. The budget can never be overspent, and each tool stays within its own allowed range (see `simulation.md`).
 - Revenue from the holding tax may flow back into the budget (exact rule defined in the simulation spec).
 
 ## Events
 
 - MVP event library: real events from 2015–2025, e.g., the House and Land Consolidated Income Tax, COVID-19, interest rate hikes and cuts, central bank credit controls, TPASS, the New Youth Housing Loan, earthquakes.
-- Each event card has: real date, type, affected indicators, impact magnitude measured from data at the time, and source links.
+- Each event card has: real date, type, affected indicators, impact magnitude measured from data at the time, and source links. The measured impact explains what happened; it is already in the real baseline and is not applied a second time.
 - Event card text describes **what happened only** (see `neutrality.md`).
 
 ## Citizens and ghosts (the Halloween theme is functional)

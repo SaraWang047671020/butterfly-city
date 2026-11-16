@@ -25,6 +25,7 @@ inclusion: always
 - Raw open data is processed **locally** by Node scripts in `scripts/` into static JSON in `public/data/`:
   - `districts.json`: district attributes, boundaries reference, adjacency and commute-time matrix
   - `history.json`: real quarterly baseline per district (2015 Q1 – 2025 Q4)
+  - `policy-track.json`: real quarterly values of the 5 policy tools, each with a source and an estimate flag
   - `events.json`: event cards
   - `params.json`: simulation parameter table with sources
 - The web app only reads these JSON files. It never fetches live data at runtime.
@@ -81,5 +82,6 @@ npm install
 npm run dev          # run manually by the user
 npm run build
 npx vitest --run
+npm run backtest     # recompute docs/BACKTEST.md (once the engine exists)
 npm run data         # rebuild public/data/*.json from data/raw (once scripts exist)
 ```

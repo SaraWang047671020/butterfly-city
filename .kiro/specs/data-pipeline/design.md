@@ -2,16 +2,17 @@
 
 ## Overview
 
-The data pipeline is one Node command, `npm run data`, that turns the raw open data in `data/raw/` and a small set of committed tables into three outputs:
+The data pipeline is one Node command, `npm run data`, that turns the raw open data in `data/raw/` and a small set of committed tables into four outputs:
 
 - `public/data/districts.json`: the 41 districts with city, romanized name, land area, centroid and simplified boundary geometry.
-- `public/data/history.json`: the real quarterly baseline, 2015Q1 to 2025Q4, for 11 district indicators and 2 city indicators, with an estimate flag and a method id on every estimated value. It also embeds the source registry and method list it references, so the web app can show provenance without parsing Markdown.
-- `data/SOURCES.md`: a generated document listing every source, every method, the reference-district table, the MRT station notes and the known data gaps.
+- `public/data/history.json`: the real quarterly baseline, 2015Q1 to 2025Q4, for 10 district indicators and 2 city indicators, with an estimate flag and a method id on every estimated value. It also embeds the source registry and method list it references, so the web app can show provenance without parsing Markdown.
+- `public/data/policy-track.json`: the real quarterly track of the 5 player policy tools, 2015Q1 to 2025Q4, 10 series, each value with its source and an estimate flag (and a method id when estimated). It embeds its own source and method registry.
+- `data/SOURCES.md`: a generated document listing every source, every method, the reference-district table, the MRT station notes, the policy-series assumptions and the known data gaps.
 
 The pipeline:
 
 - reads only `data/raw/` and committed repository files, and never imports the HTTP helpers;
-- builds and validates all three outputs in memory before writing anything;
+- builds and validates all four outputs in memory before writing anything;
 - writes all outputs in one transaction that restores the previous files if any write fails;
 - produces byte-identical output for identical input, in PowerShell and Git Bash, on any machine.
 
@@ -31,7 +32,8 @@ It reuses the existing code: `scripts/lib/` (CSV parser, district table, ROC tim
 - **CPI rent series**: the Taipei DBAS CSV has the columns `統計期`, `基本分類`, `原始值[統計數值]`, `年增率[%]`, `縣市別代碼`; the DGBAS XML has `<Obs>` elements with `Item` `1.房租(指數基期：民國110年=100)`, `TIME_PERIOD` `YYYYMmm` and `TYPE` `原始值`.
 - **MRT annual series** columns: `統計期` (`103年`), `捷運站別`, `進站人次`, `出站人次`.
 - **DGBAS 9415** columns: `年`, `臺北市-元`, `新北市-元` (one row per year from 1998).
-- **PM2.5 daily completeness**: a 24-hour average needs at least 18 of 24 hourly values (75 %) under US EPA 40 CFR Part 50, Appendix N, which is also the example in Requirement 12.1. The equivalent MOENV rule was not found in the Air Pollution Control Act text ([law.moj.gov.tw O0020001](https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=O0020001)); the design uses 18 and records the EPA citation in the method entry until an MOENV citation is found.
+- **Policy raw files checked on disk** (2026-11 download): the MOI E3010 JSON tables (6_1_3 and 6_3_1) hold a `resultTable` whose header cells are ROC quarters such as `104Q1` (add 1911), city labels `台北市` and `新北市`, and values with thousands separators such as `4,213.00`. MOI dataset 169800 has, for ROC year 112, household-months and subsidy amounts (NT$ thousand) per city. MOF dataset 6742 has a `房屋稅` column and row labels such as `90年/ 新北市(改制後)`.
+- **Holding tax rates in law**: the House Tax Act range for other residential buildings was 1.5–3.6 % from 2014-06-06 and 2.0–4.8 % from 2024-07-01. The New Taipei ordinance was enacted on 2016-07-20 and took effect on 2017-07-01, so its rate before that date is not in any legal text found (Requirement 12.10).
 - **Node string sort is by UTF-16 code unit, and `localeCompare` depends on the ICU locale.** `scripts/build-boundaries.ts` uses `localeCompare` to sort features; the pipeline replaces it with an explicit code-point comparator.
 - **`fs.renameSync` on Windows** replaces an existing destination (Node uses `MoveFileEx` with `MOVEFILE_REPLACE_EXISTING`), but fails if another process holds the file open. The writer treats a failed rename like a failed write and rolls back.
 - **Git line endings**: with `core.autocrlf=true` (the Git for Windows default), LF files can be checked out as CRLF. A `.gitattributes` entry forces LF for the generated files.
@@ -71,8 +73,10 @@ scripts/
     │   ├── cpi.ts                # Taipei DBAS CSV, DGBAS XML
     │   ├── rent-stats.ts         # MOI district rent statistics ODS
     │   ├── mrt.ts                # annual series, daily Big5 files
-    │   ├── air.ts                # station metadata, aqx_p_13 daily rows
-    │   ├── social-housing.ts     # NLMA list and detail JSON
+    │   ├── rent-subsidy.ts       # MOI E3010 JSON tables 6_1_3 and 6_3_1, MOI 169800 CSV
+    │   ├── house-tax.ts          # MOF 6742 CSV
+    │   ├── policy-tables.ts      # committed tables: holding tax rates, commuter pass products, sublease phases
+    │   ├── social-housing.ts     # NLMA list and detail JSON (completion and start dates)
     │   └── reference-ratios.ts   # optional hand-entered MOI price-to-income table
     ├── indicators/               # pure builders: parsed rows → IndicatorSeries
     │   ├── population.ts
@@ -82,8 +86,14 @@ scripts/
     │   ├── rent.ts
     │   ├── price-to-income.ts
     │   ├── mrt.ts
-    │   ├── pm25.ts
     │   └── social-housing.ts
+    ├── policy/                   # pure builders: parsed rows + committed tables → PolicySeries
+    │   ├── social-housing-starts.ts
+    │   ├── rent-subsidy.ts
+    │   ├── sublease.ts
+    │   ├── holding-tax.ts
+    │   └── commuter-pass.ts
+    ├── policy-file.ts            # assembles PolicyTrackFile from PolicySeries + registries
     ├── districts-file.ts         # builds DistrictsFile from shapes
     ├── history-file.ts           # assembles HistoryFile from IndicatorSeries + registries
     ├── sources-doc.ts            # renders data/SOURCES.md from registries and build notes
@@ -96,7 +106,10 @@ src/
 data/config/
 ├── banned-terms.txt              # one term per line, seeded from neutrality.md
 ├── banned-terms-exempt.txt       # official policy or dataset titles that may contain a banned term
-└── moi-price-to-income.csv       # optional hand-entered MOI ratios (Requirement 10.5)
+├── moi-price-to-income.csv       # optional hand-entered MOI ratios (Requirement 10.5)
+├── holding-tax-rates.csv         # effective-dated rates with legal text, article and source (Requirement 12.9)
+├── commuter-pass-products.csv    # pass products with start date, price and source (Requirement 12.12)
+└── sublease-phases.csv           # phase start dates and cumulative totals with source (Requirement 12.8)
 
 .gitattributes                    # public/data/*.json and data/SOURCES.md: text eol=lf
 ```
@@ -122,16 +135,17 @@ flowchart TD
   RS[MOI rent stats] --> RENT
   SP --> RENT
   D --> MRT[MRT entries: point-in-polygon,<br/>seasonal split]
-  D --> PM[PM2.5: station district,<br/>nearest available station]
   SH[social housing completions + stock]
-  POP & MIG & HI & SP & RENT & HPI & MRT & PM & SH --> H[history-file: assemble + embed registry]
+  PT[policy track: 5 tools,<br/>committed tables + MOI + NLMA + MOF] --> PF[policy-file: assemble + embed registry]
+  POP & MIG & HI & SP & RENT & HPI & MRT & SH --> H[history-file: assemble + embed registry]
   D --> V
   H --> V[validate.ts: all files, all errors]
+  PF --> V
   V -->|errors| X2[exit 1, print file + JSON path per error]
   V --> S[sources-doc: render SOURCES.md]
   S --> BT[banned-term check]
   BT -->|match| X3[exit 1, print term + line]
-  BT --> W[write.ts: transactional write of 3 files]
+  BT --> W[write.ts: transactional write of 4 files]
   W -->|write fails| R[rollback to pre-run bytes, exit 1]
   W --> OK[print one summary line per indicator, exit 0]
 ```
@@ -177,10 +191,10 @@ export interface RawReader {
 | `macro` | `macro/taipei-A21000102-cpi-monthly.csv`; `macro/dgbas-pr0101a1m-cpi-basic.xml` |
 | `mrt` | `mrt/taipei-133184-annual-station.csv`; `mrt/daily/taipei-entries-{2015-01..2016-12}.csv` |
 | `stations` | `stations/tdx-station-TRTC.json`, `stations/tdx-station-NTMC.json` |
-| `air` | `air/moenv-aqx_p_07.json`; one `air/aqx_p_13-PM25/{siteid}-{name}.json` per station in the two cities |
+| `policy` | `policy/housing/pip-e3010-6_1_3-taipei-newtaipei.json`, `policy/housing/pip-e3010-6_3_1-taipei-newtaipei.json`, `policy/housing/datagov-169800.csv`, `policy/housing/datagov-6742.csv` |
 | `social-housing` | `social-housing/nlma-portal-GetScheduleData-{A,F}.json`; `social-housing/nlma-portal-dashboard/` |
 
-Preflight checks all entries and throws one `MissingInputsError` listing each missing path and `node scripts/download.ts <downloadId>` (Requirement 2.3). Missing per-project detail files are not a preflight error; Requirement 13.5 handles them as exclusions.
+Preflight checks all entries and throws one `MissingInputsError` listing each missing path and `node scripts/download.ts <downloadId>` (Requirement 2.3). Missing per-project detail files are not a preflight error; Requirement 13.5 handles them as exclusions. The three committed tables in `data/config/` (holding tax rates, commuter pass products, sublease phases) are checked in the same step. A missing table is reported as a missing committed file, with no download command.
 
 ## Components and Interfaces
 
@@ -255,7 +269,7 @@ export function writeAll(writes: readonly PlannedWrite[], fs?: WriteFs): void
 
 1. **Snapshot**: for each target, record the current bytes, or record that it is absent.
 2. **Stage**: write each text to `<target>.pipeline-tmp` in the same directory (same volume, so rename is a move, not a copy).
-3. **Commit**: rename each temp file over its target, in the fixed order districts → history → sources.
+3. **Commit**: rename each temp file over its target, in the fixed order districts → history → policy-track → sources.
 4. **On any failure in stage or commit**: for every target already renamed, write back the snapshot bytes, or delete it if it was absent; delete all temp files; then throw `PipelineError` naming the failed file (Requirement 16.8, 2.5).
 5. **On success**: no temp files remain.
 
@@ -271,7 +285,7 @@ The types and the validator live in `src/`, not `scripts/` (Decision D2):
 
 ```ts
 export interface ValidationError {
-  readonly file: 'districts.json' | 'history.json';
+  readonly file: 'districts.json' | 'history.json' | 'policy-track.json';
   readonly path: string;     // JSON path, e.g. $.indicators[2].series["65000200"][17].value
   readonly rule: string;     // e.g. "type", "required", "district-code", "quarter-span", "range", "method-ref"
   readonly message: string;
@@ -279,9 +293,11 @@ export interface ValidationError {
 export interface ValidationContext {
   readonly districtCodes: readonly string[]; // exactly the 41 codes
   readonly quarters: readonly string[];      // exactly 2015Q1..2025Q4
+  readonly indicatorIds: readonly string[];  // ids in history.json, for the unique-name check of policy series
 }
 export function validateDistrictsFile(x: unknown, ctx: ValidationContext): ValidationError[];
 export function validateHistoryFile(x: unknown, ctx: ValidationContext): ValidationError[];
+export function validatePolicyTrackFile(x: unknown, ctx: ValidationContext): ValidationError[];
 ```
 
 The validator is hand-written (Decision D2): small typed checkers (`isObject`, `expectString`, `expectFiniteNumber`, `expectBoolean`, `expectArray`) that append to an error list and keep going. It runs on the in-memory object before serialization (Requirement 16.2), and the round-trip tests also run it on parsed JSON.
@@ -304,6 +320,18 @@ Checks for `history.json`:
 | `decimals` | `roundTo(value, decimals) === value`. |
 
 Checks for `districts.json`: required fields and types; exactly 41 entries in ascending code order with codes from the context; `city` ∈ {Taipei, New Taipei}; `areaKm2 > 0` with 2 decimals; centroid with 5 decimals inside the entry's geometry bounding box; geometry is `Polygon` or `MultiPolygon`; every ring closed with ≥ 4 positions; exterior rings clockwise and holes counterclockwise by the sign of the planar shoelace area (`signedArea` < 0 for clockwise, as in `scripts/geo/shapefile.ts`, reimplemented in `src/` because `src/` cannot import `scripts/`); coordinates with ≤ 5 decimals; every `sources` reference defined in the file's embedded `sources`.
+
+Checks for `policy-track.json` use the same `required`, `type`, `quarter-span`, `finite`, `method-ref`, `source-ref`, `source-entry`, `credential`, `range` and `decimals` rules as `history.json`, with these differences:
+
+| Rule | Check |
+|---|---|
+| `district-code` | A series with `level: 'district'` has exactly the 41 codes; a series with `level: 'city'` has exactly `Taipei` and `New Taipei`. |
+| `track-source` | Every Track_Record has a `source` defined in the embedded `sources`. |
+| `estimate` | `estimated: true` → exactly one `method` defined in the embedded `methods`; `false` → no `method`. A Track_Record never has a `null` value. |
+| `tool` | `tool` is one of the five `PolicyToolId` values. |
+| `unique-id` | Series ids are unique and do not appear in `ctx.indicatorIds`. |
+| `policy-series-set` | The file has exactly the 10 series ids of the Policy series table, no others. |
+| `rate-order` | For each city and quarter, `holdingTaxRateLowestTier` ≤ `holdingTaxRateHighestTier`. |
 
 ## Data Models
 
@@ -407,6 +435,40 @@ export interface DistrictsFile {
   readonly sources: readonly SourceEntry[];
   readonly methods: readonly MethodEntry[];
 }
+
+export type PolicyToolId = 'socialHousing' | 'sublease' | 'rentSubsidy' | 'holdingTax' | 'commuterPass';
+
+/** One real value of a policy series for one district or city and one quarter. */
+export type TrackRecord =
+  | { readonly value: number; readonly source: string; readonly estimated: false }
+  | { readonly value: number; readonly source: string; readonly estimated: true; readonly method: string };
+
+interface PolicySeriesBase {
+  readonly id: string;            // camelCase, unique across indicators and policy series
+  readonly tool: PolicyToolId;
+  readonly unit: string;
+  readonly kind: IndicatorKind;   // drives the range check
+  readonly decimals: number;      // 0..6
+  readonly description: string;   // English, 1..200 characters, neutral wording
+  readonly sources: readonly string[]; // Source_Ids, at least one
+}
+export interface DistrictPolicySeries extends PolicySeriesBase {
+  readonly level: 'district';
+  readonly series: Readonly<Record<DistrictCode, readonly TrackRecord[]>>; // 41 keys × 44 records
+}
+export interface CityPolicySeries extends PolicySeriesBase {
+  readonly level: 'city';
+  readonly series: Readonly<Record<CityName, readonly TrackRecord[]>>;     // 2 keys × 44 records
+}
+export type PolicySeries = DistrictPolicySeries | CityPolicySeries;
+
+export interface PolicyTrackFile {
+  readonly schemaVersion: 1;
+  readonly quarters: readonly QuarterKey[];     // the 44 keys
+  readonly policySeries: readonly PolicySeries[]; // fixed order, see the Policy series table
+  readonly sources: readonly SourceEntry[];
+  readonly methods: readonly MethodEntry[];
+}
 ```
 
 `districts` is an array sorted by `code`, each entry carrying its `code`. This satisfies "keyed by District_Code" (Requirement 3.1) and keeps the order explicit (Requirement 3.6). History series use objects keyed by code because the engine looks values up by code.
@@ -423,11 +485,27 @@ export interface DistrictsFile {
 | 6 | `salePrice` | district | TWD per m² | positive | 0 | lvr/moi-25119 |
 | 7 | `rent` | district | TWD per m² per month | positive | 1 | lvr/moi-25118, macro/taipei-dbas-131822, macro/dgbas-6019, rent/moi-rent-stats |
 | 8 | `mrtEntries` | district | entries per quarter | count | 0 | mrt/trtc-133184, mrt/trtc-128683, stations/tdx-metro-station, boundaries/moi-7441 |
-| 9 | `pm25` | district | µg/m³ | non-negative | 1 | air/moenv-6075, air/moenv-28178, boundaries/moi-7441 |
-| 10 | `socialHousingCompletions` | district | units per quarter | count | 0 | social-housing/nlma-portal |
-| 11 | `socialHousingStock` | district | units | count | 0 | social-housing/nlma-portal |
-| 12 | `cityDisposableIncome` | city | TWD per household per year | positive | 0 | income/dgbas-9415 |
-| 13 | `priceToIncomeRatio` | city | years of income | positive | 2 | lvr/moi-25119, income/dgbas-9415 |
+| 9 | `socialHousingCompletions` | district | units per quarter | count | 0 | social-housing/nlma-portal |
+| 10 | `socialHousingStock` | district | units | count | 0 | social-housing/nlma-portal |
+| 11 | `cityDisposableIncome` | city | TWD per household per year | positive | 0 | income/dgbas-9415 |
+| 12 | `priceToIncomeRatio` | city | years of income | positive | 2 | lvr/moi-25119, income/dgbas-9415 |
+
+### Policy series (fixed order, policy-track.json)
+
+| # | id | Tool | Level | Unit | Kind | Decimals | Sources |
+|---|---|---|---|---|---|---|---|
+| 1 | `socialHousingUnitsStarted` | socialHousing | district | units per quarter | count | 0 | social-housing/nlma-portal |
+| 2 | `subleaseUnitsMatched` | sublease | city | units per quarter | count | 0 | policy/moi-b5010 |
+| 3 | `rentSubsidyHouseholds` | rentSubsidy | city | households | count | 0 | policy/moi-e3010 |
+| 4 | `rentSubsidyAmountPerHousehold` | rentSubsidy | city | TWD per household per month | non-negative | 0 | policy/moi-169800 |
+| 5 | `holdingTaxRateLowestTier` | holdingTax | city | percent of assessed house value | percent | 2 | policy/house-tax-act, policy/taipei-ordinance, policy/ntpc-ordinance |
+| 6 | `holdingTaxRateHighestTier` | holdingTax | city | percent of assessed house value | percent | 2 | same as #5 |
+| 7 | `houseTaxRevenue` | holdingTax | city | NT$ thousand per quarter | count | 0 | policy/mof-6742 |
+| 8 | `commuterPassPrice` | commuterPass | city | TWD per 30-day pass | non-negative | 0 | policy/trtc-products |
+| 9 | `commuterPassSubsidy` | commuterPass | city | TWD per 30-day pass | non-negative | 0 | policy/trtc-products |
+| 10 | `commuterPassesSold` | commuterPass | city | passes per quarter | count | 0 | policy/taipei-dot-2020, population/ris-odrp060 |
+
+Series 1 is the only district-level series. The other nine are city-level because the sources publish them for the two cities only. Series 8 to 10 are 0 before the first pass product (2018-04-16).
 
 ### JSON layout examples
 
@@ -533,6 +611,36 @@ export interface DistrictsFile {
 }
 ```
 
+`public/data/policy-track.json` (excerpt):
+
+```json
+{
+  "schemaVersion": 1,
+  "quarters": ["2015Q1", "…", "2025Q4"],
+  "policySeries": [
+    {
+      "id": "rentSubsidyAmountPerHousehold",
+      "tool": "rentSubsidy",
+      "level": "city",
+      "unit": "TWD per household per month",
+      "kind": "non-negative",
+      "decimals": 0,
+      "description": "Average subsidy per subsidized household per month; the 2023 average is used for every quarter.",
+      "sources": ["policy/moi-169800"],
+      "series": {
+        "Taipei": [
+          { "value": 4699, "source": "policy/moi-169800", "estimated": true, "method": "rent-amount-carry" }
+        ]
+      }
+    }
+  ],
+  "sources": [ { "id": "policy/moi-169800", "…": "…" } ],
+  "methods": [ { "id": "rent-amount-carry", "…": "…" } ]
+}
+```
+
+(The numbers above illustrate the format only.)
+
 ### Source registry (`registry/sources.ts`)
 
 One `SourceEntry` per dataset. The id prefix is the `scripts/download.ts` id that fetches it, so a missing-file message and a provenance link name the same command. URLs point to the data.gov.tw catalog page or the agency page, not to download endpoints with keys; `redactUrl(url)` still replaces the value of any query parameter whose name matches `/^(api_?key|key|token|access_token|client_secret|secret)$/i` with `REDACTED` (Requirement 14.6).
@@ -559,10 +667,19 @@ One `SourceEntry` per dataset. The id prefix is the `scripts/download.ts` id tha
 | `mrt/trtc-133184` | Taipei Rapid Transit Corporation (via Taipei DBAS) | 臺北捷運各站進出人次 | https://data.gov.tw/dataset/133184 | 2015–2025 | OGDL v1.0 |
 | `mrt/trtc-128683` | Taipei Rapid Transit Corporation | 臺北捷運各站進出量統計 | https://data.gov.tw/dataset/128683 | 2015–2016 | OGDL v1.0 |
 | `stations/tdx-metro-station` | MOTC Transport Data eXchange | Rail/Metro/Station TRTC, NTMC | https://tdx.transportdata.tw/ | 2025–2026 | not stated |
-| `air/moenv-6075` | Ministry of Environment | 空氣品質監測站基本資料 | https://data.gov.tw/dataset/6075 | 2025–2026 | OGDL v1.0 |
-| `air/moenv-28178` | Ministry of Environment | 空氣品質監測小時值 | https://data.gov.tw/dataset/28178 | 2015–2025 | OGDL v1.0 |
 | `social-housing/nlma-portal` | National Land Management Agency, MOI | 社會住宅即時資訊平台 | https://socialhousing.nlma.gov.tw/CPA_SocialHousing_Portal/ | 1971–2026 | not stated |
 | `affordability/moi-e1050` | MOI (Real Estate Information Platform) | 房價負擔能力統計 | https://pip.moi.gov.tw/Publicize/Info/E1050 | 2016–2025 | not stated |
+| `policy/moi-e3010` | MOI (Real Estate Information Platform) | 住宅補貼 tables 6_1_3 and 6_3_1 (rent subsidy households) | https://pip.moi.gov.tw/Publicize/Info/E3010 | 2015–2025 | not stated |
+| `policy/moi-169800` | MOI | 租金補貼 household-months and amounts | https://data.gov.tw/dataset/169800 | 2023–2023 | OGDL v1.0 |
+| `policy/moi-b5010` | MOI (Real Estate Information Platform) | 包租代管 cumulative matches by phase | https://pip.moi.gov.tw/Publicize/Info/B5010 | 2017–2026 | not stated |
+| `policy/house-tax-act` | Ministry of Finance | 房屋稅條例 (House Tax Act), rate range for other residential buildings | URL of the legal text, one per row of `holding-tax-rates.csv` | 2014–2025 | not stated |
+| `policy/taipei-ordinance` | Taipei City Government | Taipei house tax collection rules | URL of the legal text, one per row of `holding-tax-rates.csv` | 2015–2025 | not stated |
+| `policy/ntpc-ordinance` | New Taipei City Government | New Taipei house tax collection rules | URL of the legal text, one per row of `holding-tax-rates.csv` | 2017–2025 | not stated |
+| `policy/mof-6742` | MOF | 賦稅統計 house tax collections by county | https://data.gov.tw/dataset/6742 | 2015–2025 | OGDL v1.0 |
+| `policy/trtc-products` | Taipei Rapid Transit Corporation | Commuter pass products and prices | URL per row of `commuter-pass-products.csv` | 2018–2025 | not stated |
+| `policy/taipei-dot-2020` | Taipei City Department of Transportation | Commuter pass cumulative sales to 2020-12-31 | URL per row of `commuter-pass-products.csv` | 2018–2020 | not stated |
+
+For the rows of `policy/` sources whose URL is given as "per row", the registry entry takes the URL of the first row of the committed table that cites it, and SOURCES.md lists every row.
 
 TDX's terms of use were not verified (DATA-CHECK.md gap 8); "not stated" is recorded until they are. `affordability/moi-e1050` is cited only by the price-to-income validation note, not by an output value.
 
@@ -580,10 +697,16 @@ TDX's terms of use were not verified (DATA-CHECK.md gap 8); "not stated" is reco
 | `rent-reference-sale-ratio` | estimation | `rent` | reference districts not covered by MOI rent statistics |
 | `price-to-income-computed` | estimation | `priceToIncomeRatio` | 2015Q1–2025Q4 |
 | `mrt-seasonal-split` | estimation | `mrtEntries` | every quarter of a district with an Active_Station |
-| `pm25-nearest-station` | estimation | `pm25` | district-quarters with no available station |
+| `rent-amount-annual-average` | estimation | `rentSubsidyAmountPerHousehold` | 2023Q1–2023Q4 |
+| `rent-amount-carry` | estimation | `rentSubsidyAmountPerHousehold` | every quarter outside 2023 |
+| `sublease-phase-spread` | estimation | `subleaseUnitsMatched` | 2015Q1–2025Q4 |
+| `holding-tax-statutory-minimum` | estimation | `holdingTaxRateLowestTier`, `holdingTaxRateHighestTier` | New Taipei, 2015Q1–2017Q2 |
+| `house-tax-even-split` | estimation | `houseTaxRevenue` | 2015Q1–2025Q4 |
+| `commuter-subsidy-definition` | estimation | `commuterPassSubsidy` | 2015Q1–2025Q4 |
+| `commuter-passes-estimate` | estimation | `commuterPassesSold` | 2015Q1–2025Q4 |
 | `district-area`, `district-centroid`, `boundary-simplify` | estimation | districts.json fields | n/a |
 
-`MethodEntry.steps` hold the formulas below in plain English. A method whose `kind` is `missing-reason` would document a `null` value; none is defined because none is emitted.
+`MethodEntry.appliesTo` lists indicator ids or policy series ids. `MethodEntry.steps` hold the formulas below in plain English. A method whose `kind` is `missing-reason` would document a `null` value; none is defined because none is emitted.
 
 ### Per-indicator algorithms
 
@@ -765,29 +888,6 @@ mrtEntries(d, q)    = Σ over rows r with district(station(r)) = d and r active 
 
 `apportion` with zero weights for inactive quarters gives both the opening-year rescaling (Requirement 11.13) and full-year splitting (Requirement 11.7); its exact-sum guarantee meets Requirement 11.14 with a difference of 0. Districts with no active row in a quarter get `0, estimated: false`; all other district-quarters are `estimated: true` with `mrt-seasonal-split` (Requirement 11.9, 11.10). An unknown row name or an active row without a value for a year stops the build (Requirement 11.11). SOURCES.md carries the border-station list, the comparable stations and the note on Danhai LRT, Ankeng LRT and Sanying Line (Requirement 11.12).
 
-#### PM2.5 (Requirement 12)
-
-```
-validHour(v)   = v is non-empty, has no flag (#, *, x, A) and parses as a number ≥ 0
-dailyMean(s,t) = mean of valid hours of station s on date t     if ≥ 18 valid hours, else invalid
-row selection  = when several rows exist for (s, t), take the row with the most valid hours;
-                 ties go to the first in file order (files are read in sorted order)
-quarterly(s,q) = mean of valid daily means of s in q             if ≥ ceil(0.75 · days in q) valid days, else unavailable
-```
-
-- Station district: `districtAt([twd97lon, twd97lat], shapes)`. This places Shilin and Yangming in Beitou, and Cailiao and Sanchong in Sanchong (Requirement 12.2).
-- One available station in `d` → its value; two or more → equal-weight mean; both `estimated: false` (Requirement 12.3, 12.4).
-- No available station in `d` → value of the nearest available station by `haversineKm(centroid(d), station)`; ties go to the lower station id; `estimated: true` with `pm25-nearest-station` (Requirement 12.6).
-- No available station in either city in a quarter stops the build (Requirement 12.8).
-
-Nearest station rather than inverse-distance weighting (Decision D9):
-
-- **Explainable**: the "Why?" view can say "measured at station X, Y km away". IDW would need to list every station and its weight.
-- **No cross-terrain mixing**: 25 of 41 districts have no station, and many are mountain districts. IDW would blend urban traffic stations into them across ridges. Nearest-station picks one real measurement.
-- **Trade-off**: values jump when the nearest available station changes. This happens, for example, when Fuguijiao becomes available in late 2017. SOURCES.md lists the station used per district.
-
-The minimum valid days per quarter (75 %, the same completeness ratio as the daily rule) is a design choice recorded in the method entry.
-
 #### Social housing (Requirement 13)
 
 ```
@@ -808,6 +908,72 @@ Projects with an empty or unparseable date, no detail file, or a TownCode outsid
 3. `areaKm2 = roundTo(Σ area, 2)`, `centroid = roundTo(centroid, 5)` from the unsimplified polygons; `name` and `city` from `scripts/lib/districts.ts`.
 4. Entries sorted by `codePointCompare(code)`.
 
+### Policy track (`policy/`, Requirement 12)
+
+Each builder is a pure function from parsed rows and committed-table rows to one or more `PolicySeries`. A district-level series has 41 × 44 Track_Records and a city-level series has 2 × 44. Every Track_Record carries one Source_Id. Before a program starts, its Track_Records are 0 (Requirement 12.13).
+
+**Parsers.**
+
+- `rent-subsidy.ts` reads the E3010 JSON: header cell `104Q1` → 2015Q1 (add 1911 to the ROC year), city label `台北市` → Taipei and `新北市` → New Taipei, values with thousands separators and decimals (`"4,213.00"`) parsed after removing commas. It also reads MOI 169800 (household-months and amount in NT$ thousand per city and ROC year). A missing header, an unknown city label or a non-numeric cell throws `ParseError`.
+- `house-tax.ts` reads MOF 6742: ROC year and city from labels such as `90年/ 新北市(改制後)`, and the `房屋稅` column in NT$ thousand.
+- `policy-tables.ts` reads the three committed CSV tables. It checks every row (valid ISO date, date later than the previous row of the same city and series, positive rate or price, non-empty source) and throws `DataError` with the table path, the row number and the reason (Requirement 12.15).
+
+**Social housing starts** (series 1). Same project list, de-duplication and detail files as completions:
+
+```
+startQuarter(p)           = quarter of strStartDate (ROC yyy/mm/dd + 1911)
+socialHousingUnitsStarted(d, q) = Σ household_num of projects of any status with district d and startQuarter = q
+```
+
+Projects with an empty or unparseable start date, no detail file or a TownCode outside the 41 are excluded and printed (Requirement 12.5). All records `estimated: false`.
+
+**Rent subsidy** (series 3 and 4).
+
+```
+rentSubsidyHouseholds(c, q) = hh613(c, q) + hh631(c, q)           a table without a figure for q counts as 0
+amount2023(c)               = round( total2023(c) · 1000 / householdMonths2023(c) )     Taipei ≈ 4,699; New Taipei ≈ 3,648
+rentSubsidyAmountPerHousehold(c, q) = amount2023(c)   for every q
+```
+
+Quarters of 2023 use `rent-amount-annual-average` and all other quarters `rent-amount-carry`, both `estimated: true`. A value outside 1,000–10,000 stops the build (a guard against a unit error such as NT$ thousand versus NT$). Households are `estimated: false`.
+
+**Sublease** (series 2). `sublease-phases.csv` has the columns `city,channel,phase,start_date,total_units,as_of,source`. Phase 1 is entered in the `city` channel. For each city and channel, phase `i` spans from its start date to the start date of phase `i+1` in the same channel, or to `as_of` (2026-10-31) for the last phase:
+
+```
+span(i)     = days in [start(i), end(i))
+counted(i)  = days of that span on or before 2025-12-31
+units(i)    = round( total(i) · counted(i) / span(i) )
+subleaseUnitsMatched(c, ·) = Σ over channels and phases of apportion(units(i), daysInQuarter weights over the counted days)
+```
+
+Every record is `estimated: true` with `sublease-phase-spread`. Phase 1 has no published start date; `2017-01-01` is assumed (Decision D23).
+
+**Holding tax** (series 5 to 7). `holding-tax-rates.csv` has the columns `city,effective_date,lowest_rate,highest_rate,legal_text,article_or_version,source`, with rows for `Taipei`, `New Taipei` and `statutory` (the House Tax Act range).
+
+```
+rate(c, q) = row of city c with the latest effective_date ≤ last day of q
+             if none: lowest = highest = lowest_rate of the statutory row in force on that day   (holding-tax-statutory-minimum, estimated)
+houseTaxRevenue(c, q) = apportion( annual(c, year(q)) , [1, 1, 1, 1] )[quarter index]            (house-tax-even-split, estimated)
+```
+
+Rates read from a row are `estimated: false`.
+
+**Commuter pass** (series 8 to 10). `commuter-pass-products.csv` has the columns `city,product,start_date,price_twd,source` (2018-04-16: NT$ 1,280; 2023-07-01: NT$ 1,200).
+
+```
+commuterPassPrice(c, q)   = price of the latest product of c with start_date ≤ last day of q, else 0        (observed)
+commuterPassSubsidy(c, q) = 0                                                                              (commuter-subsidy-definition)
+r0                        = 9,240,000 passes / 991 days            cumulative sales 2018-04-16 .. 2020-12-31
+share(c, q)               = population(c, q) / (population(Taipei, q) + population(New Taipei, q))
+weight(c, q)              = r0 · activeDays(c, q) · share(c, q)     activeDays = days of q with price > 0
+commuterPassesSold        = apportion(9,240,000, weight over 2018Q2..2020Q4, both cities)
+                            round(weight(c, q)) for later quarters (the daily rate is held)                (commuter-passes-estimate)
+```
+
+Both estimates are low-confidence assumptions (Decision D22). `commuterPassesSold` is 0 whenever `commuterPassPrice` is 0.
+
+**Assembly.** `policy-file.ts` builds the `PolicyTrackFile` with the series in the fixed order, rounds each value to its `decimals`, and embeds the referenced Source_Entries and Method_Entries.
+
 ### Sources document (`sources-doc.ts`)
 
 `renderSourcesDoc(state)` returns a string built from the registries and the build notes. It contains no date, path or environment value. Sections, in fixed order:
@@ -819,8 +985,8 @@ Projects with an empty or unparseable date, no detail file, or a TownCode outsid
 5. Methods: for each method, its inputs, steps, indicators, quarters and "Sets `estimated: true`" (Requirement 15.4).
 6. Rent reference districts: district, reference, method, record count, ratio (Requirement 9.6).
 7. MRT notes: border stations with point district and address district; comparable stations; lines not included.
-8. PM2.5 station use: stations per district and the nearest station used for districts without one.
-9. Known data gaps: one row per DATA-CHECK.md gap that affects an output field (items 1, 2a, 2b, 3b, 4, 7, 8), with item number, affected fields, quarter range or districts, and Method_Id (Requirement 15.5).
+8. Policy series: for each series its unit, sources, the share of estimated Track_Records, the assumption of each Method_Id and the data that would replace the estimate (Requirement 12.16), plus every row of the three committed tables with its source.
+9. Known data gaps: one row per DATA-CHECK.md gap that affects an output field (items 1, 2a, 2b, 3b, 4, 7, 10), with item number, affected fields, quarter range or districts, and Method_Id (Requirement 15.5).
 
 ### Banned-term check (`banned-terms.ts`)
 
@@ -913,7 +1079,7 @@ All properties below test pure functions with generated in-memory inputs. None r
 
 *For any* partition of a rectangle into a grid of rectangular districts (some with a hole that is itself another district) and any point strictly inside one cell and outside its holes, `districtAt` returns that cell's district.
 
-**Validates: Requirements 11.1, 12.2**
+**Validates: Requirements 11.1**
 
 ### Property 14: Seasonal shares are non-negative and sum to one
 
@@ -927,17 +1093,17 @@ All properties below test pure functions with generated in-memory inputs. None r
 
 **Validates: Requirements 11.4, 11.5, 11.7, 11.9, 11.10, 11.13, 11.14**
 
-### Property 16: Station PM2.5 means follow the validity rules
+### Property 16: Effective-dated lookup
 
-*For any* station rows with 24 hourly tokens drawn from numbers, empty strings and flagged values (`#`, `*`, `x`, `A`), and with duplicate rows for some dates, the station's quarterly value equals the reference computation: per date the row with the most valid hours (first in order on ties), daily means only for days with at least 18 valid hours, and a quarterly mean only when at least 75 % of the quarter's days are valid, otherwise the station is unavailable.
+*For any* table rows of one city with strictly increasing effective dates and positive values, and any quarter, the value read for the quarter is the value of the row with the latest effective date on or before the last day of the quarter; before the first row, a commuter pass price is 0 and not estimated, and a New Taipei holding tax rate is the lower limit of the statutory range in force, estimated with `holding-tax-statutory-minimum`. A table with a date that is not later than the previous row, a non-positive value or an empty source stops the build with the table path and row number.
 
-**Validates: Requirements 12.1, 12.5**
+**Validates: Requirements 12.9, 12.10, 12.12, 12.13, 12.15**
 
-### Property 17: District PM2.5 assignment
+### Property 17: Sublease phase spread conserves the counted totals
 
-*For any* set of stations with coordinates, district assignments and availability per quarter (at least one available), every district gets exactly one value per quarter; a district with available stations gets their equal-weight mean and is not estimated; and a district with none gets the value of an available station whose distance from the district centroid is no greater than any other available station's, estimated with `pm25-nearest-station`.
+*For any* phases of one city and channel (increasing start dates, integer totals from 0 to 100,000) and any publication date after the last start, the quarterly values are non-negative integers, are 0 in every quarter before the first start date, sum over the quarters to the sum over phases of `round(total · counted days / span days)`, and every record is estimated with `sublease-phase-spread`.
 
-**Validates: Requirements 12.3, 12.4, 12.6, 12.7**
+**Validates: Requirements 12.8, 12.13**
 
 ### Property 18: Social housing completions, stock and deduplication
 
@@ -953,15 +1119,15 @@ All properties below test pure functions with generated in-memory inputs. None r
 
 ### Property 20: The validator detects every injected defect
 
-*For any* valid HistoryFile or DistrictsFile and any set of 1 to 5 defects injected at distinct locations (a removed required field, a wrong type, `NaN` or `±Infinity`, an unknown or duplicated district code, a quarter outside 2015Q1–2025Q4, a series of the wrong length, `estimated: true` without a method, `estimated: false` with a method, an unknown source or method id, a negative count, a percentage outside 0–100, a wrong ring winding, an unclosed ring, an unredacted `api_key`), the validator reports at least one error for each defect, each with the JSON path of that defect, and reports no error for the unmodified file.
+*For any* valid HistoryFile, DistrictsFile or PolicyTrackFile and any set of 1 to 5 defects injected at distinct locations (a removed required field, a wrong type, `NaN` or `±Infinity`, an unknown or duplicated district code, a quarter outside 2015Q1–2025Q4, a series of the wrong length, `estimated: true` without a method, `estimated: false` with a method, an unknown source or method id, a negative count, a percentage outside 0–100, a wrong ring winding, an unclosed ring, an unredacted `api_key`, a Track_Record whose source id is not defined, a negative count Track_Record), the validator reports at least one error for each defect, each with the JSON path of that defect, and reports no error for the unmodified file.
 
-**Validates: Requirements 3.1, 3.4, 3.5, 3.9, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 14.3, 14.4, 14.5, 14.7, 16.1, 16.2, 16.3, 16.4, 16.5**
+**Validates: Requirements 3.1, 3.4, 3.5, 3.9, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 14.3, 14.4, 14.5, 12.2, 12.3, 14.7, 16.1, 16.2, 16.3, 16.4, 16.5**
 
 ### Property 21: Serialize, parse and validate round trip
 
-*For any* valid HistoryFile or DistrictsFile whose numbers are already rounded to their declared decimals, `JSON.parse(serializeJson(x))` is deep-equal to `x` and validates with zero errors.
+*For any* valid HistoryFile, DistrictsFile or PolicyTrackFile whose numbers are already rounded to their declared decimals, `JSON.parse(serializeJson(x))` is deep-equal to `x` and validates with zero errors.
 
-**Validates: Requirements 16.10, 16.11**
+**Validates: Requirements 16.10, 16.11, 16.12**
 
 ### Property 22: Number and text formatting
 
@@ -971,7 +1137,7 @@ All properties below test pure functions with generated in-memory inputs. None r
 
 ### Property 23: Output is independent of input order and does not mutate inputs
 
-*For any* set of parsed input records for the build (a small fixture-scale generator covering every indicator builder and the districts builder), building twice from the same records, and building from a shuffled copy of the record lists and file lists, produce byte-identical serialized outputs, and the input records are deep-equal before and after each build.
+*For any* set of parsed input records for the build (a small fixture-scale generator covering every indicator builder, every policy builder and the districts builder), building twice from the same records, and building from a shuffled copy of the record lists and file lists, produce byte-identical serialized outputs, and the input records are deep-equal before and after each build.
 
 **Validates: Requirements 2.6, 3.6, 4.10, 15.2, 17.1, 17.2, 17.6**
 
@@ -983,7 +1149,7 @@ All properties below test pure functions with generated in-memory inputs. None r
 
 ### Property 25: Transactional write restores the previous state on failure
 
-*For any* set of 3 planned writes, any subset of targets that already exist with arbitrary content, and any failure point (any stage or commit operation), a failed `writeAll` leaves every pre-existing target with its previous bytes, leaves no target that did not exist before, leaves no temp file, and throws an error naming the failed file; a successful `writeAll` leaves exactly the planned texts.
+*For any* set of 1 to 4 planned writes, any subset of targets that already exist with arbitrary content, and any failure point (any stage or commit operation), a failed `writeAll` leaves every pre-existing target with its previous bytes, leaves no target that did not exist before, leaves no temp file, and throws an error naming the failed file; a successful `writeAll` leaves exactly the planned texts.
 
 **Validates: Requirements 2.5, 16.7, 16.8**
 
@@ -1013,9 +1179,27 @@ All properties below test pure functions with generated in-memory inputs. None r
 
 ### Property 30: Summary counts match the file
 
-*For any* valid HistoryFile, the summary printed on success has one line per indicator whose total and estimated counts equal the number of records and the number of records with `estimated: true` in that indicator.
+*For any* valid HistoryFile and PolicyTrackFile, the summary printed on success has one line per indicator and one per policy series whose total and estimated counts equal the number of records and the number of records with `estimated: true` in that indicator or series.
 
 **Validates: Requirements 1.4**
+
+### Property 31: Social housing starts bucketing, de-duplication and exclusion
+
+*For any* set of projects with random status, district, start date (valid, empty or unparseable), detail file presence and unit count, the starts of a district and quarter equal the sum of the units of projects of any status that have a parseable start date in that quarter and a detail file naming the district; adding duplicate copies (same `setupplan_guid`) changes no value; excluded projects change no value and are all reported with a reason; every record is not estimated.
+
+**Validates: Requirements 12.4, 12.5**
+
+### Property 32: Rent subsidy households and amount
+
+*For any* two household tables with random quarters and values (a missing quarter counts as 0) and any 2023 total and household-months with a ratio in the guard range, the households of a quarter equal the sum of the two tables, and the amount is the same rounded 2023 average in every quarter, estimated with `rent-amount-annual-average` in 2023 and `rent-amount-carry` in the other quarters.
+
+**Validates: Requirements 12.6, 12.7**
+
+### Property 33: House tax and commuter passes sold conserve their totals
+
+*For any* annual house tax totals (non-negative integers), the four quarters of each year are non-negative integers that sum to the annual total and differ from each other by at most 1; and *for any* populations and pass price tables, the passes sold of both cities over 2018Q2–2020Q4 sum to exactly 9,240,000, are non-negative integers, and are 0 in every quarter in which the price of the city is 0.
+
+**Validates: Requirements 12.11, 12.12**
 
 ## Error Handling
 
@@ -1025,7 +1209,7 @@ All properties below test pure functions with generated in-memory inputs. None r
 |---|---|---|
 | `MissingInputsError` | preflight | One line per missing file: repository-relative path and `node scripts/download.ts <download-id>` (Requirement 2.3). |
 | `ParseError` | parsers | File path (plus `!entry` for ZIP members), 1-based row, expected columns, found columns (Requirement 2.4). |
-| `DataError` | indicator builders | The rule that failed and its subject: district code, city, quarter, month, station, project guid, values involved. Examples: Requirement 5.5, 5.6, 6.6, 6.7, 7.8, 7.9, 8.9, 9.8–9.10, 10.4, 10.6, 11.11, 12.8, 13.6, 3.7, 3.8. |
+| `DataError` | indicator builders | The rule that failed and its subject: district code, city, quarter, month, station, project guid, values involved. Examples: Requirement 5.5, 5.6, 6.6, 6.7, 7.8, 7.9, 8.9, 9.8–9.10, 10.4, 10.6, 11.11, 12.14, 12.15, 13.6, 3.7, 3.8. |
 | `ValidationFailedError` | validation step | All `ValidationError`s of all files, each as `<file> <JSON path>: <rule>: <message>` (Requirement 16.5). |
 | `BannedTermError` | banned-term step | Each term and line number (Requirement 15.9). |
 | `WriteError` | writer | The file whose write or rename failed, after rollback (Requirement 16.8). |
@@ -1038,7 +1222,7 @@ Classes use plain field declarations and constructor assignments, no parameter p
 - **No partial output**: nothing is written before the write step, and the write step rolls back on failure. A failed run leaves `public/data/` and `data/SOURCES.md` byte-identical to before (Requirement 1.5, 2.5, 16.7).
 - **Exit codes**: 0 on success, 1 on any failure. The runner catches errors at the top level, prints them, and calls `process.exitCode = 1` rather than `process.exit`, so buffered output is flushed.
 - **Unexpected exceptions** (bugs) are printed with the step name and the stack, and also exit 1.
-- **Non-fatal notes** are printed only after a successful build: excluded registration records by reason, social housing projects excluded with guid, reason and units, unused reference-table entries, and the price-to-income comparison. They never change the exit code.
+- **Non-fatal notes** are printed only after a successful build: excluded registration records by reason, social housing projects excluded with guid, reason and units (completions and starts), unused reference-table entries, and the price-to-income comparison. They never change the exit code.
 - **Messages** use repository-relative paths with forward slashes, never absolute paths, and never print environment values.
 - **Neutral wording** in SOURCES.md and in indicator and method descriptions follows `neutrality.md`; the banned-term check enforces the listed terms. Console messages are developer-facing and may use words such as "failed".
 
@@ -1047,12 +1231,12 @@ Classes use plain field declarations and constructor assignments, no parameter p
 ### Tools
 
 - **Vitest 5.1**, run once with `npx vitest --run`. Tests live in `tests/scripts/pipeline/` (pipeline modules) and `tests/data/` (the validator in `src/data/validate.ts`), mirroring the source tree.
-- **fast-check** for property-based tests. It is not installed. Adding it as a pinned exact devDependency needs the user's approval under `tech.md`'s dependency policy; the first testing task asks for that approval before running `npm install --save-dev --save-exact fast-check@<version>`. No property test is written against a hand-rolled generator in its place.
+- **fast-check** for property-based tests. Version 4.10.2 is installed as a pinned exact devDependency (approved by the user on 2026-11-11 under `tech.md`'s dependency policy). No property test is written against a hand-rolled generator in its place.
 - **TypeScript 7 strict** via `npm run typecheck`. The `include` list in `tsconfig.json` gains `src` so the schema module is checked directly.
 
 ### Property-based tests
 
-- One test per property above, 30 in total, each configured with `{ numRuns: 100 }` or more.
+- One test per property above, 33 in total, each configured with `{ numRuns: 100 }` or more.
 - Each test carries a comment tag in the form `// Feature: data-pipeline, Property <n>: <property title>`.
 - Generators build in-memory records only. File-shaped generators (CSV text, JSON rows) are used where the property is about parsing, for example Property 9.
 - Generators for file-level properties (20, 21, 23) produce full-size files: 41 codes and 44 quarters, 1 to 3 indicators. That is about 5,000 records per case, fast enough for 100 runs.
@@ -1060,13 +1244,13 @@ Classes use plain field declarations and constructor assignments, no parameter p
 
 ### Example and edge-case unit tests
 
-- **One fixture test per parser** (Requirement 18.1): at most 50 rows built in the test file, with literal expected values checked by hand. Parsers: household CSV and JSON, annual migration (Taipei and New Taipei), FIA and DGBAS income, lvr sales and rentals, Taipei CPI CSV, DGBAS CPI XML, MOI rent statistics ODS (built with the existing `makeOds` helper), MRT annual and Big5 daily files, air station metadata and daily rows, social housing list and detail, MOI reference table.
+- **One fixture test per parser** (Requirement 18.1): at most 50 rows built in the test file, with literal expected values checked by hand. Parsers: household CSV and JSON, annual migration (Taipei and New Taipei), FIA and DGBAS income, lvr sales and rentals, Taipei CPI CSV, DGBAS CPI XML, MOI rent statistics ODS (built with the existing `makeOds` helper), MRT annual and Big5 daily files, MOI E3010 JSON tables, MOI 169800 CSV, MOF 6742 CSV, the three committed policy tables, social housing list and detail, MOI reference table.
 - **One missing-column test per parser** (Requirement 18.2), checking the row number and expected column names in the `ParseError`.
 - **Validator examples** (Requirement 18.3, 18.4): one valid in-memory file of each type is accepted; malformed objects cover a missing field, a wrong type, an unknown district code and an out-of-range quarter for each file, plus a district count of 40 for `districts.json`; each test asserts the exact JSON path. Boundary cases: percentages of exactly 0 and 100 pass; a `null` value with a `missing-reason` method passes, and with an estimation method it fails.
-- **Builder error cases**: each `DataError` listed under Error Handling has one example test (for example a district with zero sales in 11 years, a reference-table entry in another city, a CPI month missing, a misconfigured CPI mapping, an MRT row without an alias, no available PM2.5 station in a quarter, an invalid `household_num`).
+- **Builder error cases**: each `DataError` listed under Error Handling has one example test (for example a district with zero sales in 11 years, a reference-table entry in another city, a CPI month missing, a misconfigured CPI mapping, an MRT row without an alias, a holding tax table row whose date is not later than the previous row, an invalid `household_num`).
 - **Fixed tables**: the month → source table for population (2020-08, 2020-09, 2021-03, 2024-08); the CPI series mapping; the reference table checked against a fixture adjacency.
 - **Runner**: a failing step stops later steps and prints its name; validation errors prevent any call to the injected `WriteFs`; the success summary is printed.
-- **Rendering**: SOURCES.md contains the generated-file notice, the disclosure sentence, the reference-district rows, the MRT notes, the data-gap rows and the Wikipedia attribution format.
+- **Rendering**: SOURCES.md contains the generated-file notice, the disclosure sentence, the reference-district rows, the MRT notes, the policy series section, the data-gap rows and the Wikipedia attribution format.
 - **Static checks**: no file under `scripts/pipeline/` imports `scripts/lib/http.ts` or `scripts/lib/datagov.ts` or calls `fetch` (Requirement 2.1); the `data` npm script contains no `rm`, `cp`, `mkdir -p` or `VAR=value` syntax (Requirement 1.6); no test file reads from `data/raw/` (Requirement 18.8).
 
 ### Not unit-tested
@@ -1093,27 +1277,34 @@ Each open question from requirements.md uses its stated default unless noted. Th
 | D1 | Boundaries in `districts.json` | (a) Embed the geometry in `districts.json`. Stop writing `public/data/boundaries.geojson`. `build-boundaries.ts` and the `data:boundaries` npm script are retired; its simplification call and mismatched-edge check move into the pipeline. Removing the existing `boundaries.geojson` from the repository is a separate task step that needs the user's confirmation. | Districts file |
 | D2 | Schema validation library and location | Hand-written validator, no new dependency. Types in `src/types/data-files.ts`, validator in `src/data/validate.ts`, both pure and erasable, imported by the pipeline (scripts may import src; src may not import scripts). | Schema module |
 | D3 | Commute matrix and adjacency | Both deferred to a later spec. Adjacency is computed in memory only to check the rent reference table. | Districts file |
-| D4 | Indicator list | As drafted: 11 district and 2 city indicators (table above). | History file |
+| D4 | Indicator list | 10 district and 2 city indicators (table above), plus the 10 policy series of `policy-track.json` (Policy series table). | History file |
 | D5 | Annual-to-quarterly interpolation | Mean-preserving, slope-limited piecewise-linear (minmod). | Interpolation |
 | D6 | Thin-cell thresholds and pooling | Rent: 30 records over 2015–2025. Sales: fewer than 10 sales in a district-quarter → symmetric window expanded one quarter at a time until it holds 10 sales or covers all 44 quarters. | Sale price, rent |
 | D7 | Reference districts | Fixed table above. **Conflict**: Pinglin has no bordering same-city district with 30 records, so Requirement 9.7 as written stops the build. Proposed amendment to 9.7: "shares a border with the district, or, when no bordering district qualifies, borders a district that borders it". With it, Pinglin → Xindian. The user should approve the amendment or choose another rule. | Rent |
 | D8 | Price-to-income level | City level only. MOI PDFs are not parsed; validation uses the optional hand-entered table. | Price-to-income |
-| D9 | PM2.5 without a station | Nearest available station (see rationale). | PM2.5 |
+| D9 | PM2.5 without a station | Removed with the air-quality indicator when the scope narrowed to 5 policy tools. | none |
 | D10 | Border stations | Point-in-polygon; SOURCES.md lists point and address districts. | MRT |
 | D11 | Missing values | The pipeline never emits `null`; every method chain yields a number or stops with a named error. The validator keeps `null` support per Requirement 4.8. | History file |
 | D12 | MRT unit | Entries only. | MRT |
-| D13 | fast-check | Needed by Requirement 18.5 and listed in `tech.md`, but not installed. Adding it as a pinned exact devDependency (`npm install --save-dev --save-exact fast-check@<version>`) needs the user's approval; the tasks will ask before installing. | Testing |
+| D13 | fast-check | Needed by Requirement 18.5 and listed in `tech.md`. Approved by the user on 2026-11-11; version 4.10.2 is installed as a pinned exact devDependency. | Testing |
 | D14 | Rent base year | 2024. | Rent |
 
 Further decisions made in this design:
 
 | # | Topic | Decision |
 |---|---|---|
-| D15 | Source_Id format | `<download-id>/<dataset>`. Requirement 14.1 needs one agency per Source_Entry, but one download id (for example `population`) covers several agencies. The prefix keeps the link to `node scripts/download.ts <download-id>` that the glossary asks for. |
+| D15 | Source_Id format | `<download-id>/<dataset>`. Policy sources use the prefix `policy/`, the id of the download source that fetches their raw files. Requirement 14.1 needs one agency per Source_Entry, but one download id (for example `population`) covers several agencies. The prefix keeps the link to `node scripts/download.ts <download-id>` that the glossary asks for. |
 | D16 | Rent estimate flag | All rent values are `estimated: true` (see Rent). Requirement 9 does not state the flag for districts with enough records; the glossary's definition of the flag decides it. |
 | D17 | "Mean rent" in Requirement 9.4 | The MOI rent statistics publish no mean. The design uses the 50th percentile of the `不分類` row, edition 1140123. Requirement 9.4's wording should change from "mean rent" to "median rent". |
 | D18 | MRT activation | Per annual-series row, so a station that gains a line (Banqiao, Dapinglin and other Circular Line transfers) counts the new row only from its opening quarter. |
 | D19 | Registry in outputs | `history.json` and `districts.json` each embed the Source_Entries and Method_Entries they reference, so the app can show provenance without SOURCES.md. |
-| D20 | PM2.5 completeness | 18 of 24 valid hours per day (US EPA Appendix N ratio, pending an MOENV citation); 75 % valid days per quarter. |
+| D20 | PM2.5 completeness | Removed with the air-quality indicator. |
+| D21 | Policy track file | A separate `public/data/policy-track.json`. Not `params.json`: that file holds simulation parameters and belongs to the simulation-engine spec. Not `history.json`: that file is a 41 × 44 baseline per indicator, and the engine takes the real policy track as a separate input. |
+| D22 | Commuter pass conventions | Price is the published product price. Subsidy is defined as 0 on top of it, because no local-government share is published. Passes sold are estimated from one cumulative figure (9.24 million to 2020-12-31), spread by day from 2018-04-16, split by population, with the later daily rate held. All three are low confidence and flagged. Needs user confirmation (Open Question 15 a, b). |
+| D23 | Sublease phase spread | Each phase total is spread by day to the next phase start of the same channel. The first phase start (2017-01-01) is assumed: the Taipei phase 1 total equals the sum of the Taipei yearly figures for 2017–2019 (17 + 687 + 462). Needs user confirmation (Open Question 15 e). |
+| D24 | Rent subsidy amount | The 2023 average per household-month is carried to every quarter, because no other year is published. A guard of 1,000–10,000 catches unit errors. Needs user confirmation (Open Question 15 c). |
+| D25 | Holding tax rates | Two series (lowest and highest tier). New Taipei before 2017-07-01 uses the statutory minimum, flagged as estimated. Needs user confirmation (Open Question 15 d). |
+| D26 | Committed policy tables | Holding tax rates, commuter pass products and sublease phases are small hand-entered CSV tables with a source on every row, not parsed from HTML or PDF. The four raw policy files are fetched by a new `policy` download source, added in the tasks (they are hand-fetched today). |
+| D27 | Policy limits and budget | The lower and upper limit of each tool and the budget ceilings are simulation parameters in `params.json` (simulation-engine spec). This pipeline outputs only the real track. |
 
 D7 and D17 change requirement wording. If the user prefers, the requirements phase can be reopened to amend Requirements 9.4 and 9.7 before tasks are written.
