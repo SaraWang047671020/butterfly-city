@@ -21,6 +21,18 @@ function plain(x: number): number {
   return x === 0 ? 0 : x;
 }
 
+/** Sorted job-share ids per commute-code list; the list is fixed for a run, so it is built once. */
+const JOB_SHARE_IDS = new WeakMap<readonly string[], readonly string[]>();
+
+function jobShareIds(codes: readonly string[]): readonly string[] {
+  let ids = JOB_SHARE_IDS.get(codes);
+  if (ids === undefined) {
+    ids = codes.map((code) => jobShareId(code)).sort();
+    JOB_SHARE_IDS.set(codes, ids);
+  }
+  return ids;
+}
+
 function draft(d: DistrictCode, work: QuarterWork): CauseDraft {
   const { ctx } = work;
   const derived = derivedMeanCommuteTime(ctx.params, ctx.commute, d, work.quarter);
@@ -28,9 +40,7 @@ function draft(d: DistrictCode, work: QuarterWork): CauseDraft {
   const start: Contribution = {
     value: derived.ok ? derived.value : Number.NaN,
     links: {
-      parameterIds: ctx.commute.codes
-        .map((code) => jobShareId(code))
-        .sort(),
+      parameterIds: jobShareIds(ctx.commute.codes),
       sourceIds: [],
     },
   };

@@ -32,10 +32,13 @@ export interface FinishContext {
 export interface CauseCache {
   readonly parameters: Map<string, { ids: readonly string[]; details: readonly CauseParameter[] }>;
   readonly sources: Map<string, readonly string[]>;
+  /** Same memo keyed by the link array object, so a reused array skips building the string key. */
+  readonly parametersByRef: WeakMap<readonly string[], { ids: readonly string[]; details: readonly CauseParameter[] }>;
+  readonly sourcesByRef: WeakMap<readonly string[], readonly string[]>;
 }
 
 export function createCauseCache(): CauseCache {
-  return { parameters: new Map(), sources: new Map() };
+  return { parameters: new Map(), sources: new Map(), parametersByRef: new WeakMap(), sourcesByRef: new WeakMap() };
 }
 
 function normalizeZero(x: number): number {
@@ -84,21 +87,34 @@ function makeCause(
     meta = build();
     sourceIds = sortedUnique(links.sourceIds);
   } else {
-    const pKey = links.parameterIds.join('\u0000');
-    const cachedMeta = cache.parameters.get(pKey);
-    if (cachedMeta === undefined) {
-      meta = build();
-      cache.parameters.set(pKey, meta);
+    // Identity fast path: the same link array object is reused across districts; the string key is the fallback.
+    const byRefMeta = cache.parametersByRef.get(links.parameterIds);
+    if (byRefMeta !== undefined) {
+      meta = byRefMeta;
     } else {
-      meta = cachedMeta;
+      const pKey = links.parameterIds.join('\u0000');
+      const cachedMeta = cache.parameters.get(pKey);
+      if (cachedMeta === undefined) {
+        meta = build();
+        cache.parameters.set(pKey, meta);
+      } else {
+        meta = cachedMeta;
+      }
+      cache.parametersByRef.set(links.parameterIds, meta);
     }
-    const sKey = links.sourceIds.join('\u0000');
-    const cachedSources = cache.sources.get(sKey);
-    if (cachedSources === undefined) {
-      sourceIds = sortedUnique(links.sourceIds);
-      cache.sources.set(sKey, sourceIds);
+    const byRefSources = cache.sourcesByRef.get(links.sourceIds);
+    if (byRefSources !== undefined) {
+      sourceIds = byRefSources;
     } else {
-      sourceIds = cachedSources;
+      const sKey = links.sourceIds.join('\u0000');
+      const cachedSources = cache.sources.get(sKey);
+      if (cachedSources === undefined) {
+        sourceIds = sortedUnique(links.sourceIds);
+        cache.sources.set(sKey, sourceIds);
+      } else {
+        sourceIds = cachedSources;
+      }
+      cache.sourcesByRef.set(links.sourceIds, sourceIds);
     }
   }
   return {

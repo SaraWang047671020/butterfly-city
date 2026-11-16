@@ -1,8 +1,14 @@
+import { isDeepStrictEqual } from 'node:util';
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import type { QuarterKey } from '../../../src/types/data-files.ts';
 import { run, runRange } from '../../../src/simulation/engine.ts';
 import { arbEngineInputs } from '../arbitraries.ts';
+
+/** Fast deep comparison; falls back to toEqual only to produce a readable diff when the results differ. */
+function expectSame(actual: unknown, expected: unknown): void {
+  if (!isDeepStrictEqual(actual, expected)) expect(actual).toEqual(expected);
+}
 
 describe('Property 2: Determinism', () => {
   it('run and runRange return deep-equal results on a structuredClone of every argument', () => {
@@ -25,7 +31,7 @@ describe('Property 2: Determinism', () => {
             structuredClone(commute),
             structuredClone(target),
           );
-          expect(second).toEqual(first);
+          expectSame(second, first);
 
           const firstRange = runRange(policies, events, params, baseline, realTrack, commute, target);
           const secondRange = runRange(
@@ -37,7 +43,7 @@ describe('Property 2: Determinism', () => {
             structuredClone(commute),
             structuredClone(target),
           );
-          expect(secondRange).toEqual(firstRange);
+          expectSame(secondRange, firstRange);
         },
       ),
       { numRuns: 100 },

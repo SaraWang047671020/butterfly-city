@@ -118,6 +118,21 @@ function mergeLinks(parts: readonly CauseLinks[], extraParameterIds: readonly st
   return { parameterIds: [...parameterIds].sort(), sourceIds: [...sourceIds].sort() };
 }
 
+// Links that do not depend on the district or quarter; built once and shared (the output is deep-frozen).
+const GHOST_COMMUTE_LINKS: CauseLinks = mergeLinks([], [
+  'ghost.commuteThreshold',
+  'ghost.sensitivityCommute',
+  'ghost.shareCommuteWithin',
+  'ghost.size',
+]);
+const GHOST_OVERLAP_LINKS: CauseLinks = mergeLinks([], [
+  'ghost.shareBoth',
+  'ghost.shareCommuteWithin',
+  'ghost.shareRent',
+  'ghost.size',
+]);
+const GHOST_DISPLACED_LINKS: CauseLinks = mergeLinks([], ['ghost.size']);
+
 /** Builds the Ghost count and its CauseDraft: Baseline, then the six group Causes in order (Requirement 10.6). */
 export function ghostDraft(params: ParameterTable, input: GhostDraftInput): GhostResult {
   const size = scalar(params, 'ghost.size');
@@ -164,22 +179,17 @@ export function ghostDraft(params: ParameterTable, input: GhostDraftInput): Ghos
   groups.push({
     groupId: 'ghost-commute',
     value: (sim.commute - base.commute) / size,
-    links: mergeLinks([], [
-      'ghost.commuteThreshold',
-      'ghost.sensitivityCommute',
-      'ghost.shareCommuteWithin',
-      'ghost.size',
-    ]),
+    links: GHOST_COMMUTE_LINKS,
   });
   groups.push({
     groupId: 'ghost-overlap',
     value: -(sim.overlap - base.overlap) / size,
-    links: mergeLinks([], ['ghost.shareBoth', 'ghost.shareCommuteWithin', 'ghost.shareRent', 'ghost.size']),
+    links: GHOST_OVERLAP_LINKS,
   });
   groups.push({
     groupId: 'ghost-displaced',
     value: sim.displaced / size,
-    links: mergeLinks([], ['ghost.size']),
+    links: GHOST_DISPLACED_LINKS,
   });
 
   const empty: Contribution = { value: 0, links: { parameterIds: [], sourceIds: [] } };

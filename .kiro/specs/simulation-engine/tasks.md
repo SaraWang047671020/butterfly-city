@@ -266,7 +266,7 @@ Every property test uses fast-check 4.10.2 with `fc.assert(fc.property(...), { n
     - **Property 1: Zero-delta identity**
     - **Validates: Requirements 2.3, 2.4, 3.2, 3.3, 3.4, 3.5, 3.6, 3.8, 8.9, 13.10**
 
-  - [-] 11.2 Write property test for determinism
+  - [x] 11.2 Write property test for determinism
     - `tests/simulation/properties/determinism.property.test.ts`; second call on a `structuredClone` of every argument, for `run` and `runRange`
     - **Property 2: Determinism**
     - **Validates: Requirements 1.11, 17.7, 19.7**

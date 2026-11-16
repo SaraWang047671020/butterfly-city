@@ -100,7 +100,10 @@ function deepFreeze<T>(root: T, skip: ReadonlySet<object>): T {
   if (typeof root !== 'object' || root === null) return root;
   if (skip.has(root) || Object.isFrozen(root)) return root;
   Object.freeze(root);
-  for (const child of Object.values(root)) deepFreeze(child, skip);
+  for (const key in root) {
+    const child: unknown = root[key];
+    if (typeof child === 'object' && child !== null) deepFreeze(child, skip);
+  }
   return root;
 }
 

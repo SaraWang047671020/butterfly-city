@@ -53,7 +53,11 @@ export function jobShareId(code: string): string {
 // ---------------------------------------------------------------------------
 
 function entry(params: ParameterTable, id: string): ScalarParameter | ScheduleParameter | undefined {
-  return Object.hasOwn(params, id) ? params[id] : undefined;
+  // One property read instead of hasOwn plus read. Inherited members (constructor, toString) are
+  // functions without a `kind`, and `__proto__` is Object.prototype; all of them fail the callers' kind check.
+  const p = params[id];
+  if (p === undefined || typeof p !== 'object' || p === null) return undefined;
+  return p;
 }
 
 /**
