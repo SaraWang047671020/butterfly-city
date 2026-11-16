@@ -1,0 +1,759 @@
+{
+  "pbtResults": {
+    "1.4 Write property tests for the shared helpers": {
+      "status": "passed",
+      "lastRunTimestamp": 1794797035878
+    },
+    "5.3 Write property tests for population and migration": {
+      "status": "passed",
+      "lastRunTimestamp": 1794798996036
+    },
+    "6.3 Write property tests for income": {
+      "status": "passed",
+      "lastRunTimestamp": 1794799237946
+    },
+    "7.3 Write property tests for registration records, sale price and price-to-income": {
+      "status": "passed",
+      "lastRunTimestamp": 1794799713841
+    },
+    "8.3 Write property tests for rent": {
+      "status": "passed",
+      "lastRunTimestamp": 1794800161934
+    },
+    "10.2 Write property test for social housing": {
+      "status": "passed",
+      "lastRunTimestamp": 1794800953615
+    }
+  },
+  "executionHistory": {
+    "1.1 Implement `scripts/pipeline/numeric.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840416
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796850232
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796910592
+      }
+    ],
+    "1.2 Implement `scripts/pipeline/interpolate.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840433
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796921728
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796977687
+      }
+    ],
+    "1.3 Implement `scripts/pipeline/serialize.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840448
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796921927
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796977981
+      }
+    ],
+    "1.4 Write property tests for the shared helpers": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840465
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796987512
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797101319
+      }
+    ],
+    "2.1 Implement `errors.ts`, `raw-reader.ts` and `context.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840481
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796987776
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797101010
+      }
+    ],
+    "2.2 Implement `manifest.ts` and the preflight step": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840498
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797105320
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797251042
+      }
+    ],
+    "2.3 Implement `run.ts`, `scripts/build-data.ts` and the `data` npm script": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840513
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797261605
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797361781
+      }
+    ],
+    "2.4 Write property tests for the reader and preflight": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840532
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797261627
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797362114
+      }
+    ],
+    "3.1 Implement `src/types/data-files.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840547
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797366072
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797421874
+      }
+    ],
+    "3.2 Implement `registry/sources.ts`, `registry/methods.ts` and `registry/indicators.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840562
+      },
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797425841
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797542539
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797647365
+      }
+    ],
+    "3.3 Write property test for credential redaction": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840579
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797651818
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797786714
+      }
+    ],
+    "4.1 Implement `scripts/pipeline/geo.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840595
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797652105
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797787060
+      }
+    ],
+    "4.2 Implement `scripts/pipeline/districts-file.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840608
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797791410
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797976553
+      }
+    ],
+    "4.3 Write property tests for the geometry helpers": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840624
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797791768
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797976758
+      }
+    ],
+    "5.1 Implement `parsers/household.ts` and `parsers/migration-annual.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840639
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797982946
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794798362394
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794798366450
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794798726765
+      }
+    ],
+    "5.2 Implement `indicators/population.ts` and `indicators/migration.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840655
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794798731388
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794798912001
+      }
+    ],
+    "5.3 Write property tests for population and migration": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840671
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794798916351
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799011993
+      }
+    ],
+    "6.1 Implement `parsers/income.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840687
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794798916631
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799012279
+      }
+    ],
+    "6.2 Implement `indicators/income.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840702
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799016996
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799187506
+      }
+    ],
+    "6.3 Write property tests for income": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840718
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799191908
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799328658
+      }
+    ],
+    "7.1 Implement `parsers/lvr.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840733
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799192224
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799329018
+      }
+    ],
+    "7.2 Implement `indicators/sale-price.ts` and `indicators/price-to-income.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840750
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799333601
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799583730
+      }
+    ],
+    "7.3 Write property tests for registration records, sale price and price-to-income": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840764
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799588212
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799867154
+      }
+    ],
+    "8.1 Implement `parsers/cpi.ts`, `parsers/rent-stats.ts`, `tables/cpi-series.ts` and `tables/rent-reference.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840780
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799588813
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799866919
+      }
+    ],
+    "8.2 Implement `indicators/rent.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840795
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799871500
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800063966
+      }
+    ],
+    "8.3 Write property tests for rent": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840814
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800068811
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800365312
+      }
+    ],
+    "9.1 Implement `parsers/mrt.ts` and `tables/mrt-stations.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840830
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800069401
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800365991
+      }
+    ],
+    "9.2 Implement `indicators/mrt.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840846
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800370452
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800536523
+      }
+    ],
+    "9.3 Write property tests for MRT entries": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840862
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800541329
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800827387
+      }
+    ],
+    "10.1 Implement `parsers/social-housing.ts` and `indicators/social-housing.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840877
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800541923
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800827441
+      }
+    ],
+    "10.2 Write property test for social housing": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840893
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800831875
+      }
+    ],
+    "11.1 Add the `policy` download source in `scripts/sources/`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840908
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800832571
+      }
+    ],
+    "11.2 Create the committed tables in `data/config/`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840925
+      },
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800833248
+      }
+    ],
+    "11.3 Implement `parsers/rent-subsidy.ts`, `parsers/house-tax.ts` and `parsers/policy-tables.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840941
+      }
+    ],
+    "11.4 Write property test for effective-dated lookup": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840956
+      }
+    ],
+    "12.1 Implement the builders in `scripts/pipeline/policy/`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840973
+      }
+    ],
+    "12.2 Implement `scripts/pipeline/policy-file.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796840988
+      }
+    ],
+    "12.3 Write property tests for the policy builders": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796841002
+      }
+    ],
+    "13.1 Implement `src/data/validate.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796841021
+      }
+    ],
+    "13.2 Implement `scripts/pipeline/history-file.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796841036
+      }
+    ],
+    "13.3 Write property tests for validation and round trip": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796841052
+      }
+    ],
+    "14.1 Implement `scripts/pipeline/write.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796841070
+      }
+    ],
+    "14.2 Wire every step into `run.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796841089
+      }
+    ],
+    "14.3 Write property tests for the writer and the full build": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796841104
+      }
+    ],
+    "15.1 Implement `scripts/pipeline/banned-terms.ts` and the term lists": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796841119
+      }
+    ],
+    "15.2 Implement `scripts/pipeline/sources-doc.ts` and add the render and check steps to `run.ts`": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796841133
+      }
+    ],
+    "15.3 Write property tests for SOURCES.md and the banned-term check": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796841147
+      }
+    ],
+    "15.4 Run the full build and confirm": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794796841162
+      }
+    ],
+    "1. Shared numeric, interpolation and serialization helpers": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797101376
+      }
+    ],
+    "2. Raw reader, preflight manifest, errors and step runner": [
+      {
+        "executionId": "ff7de431-a75b-4823-9fc2-341e9f0742c5",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797362128
+      }
+    ],
+    "3. Schema types and source, method and indicator registries": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797786729
+      }
+    ],
+    "4. Geometry helpers and the districts file": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794797976777
+      }
+    ],
+    "5. Population and migration indicators": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799012012
+      }
+    ],
+    "6. Income indicators": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799328675
+      }
+    ],
+    "7. Real-price registration, sale price and price-to-income ratio": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794799867171
+      }
+    ],
+    "8. Rent indicator": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800365329
+      }
+    ],
+    "9. MRT entries indicator": [
+      {
+        "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
+        "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
+        "timestamp": 1794800827406
+      }
+    ]
+  }
+}

@@ -30,6 +30,7 @@ It reuses the existing code: `scripts/lib/` (CSV parser, district table, ROC tim
 - **Raw layouts checked on disk** (2026-11 download): the MOI district rent statistics ODS (`1140123全國行政區租金統計-修正.ods`) holds contract counts and the 25th, 50th and 75th percentile of monthly rent per contract, per district and housing type. It has **no mean**, so Requirement 9.4 uses the median monthly rent, the 50th percentile of the `不分類` (all types) row (Decision D17).
 - **District adjacency** computed from the existing simplified boundaries (shared vertices): Pinglin borders only Shiding, Pingxi, Wulai and Shuangxi. All four have fewer than 30 rental records in DATA-CHECK.md item 2b, so Pinglin uses the second rule of Requirement 9.7, a district that borders one of its bordering districts (Decision D7).
 - **CPI rent series**: the Taipei DBAS CSV has the columns `統計期`, `基本分類`, `原始值[統計數值]`, `年增率[%]`, `縣市別代碼`; the DGBAS XML has `<Obs>` elements with `Item` `1.房租(指數基期：民國110年=100)`, `TIME_PERIOD` `YYYYMmm` and `TYPE` `原始值`.
+- **Population source correction**: ODRP010 and ODRP060 hold births, deaths, marriages and divorces by village, not population (no `people_total`). Population from 2018 comes from ODRP014 (`people_total`, `household_no`, single-age columns and an 11-digit `district_code`), read for the last month of each quarter (10703–11412). The API returns all 32 months, so the data.gov.tw 131138 CSV fallback is not used.
 - **MRT annual series** columns: `統計期` (`103年`), `捷運站別`, `進站人次`, `出站人次`.
 - **DGBAS 9415** columns: `年`, `臺北市-元`, `新北市-元` (one row per year from 1998).
 - **Policy raw files checked on disk** (2026-11 download): the MOI E3010 JSON tables (6_1_3 and 6_3_1) hold a `resultTable` whose header cells are ROC quarters such as `104Q1` (add 1911), city labels `台北市` and `新北市`, and values with thousands separators such as `4,213.00`. MOI dataset 169800 has, for ROC year 112, household-months and subsidy amounts (NT$ thousand) per city. MOF dataset 6742 has a `房屋稅` column and row labels such as `90年/ 新北市(改制後)`.
@@ -184,7 +185,7 @@ export interface RawReader {
 | Download id | Required files |
 |---|---|
 | `boundaries` | `boundaries/town-*/TOWN_MOI_*.shp` and `.dbf` (latest edition) |
-| `population` | `ris/ODRP005-{10401..10612}.csv`; `ris/ODRP010-{yyymm}-{臺北市,新北市}.json` for 10701–10908; `ris/ODRP060-…json` for 10909–11412 except 11003 and 11308; `ris/ODRP060-11003.csv`, `ris/ODRP060-11308.csv`; `ris/ODRP002-{10412..10612}.csv`; `ris/ODRP011-…json` for 10701–11412 except 11308; `ris/ODRP011-11308.csv`; `taipei-a05002802-cycle4.csv`; `ntpc-124872.csv` |
+| `population` | `population/ris/ODRP005-{10401..10612}.csv`; `population/ris/ODRP014-{yyymm}-{臺北市,新北市}.json` for the last month of each quarter, 10703–11412 (64 files); `population/ris/ODRP002-{10412..10612}.csv`; `population/ris/ODRP011-…json` for 10701–11412 except 11308; `population/ris/ODRP011-11308.csv`; `taipei-a05002802-cycle4.csv`; `ntpc-124872.csv` |
 | `income` | `income/{103..112}_165-9.csv`; `income/dgbas-9415-disposable-income-by-region.csv` |
 | `lvr` | `lvr/{104S1..115S3}_{a,f}_lvr_land_{a,c}.csv` (188 files) |
 | `rent` | `rent-stats/1140123全國行政區租金統計-修正.ods` |
@@ -477,7 +478,7 @@ export interface PolicyTrackFile {
 
 | # | id | Level | Unit | Kind | Decimals | Sources |
 |---|---|---|---|---|---|---|
-| 1 | `population` | district | persons | count | 0 | population/moi-32973, population/ris-odrp010, population/ris-odrp060, population/moi-131138 |
+| 1 | `population` | district | persons | count | 0 | population/moi-32973, population/ris-odrp014 |
 | 2 | `moveIn` | district | persons per quarter | count | 0 | population/moi-32975, population/ris-odrp011, population/moi-77144, population/taipei-dbas-a05002802, population/ntpc-124872 |
 | 3 | `moveOut` | district | persons per quarter | count | 0 | same as `moveIn` |
 | 4 | `relativeMedianIncome` | district | ratio to city median of district medians | positive | 4 | income/fia-103066 |
@@ -503,7 +504,7 @@ export interface PolicyTrackFile {
 | 7 | `houseTaxRevenue` | holdingTax | city | NT$ thousand per quarter | count | 0 | policy/mof-6742 |
 | 8 | `commuterPassPrice` | commuterPass | city | TWD per 30-day pass | non-negative | 0 | policy/trtc-products |
 | 9 | `commuterPassSubsidy` | commuterPass | city | TWD per 30-day pass | non-negative | 0 | policy/trtc-products |
-| 10 | `commuterPassesSold` | commuterPass | city | passes per quarter | count | 0 | policy/taipei-dot-2020, population/ris-odrp060 |
+| 10 | `commuterPassesSold` | commuterPass | city | passes per quarter | count | 0 | policy/taipei-dot-2020, population/ris-odrp014 |
 
 Series 1 is the only district-level series. The other nine are city-level because the sources publish them for the two cities only. Series 8 to 10 are 0 before the first pass product (2018-04-16).
 
@@ -523,7 +524,7 @@ Series 1 is the only district-level series. The other nine are city-level becaus
       "kind": "count",
       "decimals": 0,
       "description": "Registered population at the end of the last month of the quarter.",
-      "sources": ["population/moi-32973", "population/ris-odrp010", "population/ris-odrp060", "population/moi-131138"],
+      "sources": ["population/moi-32973", "population/ris-odrp014"],
       "series": {
         "63000010": [
           { "value": 208932, "estimated": false },
@@ -649,9 +650,7 @@ One `SourceEntry` per dataset. The id prefix is the `scripts/download.ts` id tha
 |---|---|---|---|---|---|
 | `boundaries/moi-7441` | MOI Department of Land Administration (distributed by NLSC via TGOS) | 鄉鎮市區界線(TWD97經緯度) | https://data.gov.tw/dataset/7441 | 2025–2025 | OGDL v1.0 |
 | `population/moi-32973` | MOI Department of Household Registration | 村里戶數、單一年齡人口 | https://data.gov.tw/dataset/32973 | 2015–2017 | OGDL v1.0 |
-| `population/ris-odrp010` | same | ODRP010 open API | https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP010 | 2018–2020 | OGDL v1.0 |
-| `population/ris-odrp060` | same | ODRP060 open API | https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP060 | 2020–2025 | OGDL v1.0 |
-| `population/moi-131138` | same | CSV months not in the API | https://data.gov.tw/dataset/131138 | 2021–2024 | OGDL v1.0 |
+| `population/ris-odrp014` | same | ODRP014 open API | https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP014 | 2018–2025 | OGDL v1.0 |
 | `population/moi-32975` | same | 遷入遷出統計表 | https://data.gov.tw/dataset/32975 | 2015–2017 | OGDL v1.0 |
 | `population/ris-odrp011` | same | ODRP011 open API | https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP011 | 2018–2025 | OGDL v1.0 |
 | `population/moi-77144` | same | 77144 CSV (2024-08) | https://data.gov.tw/dataset/77144 | 2024–2024 | OGDL v1.0 |
@@ -719,7 +718,7 @@ population(d, q) = Σ people_total over village rows r with district(r) = d,
                    in the file of the last month of q (03, 06, 09, 12)
 ```
 
-- Month → file: 2015-01..2017-12 `ODRP005-{yyymm}.csv`; 2018-01..2020-08 `ODRP010-{yyymm}-{county}.json`; 2020-09..2025-12 `ODRP060-…json`; 2021-03 and 2024-08 `ODRP060-{yyymm}.csv` (data.gov.tw 131138). Only last-of-quarter months are read.
+- Month → file: 2015-01..2017-12 `ODRP005-{yyymm}.csv`; 2018-03..2025-12 `ODRP014-{yyymm}-{county}.json`. Only last-of-quarter months are read, and ODRP014 files exist only for those months. The API returns all 32 of them, so no CSV fallback is used.
 - `district(r)` = `districtByZh(site_id or 區域別)` after the 台/臺 normalization already in `districtByZh`; for rows whose name ends in a village name, the parser strips the village part using the CSV's separate village column when present. Rows outside the two cities are skipped; rows inside them that match no district stop the build with file, row and value (Requirement 5.5).
 - A month with no rows for a district, or a population value that is not a non-negative integer, stops the build (Requirement 5.6).
 - `estimated: false` on all records.
@@ -1248,7 +1247,7 @@ Classes use plain field declarations and constructor assignments, no parameter p
 - **One missing-column test per parser** (Requirement 18.2), checking the row number and expected column names in the `ParseError`.
 - **Validator examples** (Requirement 18.3, 18.4): one valid in-memory file of each type is accepted; malformed objects cover a missing field, a wrong type, an unknown district code and an out-of-range quarter for each file, plus a district count of 40 for `districts.json`; each test asserts the exact JSON path. Boundary cases: percentages of exactly 0 and 100 pass; a `null` value with a `missing-reason` method passes, and with an estimation method it fails.
 - **Builder error cases**: each `DataError` listed under Error Handling has one example test (for example a district with zero sales in 11 years, a reference-table entry in another city, a CPI month missing, a misconfigured CPI mapping, an MRT row without an alias, a holding tax table row whose date is not later than the previous row, an invalid `household_num`).
-- **Fixed tables**: the month → source table for population (2020-08, 2020-09, 2021-03, 2024-08); the CPI series mapping; the reference table checked against a fixture adjacency.
+- **Fixed tables**: the month → source table for population (2017-12, 2018-03); the CPI series mapping; the reference table checked against a fixture adjacency.
 - **Runner**: a failing step stops later steps and prints its name; validation errors prevent any call to the injected `WriteFs`; the success summary is printed.
 - **Rendering**: SOURCES.md contains the generated-file notice, the disclosure sentence, the reference-district rows, the MRT notes, the policy series section, the data-gap rows and the Wikipedia attribution format.
 - **Static checks**: no file under `scripts/pipeline/` imports `scripts/lib/http.ts` or `scripts/lib/datagov.ts` or calls `fetch` (Requirement 2.1); the `data` npm script contains no `rm`, `cp`, `mkdir -p` or `VAR=value` syntax (Requirement 1.6); no test file reads from `data/raw/` (Requirement 18.8).

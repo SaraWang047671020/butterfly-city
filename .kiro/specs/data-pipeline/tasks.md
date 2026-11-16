@@ -8,19 +8,19 @@ The order follows the design: shared helpers first, then the district file and e
 
 ## Tasks
 
-- [ ] 1. Shared numeric, interpolation and serialization helpers
-  - [ ] 1.1 Implement `scripts/pipeline/numeric.ts`
+- [x] 1. Shared numeric, interpolation and serialization helpers
+  - [x] 1.1 Implement `scripts/pipeline/numeric.ts`
     - `codePointCompare`, `median`, `stableSum`, `mean`, `roundTo`, `apportion` (largest remainder, ties to the lower index, all-zero weights become equal weights) and `linearFit`, as in the design's numeric helper table
     - Add example tests in `tests/scripts/pipeline/numeric.test.ts` for even and odd medians, `-0`, empty input errors and an all-zero `apportion`
     - _Requirements: 6.3, 11.14, 17.1, 17.3_
-  - [ ] 1.2 Implement `scripts/pipeline/interpolate.ts`
+  - [x] 1.2 Implement `scripts/pipeline/interpolate.ts`
     - `annualToQuarterly` with the minmod slope limiter and offsets (−3/8, −1/8, +1/8, +3/8); flat first, last and turning-point years
     - _Requirements: 7.1, 7.6_
-  - [ ] 1.3 Implement `scripts/pipeline/serialize.ts`
+  - [x] 1.3 Implement `scripts/pipeline/serialize.ts`
     - `formatNumber` and `serializeJson`: 2-space indentation, primitive-only containers on one line, insertion key order, no exponent, no `-0`, LF only, one trailing LF, no BOM; throw on `NaN`, `±Infinity` and exponent tokens
     - Add `.gitattributes` with `public/data/*.json text eol=lf` and `data/SOURCES.md text eol=lf`
     - _Requirements: 17.3, 17.5_
-  - [ ] 1.4 Write property tests for the shared helpers
+  - [x] 1.4 Write property tests for the shared helpers
     - **Property 1: Interpolation preserves the annual mean and stays within neighbouring values**
     - **Validates: Requirements 7.1, 7.6, 18.5**
     - **Property 2: Apportionment yields non-negative integers that sum to the total**
@@ -28,91 +28,91 @@ The order follows the design: shared helpers first, then the district file and e
     - **Property 22: Number and text formatting**
     - **Validates: Requirements 17.3, 17.5**
 
-- [ ] 2. Raw reader, preflight manifest, errors and step runner
-  - [ ] 2.1 Implement `errors.ts`, `raw-reader.ts` and `context.ts`
+- [x] 2. Raw reader, preflight manifest, errors and step runner
+  - [x] 2.1 Implement `errors.ts`, `raw-reader.ts` and `context.ts`
     - `PipelineError`, `ParseError`, `DataError`, `MissingInputsError`, `ValidationFailedError`, `BannedTermError`, `WriteError` with plain field declarations (no parameter properties)
     - `RawReader` with code-point sorted `list`, `exists`, `readBytes`, `readText` (UTF-8 with BOM stripped, or Big5) and repository-relative `display` paths, including `zip!entry` paths
     - `BuildContext` holding the reader, the 41 districts, the 44 quarters and a logger
     - _Requirements: 2.4, 17.4, 17.7_
-  - [ ] 2.2 Implement `manifest.ts` and the preflight step
+  - [x] 2.2 Implement `manifest.ts` and the preflight step
     - Every row of the design's manifest table, including the `policy` row and the three committed tables in `data/config/`
     - One `MissingInputsError` that lists every missing path with `node scripts/download.ts <download-id>`; a missing committed table is listed without a download command
     - _Requirements: 2.3_
-  - [ ] 2.3 Implement `run.ts`, `scripts/build-data.ts` and the `data` npm script
+  - [x] 2.3 Implement `run.ts`, `scripts/build-data.ts` and the `data` npm script
     - Fixed list of named steps; delete stale `*.pipeline-tmp` files first; on a thrown error print `step <name> failed: <message>` and set `process.exitCode = 1`; on success print the summary lines
     - Add `"data": "node scripts/build-data.ts"` to `package.json`, with no `rm`, `cp`, `mkdir -p` or `VAR=value` syntax
     - Add the static tests: no file under `scripts/pipeline/` imports `scripts/lib/http.ts` or `scripts/lib/datagov.ts` or calls `fetch`; the `data` script has no POSIX-only syntax; no test file reads `data/raw/`
     - _Requirements: 1.1, 1.3, 1.5, 1.6, 2.1, 2.2, 18.8_
-  - [ ] 2.4 Write property tests for the reader and preflight
+  - [x] 2.4 Write property tests for the reader and preflight
     - **Property 24: Directory listings are sorted by code point**
     - **Validates: Requirements 17.7**
     - **Property 26: Preflight lists every missing raw file**
     - **Validates: Requirements 2.3**
 
-- [ ] 3. Schema types and source, method and indicator registries
-  - [ ] 3.1 Implement `src/types/data-files.ts`
+- [x] 3. Schema types and source, method and indicator registries
+  - [x] 3.1 Implement `src/types/data-files.ts`
     - `ValueRecord`, `Indicator`, `SourceEntry`, `MethodEntry`, `HistoryFile`, `DistrictsFile`, `PolicyToolId`, `TrackRecord`, `PolicySeries` and `PolicyTrackFile`, with erasable syntax only and no DOM or Node APIs
     - Add `src` to the `include` list of `tsconfig.json`
     - _Requirements: 3.1, 4.1, 4.2, 12.3, 14.1_
-  - [ ] 3.2 Implement `registry/sources.ts`, `registry/methods.ts` and `registry/indicators.ts`
+  - [x] 3.2 Implement `registry/sources.ts`, `registry/methods.ts` and `registry/indicators.ts`
     - Every Source_Entry of the design's source registry table, including the `policy/` sources; `redactUrl` for credential query parameters
     - The indicator list (10 district and 2 city indicators) and the policy series list (10 series) in their fixed orders
     - The method registry starts with the district-file methods; each later task adds the Method_Entries it uses
     - _Requirements: 4.9, 14.1, 14.2, 14.6, 14.7_
-  - [ ] 3.3 Write property test for credential redaction
+  - [x] 3.3 Write property test for credential redaction
     - **Property 27: Credential redaction**
     - **Validates: Requirements 14.6, 14.7**
 
-- [ ] 4. Geometry helpers and the districts file
-  - [ ] 4.1 Implement `scripts/pipeline/geo.ts`
+- [x] 4. Geometry helpers and the districts file
+  - [x] 4.1 Implement `scripts/pipeline/geo.ts`
     - `ringAreaKm2` (spherical excess, radius 6,371.0072 km), `centroid`, `haversineKm`, `districtAt` (point in polygon, error when a point is in two districts), `adjacency` (shared edges by 7-decimal vertex key) and the mismatched-edge count moved from `build-boundaries.ts`
     - _Requirements: 3.2, 11.1_
-  - [ ] 4.2 Implement `scripts/pipeline/districts-file.ts`
+  - [x] 4.2 Implement `scripts/pipeline/districts-file.ts`
     - Check that the unfiltered shapefile has each of the 41 codes exactly once; simplify with 40 m and 5 decimals; stop when the mismatched-edge count rises; area with 2 decimals and centroid with 5 decimals from unsimplified rings; entries sorted by code; embedded provenance, sources and methods
     - Retire `scripts/build-boundaries.ts` and the `data:boundaries` script. Delete `public/data/boundaries.geojson` (Decision D1) only after a test confirms that `districts.json` holds 41 districts with boundaries and a search of the repository (`src/`, `scripts/`, `tests/`, `index.html`, `vite.config.ts`, docs) finds no other reader of the file
     - _Requirements: 3.1, 3.2, 3.3, 3.6, 3.7, 3.8_
-  - [ ] 4.3 Write property tests for the geometry helpers
+  - [x] 4.3 Write property tests for the geometry helpers
     - **Property 13: Point-in-polygon district lookup**
     - **Validates: Requirements 11.1**
     - **Property 19: Area and centroid of district shapes**
     - **Validates: Requirements 3.2**
 
-- [ ] 5. Population and migration indicators
-  - [ ] 5.1 Implement `parsers/household.ts` and `parsers/migration-annual.ts`
-    - ODRP005, ODRP010, ODRP060, ODRP002 and ODRP011 in CSV and JSON layouts; Taipei a05002802 and New Taipei 124872 annual tables; 台/臺 normalization; `ParseError` with row, expected and found columns
+- [x] 5. Population and migration indicators
+  - [x] 5.1 Implement `parsers/household.ts` and `parsers/migration-annual.ts`
+    - ODRP005, ODRP014, ODRP002 and ODRP011 in CSV and JSON layouts; Taipei a05002802 and New Taipei 124872 annual tables; 台/臺 normalization; `ParseError` with row, expected and found columns
     - One fixture test and one missing-column test per parser
     - _Requirements: 2.4, 5.5, 18.1, 18.2_
-  - [ ] 5.2 Implement `indicators/population.ts` and `indicators/migration.ts`
-    - Month to file table (2020-08, 2020-09, 2021-03, 2024-08 checked by example tests); population from last-of-quarter months; quarterly migration as sums of three months; 2015-01 to 2015-11 split with `apportion` and `migration-2015-seasonal-split`; `DataError` for a negative remainder, a missing month or an invalid count
+  - [x] 5.2 Implement `indicators/population.ts` and `indicators/migration.ts`
+    - Month to file table (2017-12 and 2018-03 checked by example tests); population from last-of-quarter months; quarterly migration as sums of three months; 2015-01 to 2015-11 split with `apportion` and `migration-2015-seasonal-split`; `DataError` for a negative remainder, a missing month or an invalid count
     - _Requirements: 5.1, 5.3, 5.4, 5.5, 5.6, 6.1, 6.2, 6.3, 6.4, 6.6, 6.7_
-  - [ ] 5.3 Write property tests for population and migration
+  - [x] 5.3 Write property tests for population and migration
     - **Property 3: Migration quarters are monthly sums with the correct flags**
     - **Validates: Requirements 6.1, 6.2, 6.3, 6.4**
     - **Property 4: Population equals the sum of the district's village rows**
     - **Validates: Requirements 5.1, 5.3, 5.4**
 
-- [ ] 6. Income indicators
-  - [ ] 6.1 Implement `parsers/income.ts`
+- [x] 6. Income indicators
+  - [x] 6.1 Implement `parsers/income.ts`
     - FIA files through `districtTotals` and DGBAS 9415 (`年`, `臺北市-元`, `新北市-元`); fixture and missing-column tests
     - _Requirements: 2.4, 18.1, 18.2_
-  - [ ] 6.2 Implement `indicators/income.ts`
+  - [x] 6.2 Implement `indicators/income.ts`
     - `cityDisposableIncome` by `annualToQuarterly`; relative median income per FIA year; 2024–2025 from `linearFit` over 2019–2023; `householdIncome` from unrounded values; method ids per the design; `DataError` for missing district rows, non-positive medians and missing DGBAS years
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.7, 7.8, 7.9_
-  - [ ] 6.3 Write property tests for income
+  - [x] 6.3 Write property tests for income
     - **Property 5: Relative income is scale-invariant per income year and composes into household income**
     - **Validates: Requirements 7.2, 7.3, 7.4, 7.7**
     - **Property 6: Income extrapolation ignores income years before 2019**
     - **Validates: Requirements 7.5**
 
-- [ ] 7. Real-price registration, sale price and price-to-income ratio
-  - [ ] 7.1 Implement `parsers/lvr.ts`
+- [x] 7. Real-price registration, sale price and price-to-income ratio
+  - [x] 7.1 Implement `parsers/lvr.ts`
     - Skip the two header rows, city from the file name, typed records, strict 7-digit ROC dates (`rocDate7ToQuarter`), qualifying filters, exclusion counts by reason, and de-duplication by `編號` in sorted file order
     - _Requirements: 8.2, 8.4, 8.5, 8.6, 9.1_
-  - [ ] 7.2 Implement `indicators/sale-price.ts` and `indicators/price-to-income.ts`
+  - [x] 7.2 Implement `indicators/sale-price.ts` and `indicators/price-to-income.ts`
     - Median for district-quarters with at least 10 sales; symmetric pooled window otherwise, without a cap; stop on a window with zero sales
     - City ratio of median total price to `cityDisposableIncome`, stop below 100 sales; optional `data/config/moi-price-to-income.csv` comparison printed as a note that never changes outputs
     - _Requirements: 8.1, 8.7, 8.8, 8.9, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7_
-  - [ ] 7.3 Write property tests for registration records, sale price and price-to-income
+  - [x] 7.3 Write property tests for registration records, sale price and price-to-income
     - **Property 7: Sale-price medians, thin-cell flags and pooled windows**
     - **Validates: Requirements 8.1, 8.7, 8.8**
     - **Property 8: Sale and rental filters match their definitions and exclusions are counted**
@@ -122,46 +122,46 @@ The order follows the design: shared helpers first, then the district file and e
     - **Property 12: Price-to-income ratio is the median total price over income**
     - **Validates: Requirements 10.2, 10.3**
 
-- [ ] 8. Rent indicator
-  - [ ] 8.1 Implement `parsers/cpi.ts`, `parsers/rent-stats.ts`, `tables/cpi-series.ts` and `tables/rent-reference.ts`
+- [x] 8. Rent indicator
+  - [x] 8.1 Implement `parsers/cpi.ts`, `parsers/rent-stats.ts`, `tables/cpi-series.ts` and `tables/rent-reference.ts`
     - Taipei DBAS CSV and DGBAS XML rent sub-index; MOI rent statistics ODS (P50 of the `不分類` row, Decision D17); the fixed reference table with the second rule for Pinglin (Decision D7)
     - Fixture tests with `makeOds`, and missing-column tests
     - _Requirements: 9.4, 9.6, 9.10, 18.1, 18.2_
-  - [ ] 8.2 Implement `indicators/rent.ts`
+  - [x] 8.2 Implement `indicators/rent.ts`
     - `rent-relative-cpi` for districts with at least 30 records (base year 2024); `rent-reference-stats` or `rent-reference-sale-ratio` for the others; checks of the reference table against adjacency, city and record count; checks of the CPI mapping; stop on a missing CPI month
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9, 9.10_
-  - [ ] 8.3 Write property tests for rent
+  - [x] 8.3 Write property tests for rent
     - **Property 10: Rent formula reproduces the base level in the base year**
     - **Validates: Requirements 9.1, 9.2, 9.3**
     - **Property 11: Reference districts follow their reference by a constant ratio**
     - **Validates: Requirements 9.4, 9.5**
 
-- [ ] 9. MRT entries indicator
-  - [ ] 9.1 Implement `parsers/mrt.ts` and `tables/mrt-stations.ts`
+- [x] 9. MRT entries indicator
+  - [x] 9.1 Implement `parsers/mrt.ts` and `tables/mrt-stations.ts`
     - Annual station series and Big5 daily files; `MrtRowEntry` per annual-series row, `NON_STATION_ROWS` and `BORDER_STATIONS`
     - _Requirements: 11.2, 11.11, 11.12, 18.1, 18.2_
-  - [ ] 9.2 Implement `indicators/mrt.ts`
+  - [x] 9.2 Implement `indicators/mrt.ts`
     - Station district by `districtAt`; seasonal shares from 2015–2016 full years or a comparable station; activation per annual-series row; `apportion` with zero weights for inactive quarters; 0 and not estimated for districts without an active row
     - _Requirements: 11.1, 11.4, 11.5, 11.6, 11.7, 11.8, 11.9, 11.10, 11.11, 11.13, 11.14_
-  - [ ] 9.3 Write property tests for MRT entries
+  - [x] 9.3 Write property tests for MRT entries
     - **Property 14: Seasonal shares are non-negative and sum to one**
     - **Validates: Requirements 11.6**
     - **Property 15: MRT quarterly entries respect opening dates and annual totals**
     - **Validates: Requirements 11.4, 11.5, 11.7, 11.9, 11.10, 11.13, 11.14**
 
 - [ ] 10. Social housing completions and stock
-  - [ ] 10.1 Implement `parsers/social-housing.ts` and `indicators/social-housing.ts`
+  - [x] 10.1 Implement `parsers/social-housing.ts` and `indicators/social-housing.ts`
     - List and detail JSON with completion (`strEndDate`) and start (`strStartDate`) dates; de-duplication by `setupplan_guid`; completions and stock including stock before 2015; exclusions printed with guid, reason, units and per-city totals; stop on an invalid `household_num`
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7_
-  - [ ] 10.2 Write property test for social housing
+  - [-] 10.2 Write property test for social housing
     - **Property 18: Social housing completions, stock and deduplication**
     - **Validates: Requirements 13.1, 13.2, 13.3, 13.4, 13.7**
 
 - [ ] 11. Policy raw sources, parsers and committed tables
-  - [ ] 11.1 Add the `policy` download source in `scripts/sources/`
+  - [-] 11.1 Add the `policy` download source in `scripts/sources/`
     - Fetch the four raw files into `data/raw/policy/housing/` (E3010 6_1_3 and 6_3_1 JSON, data.gov.tw 169800 and 6742 CSV); record the exact URLs; document the command in `data/DOWNLOAD.md`
     - _Requirements: 2.3, 14.1_
-  - [ ] 11.2 Create the committed tables in `data/config/`
+  - [-] 11.2 Create the committed tables in `data/config/`
     - `holding-tax-rates.csv`, `commuter-pass-products.csv` and `sublease-phases.csv` with the columns and values in the design, a source on every row, and the statutory House Tax Act rows
     - _Requirements: 12.8, 12.9, 12.10, 12.12_
   - [ ] 11.3 Implement `parsers/rent-subsidy.ts`, `parsers/house-tax.ts` and `parsers/policy-tables.ts`

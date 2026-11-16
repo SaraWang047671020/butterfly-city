@@ -162,7 +162,7 @@ For comparison: Wanhua 16,650 renting households (22.9%), Banqiao 28,837 (13.7%)
 
 - **Agency**: Department of Household Registration, MOI (內政部戶政司). License OGDL v1 for all of the sources below.
 - **2015-01 – 2017-12**: data.gov.tw 32973 村里戶數、單一年齡人口. One CSV per month at `https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/93B503C4-6799-400D-A3AE-A42464E91B3D/resource/{id}/download` (resource IDs are in the catalog JSON). All 36 months have all 41 districts. Sum of the 41 districts: 6,671,704 (2015-01) and 6,669,946 (2017-12).
-- **2018-01 – 2025-12**: household-registration open API, `https://www.ris.gov.tw/rs-opendata/api/v1/datastore/{ODRP010|ODRP060}/{yyymm}?COUNTY={臺北市|新北市}` (JSON, no key). ODRP010 is used until 2020-08 and ODRP060 from 2020-09. All months have all 41 districts, except that the API returns no data for **2021-03** and **2024-08**. Both months are available as CSV in data.gov.tw 131138 (downloaded, 41/41).
+- **2018-01 – 2025-12**: household-registration open API, `https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP014/{yyymm}?COUNTY={臺北市|新北市}` (JSON, no key; village rows with `district_code`, `household_no`, `people_total` and single-age columns). Only the last month of each quarter is downloaded (2018-03 to 2025-12, 32 months); all of them are returned by the API and have all 41 districts. Correction: ODRP010 and ODRP060 are births, deaths, marriages and divorces by village, not population, and are not used. The data.gov.tw 131138 CSV fallback is not needed.
 - **Annual cross-check**: data.gov.tw 8410 各鄉鎮市區人口密度 has year-end population per district for 2013–2025 (not downloaded).
 - **Taipei alternative**: data.gov.tw 131723 臺北市各區土地人口按月別 (Taipei DBAS statistics database) has monthly district population from 1998. Saved as `data/raw/population/taipei-131723.csv`.
 
@@ -275,7 +275,7 @@ All from Taipei Rapid Transit Corporation via data.taipei. License OGDL v1.
 - **Format**: Esri Shapefile (Polygon), UTF-8 attributes, geographic coordinates on TWD97[2020] (GRS80; for web maps the difference from WGS84 is negligible).
 - **Attributes**: `TOWNCODE` (official code, e.g. `63000030` = Da'an), `COUNTYNAME`, `TOWNNAME`, `TOWNENG` (e.g. "Da'an District"), `COUNTYCODE`.
 - **Coverage**: 368 districts nationwide; **all 41** target districts are present.
-- **GeoJSON** (`node scripts/build-boundaries.ts`): the script reads the shapefile with a small built-in reader (`scripts/geo/shapefile.ts`, no dependencies), simplifies the 41 districts, and writes `public/data/boundaries.geojson`.
+- **GeoJSON** (now built by `scripts/pipeline/districts-file.ts` into `public/data/districts.json`; the earlier `scripts/build-boundaries.ts` and `boundaries.geojson` were retired): the script reads the shapefile with a small built-in reader (`scripts/geo/shapefile.ts`, no dependencies), simplifies the 41 districts, and embeds the geometry.
   - **Simplification** (`scripts/geo/simplify.ts`): Douglas–Peucker applied to shared borders, not to each district separately. Each border between two districts is simplified once and reused by both, so neighbors cannot develop gaps or overlaps.
   - **Result at the default 40 m tolerance**: 124,960 → 5,311 points, 4.9 MB → 113 KB. Every district's area changes by less than 1% (largest: Luzhou −0.73%). The source has one border edge that does not coincide between neighbors; the output has none.
   - **Feature properties**: `code` (official TOWNCODE), `name` (romanized), `city`.
@@ -428,7 +428,7 @@ Openings in Taipei and New Taipei, 2015-01-01 – 2025-12-31 (New Taipei DORTS r
 | Transfer walking time | Taipei Metro data.gov.tw 128417 (21 transfer stations, minutes) | Current | ✅ |
 | LRT travel times | Not in the TDX metro API (accepts TRTC, KRTC, TYMC, KLRT, TMRT, NTMC only) | — | ⚠️ Estimate from official length and station count (item 10.5) and a cited average speed |
 | Station locations | Item 11 | Current | ✅ |
-| District centroids and distances | Computed from `public/data/boundaries.geojson` | — | ✅ (to compute) |
+| District centroids and distances | Computed from the geometry in `public/data/districts.json` | — | ✅ (to compute) |
 | Observed commuting shares | 2020 census, table 14 per city (DGBAS, OGDL v1): employed residents by district of residence, working in the same district / another district of the same city / another county or abroad | 41/41 districts, November 2020 | ✅ Calibration target |
 | District-to-district commuting matrix | Not published in the census tables; not found elsewhere | — | ❌ |
 | Bus network | TDX bus data; not checked | — | Not checked |

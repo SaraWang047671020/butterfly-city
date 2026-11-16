@@ -26,14 +26,13 @@ node scripts/download.ts mrt --od=all      # all months (about 35 GB streamed, a
 node scripts/download.ts air --items=PM2.5,PM10   # no longer used by the data pipeline (air quality is out of scope)
 
 node scripts/check.ts all                  # coverage reports used in DATA-CHECK.md
-node scripts/build-boundaries.ts           # writes public/data/boundaries.geojson
 node scripts/find-datasets.ts "租金" "新北市"  # search the data.gov.tw catalog by title
 ```
 
 Downloads are resumable: existing files are skipped unless `--force` is given.
 
 The same commands are available as npm scripts: `npm run data:download -- <source>`, `npm run data:check -- <source>`,
-`npm run data:boundaries`. Type checking and unit tests for the scripts need `npm install` once:
+District boundaries are built into `public/data/districts.json` by `npm run data`. Type checking and unit tests for the scripts need `npm install` once:
 `npm run typecheck` and `npm test`.
 
 ## Sources
@@ -43,7 +42,7 @@ The same commands are available as npm scripts: `npm run data:download -- <sourc
 | `income` | MOF income tax by village, 2014–2023; DGBAS disposable income by county, 1998–2025 | 8 MB | 2024–2025 FIA files return HTTP 404 until published |
 | `lvr` | MOI real-price registration, sales and rentals, seasons 2015S1–2026S3 | 0.4 GB | Unpublished seasons are reported as failed and retried next run |
 | `rent` | MOI district rent statistics (ODS), Taipei rent index, 2020 census tenure tables | 0.2 MB | |
-| `population` | MOI monthly population and migration by village; annual district migration | 0.4 GB | About 400 API calls on the first run |
+| `population` | MOI monthly population and migration by village; annual district migration | 0.4 GB | About 250 API calls on the first run |
 | `mrt` | Taipei Metro daily station counts 2015–2016, annual series, OD indexes; OD months with `--od` | 2 MB plus ~10 KB per OD month | OD raw files are streamed, not stored |
 | `stations` | TDX metro stations and station-to-station travel times, NLSC LRT stations, transfer walking times | 0.2 MB | TDX works without a key at a low rate limit; optional `TDX_CLIENT_ID` / `TDX_CLIENT_SECRET` |
 | `commute` | 2020 census table 14: where employed residents of each district work | 40 KB | |
