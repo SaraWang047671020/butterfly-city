@@ -25,7 +25,10 @@ import { defaultWaitStatement, loadRailNetwork } from './network.ts';
 import { readCommuteParams, type CommuteParams } from './params.ts';
 import { loadVillageCentroids } from './centroids.ts';
 import { buildCommuteFile } from './commute-file.ts';
-import { buildCommuteMatrix, loadLrtStationCoords, modelConstants, type LonLat } from './model.ts';
+import { buildCommuteMatrix, loadLrtStationCoords, modelConstants, nearestStationInfo, type LonLat } from './model.ts';
+
+/** District_Code of Linkou (see scripts/lib/districts.ts). */
+const LINKOU_CODE = '65000170';
 import { population2025Mean, surveyCheck, surveyCheckLine } from './survey-check.ts';
 import { jobShares } from '../params/job-share.ts';
 import { CENSUS_EMPLOYEES_TABLE, parseCensusEmployees } from '../params/census-employees.ts';
@@ -96,13 +99,19 @@ export function commuteMatrixStep(readCommitted: CommittedReader = fsCommittedRe
       const params = readCommuteParams(readCommitted);
       const centroids = loadVillageCentroids(ctx.reader, shapes);
       const jobShare = jobShares(parseCensusEmployees(readCommitted(CENSUS_EMPLOYEES_TABLE)));
+      const lrtCoords = loadLrtStationCoords(ctx.reader);
+      const centroidOf = new Map([...centroids.districts].map(([code, c]) => [code, c.weighted as LonLat]));
       const result = buildCommuteMatrix({
         districts: ctx.districts,
-        centroids: new Map([...centroids.districts].map(([code, c]) => [code, c.weighted as LonLat])),
+        centroids: centroidOf,
         network,
         constants: modelConstants(params),
-        lrtCoords: loadLrtStationCoords(ctx.reader),
+        lrtCoords,
       });
+      const linkouCentroid = centroidOf.get(LINKOU_CODE);
+      if (linkouCentroid !== undefined) {
+        state.commuteLinkou = nearestStationInfo(network, lrtCoords, linkouCentroid, result.nearest.get(LINKOU_CODE));
+      }
       const cityOf = new Map(ctx.districts.map((d) => [d.code, d.city]));
       const survey = surveyCheck({
         codes: result.codes,

@@ -97,6 +97,31 @@ export interface CommuteModelInput {
   readonly lrtCoords: ReadonlyMap<string, LonLat>;
 }
 
+/** The nearest station of one district and its distance from the district's population-weighted centroid. */
+export interface NearestStationInfo {
+  readonly stationId: string;
+  readonly lineId: string;
+  /** Chinese station name from the network. */
+  readonly stationName: string;
+  /** Kilometres, unrounded. */
+  readonly distanceKm: number;
+}
+
+/** Looks up the nearest station of a district from a model result (undefined when none is reachable). */
+export function nearestStationInfo(
+  network: RailNetwork,
+  lrtCoords: ReadonlyMap<string, LonLat>,
+  centroid: LonLat,
+  stationId: string | undefined,
+): NearestStationInfo | undefined {
+  if (stationId === undefined) return undefined;
+  const s = network.stations.find((x) => x.id === stationId);
+  if (s === undefined) return undefined;
+  const pos: LonLat | undefined = s.lon !== undefined && s.lat !== undefined ? [s.lon, s.lat] : lrtCoords.get(s.id);
+  if (pos === undefined) return undefined;
+  return { stationId: s.id, lineId: s.lineId, stationName: s.name, distanceKm: haversineKm(centroid, pos) };
+}
+
 export interface CommuteMatrixResult {
   readonly codes: readonly string[];
   readonly minutes: readonly (readonly number[])[];

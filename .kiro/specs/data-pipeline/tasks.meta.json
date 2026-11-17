@@ -59,6 +59,14 @@
     "24.8 Write property test for the commute model": {
       "status": "passed",
       "lastRunTimestamp": 1794900374664
+    },
+    "25.10 Write property test for the rent-burden calculation": {
+      "status": "passed",
+      "lastRunTimestamp": 1794903121177
+    },
+    "25.11 Write property test for the commute shares": {
+      "status": "passed",
+      "lastRunTimestamp": 1794903389567
     }
   },
   "executionHistory": {
@@ -1625,6 +1633,16 @@
         "executionId": "50c9686e-3e96-483b-9557-29d889528bd4",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794900096624
+      },
+      {
+        "executionId": "9770ef71-d443-41f0-8b75-81be2d94110d",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794900855211
+      },
+      {
+        "executionId": "9770ef71-d443-41f0-8b75-81be2d94110d",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794900989193
       }
     ],
     "24.6 Write example tests for the model, survey check, matrix file and validator": [
@@ -1676,6 +1694,26 @@
         "executionId": "50c9686e-3e96-483b-9557-29d889528bd4",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794900387818
+      },
+      {
+        "executionId": "9770ef71-d443-41f0-8b75-81be2d94110d",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794900855401
+      },
+      {
+        "executionId": "9770ef71-d443-41f0-8b75-81be2d94110d",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794900990012
+      },
+      {
+        "executionId": "dd7a3d7f-52c3-4bdd-b38d-babeec31a0fd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901204472
+      },
+      {
+        "executionId": "dd7a3d7f-52c3-4bdd-b38d-babeec31a0fd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901471131
       }
     ],
     "24.9 Build `public/data/commute-matrix.json` and confirm": [
@@ -1700,6 +1738,36 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184178
+      },
+      {
+        "executionId": "dd7a3d7f-52c3-4bdd-b38d-babeec31a0fd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901505302
+      },
+      {
+        "executionId": "dd7a3d7f-52c3-4bdd-b38d-babeec31a0fd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901698596
+      },
+      {
+        "executionId": "8380112e-bfc4-4bc9-842e-638b94092b4d",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901828528
+      },
+      {
+        "executionId": "8380112e-bfc4-4bc9-842e-638b94092b4d",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901946056
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794902127612
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794902266108
       }
     ],
     "25.2 Implement `params/social-housing.ts` and `data/config/social-housing-unit-cost-cases.csv`": [
@@ -1707,6 +1775,26 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184211
+      },
+      {
+        "executionId": "dd7a3d7f-52c3-4bdd-b38d-babeec31a0fd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901505328
+      },
+      {
+        "executionId": "dd7a3d7f-52c3-4bdd-b38d-babeec31a0fd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901698631
+      },
+      {
+        "executionId": "8380112e-bfc4-4bc9-842e-638b94092b4d",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901828552
+      },
+      {
+        "executionId": "8380112e-bfc4-4bc9-842e-638b94092b4d",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901946742
       }
     ],
     "25.3 Implement `params/housing.ts` and `parsers/census-tenure.ts`": [
@@ -1714,6 +1802,26 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184242
+      },
+      {
+        "executionId": "dd7a3d7f-52c3-4bdd-b38d-babeec31a0fd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901505353
+      },
+      {
+        "executionId": "dd7a3d7f-52c3-4bdd-b38d-babeec31a0fd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901699417
+      },
+      {
+        "executionId": "8380112e-bfc4-4bc9-842e-638b94092b4d",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901829043
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794902267182
       }
     ],
     "25.4 Implement the rent-burden calculation in `params/ghost.ts`": [
@@ -1721,6 +1829,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184273
+      },
+      {
+        "executionId": "dd7a3d7f-52c3-4bdd-b38d-babeec31a0fd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901505867
+      },
+      {
+        "executionId": "dd7a3d7f-52c3-4bdd-b38d-babeec31a0fd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794901700045
       }
     ],
     "25.5 Implement the commute shares in `params/ghost.ts`": [
@@ -1728,6 +1846,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184318
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794902291657
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794902421517
       }
     ],
     "25.6 Create the job-share and commute-cost Parameter_Entries": [
@@ -1735,6 +1863,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184349
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794902291689
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794902421863
       }
     ],
     "25.7 Add `paramsPart1Step` to `run.ts` and the manifest": [
@@ -1742,6 +1880,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184378
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794902446325
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794902705911
       }
     ],
     "25.8 Add the type 1 and type 2 sections to `sources-doc.ts`": [
@@ -1749,6 +1897,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184406
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794902732765
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903017772
       }
     ],
     "25.9 Write example tests for the part 1 parsers and builders": [
@@ -1756,6 +1914,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184436
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903042838
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903306804
       }
     ],
     "25.10 Write property test for the rent-burden calculation": [
@@ -1763,6 +1931,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184469
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903043718
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903307684
       }
     ],
     "25.11 Write property test for the commute shares": [
@@ -1770,6 +1948,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184501
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903331740
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903402517
       }
     ],
     "25.12 Run the build and report the computed values": [
@@ -1777,6 +1965,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184537
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903428783
+      },
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903637210
       }
     ],
     "26.1 Add the type 3 entries to `data/config/params-fixed.json`": [
@@ -1976,6 +2174,13 @@
         "executionId": "a661efe6-da24-44e4-88f0-334afe0d3b46",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794898911623
+      }
+    ],
+    "25. Parameter table part 1: research values and values computed from our own data": [
+      {
+        "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903637242
       }
     ]
   }

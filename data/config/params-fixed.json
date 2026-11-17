@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "parameters": {
+    "socialHousing.rentRatio": {
+      "kind": "scalar",
+      "value": 0.8,
+      "unit": "ratio of market rent",
+      "status": "secondary",
+      "source": {
+        "citation": "Tenant rent of the social housing sublease and management program: 80 percent of market rent, as reported by CNA (Kaohsiung program, 2021) and Money Weekly",
+        "url": "https://www.cna.com.tw/news/aloc/202110270245.aspx"
+      },
+      "range": {
+        "low": 0.5,
+        "high": 0.9,
+        "lowSource": {
+          "citation": "Money Weekly: rent of 50 to 70 percent of market rent for disadvantaged households (the low end is the lower bound of that range)",
+          "url": "https://www.moneyweekly.com.tw/_Article?AID=59942"
+        },
+        "highSource": {
+          "citation": "project assumption; no independent source",
+          "url": ".kiro/specs/data-pipeline/design.md"
+        }
+      },
+      "estimated": {
+        "method": "The Taipei City and New Taipei City social housing rent rules are still to be checked against the program rules. The high value 0.9 has no independent source."
+      }
+    },
+    "rentSubsidy.passThrough": {
+      "kind": "scalar",
+      "value": 0.5,
+      "unit": "share of the subsidy that reaches market rent",
+      "status": "secondary",
+      "source": {
+        "citation": "Gibbons and Manning (2006), United Kingdom, about 50 percent, as summarized in Berard (2023), LIS working paper",
+        "url": "https://www.lisdatacenter.org/wp-content/uploads/files/2023-LIS2ER-B%C3%A9rard.pdf"
+      },
+      "range": {
+        "low": 0.16,
+        "high": 0.78,
+        "lowSource": {
+          "citation": "United States housing allowances, about 16 percent, as summarized in Berard (2023), LIS working paper",
+          "url": "https://www.lisdatacenter.org/wp-content/uploads/files/2023-LIS2ER-B%C3%A9rard.pdf"
+        },
+        "highSource": {
+          "citation": "Fack (2006), France, about 78 percent, as summarized in Berard (2023), LIS working paper (Laferrere and Le Blanc 2004 report 50 to 80 percent)",
+          "url": "https://www.lisdatacenter.org/wp-content/uploads/files/2023-LIS2ER-B%C3%A9rard.pdf"
+        }
+      },
+      "estimated": {
+        "method": "Range ends cited via review; the original tables were not read. The value is the figure for the United Kingdom, taken from a summary and not from the original paper. The studies cover France, the United Kingdom and the United States; no Taiwan estimate was found. Finnish work on the same question is VATT Working Paper 149."
+      }
+    },
+    "commuterPass.elasticity": {
+      "kind": "scalar",
+      "value": -0.3,
+      "unit": "percent change in ridership per percent change in fare",
+      "status": "secondary",
+      "source": {
+        "citation": "Simpson-Curtin rule (fare elasticity of transit ridership of about -0.3), as reported in Litman, Transit Price Elasticities and Cross-Elasticities (Victoria Transport Policy Institute)",
+        "url": "https://www.vtpi.org/tranelas.pdf"
+      },
+      "estimated": {
+        "method": "Range ends cited via review; the original tables were not read. The individual Litman table entries for -0.5 and -0.2 are still to be read."
+      },
+      "range": {
+        "low": -0.5,
+        "high": -0.2,
+        "lowSource": {
+          "citation": "Litman, Transit Price Elasticities and Cross-Elasticities: long-run values are larger in absolute size (the individual table entry for -0.5 is still to be read)",
+          "url": "https://www.vtpi.org/tranelas.pdf"
+        },
+        "highSource": {
+          "citation": "Litman, Transit Price Elasticities and Cross-Elasticities (the individual table entry for -0.2 is still to be read)",
+          "url": "https://www.vtpi.org/tranelas.pdf"
+        }
+      }
+    },
+    "ghost.rentThreshold": {
+      "kind": "scalar",
+      "value": 50,
+      "unit": "percent of income",
+      "status": "verified",
+      "source": {
+        "citation": "U.S. Department of Housing and Urban Development (HUD), definition of a severely cost-burdened household (rent above 50 percent of income)",
+        "url": "https://www.huduser.gov/portal/node/10587"
+      }
+    },
+    "ghost.commuteThreshold": {
+      "kind": "scalar",
+      "value": 60,
+      "unit": "minutes one way",
+      "status": "gap",
+      "assumption": "project rule; no study found for 60 minutes",
+      "source": {
+        "citation": "Project rule, no study for the value of 60 minutes. The 45-minute low end is a TVBS report on a survey of tolerable one-way commute time (original study unknown)",
+        "url": "https://news.tvbs.com.tw/life/832402"
+      },
+      "range": {
+        "low": 45,
+        "high": 60,
+        "lowSource": {
+          "citation": "TVBS report on a survey of tolerable one-way commute time (about 45 minutes); original study unknown",
+          "url": "https://news.tvbs.com.tw/life/832402"
+        },
+        "highSource": {
+          "citation": "project rule, no study",
+          "url": ".kiro/specs/data-pipeline/design.md"
+        }
+      },
+      "estimated": {
+        "method": "The low end is the survey figure as reported by TVBS. The value and the high end of 60 minutes are a project rule, without a cited study. A MOTC daily transport survey, reported by TVBS in 2017, gives about 57 minutes for trips from New Taipei City to Taipei City."
+      }
+    },
+    "rentSubsidy.nationalBudget": {
+      "kind": "scalar",
+      "value": 30000000000,
+      "unit": "TWD per year",
+      "status": "verified",
+      "source": {
+        "citation": "TechNews (2022-06-30), expanded central rent subsidy program from 2022-07-01",
+        "url": "https://finance.technews.tw/2022/06/30/expanded-rental-subsidy-program/"
+      },
+      "estimated": {
+        "method": "The value describes the national program from 2022. No engine rule reads it."
+      }
+    },
+    "rentSubsidy.nationalHouseholds": {
+      "kind": "scalar",
+      "value": 500000,
+      "unit": "households",
+      "status": "verified",
+      "source": {
+        "citation": "TechNews (2022-06-30), expanded central rent subsidy program from 2022-07-01 (target of 500,000 households, up from about 120,000)",
+        "url": "https://finance.technews.tw/2022/06/30/expanded-rental-subsidy-program/"
+      },
+      "estimated": {
+        "method": "The value describes the national program from 2022. No engine rule reads it."
+      }
+    },
+    "rentSubsidy.lag": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "quarters",
+      "status": "secondary",
+      "source": {
+        "citation": "GVM (2022), expanded central rent subsidy program: applications opened 2022-07-01, first payments in October 2022",
+        "url": "https://city.gvm.com.tw/article/88542"
+      },
+      "estimated": {
+        "method": "Derived from the 2022 program dates: applications opened on 2022-07-01 and the first payments were made in October 2022, which is one quarter later."
+      }
+    }
+  }
+}

@@ -11,7 +11,7 @@ import { FakeWriteFs } from './helpers-write.ts';
 
 const NAMES = [
   'preflight', 'census-check', 'districts', 'population', 'migration', 'income', 'sale-price', 'price-to-income', 'rent',
-  'mrt', 'social-housing', 'policy-track', 'history-file', 'policy-file', 'network', 'fare-slope', 'commute-matrix', 'validate', 'sources-doc', 'banned-terms', 'write',
+  'mrt', 'social-housing', 'policy-track', 'history-file', 'policy-file', 'network', 'fare-slope', 'commute-matrix', 'params-part1', 'validate', 'sources-doc', 'banned-terms', 'write',
 ];
 
 /** Text of the written file whose path ends with the given name. */

@@ -107,3 +107,47 @@ export function parseDgbasDisposableIncome(text: string, file: string): DgbasCit
   });
   return out;
 }
+
+export interface FiaQuartileRow {
+  readonly districtCode: string;
+  readonly incomeYear: number;
+  /** First quartile of the district total row, NT$ thousand. Any finite number: the caller checks the order. */
+  readonly q1: number;
+  /** Third quartile of the district total row, NT$ thousand. */
+  readonly q3: number;
+}
+
+/**
+ * Q1 and Q3 (`第一分位數`, `第三分位數`) of the district total rows of one FIA file, in file order.
+ * Same row selection as `parseFiaDistrictTotals`. The quartiles are not required to be positive here:
+ * Requirement 22.8 stops the build in `params/ghost.ts` with both values printed.
+ */
+export function parseFiaQuartiles(text: string, file: string, incomeYear: number): FiaQuartileRow[] {
+  const [rawHeader, ...rows] = parseCsv(text);
+  const header = (rawHeader ?? []).map((h) => h.trim());
+  const nameCol = indexOfAny(header, ['鄉鎮市區', '縣市別']);
+  const villageCol = header.indexOf('村里');
+  const q1Col = header.indexOf('第一分位數');
+  const q3Col = header.indexOf('第三分位數');
+  if (nameCol < 0 || villageCol < 0 || q1Col < 0 || q3Col < 0) {
+    const expected = ['鄉鎮市區 or 縣市別', '村里', '第一分位數', '第三分位數'];
+    const missing = [nameCol, villageCol, q1Col, q3Col].findIndex((i) => i < 0);
+    throw new ParseError(file, 1, expected, header, `missing required column ${expected[missing]}`);
+  }
+  const out: FiaQuartileRow[] = [];
+  rows.forEach((r, i) => {
+    if ((r[villageCol] ?? '').trim() !== '合計') return;
+    const d = districtByZh((r[nameCol] ?? '').trim());
+    if (!d) return;
+    const row = i + 2;
+    const finite = (cell: string | undefined, column: string): number => {
+      const n = parseNumber(cell ?? '');
+      if (!Number.isFinite(n)) {
+        throw new ParseError(file, row, [`${column}: number`], [`${column}: ${JSON.stringify(cell ?? null)}`], `${column} is not a number`);
+      }
+      return n;
+    };
+    out.push({ districtCode: d.code, incomeYear, q1: finite(r[q1Col], '第一分位數'), q3: finite(r[q3Col], '第三分位數') });
+  });
+  return out;
+}

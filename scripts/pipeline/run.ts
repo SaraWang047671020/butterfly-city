@@ -16,11 +16,13 @@ import { PUBLIC_DATA, ROOT } from '../lib/paths.ts';
 import { bannedTermsStep } from './banned-terms.ts';
 import { createContext, type BuildContext, type Logger } from './context.ts';
 import type { CentroidResult } from './commute/centroids.ts';
+import type { NearestStationInfo } from './commute/model.ts';
 import type { RailNetwork } from './commute/network.ts';
 import { commuteMatrixStep, fareSlopeStep, networkStep, type FareSlopeResult } from './commute/step.ts';
 import type { SurveyCheckResult } from './commute/survey-check.ts';
 import { districtsStep } from './districts-file.ts';
 import { censusCheckStep } from './params/census-employees.ts';
+import { paramsPart1Step, type ParamsPart1 } from './params/part1.ts';
 import { PipelineError } from './errors.ts';
 import type { DistrictShape } from './geo.ts';
 import { historyFileStep } from './history-file.ts';
@@ -109,6 +111,10 @@ export interface BuildState {
   commuteSurvey?: SurveyCheckResult;
   /** Set by the commute matrix step (task 24.5): the population-weighted centroids, for SOURCES.md. */
   commuteCentroids?: CentroidResult;
+  /** Set by the params part 1 step (task 25.7): the entries of tasks 25.1 to 25.6 and their method notes. */
+  paramsPart1?: ParamsPart1;
+  /** Set by the commute matrix step (task 24.5): the nearest station of Linkou, for SOURCES.md. */
+  commuteLinkou?: NearestStationInfo | undefined;
   /** Set by the SOURCES.md step (task 15.2): the full text of data/SOURCES.md. */
   sourcesDoc?: string;
   /** Lines about the policy track, e.g. social housing starts excluded from it (also added to `notes`). */
@@ -197,6 +203,7 @@ export function createDefaultSteps(options: DefaultStepsOptions = {}): readonly 
     networkStep(options.committedReader),
     fareSlopeStep(options.committedReader),
     commuteMatrixStep(options.committedReader),
+    paramsPart1Step(options.committedReader),
     validateStep(options.validationContext),
     sourcesDocStep(options.committedReader),
     bannedTermsStep(options.committedReader),

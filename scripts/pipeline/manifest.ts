@@ -33,6 +33,8 @@ export const COMMITTED_TABLES: readonly string[] = [
   'data/config/commute-params.json',
   'data/config/census-employees-2021.csv',
   'data/config/census-employees-2021-totals.csv',
+  'data/config/params-fixed.json',
+  'data/config/social-housing-unit-cost-cases.csv',
 ];
 
 const CITY_NAMES = ['臺北市', '新北市'] as const;
@@ -141,7 +143,8 @@ export function staticInputs(): RequiredInput[] {
     ...populationInputs(),
     ...incomeInputs(),
     ...raw('lvr', ...lvrFiles()),
-    ...raw('rent', 'rent-stats/1140123全國行政區租金統計-修正.ods'),
+    ...raw('rent', 'rent-stats/1140123全國行政區租金統計-修正.ods', 'census/census2020-taipei-s034-tenure.ods', 'census/census2020-ntpc-s034-tenure.ods'),
+    ...raw('commute', 'census/census2020-taipei-s014-workplace.ods', 'census/census2020-ntpc-s014-workplace.ods'),
     ...raw('macro', 'macro/taipei-A21000102-cpi-monthly.csv', 'macro/dgbas-pr0101a1m-cpi-basic.xml'),
     ...raw(
       'mrt',

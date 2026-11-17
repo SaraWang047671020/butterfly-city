@@ -435,7 +435,7 @@ The order follows the design: shared helpers first, then the district file and e
     - `jobShare`, `commuteMatrix` and `commuteSurvey` in `BuildState`; the step runs after `networkStep`; the validation step validates the matrix with the other files; `write.ts` stages and commits `public/data/commute-matrix.json` after `policy-track.json` and before `SOURCES.md` with the same rollback; the summary prints the mean commute time for the comparison. Update the runner and writer tests that list files or steps
     - _Requirements: 16.5, 16.6, 24.1, 24.10, 27.10, 27.7_
   - [x] 24.5 Add the commute sections to `sources-doc.ts`
-    - Each constant of `commute-params.json` with value, range, status, sources and, for `gap` entries, the assumption; the input that supplied the run times of each line; the interchanges that use the mean walking time; the pairs used and excluded for the fare slope; the model limitations (one fixed matrix for the 2025Q4 network, no change with the 2018 to 2023 openings, every off-diagonal cell estimated with the Commute_Model method, Airport MRT, buses and the Sanying Line not modelled, **Linkou has no other rail line so its times come from the road model only and are likely over-estimated**); the modelled mean, the survey figure of about 57 minutes and the signed difference reported as they are, with the statement that no constant, parameter or input was changed because of it
+    - Each constant of `commute-params.json` with value, range, status, sources and, for `gap` entries, the assumption; the input that supplied the run times of each line; the interchanges that use the mean walking time; the pairs used and excluded for the fare slope; the model limitations (one fixed matrix for the 2025Q4 network, no change with the 2018 to 2023 openings, every off-diagonal cell estimated with the Commute_Model method, Airport MRT, buses and the Sanying Line not modelled, **Linkou has no station in the model. Its residents reach the network by road at Huilong station (O21, Zhonghe-Xinlu Line), about 7.57 km from the Linkou population centre (computed by the build; 2025 value); for some destinations the road alone is faster. Road speed is a gap value, so Linkou commute times may be over-estimated.**); the modelled mean, the survey figure of about 57 minutes and the signed difference reported as they are, with the statement that no constant, parameter or input was changed because of it
     - The banned-term check must pass on the new text
     - Also state: the Population_Weighted_Centroid method with its two sources and the retrieval date 2026-11-17; the access rule `min(walk, road + accessTime)` with the reason that residents far from a station usually reach it by scooter or bus; the 5 districts with the largest weighted-to-geometric centroid distance
     - _Requirements: 24.7, 24.8, 24.11, 24.12, 24.13, 24.16, 25.2, 25.3, 25.8, 25.14, 29.2_
@@ -457,46 +457,46 @@ The order follows the design: shared helpers first, then the district file and e
     - Run `npx vitest --run` and `npm run typecheck` and report both exit codes
     - _Requirements: 24.1, 24.8, 24.10, 27.3_
 
-- [ ] 25. Parameter table part 1: research values and values computed from our own data
-  - [~] 25.1 Create the type 1 entries of `data/config/params-fixed.json` and the reader `params/fixed-table.ts`
-    - The eight entries of Requirement 21 (`socialHousing.rentRatio` 0.5 / 0.8 / 0.9, `rentSubsidy.passThrough` 0.16 / 0.50 / 0.78, `commuterPass.elasticity` −0.5 / −0.3 / −0.2, `ghost.rentThreshold` 50, `ghost.commuteThreshold` 45 / 60 / 60, `rentSubsidy.nationalBudget`, `rentSubsidy.nationalHouseholds`, `rentSubsidy.lag` 1) with unit, citation, url, status and, for ranges, `lowSource` and `highSource`; the study cited and each range end stated without ranking
+- [x] 25. Parameter table part 1: research values and values computed from our own data
+  - [x] 25.1 Create the type 1 entries of `data/config/params-fixed.json` and the reader `params/fixed-table.ts`
+    - The eight entries of Requirement 21 (`socialHousing.rentRatio` 0.5 / 0.8 / 0.9 with `highSource` citation "project assumption; no independent source", url `.kiro/specs/data-pipeline/design.md` (D41) and no pointer to RESEARCH-NOTES.md, `rentSubsidy.passThrough` 0.16 / 0.50 / 0.78 and `commuterPass.elasticity` −0.5 / −0.3 / −0.2 with status `secondary` and `estimated.method` "cited via review", `ghost.rentThreshold` 50, `ghost.commuteThreshold` 45 / 60 / 60 with status `gap`, assumption "project rule; no study found for 60 minutes" the low end 45 keeping its survey citation, `highSource` citation "project rule, no study" with url `.kiro/specs/data-pipeline/design.md`, and no source field pointing to RESEARCH-NOTES.md, `rentSubsidy.nationalBudget`, `rentSubsidy.nationalHouseholds`, `rentSubsidy.lag` 1) with unit, citation, url, status and, for ranges, `lowSource` and `highSource`; the study cited and each range end stated without ranking
     - `fixed-table.ts` reads the file through `checkParameterEntry` and stops with the id and the rule for an empty unit, citation or url, an unknown status, or a range out of order
     - _Requirements: 20.3, 20.9, 20.10, 21.1, 21.2, 21.3, 21.4, 21.5, 21.6, 21.7, 21.8, 21.10_
-  - [~] 25.2 Implement `params/social-housing.ts` and `data/config/social-housing-unit-cost-cases.csv`
+  - [x] 25.2 Implement `params/social-housing.ts` and `data/config/social-housing-unit-cost-cases.csv`
     - `socialHousing.lag`: median of start-to-completion quarters of projects with status `已完工`, both dates parseable, completion from 2015Q1 to 2025Q4, each `setupplan_guid` once; `range` is the first and third quartile in whole quarters; `estimated.method` contains `NLMA`; fewer than 10 qualifying projects stops the build and prints the counts by exclusion reason
-    - `socialHousing.unitCost` 5,450,000 / 7,800,000 / 8,600,000 from the three-project table, stopping when total ÷ dwellings differs from the stated figure by more than 1 percent; `socialHousing.rentPerUnit` for −2.5 percent, 0 and +6.5 percent × the 2024 median rent ÷ the median unit count of completed projects, with both assumptions stated in `estimated.method`
+    - `socialHousing.unitCost` 5,450,000 / 7,800,000 / 8,600,000 from the three-project table (every row lists all three sources: Storm, CNA, Control Yuan; no one-to-one mapping), stopping when total ÷ dwellings differs from the stated figure by more than 1 percent; `socialHousing.rentPerUnit` for −2.5 percent, 0 and +6.5 percent × the 2024 median rent ÷ the median unit count of completed projects, with both assumptions stated in `estimated.method`, which also states that the asymmetry comes from Diamond & McQuade (2019): +6.5% in low-income areas, −2.5% in high-income areas
     - _Requirements: 21.9, 22.1, 22.2, 22.3, 22.4, 22.12_
-  - [~] 25.3 Implement `params/housing.ts` and `parsers/census-tenure.ts`
-    - `housing.dwellingSize` = median `建物總面積平方公尺` of the qualifying rental records, 2015Q1 to 2025Q4, both cities; `housing.householdSize.<city>` = Σ `people_total` ÷ Σ `household_no` of the ODRP014 file of 2020-12; `housing.renterRate.<city>` = renting households ÷ households from the 2020 census tenure table (DGBAS table 34); status `verified` with `estimated.method`, and the note that the renter rate is a single-year value
+  - [x] 25.3 Implement `params/housing.ts` and `parsers/census-tenure.ts`
+    - `housing.dwellingSize` = median `建物總面積平方公尺` of the qualifying rental records, 2015Q1 to 2025Q4, both cities, after keeping only residential records whose rental type is blank or 整棟(戶)出租 and excluding records with a parking space and the types 獨立套房, 分租套房, 分租雅房, 分層出租 (`estimated.method` states the filters, the counts and the reason: the Ghost rule uses a whole reference dwelling; area and rent per m² both use total area including shared space; blank-type records before 2023 may include unidentifiable suites; suite and room renters are not in the reference dwelling); a report-only cross-check per city of (district median rent per m² × `housing.dwellingSize`) against the median monthly total rent, printed as a % gap with no value adjusted; `housing.householdSize.<city>` = Σ `people_total` ÷ Σ `household_no` of the ODRP014 file of 2020-12; `housing.renterRate.<city>` = renting households ÷ households from the 2020 census tenure table (DGBAS table 34); status `verified` with `estimated.method`, and the note that the renter rate is a single-year value
     - _Requirements: 22.5, 22.6, 22.12, 2.4_
-  - [~] 25.4 Implement the rent-burden calculation in `params/ghost.ts`
-    - `Φ` in `numeric.ts` (Abramowitz and Stegun 7.1.26); the FIA quartile reader (Q1 and Q3 of the district total row, income year 2023) in `parsers/income.ts`; `ghost.shareRent` and `ghost.sensitivityRent` for reference year 2023 as in the design; a district with Q1 ≤ 0 or Q1 ≥ Q3 stops the build with the District_Code and both quartiles; status `secondary`; `estimated.method` states the log-normal assumption and its limits (FIA income is per tax unit and excludes transfer income)
+  - [x] 25.4 Implement the rent-burden calculation in `params/ghost.ts`
+    - `Φ` in `numeric.ts` (Abramowitz and Stegun 7.1.26); the FIA quartile reader (Fiscal Information Agency dataset 103066 「綜稅綜合所得總額全國各縣市鄉鎮村里統計分析表」; Q1 and Q3 of the district total row, income year 2023) in `parsers/income.ts`; `ghost.shareRent` and `ghost.sensitivityRent` for reference year 2023 as in the design; a district with Q1 ≤ 0 or Q1 ≥ Q3 stops the build with the District_Code and both quartiles; status `secondary`; `estimated.method` states the log-normal assumption and its limits (FIA income is per tax unit and excludes transfer income)
     - _Requirements: 22.7, 22.8, 22.12_
-  - [~] 25.5 Implement the commute shares in `params/ghost.ts`
+  - [x] 25.5 Implement the commute shares in `params/ghost.ts`
     - Parser for the 2020 census table 14 (`census2020-{taipei,ntpc}-s014-workplace.ods`; same district, other district of the city, other county, city or overseas); the workplace spreading by `jobShare`; `ghost.shareCommuteWithin` (value 60 minutes, `low` the 45-minute share, `high` = value) and `ghost.sensitivityCommute` (share in (59, 60]) from the Commute_Matrix; status `secondary`; `estimated.method` states the spreading rule and its effect in both directions (same-district commutes at 0 minutes; the other-county category placed in the other city of the pair, so Ghost counts may be under-estimated)
     - _Requirements: 22.9, 22.12, 2.4_
-  - [~] 25.6 Create the job-share and commute-cost Parameter_Entries
+  - [x] 25.6 Create the job-share and commute-cost Parameter_Entries
     - `params/job-share.ts` builds the 41 `commute.jobShare.<code>` entries (status `secondary`, `estimated.method` states that the census excludes government agencies and public schools and under-counts districts such as Zhongzheng); `params/commute-cost.ts` wraps the `commuteCostEntry` of task 23 for the table. Add the Method text that the entry carries to the Sources_Document input
     - _Requirements: 20.10, 20.11, 22.10, 28.6, 29.6_
-  - [~] 25.7 Add `paramsPart1Step` to `run.ts` and the manifest
+  - [x] 25.7 Add `paramsPart1Step` to `run.ts` and the manifest
     - The step builds the entries of 25.1 to 25.6 into `BuildState.paramsPart1` and prints one line per entry (id, low, value, high, status); manifest rows for the census tenure and table 14 files and for the committed tables. Task 26 consumes the state
     - _Requirements: 2.3, 27.2_
-  - [~] 25.8 Add the type 1 and type 2 sections to `sources-doc.ts`
-    - For each entry of this task the study or page cited, each range end with its study, the inputs, the steps and the data that would replace each assumption; the sections follow `neutrality.md` (no study ranked above another)
-    - _Requirements: 21.10, 22.12_
-  - [~] 25.9 Write example tests for the part 1 parsers and builders
+  - [x] 25.8 Add the type 1 and type 2 sections to `sources-doc.ts`
+    - For each entry of this task the study or page cited, each range end with its study, the inputs, the steps and the data that would replace each assumption; the sections follow `neutrality.md` (no study ranked above another); list the social housing projects with a 0-quarter lag (8 in the current data)
+    - _Requirements: 21.10, 22.12, 22.13_
+  - [x] 25.9 Write example tests for the part 1 parsers and builders
     - Fixtures of at most 50 rows, literal expected values, and a missing-column test for each new parser (tenure, table 14, FIA quartiles): `socialHousing.lag` (median, quartiles, `NLMA` in the method, fewer than 10 projects stops), `unitCost` (the 1 percent check), `rentPerUnit`, `dwellingSize`, household size, renter rate, a district with Q1 ≥ Q3 stopping the build, the commute shares on a 3-district fixture, job share entries, and a fixed table with each rule violation
     - A static test: no module that computes a Parameter_Entry value imports from `scripts/backtest/`, reads `docs/BACKTEST.md` or reads a save file
     - _Requirements: 20.10, 21.1, 22.2, 22.4, 22.8, 27.15, 27.10_
-  - [~] 25.10 Write property test for the rent-burden calculation
+  - [x] 25.10 Write property test for the rent-burden calculation
     - **Property 41: Rent-burden tail share and sensitivity are bounded and monotone**
     - In `tests/scripts/pipeline/properties-ghost.test.ts`
     - **Validates: Requirements 22.7**
-  - [~] 25.11 Write property test for the commute shares
+  - [x] 25.11 Write property test for the commute shares
     - **Property 42: Commute shares are ordered and bounded**
     - In `tests/scripts/pipeline/properties-ghost.test.ts`
     - **Validates: Requirements 22.9**
-  - [~] 25.12 Run the build and report the computed values
+  - [x] 25.12 Run the build and report the computed values
     - Run `npm run data`, confirm exit code 0 and report, with a throwaway command that is not added to the repository, the `value`, `low` and `high` of every entry of this task; stop and report if a value looks implausible (for example a share outside 0 to 1)
     - Run `npx vitest --run` and `npm run typecheck` and report both exit codes
     - _Requirements: 22.1, 22.7, 22.9, 29.3_

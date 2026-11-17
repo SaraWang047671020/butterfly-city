@@ -275,6 +275,8 @@ const nodeId = (station: string, key: string): string => `${station}|${key}`;
 interface Arc {
   readonly to: string;
   readonly minutes: number;
+  /** Cost when the arc is the last one of the path: no dwell at the destination (equals `minutes` for a transfer). */
+  readonly finalMinutes: number;
   readonly train: boolean;
 }
 
@@ -307,9 +309,11 @@ export function buildRailNetwork(input: NetworkInputs, options: NetworkOptions):
 
   // Directed arcs keyed by `${key}|${a}|${b}`; the undirected edge keeps the smaller weight.
   const edgeMap = new Map<string, NetworkEdge>();
-  const addEdge = (lineId: string, lineKey: string, from: string, to: string, minutes: number): void => {
+  const runMap = new Map<string, number>();
+  const addEdge = (lineId: string, lineKey: string, from: string, to: string, minutes: number, runMinutes: number = minutes): void => {
     const [a, b] = codePointCompare(from, to) <= 0 ? [from, to] : [to, from];
     const k = `${lineKey}|${a}|${b}`;
+    runMap.set(k, Math.min(runMap.get(k) ?? Infinity, runMinutes));
     const cur = edgeMap.get(k);
     if (cur === undefined || minutes < cur.minutes) edgeMap.set(k, { lineId, lineKey, from: a, to: b, minutes });
   };
@@ -318,7 +322,7 @@ export function buildRailNetwork(input: NetworkInputs, options: NetworkOptions):
       if (droppedLines.has(r.lineId)) continue;
       throw new DataError('S2S record names a station that is not in the station file', `${r.routeId} ${r.from} -> ${r.to}`);
     }
-    addEdge(r.lineId, lineKeyOf(r.lineId, r.routeId), r.from, r.to, r.runSeconds / 60 + dwell(r.to));
+    addEdge(r.lineId, lineKeyOf(r.lineId, r.routeId), r.from, r.to, r.runSeconds / 60 + dwell(r.to), r.runSeconds / 60);
   }
 
   // LRT lines from the StationTimeTable.
@@ -434,7 +438,6 @@ export function buildRailNetwork(input: NetworkInputs, options: NetworkOptions):
 
   // Graph arcs between nodes.
   const arcs = new Map<string, Arc[]>();
-  const nodeDwell = new Map<string, number>();
   const push = (from: string, arc: Arc): void => {
     const list = arcs.get(from) ?? [];
     arcs.set(from, list);
@@ -443,11 +446,9 @@ export function buildRailNetwork(input: NetworkInputs, options: NetworkOptions):
   for (const e of edges) {
     const a = nodeId(e.from, e.lineKey);
     const b = nodeId(e.to, e.lineKey);
-    push(a, { to: b, minutes: e.minutes, train: true });
-    push(b, { to: a, minutes: e.minutes, train: true });
-  }
-  for (const [station, keys] of nodeKeys) {
-    for (const k of keys) nodeDwell.set(nodeId(station, k), dwell(station));
+    const run = runMap.get(`${e.lineKey}|${e.from}|${e.to}`) as number;
+    push(a, { to: b, minutes: run + dwell(e.to), finalMinutes: run, train: true });
+    push(b, { to: a, minutes: run + dwell(e.from), finalMinutes: run, train: true });
   }
   for (const ts of transferSites) {
     const members: { station: string; key: string }[] = [];
@@ -455,7 +456,7 @@ export function buildRailNetwork(input: NetworkInputs, options: NetworkOptions):
     for (const x of members) {
       for (const y of members) {
         if (x.key === y.key) continue;
-        push(nodeId(x.station, x.key), { to: nodeId(y.station, y.key), minutes: ts.walkMinutes + (waits.get(y.key) as number), train: false });
+        push(nodeId(x.station, x.key), { to: nodeId(y.station, y.key), minutes: ts.walkMinutes + (waits.get(y.key) as number), finalMinutes: ts.walkMinutes + (waits.get(y.key) as number), train: false });
       }
     }
   }
@@ -478,7 +479,6 @@ export function buildRailNetwork(input: NetworkInputs, options: NetworkOptions):
     const cached = cache.get(origin);
     if (cached !== undefined) return cached;
     const dist = new Map<string, number>();
-    const viaTrain = new Map<string, boolean>();
     const prev = new Map<string, string>();
     const done = new Set<string>();
     for (const n of startNodes(origin)) dist.set(n, 0);
@@ -498,19 +498,21 @@ export function buildRailNetwork(input: NetworkInputs, options: NetworkOptions):
         const cur = dist.get(arc.to);
         if (cur === undefined || nd < cur || (nd === cur && codePointCompare(best, prev.get(arc.to) as string) < 0)) {
           dist.set(arc.to, nd);
-          viaTrain.set(arc.to, arc.train);
           prev.set(arc.to, best);
         }
       }
     }
-    // Per station: the best arrival minus the dwell of the destination when it was reached by a train.
+    // Per station: the cheapest last arc into any of its nodes. The last arc does not count the dwell of the destination.
     const result = new Map<string, number>();
     for (const [n, d] of dist) {
-      const station = n.slice(0, n.indexOf('|'));
-      const t = d - (viaTrain.get(n) === true ? (nodeDwell.get(n) as number) : 0);
-      const cur = result.get(station);
-      if (cur === undefined || t < cur) result.set(station, t);
+      for (const arc of arcs.get(n) ?? []) {
+        const station = arc.to.slice(0, arc.to.indexOf('|'));
+        const c = d + arc.finalMinutes;
+        const cur = result.get(station);
+        if (cur === undefined || c < cur) result.set(station, c);
+      }
     }
+
     cache.set(origin, result);
     return result;
   }
@@ -528,7 +530,7 @@ export function buildRailNetwork(input: NetworkInputs, options: NetworkOptions):
       if (!nodeKeys.has(a) || !nodeKeys.has(b)) return undefined;
       if (a === b) return 0;
       const t = run(a).get(b);
-      return t === undefined ? undefined : Math.max(0, t);
+      return t;
     },
   };
 }
