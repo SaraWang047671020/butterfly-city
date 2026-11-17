@@ -175,8 +175,8 @@ describe('preflight', () => {
       (i) => i.committed !== true && i.directory !== true,
     );
     // 2 boundaries; population: ODRP005 36, ODRP014 64, ODRP002 25, ODRP011 191, 2 annual;
-    // 11 income, 188 lvr, 1 rent, 4 census tables 14 and 34, 2 macro, 25 mrt, 5 stations, 4 fares, 4 timetables, 4 policy, 2 social housing, 5 villages.
+    // 11 income, 188 lvr, 1 rent, 4 census tables 14 and 34, 2 macro, 25 mrt, 5 stations, 4 fares, 4 timetables, 4 policy, 2 social housing, 5 villages, 34 low-use.
     const population = 36 + 64 + 25 + 191 + 2;
-    expect(raws.length).toBe(2 + population + 11 + 188 + 1 + 4 + 2 + 25 + 5 + 4 + 4 + 4 + 2 + 5);
+    expect(raws.length).toBe(2 + population + 11 + 188 + 1 + 4 + 2 + 25 + 5 + 4 + 4 + 4 + 2 + 5 + 34);
   });
 });

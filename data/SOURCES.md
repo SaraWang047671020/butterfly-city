@@ -24,6 +24,8 @@ Initial data and events come from real open data. Policy outcomes are simulated,
   - history.json mrtEntries: 0 decimals
   - history.json socialHousingCompletions: 0 decimals
   - history.json socialHousingStock: 0 decimals
+  - history.json lowUseHousingCount: 0 decimals
+  - history.json lowUseHousingRate: 2 decimals
   - history.json cityDisposableIncome: 0 decimals
   - history.json priceToIncomeRatio: 2 decimals
   - policy-track.json socialHousingUnitsStarted: 0 decimals
@@ -82,6 +84,8 @@ Initial data and events come from real open data. Policy outcomes are simulated,
 | mrtEntries | entries per quarter | 0 | `boundaries/moi-7441` | MOI Department of Land Administration (distributed by NLSC via TGOS) | 鄉鎮市區界線(TWD97經緯度) (Township and district boundaries (TWD97 longitude/latitude)) | https://data.gov.tw/dataset/7441 | 2025–2025 | OGDL v1.0 |
 | socialHousingCompletions | units per quarter | 0 | `social-housing/nlma-portal` | National Land Management Agency, MOI | 社會住宅即時資訊平台 (Social housing real-time information portal) | https://socialhousing.nlma.gov.tw/CPA_SocialHousing_Portal/ | 1971–2026 | not stated |
 | socialHousingStock | units | 0 | `social-housing/nlma-portal` | National Land Management Agency, MOI | 社會住宅即時資訊平台 (Social housing real-time information portal) | https://socialhousing.nlma.gov.tw/CPA_SocialHousing_Portal/ | 1971–2026 | not stated |
+| lowUseHousingCount | dwellings | 0 | `housing/moi-low-use` | MOI (Real Estate Information Platform) | 低度使用(用電)住宅統計結果查詢(縣市及鄉鎮市區) (Low-use (low electricity use) housing statistics by district) | https://pip.moi.gov.tw/Publicize/Info/E1040 | 2015–2025 | not stated |
+| lowUseHousingRate | percent of dwellings | 2 | `housing/moi-low-use` | MOI (Real Estate Information Platform) | 低度使用(用電)住宅統計結果查詢(縣市及鄉鎮市區) (Low-use (low electricity use) housing statistics by district) | https://pip.moi.gov.tw/Publicize/Info/E1040 | 2015–2025 | not stated |
 | cityDisposableIncome | TWD per household per year | 0 | `income/dgbas-9415` | DGBAS | 家庭收支調查 平均每戶可支配所得 (by county) (Household Income and Expenditure Survey, average disposable income per household by county) | https://data.gov.tw/dataset/9415 | 2015–2025 | OGDL v1.0 |
 | priceToIncomeRatio | years of income | 2 | `lvr/moi-25119` | MOI Department of Land Administration | 實價登錄 sales (Real-price registration, sales) | https://data.gov.tw/dataset/25119 | 2015–2026 | OGDL v1.0 |
 | priceToIncomeRatio | years of income | 2 | `income/dgbas-9415` | DGBAS | 家庭收支調查 平均每戶可支配所得 (by county) (Household Income and Expenditure Survey, average disposable income per household by county) | https://data.gov.tw/dataset/9415 | 2015–2025 | OGDL v1.0 |
@@ -115,6 +119,14 @@ Initial data and events come from real open data. Policy outcomes are simulated,
 - URL: https://data.gov.tw/dataset/7441
 - Years covered: 2025–2025
 - License: OGDL v1.0
+
+### housing/moi-low-use
+
+- Agency: MOI (Real Estate Information Platform)
+- Dataset: 低度使用(用電)住宅統計結果查詢(縣市及鄉鎮市區) (Low-use (low electricity use) housing statistics by district)
+- URL: https://pip.moi.gov.tw/Publicize/Info/E1040
+- Years covered: 2015–2025
+- License: not stated
 
 ### income/dgbas-9415
 
@@ -847,7 +859,7 @@ The file public/data/commute-matrix.json holds the 41 × 41 commute times in min
 | `Y` | TDX S2S | 14 | 13 | n/a |
 | `V` | not included | 0 | 0 | The Danhai LRT is not included; the whole line lies within Tamsui District, so this affects only access times within Tamsui. |
 | `LB` | not included | 0 | 0 | The Sanying Line (LB) opened on 2026-06-30, after the 2025-12-31 cut-off of the 2025Q4 network. |
-| `AIRPORT` | not included | 0 | 0 | The Taoyuan Airport MRT is not in the TDX files and is excluded from the rail graph (user decision 2026-11-18). |
+| `AIRPORT` | not included | 0 | 0 | The Taoyuan Airport MRT is not in the TDX files and is excluded from the rail graph (user decision 2026-11-17). |
 
 ### Lines using the default transfer wait
 
@@ -1199,3 +1211,177 @@ For each city, the district median rent per m² multiplied by the dwelling size 
 
 Regression: least squares with an intercept of the adult full fare (TWD) on the rail-graph in-vehicle path time (minutes) over 14774 station pairs gives 0.6955 TWD per minute per trip; value is this slope multiplied by the monthly trips. Selection: high is the larger of value and the same regression over the Uncapped_Range multiplied by the monthly trips, 0.6928 TWD per minute per trip. The Uncapped_Range is the 14603 pairs with a path time below 59.783333333333324 minutes, the shortest pair charged the Fare_Cap of 65 TWD. low is 0, the marginal cost of a minute for a pass holder. Monthly trips: commute.tripsPerMonth = 44 one-way trips per commuter per month, Parameter_Status gap. Fare cap: fares are capped (maximum 65 TWD), so a linear per-minute cost over-estimates long trips. The Fare_Cap affects only 48 of 14,774 station pairs (0.3 percent). The slope does not rise after excluding them (0.6928 against 0.6955 TWD per minute per trip), so high equals value (30.60). The uncertainty range is provided by low = 0. Stations not in the network: R01, V01, V02, V03, V04, V05, V06, V07, V08, V09, V10, V11, V26, V27, V28 do not appear in the TDX station-to-station travel time files or the Ankeng StationTimeTable run times; 424 station pairs are excluded. Migration weights: the fares are cited, but the migration weights (migration.weight*, migration.threshold, migration.share) are gap, so how strongly the commuter pass subsidy moves migration is an assumption. Backtest: the TPASS backtest validates MRT entries only and does not validate migration.
 
+
+## 12. Parameter table
+
+The file public/data/params.json holds 81 parameter ids. Parameter_Source_Type 1 is a value from published research (8 ids), type 2 is a value computed from the open data of this pipeline (54 ids), and type 3 is a gap value (19 ids).
+
+### All parameter ids
+
+| Id | Source type | Unit | Status | Source |
+| --- | --- | --- | --- | --- |
+| `commute.jobShare.63000010` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf |
+| `commute.jobShare.63000020` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf |
+| `commute.jobShare.63000030` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf |
+| `commute.jobShare.63000040` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf |
+| `commute.jobShare.63000050` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf |
+| `commute.jobShare.63000060` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf |
+| `commute.jobShare.63000070` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf |
+| `commute.jobShare.63000080` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf |
+| `commute.jobShare.63000090` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf |
+| `commute.jobShare.63000100` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf |
+| `commute.jobShare.63000110` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf |
+| `commute.jobShare.63000120` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000010` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000020` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000030` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000040` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000050` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000060` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000070` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000080` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000090` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000100` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000110` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000120` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000130` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000140` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000150` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000160` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000170` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000180` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000190` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000200` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000210` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000220` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000230` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000240` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000250` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000260` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000270` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000280` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commute.jobShare.65000290` | 2 | share of the 41-district total | secondary | DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf |
+| `commuterPass.elasticity` | 1 | percent change in ridership per percent change in fare | secondary | Simpson-Curtin rule (fare elasticity of transit ridership of about -0.3), as reported in Litman, Transit Price Elasticities and Cross-Elasticities (Victoria Transport Policy Institute), https://www.vtpi.org/tranelas.pdf |
+| `commuterPass.lag` | 3 | quarters | gap | Project assumption; fare elasticities in RESEARCH-NOTES 2e are short-run responses, .kiro/specs/data-pipeline/design.md |
+| `commuterPass.unitCost` | 3 | TWD of budget per TWD of subsidy | gap | Project assumption; no administration overhead was found, .kiro/specs/data-pipeline/design.md |
+| `ghost.commuteThreshold` | 1 | minutes one way | gap | Project rule, no study for the value of 60 minutes. The 45-minute low end is a TVBS report on a survey of tolerable one-way commute time (original study unknown), https://news.tvbs.com.tw/life/832402 |
+| `ghost.rentThreshold` | 1 | percent of income | verified | U.S. Department of Housing and Urban Development (HUD), definition of a severely cost-burdened household (rent above 50 percent of income), https://www.huduser.gov/portal/node/10587 |
+| `ghost.sensitivityCommute` | 2 | share of employed residents per minute of one-way commute time | secondary | DGBAS, 2020 Population and Housing Census, table 14 (employed residents by place of work), Taipei City and New Taipei City reports; Open Government Data License 1.0, https://data.gov.tw/dataset/10906 |
+| `ghost.sensitivityRent` | 2 | share of renter persons per percentage point of rent burden | secondary | Ministry of Finance (Fiscal Information Agency), comprehensive income tax statistics by village, income year 2023 (112_165-9.csv); Open Government Data License 1.0, https://data.gov.tw/dataset/103066 |
+| `ghost.shareBoth` | 3 | share of residents | gap | Derived from ghost.shareRent and ghost.shareCommuteWithin; see their sources, https://data.gov.tw/dataset/103066 |
+| `ghost.shareCommuteWithin` | 2 | share of employed residents | secondary | DGBAS, 2020 Population and Housing Census, table 14 (employed residents by place of work), Taipei City and New Taipei City reports; Open Government Data License 1.0, https://data.gov.tw/dataset/10906 |
+| `ghost.shareRent` | 2 | share of residents | secondary | Ministry of Finance (Fiscal Information Agency), comprehensive income tax statistics by village, income year 2023 (112_165-9.csv); Open Government Data License 1.0, https://data.gov.tw/dataset/103066 |
+| `ghost.size` | 3 | persons per ghost | gap | Product default for the display scale (product.md); not a research result, .kiro/steering/product.md |
+| `housing.dwellingSize` | 2 | m² per rented dwelling | verified | MOI Department of Land Administration, real-price registration rental records (data.gov.tw 25118), https://data.gov.tw/dataset/25118 |
+| `housing.householdSize.New Taipei` | 2 | persons per household | verified | MOI Department of Household Registration, ODRP014 households and population by village, December 2020, https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP014 |
+| `housing.householdSize.Taipei` | 2 | persons per household | verified | MOI Department of Household Registration, ODRP014 households and population by village, December 2020, https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP014 |
+| `housing.renterRate.New Taipei` | 2 | share of households | verified | DGBAS 2020 Population and Housing Census, table 34 (home ownership of ordinary households), New Taipei, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11065/230886/s034.ods |
+| `housing.renterRate.Taipei` | 2 | share of households | verified | DGBAS 2020 Population and Housing Census, table 34 (home ownership of ordinary households), Taipei, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11065/230887/s034.ods |
+| `limit.commuterPass.subsidy.lowerFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
+| `limit.rentSubsidy.amount.lowerFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
+| `limit.rentSubsidy.amount.upperFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
+| `limit.rentSubsidy.households.lowerFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
+| `limit.rentSubsidy.households.upperFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
+| `limit.socialHousing.unitsStarted.lowerFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
+| `limit.socialHousing.unitsStarted.upperFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
+| `migration.commuteCostPerMinute` | 2 | TWD per minute per commuter per month | secondary | TDX Rail/Metro ODFare, Taipei Metro (TRTC), New Taipei Metro (NTMC), Danhai LRT (NTDLRT) and Ankeng LRT (NTALRT), adult single-journey full fare, Ministry of Transport and Communications, https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/ODFare/{TRTC,NTMC,NTDLRT,NTALRT}?%24format=JSON |
+| `migration.exitShare` | 3 | share of registered move-outs | gap | Ministry of the Interior, Department of Household Registration, registered move-in and move-out by village (ODRP002 for 2016 to 2017, ODRP011 from 2018) and population by village; Open Government Data License 1.0, https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP011 |
+| `migration.share` | 3 | share of residents per quarter | gap | Ministry of the Interior, Department of Household Registration, registered move-in and move-out by village (ODRP002 for 2016 to 2017, ODRP011 from 2018) and population by village; Open Government Data License 1.0, https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP011 |
+| `migration.threshold` | 3 | percentage points of rent burden | gap | Computed from the baseline rent indicator (Ministry of the Interior actual-price registration rental records), the householdIncome indicator (DGBAS Survey of Family Income and Expenditure with the 2021 Industry, Commerce and Services Census), and housing.dwellingSize; Open Government Data License 1.0, https://plvr.land.moi.gov.tw/DownloadOpenData |
+| `migration.weightBurden` | 3 | weight (dimensionless) | gap | Project assumption of equal weights; no study of destination choice for Taipei was found, .kiro/specs/data-pipeline/design.md |
+| `migration.weightCost` | 3 | weight (dimensionless) | gap | Project assumption of equal weights; no study of destination choice for Taipei was found, .kiro/specs/data-pipeline/design.md |
+| `migration.weightTime` | 3 | weight (dimensionless) | gap | Project assumption of equal weights; no study of destination choice for Taipei was found, .kiro/specs/data-pipeline/design.md |
+| `rentSubsidy.lag` | 1 | quarters | secondary | GVM (2022), expanded central rent subsidy program: applications opened 2022-07-01, first payments in October 2022, https://city.gvm.com.tw/article/88542 |
+| `rentSubsidy.nationalBudget` | 1 | TWD per year | verified | TechNews (2022-06-30), expanded central rent subsidy program from 2022-07-01, https://finance.technews.tw/2022/06/30/expanded-rental-subsidy-program/ |
+| `rentSubsidy.nationalHouseholds` | 1 | households | verified | TechNews (2022-06-30), expanded central rent subsidy program from 2022-07-01 (target of 500,000 households, up from about 120,000), https://finance.technews.tw/2022/06/30/expanded-rental-subsidy-program/ |
+| `rentSubsidy.passThrough` | 1 | share of the subsidy that reaches market rent | secondary | Gibbons and Manning (2006), United Kingdom, about 50 percent, as summarized in Berard (2023), LIS working paper, https://www.lisdatacenter.org/wp-content/uploads/files/2023-LIS2ER-B%C3%A9rard.pdf |
+| `rentSubsidy.unitCost` | 3 | TWD of budget per TWD of subsidy | gap | Project assumption; no administration overhead was found, .kiro/specs/data-pipeline/design.md |
+| `socialHousing.costSchedule` | 3 | share of the project cost per quarter after the start | gap | Derived from socialHousing.lag (15 quarters); see its source, https://socialhousing.nlma.gov.tw/CPA_SocialHousing_Portal/ |
+| `socialHousing.lag` | 2 | quarters | secondary | National Land Management Agency, MOI: social housing real-time information portal (project list), https://socialhousing.nlma.gov.tw/CPA_SocialHousing_Portal/ |
+| `socialHousing.rentPerUnit` | 2 | TWD per m² per month per dwelling of stock difference | secondary | Diamond and McQuade (2019), Who Wants Affordable Housing in Their Backyard?, Journal of Political Economy 127(3), https://www.nber.org/papers/w22204 |
+| `socialHousing.rentRatio` | 1 | ratio of market rent | secondary | Tenant rent of the social housing sublease and management program: 80 percent of market rent, as reported by CNA (Kaohsiung program, 2021) and Money Weekly, https://www.cna.com.tw/news/aloc/202110270245.aspx |
+| `socialHousing.unitCost` | 2 | TWD per dwelling | secondary | Dongxin: total cost TWD 690000000 for 88 dwellings. Project totals and dwelling counts of Jingfeng, Dongxin and Peiying (budget), from three sources taken together: Storm Media (https://www.storm.mg/article/3088809), Central News Agency (https://www.cna.com.tw/news/aloc/202512040148.aspx), Control Yuan report (https://www.cy.gov.tw/AP_Home/Op_Upload/eDoc/%E5%87%BA%E7%89%88%E5%93%81/109/1090000021010801895p.pdf); table in data/config/social-housing-unit-cost-cases.csv, https://www.storm.mg/article/3088809 |
+
+### Omitted optional ids
+
+These ids are not in params.json. When an id is absent, the engine applies the default below.
+
+| Id | Default applied by the engine |
+| --- | --- |
+| `limit.socialHousing.unitsStarted.upperMin` | Absent: the upper limit is the upper factor times the real value, with a floor of 0 (budget.ts, checkLimit). |
+| `limit.socialHousing.unitsStarted.min` | Absent: the lower limit is the lower factor times the real value (budget.ts, checkLimit). |
+| `limit.socialHousing.unitsStarted.max` | Absent: the upper limit is the upper factor times the real value, raised to the upper minimum when that is present (budget.ts, checkLimit). |
+| `commuterPass.costSchedule` | Absent: the whole cost is charged once at offset 0, with share 1 (budget.ts, costSchedule). |
+| `rentSubsidy.costSchedule` | Absent: the whole cost is charged once at offset 0, with share 1 (budget.ts, costSchedule). |
+| `budget.ceiling.<tool>.<year>` | Absent: the ceiling of the tool for that year is the Annual_Budget of the year (budget.ts, plan ceilings). |
+
+### Gap parameters
+
+The values below are game defaults or approximations chosen where no suitable measurement was found. They are not research results. Each row states the assumption and the data that would replace the value.
+
+| Id | Value | Assumption | Data that would replace it |
+| --- | --- | --- | --- |
+| `commuterPass.lag` | 0 quarters | The fare elasticities are short-run responses to a price change and are taken to act in the quarter of the change. | The assumption is: The fare elasticities are short-run responses to a price change and are taken to act in the quarter of the change.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `commuterPass.unitCost` | 1 TWD of budget per TWD of subsidy | One TWD of budget pays one TWD of subsidy, with no administration overhead. | The assumption is: One TWD of budget pays one TWD of subsidy, with no administration overhead.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `ghost.commuteThreshold` | 60 minutes one way | project rule; no study found for 60 minutes | The assumption is: project rule; no study found for 60 minutes. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `ghost.shareBoth` | 0.004442 share of residents | Independence: a resident being rent burdened and a resident having a long commute are treated as independent events, so the joint share is the product of the two shares. No data on the joint distribution was found; it would replace this assumption. | The assumption is: Independence: a resident being rent burdened and a resident having a long commute are treated as independent events, so the joint share is the product of the two shares. No data on the joint distribution was found; it would replace this assumption.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `ghost.size` | 1000 persons per ghost | One ghost stands for 1,000 residents; the value is a display scale. | The assumption is: One ghost stands for 1,000 residents; the value is a display scale.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `limit.commuterPass.subsidy.lowerFactor` | 0 multiple of the real value | The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement. | The assumption is: The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `limit.rentSubsidy.amount.lowerFactor` | 0 multiple of the real value | The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement. | The assumption is: The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `limit.rentSubsidy.amount.upperFactor` | 2 multiple of the real value | The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement. | The assumption is: The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `limit.rentSubsidy.households.lowerFactor` | 0 multiple of the real value | The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement. | The assumption is: The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `limit.rentSubsidy.households.upperFactor` | 2 multiple of the real value | The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement. | The assumption is: The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `limit.socialHousing.unitsStarted.lowerFactor` | 0 multiple of the real value | The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement. | The assumption is: The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `limit.socialHousing.unitsStarted.upperFactor` | 2 multiple of the real value | The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement. | The assumption is: The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `migration.exitShare` | 0.379541 share of registered move-outs | The share of residents who leave their district under rent pressure and also leave the two cities is assumed equal to the share of all registered move-outs that go outside the two cities. This is only an approximation: the files give the destination at the level of city or county and not district to district, they hold all moves and not only moves driven by rent burden, and the registered total includes cancelled registrations and "other" cases whose destination is unknown, which count as exits. Residents who leave because of rent may go to Taoyuan or Keelung more often or less often than other movers. A published measure of the destinations of rent-driven movers would replace it. This value is an assumption and not a research result. | The assumption is: The share of residents who leave their district under rent pressure and also leave the two cities is assumed equal to the share of all registered move-outs that go outside the two cities. This is only an approximation: the files give the destination at the level of city or county and not district to district, they hold all moves and not only moves driven by rent burden, and the registered total includes cancelled registrations and "other" cases whose destination is unknown, which count as exits. Residents who leave because of rent may go to Taoyuan or Keelung more often or less often than other movers. A published measure of the destinations of rent-driven movers would replace it. This value is an assumption and not a research result.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `migration.share` | 0.011891 share of residents per quarter | The share of residents who leave when the burden excess passes the threshold is assumed equal to the ordinary quarterly move-out rate. This is only an approximation: the registered rate measures all moves, made for any reason (work, family, housing), not moves caused by a rise in rent burden, and the baseline already contains this ordinary movement, so the simulated movement partly counts it again. No study of the share of residents who leave because of a rent-burden rise in Taipei or New Taipei was found. A published measure of rent-driven displacement for the two cities, for example from a household survey of reasons for moving, would replace it. This value is an assumption and not a research result. | The assumption is: The share of residents who leave when the burden excess passes the threshold is assumed equal to the ordinary quarterly move-out rate. This is only an approximation: the registered rate measures all moves, made for any reason (work, family, housing), not moves caused by a rise in rent burden, and the baseline already contains this ordinary movement, so the simulated movement partly counts it again. No study of the share of residents who leave because of a rent-burden rise in Taipei or New Taipei was found. A published measure of rent-driven displacement for the two cities, for example from a household survey of reasons for moving, would replace it. This value is an assumption and not a research result.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `migration.threshold` | 0.5 percentage points of rent burden | A rent-burden rise is assumed to move people only when it exceeds the ordinary year-to-year variation of the burden across districts. This is only an approximation: the spread of the baseline measures how much burden varied in the past for any reason, including income estimates that are interpolated, and not the rise at which households decide to move. No study of the rent-burden rise that triggers a move in Taipei or New Taipei was found. A household survey or panel study of rent burden before and after moves in the two cities would replace it. This value is an assumption and not a research result. | The assumption is: A rent-burden rise is assumed to move people only when it exceeds the ordinary year-to-year variation of the burden across districts. This is only an approximation: the spread of the baseline measures how much burden varied in the past for any reason, including income estimates that are interpolated, and not the rise at which households decide to move. No study of the rent-burden rise that triggers a move in Taipei or New Taipei was found. A household survey or panel study of rent burden before and after moves in the two cities would replace it. This value is an assumption and not a research result.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `migration.weightBurden` | 1 weight (dimensionless) | The rent-burden term counts as much as each of the other two terms in the destination score. | The assumption is: The rent-burden term counts as much as each of the other two terms in the destination score.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `migration.weightCost` | 1 weight (dimensionless) | The commute-cost term counts as much as each of the other two terms in the destination score. | The assumption is: The commute-cost term counts as much as each of the other two terms in the destination score.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `migration.weightTime` | 1 weight (dimensionless) | The commute-time term counts as much as each of the other two terms in the destination score. | The assumption is: The commute-time term counts as much as each of the other two terms in the destination score.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `rentSubsidy.unitCost` | 1 TWD of budget per TWD of subsidy | One TWD of budget pays one TWD of subsidy, with no administration overhead. | The assumption is: One TWD of budget pays one TWD of subsidy, with no administration overhead.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
+| `socialHousing.costSchedule` | offset 0: 0.066667; offset 1: 0.066667; offset 2: 0.066667; offset 3: 0.066667; offset 4: 0.066667; offset 5: 0.066667; offset 6: 0.066667; offset 7: 0.066667; offset 8: 0.066667; offset 9: 0.066667; offset 10: 0.066667; offset 11: 0.066667; offset 12: 0.066667; offset 13: 0.066667; offset 14: 0.066662 (share of the project cost per quarter after the start) | Even payment: the cost of a project is paid in equal amounts in every quarter from start to completion. Payment schedules of completed projects would replace this assumption. | A published payment profile for the tool would replace the even payment assumption. |
+
+## 13. Low-use housing
+
+The indicators `lowUseHousingCount` and `lowUseHousingRate` give, for each district, the number and the share of dwellings with an average monthly electricity use of at most 60 kWh. A district has a value only for the half-years in which the MOI published one.
+
+### Source
+
+- Source id: `housing/moi-low-use`
+- Agency: MOI (Real Estate Information Platform)
+- Dataset: 低度使用(用電)住宅統計結果查詢(縣市及鄉鎮市區) (Low-use (low electricity use) housing statistics by district)
+- URL: https://pip.moi.gov.tw/Publicize/Info/E1040
+- Years covered: 2015–2025
+- License: not stated
+
+### Period convention
+
+A period is written YYYYH1 or YYYYH2. The published value of a period is the state at the last day of the period, so it applies to the last quarter of the period only: Q2 for the first half and Q4 for the second half. That quarter is the Reference_Quarter, and its value carries the period label in `dataPeriod`.
+
+The annual values of ROC years 104 to 108 are mapped to 2015H2 to 2019H2 of the same calendar year. Their Reference_Quarter is Q4, which matches the last day of the year. No first-half period exists for 2015 to 2019, so Q2 of each year from 2015 to 2019 is `null`.
+
+Every other quarter that no published period covers is `null` with the estimate flag `false`. No value is estimated, interpolated, held, extrapolated or pooled.
+
+### Periods with district values
+
+- Number of periods: 17
+- First period: 2015H2
+- Last period: 2025H2
+- Periods: `2015H2`, `2016H2`, `2017H2`, `2018H2`, `2019H2`, `2020H1`, `2020H2`, `2021H1`, `2021H2`, `2022H1`, `2022H2`, `2023H1`, `2023H2`, `2024H1`, `2024H2`, `2025H1`, `2025H2`
+
+### Current and original methods
+
+The MOI publishes two methods for low-use housing. The current method (現行標準) has annual values for 2015 to 2019 and half-yearly values for 2020H1 to 2025H2. The original method (原標準) has values for 2015H2 to 2020H2.
+
+For Xinyi in 2019H2 the current method gives 4.97 percent (3,741 dwellings) and the original method gives 5.32 percent (4,006 dwellings).
+
+Only the current method is used, because it is the only one that covers 2015 to 2025 with one definition. The original-method files are kept in the raw data directory and are not read.
+
+### Periods without a published value, by district
+
+Every district has a published value in every period.
+
+### Data gaps of the low-use indicators
+
+No district is entirely without a published value.

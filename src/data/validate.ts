@@ -7,7 +7,7 @@ import type { IndicatorKind } from '../types/data-files.ts';
 
 /** Structurally the same as `ValidationIssue` in scripts/pipeline/errors.ts. */
 export interface ValidationError {
-  readonly file: 'districts.json' | 'history.json' | 'policy-track.json' | 'commute-matrix.json';
+  readonly file: 'districts.json' | 'history.json' | 'policy-track.json' | 'commute-matrix.json' | 'params.json';
   readonly path: string; // JSON path, e.g. $.indicators[2].series["65000200"][17].value
   readonly rule: string;
   readonly message: string;
@@ -18,6 +18,17 @@ export interface ValidationContext {
   readonly quarters: readonly string[]; // exactly 2015Q1..2025Q4
   readonly indicatorIds: readonly string[]; // ids in history.json, for the unique-id check of policy series
   readonly policySeriesIds: readonly string[]; // exactly these policy series ids are expected
+  readonly engineIdSet?: readonly string[]; // params.json: exactly these ids (the pipeline passes it)
+  readonly sourceTypes?: Readonly<Record<string, 1 | 2 | 3>>; // params.json: Parameter_Source_Type per id
+  /** history.json, rule low-use-gap; skipped when absent (the web app loader). */
+  readonly lowUse?: LowUseContext;
+}
+
+/** The low-use build result the validator compares the periodic indicators against (Requirement 26.13). */
+export interface LowUseContext {
+  readonly dataGaps: readonly string[]; // District_Codes without a value in any Low_Use_Period
+  readonly periodsPresent: readonly string[]; // `YYYYH1` / `YYYYH2` periods with a published district value
+  readonly missing: readonly { readonly district: string; readonly period: string }[]; // (district, period) pairs without a value
 }
 
 type Obj = Record<string, unknown>;
@@ -326,6 +337,7 @@ function checkMethodRef(c: Checker, id: unknown, path: string, methods: Readonly
 interface SeriesSpec {
   readonly kind: IndicatorKind | undefined;
   readonly decimals: number | undefined;
+  readonly periodic?: boolean;
 }
 
 function checkRangeAndDecimals(c: Checker, v: number, path: string, spec: SeriesSpec): void {
@@ -351,7 +363,14 @@ function checkRangeAndDecimals(c: Checker, v: number, path: string, spec: Series
   }
 }
 
-function checkValueRecord(c: Checker, rec: unknown, p: string, spec: SeriesSpec, methods: ReadonlyMap<string, string>): void {
+function checkValueRecord(
+  c: Checker,
+  rec: unknown,
+  p: string,
+  spec: SeriesSpec,
+  methods: ReadonlyMap<string, string>,
+  quarter?: string,
+): void {
   if (!isObj(rec)) {
     c.add(p, 'type', `expected an object, found ${describe(rec)}`);
     return;
@@ -378,10 +397,45 @@ function checkValueRecord(c: Checker, rec: unknown, p: string, spec: SeriesSpec,
       c.add(sub(p, 'method'), 'estimate', 'a null value needs a method of kind missing-reason');
     }
   } else if (estimated === false) {
-    if (isNull) c.add(sub(p, 'value'), 'estimate', 'a null value needs estimated true and a missing-reason method');
+    if (isNull && spec.periodic !== true) {
+      c.add(sub(p, 'value'), 'no-data', 'a null value with estimated false is allowed only in a periodic indicator');
+    }
     if (hasMethod) c.add(sub(p, 'method'), 'estimate', 'a record with estimated false must not have a method');
   }
+  checkDataPeriod(c, rec, p, spec, isNull, estimated, quarter);
   if (value !== undefined) checkRangeAndDecimals(c, value, sub(p, 'value'), spec);
+}
+
+/** Reference_Quarter of a Low_Use_Period label: `2023H1` → `2023Q2`, `2023H2` → `2023Q4`. */
+function referenceQuarter(period: string): string | undefined {
+  const m = /^(\d{4})H([12])$/.exec(period);
+  return m === null ? undefined : `${m[1]}Q${m[2] === '1' ? 2 : 4}`;
+}
+
+function checkDataPeriod(
+  c: Checker,
+  rec: Obj,
+  p: string,
+  spec: SeriesSpec,
+  isNull: boolean,
+  estimated: unknown,
+  quarter: string | undefined,
+): void {
+  const dp = has(rec, 'dataPeriod') ? rec['dataPeriod'] : undefined;
+  const path = sub(p, 'dataPeriod');
+  if (dp !== undefined) {
+    if (spec.periodic !== true) {
+      c.add(path, 'data-period', 'dataPeriod is allowed only in a periodic indicator');
+    } else if (isNull || estimated !== false) {
+      c.add(path, 'data-period', 'dataPeriod is allowed only on a non-null record with estimated false');
+    } else if (typeof dp !== 'string' || referenceQuarter(dp) === undefined) {
+      c.add(path, 'data-period', 'dataPeriod must have the form YYYYH1 or YYYYH2');
+    } else if (quarter !== undefined && referenceQuarter(dp) !== quarter) {
+      c.add(path, 'data-period', `Reference_Quarter ${String(referenceQuarter(dp))} of ${dp} differs from the record quarter ${quarter}`);
+    }
+  } else if (spec.periodic === true && !isNull && estimated === false) {
+    c.add(path, 'data-period', 'a non-null record of a periodic indicator needs a dataPeriod');
+  }
 }
 
 function checkTrackRecord(
@@ -423,7 +477,7 @@ function checkSeriesMap(
   path: string,
   level: string,
   ctx: ValidationContext,
-  each: (rec: unknown, recPath: string) => void,
+  each: (rec: unknown, recPath: string, index: number) => void,
 ): void {
   if (series === undefined) {
     c.add(path, 'required', 'field "series" is required');
@@ -452,7 +506,7 @@ function checkSeriesMap(
     if (records.length !== ctx.quarters.length) {
       c.add(kp, 'quarter-span', `expected ${ctx.quarters.length} records, found ${records.length}`);
     }
-    records.forEach((rec, i) => each(rec, at(kp, i)));
+    records.forEach((rec, i) => each(rec, at(kp, i), i));
   }
 }
 
@@ -519,13 +573,50 @@ function checkSeriesList(
       return;
     }
     if (level === undefined) return;
-    const spec: SeriesSpec = { kind, decimals };
-    checkSeriesMap(c, has(item, 'series') ? item['series'] : undefined, sub(p, 'series'), level, ctx, (rec, rp) => {
+    const spec: SeriesSpec = { kind, decimals, periodic: !track && has(item, 'periodic') && item['periodic'] === true };
+    const seriesPath = sub(p, 'series');
+    const seriesValue = has(item, 'series') ? item['series'] : undefined;
+    checkSeriesMap(c, seriesValue, seriesPath, level, ctx, (rec, rp, index) => {
       if (track) checkTrackRecord(c, rec, rp, spec, methods, sourceIds);
-      else checkValueRecord(c, rec, rp, spec, methods);
+      else checkValueRecord(c, rec, rp, spec, methods, ctx.quarters[index]);
     });
+    if (spec.periodic === true && level === 'district' && ctx.lowUse !== undefined && isObj(seriesValue)) {
+      checkLowUseGaps(c, seriesValue, seriesPath, ctx, ctx.lowUse);
+    }
   });
   return result;
+}
+
+/** Rule `low-use-gap` (Requirement 26 criterion 13) for one periodic district indicator. */
+function checkLowUseGaps(c: Checker, series: Obj, path: string, ctx: ValidationContext, lowUse: LowUseContext): void {
+  const gaps = new Set(lowUse.dataGaps);
+  const present = new Set(lowUse.periodsPresent);
+  const missing = new Set(lowUse.missing.map((m) => `${m.district}|${m.period}`));
+  const allNull: string[] = [];
+  for (const code of ctx.districtCodes) {
+    const records = series[code];
+    if (!Array.isArray(records) || records.length !== ctx.quarters.length) continue;
+    const nullAt = records.map((r) => isObj(r) && r['value'] === null);
+    const kp = keyAt(path, code);
+    const entirely = nullAt.every((n) => n);
+    if (entirely) allNull.push(code);
+    if (entirely && !gaps.has(code)) c.add(kp, 'low-use-gap', `district ${code} has only null records but is not on the data gap list`);
+    if (!entirely && gaps.has(code)) c.add(kp, 'low-use-gap', `district ${code} is on the data gap list but has a non-null record`);
+    records.forEach((_, i) => {
+      if (!nullAt[i]) return;
+      const q = ctx.quarters[i] as string;
+      const m = /^(\d{4})Q([1-4])$/.exec(q);
+      if (m === null || m[2] === '1' || m[2] === '3') return;
+      const year = Number(m[1]);
+      if (m[2] === '2' && year <= 2019) return;
+      const period = `${m[1]}H${m[2] === '2' ? 1 : 2}`;
+      if (!present.has(period) || missing.has(`${code}|${period}`)) return;
+      c.add(at(kp, i), 'low-use-gap', `null at ${q}, but period ${period} has a published value for district ${code}`);
+    });
+  }
+  if (allNull.length > 5) {
+    c.add(path, 'low-use-gap', `${allNull.length} districts have only null records (more than 5): ${allNull.join(', ')}`);
+  }
 }
 
 // ---------------------------------------------------------------------------------------------

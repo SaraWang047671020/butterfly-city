@@ -1,19 +1,28 @@
 // Schema types and constants for public/data/*.json, shared by the pipeline scripts and the web app.
 // Pure types and small constant arrays only. No DOM or Node APIs, erasable syntax only.
 
+import type { ParameterTable } from './simulation.ts';
+
 export const SCHEMA_VERSION = 1;
 
 export type QuarterKey = `${number}Q${1 | 2 | 3 | 4}`; // same shape as scripts/lib/time.ts Quarter
 export type DistrictCode = string; // 8-digit official TOWNCODE
 export type CityName = 'Taipei' | 'New Taipei';
 
+/** public/data/params.json, the wrapped form of docs/ENGINE-INPUT-FORMATS.md section 1. */
+export interface ParamsFile {
+  readonly schemaVersion: 1;
+  readonly parameters: ParameterTable;
+}
+
 export const CITY_NAMES = ['Taipei', 'New Taipei'] as const satisfies readonly CityName[];
 
 /** One value for one district or city and one quarter. Aligned by index with HistoryFile.quarters. */
 export type ValueRecord =
-  | { readonly value: number; readonly estimated: false }
+  | { readonly value: number; readonly estimated: false; readonly dataPeriod?: string } // dataPeriod only in periodic indicators (Req 26.9)
   | { readonly value: number; readonly estimated: true; readonly method: string }
-  | { readonly value: null; readonly estimated: true; readonly method: string }; // allowed by schema (Req 4.8), never emitted
+  | { readonly value: null; readonly estimated: true; readonly method: string } // allowed by schema (Req 4.8), never emitted
+  | { readonly value: null; readonly estimated: false }; // no data: periodic indicators only (Req 26.5)
 
 export type IndicatorKind = 'count' | 'positive' | 'non-negative' | 'percent' | 'index-0-100';
 
@@ -30,6 +39,7 @@ interface IndicatorBase {
   readonly unit: string; // e.g. "persons", "TWD per m² per month"
   readonly kind: IndicatorKind; // drives the range check
   readonly decimals: number; // 0..6
+  readonly periodic?: true; // published per half-year; quarters no period covers are no-data records (Req 26)
   readonly description: string; // English, 1..200 characters, neutral wording
   readonly sources: readonly string[]; // Source_Ids, at least one
 }
@@ -42,6 +52,28 @@ export interface CityIndicator extends IndicatorBase {
   readonly series: Readonly<Record<CityName, readonly ValueRecord[]>>; // 2 keys × 44 records
 }
 export type Indicator = DistrictIndicator | CityIndicator;
+
+/**
+ * Indicator ids of history.json in file order (Requirement 4.11). `medianTotalPrice` (after `salePrice`)
+ * is added by task 17.2, which makes it 15 ids: 13 district indicators, then 2 city indicators.
+ */
+export const HISTORY_INDICATOR_IDS = [
+  'population',
+  'moveIn',
+  'moveOut',
+  'relativeMedianIncome',
+  'householdIncome',
+  'salePrice',
+  'rent',
+  'mrtEntries',
+  'socialHousingCompletions',
+  'socialHousingStock',
+  'lowUseHousingCount',
+  'lowUseHousingRate',
+  'cityDisposableIncome',
+  'priceToIncomeRatio',
+] as const;
+export type HistoryIndicatorId = (typeof HISTORY_INDICATOR_IDS)[number];
 
 export interface SourceEntry {
   readonly id: string; // "<download-id>/<dataset>", e.g. "income/fia-103066" (Decision D15)

@@ -3,7 +3,7 @@
  *
  * Stations: TDX station files of the Taipei Metro (TRTC) and the New Taipei Metro (NTMC), kept when the line
  * section opened on or before 2025-12-31 (the Sanying Line LB opened 2026-06-30 and is dropped). The Taoyuan
- * Airport MRT is not in the files and is excluded by user decision (2026-11-18).
+ * Airport MRT is not in the files and is excluded by user decision (2026-11-17).
  * Edges: TDX S2S records (`RunTime` plus the dwell of the station the train stops at); the Ankeng LRT from the
  * StationTimeTable run times of `timetable.ts`. The Danhai LRT is excluded when `timetable.ts` cannot supply it.
  * Transfers: stations that share a site are joined by `transferWalk(site) + transferWait(line boarded)`.
@@ -51,7 +51,7 @@ export const SANYING_LINE = 'LB';
 export const SANYING_REASON = 'The Sanying Line (LB) opened on 2026-06-30, after the 2025-12-31 cut-off of the 2025Q4 network.';
 export const AIRPORT_MRT = 'AIRPORT';
 export const AIRPORT_REASON =
-  'The Taoyuan Airport MRT is not in the TDX files and is excluded from the rail graph (user decision 2026-11-18).';
+  'The Taoyuan Airport MRT is not in the TDX files and is excluded from the rail graph (user decision 2026-11-17).';
 
 /** Branch routes that are their own line key (shuttles; each has its own headway). */
 const BRANCH_ROUTES: readonly string[] = ['G-3', 'R-3'];

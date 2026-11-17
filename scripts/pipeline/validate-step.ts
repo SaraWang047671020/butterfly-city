@@ -1,5 +1,5 @@
 /**
- * Validation step (Requirements 16.5, 16.6): runs the shared validators over the three assembled files in
+ * Validation step (Requirements 16.5, 16.6): runs the shared validators over the assembled files in
  * memory, collects every error of every file and throws one ValidationFailedError. The write step comes
  * after this step, so nothing is written when validation fails.
  */
@@ -10,6 +10,8 @@ import {
   validatePolicyTrackFile,
   type ValidationContext,
 } from '../../src/data/validate.ts';
+import { validateParamsFile } from '../../src/data/validate-params.ts';
+import { engineIdSet } from './params/engine-ids.ts';
 import type { BuildContext } from './context.ts';
 import { DataError, ValidationFailedError, type ValidationIssue } from './errors.ts';
 import { INDICATOR_SPECS, POLICY_SERIES_SPECS } from './registry/indicators.ts';
@@ -40,20 +42,29 @@ export function validateStep(
       if (state.historyFile === undefined) missing.push('history file: run the history file step first');
       if (state.policyTrackFile === undefined) missing.push('policy-track file: run the policy file step first');
       if (state.commuteMatrix === undefined) missing.push('commute matrix: run the commute matrix step first');
+      if (state.params === undefined) missing.push('params: run the params step first');
       if (
         state.districtsFile === undefined ||
         state.historyFile === undefined ||
         state.policyTrackFile === undefined ||
-        state.commuteMatrix === undefined
+        state.commuteMatrix === undefined ||
+        state.params === undefined
       ) {
         throw new DataError('missing-step-output', 'validation input', missing);
       }
-      const vctx = override ?? buildValidationContext(ctx);
+      const base = override ?? buildValidationContext(ctx);
+      const vctx: ValidationContext = {
+        ...base,
+        engineIdSet: base.engineIdSet ?? [...engineIdSet()],
+        sourceTypes: base.sourceTypes ?? Object.fromEntries(state.params.sourceTypes),
+        ...(base.lowUse === undefined && state.lowUse !== undefined ? { lowUse: state.lowUse } : {}),
+      };
       const errors: ValidationIssue[] = [
         ...validateDistrictsFile(state.districtsFile, vctx),
         ...validateHistoryFile(state.historyFile, vctx),
         ...validatePolicyTrackFile(state.policyTrackFile, vctx),
         ...validateCommuteMatrix(state.commuteMatrix, vctx),
+        ...validateParamsFile(state.params.file, vctx),
       ];
       // A file that cannot be serialized (for example a non-finite number) is already reported by the
       // validators above, so it is left out of the scan instead of throwing here.
@@ -63,6 +74,7 @@ export function validateStep(
         ['public/data/history.json', state.historyFile],
         ['public/data/policy-track.json', state.policyTrackFile],
         ['public/data/commute-matrix.json', state.commuteMatrix],
+        ['public/data/params.json', state.params.file],
       ];
       for (const [p, value] of named) {
         try {

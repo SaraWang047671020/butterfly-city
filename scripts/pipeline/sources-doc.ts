@@ -10,6 +10,8 @@
  *   7 MRT notes                              8 policy series          9 known data gaps
  *   10 commute matrix (when the commute steps have run)
  *   11 parameters, part 1: type 1 and type 2 entries (when the params part 1 step has run)
+ *   12 parameter table: all ids, omitted optional ids, gap parameters (when the params step has run)
+ *   13 low-use housing: source, period convention, periods, methods, gaps (when the low-use step has run)
  *
  * A source or method that an output field refers to but the embedded registries lack, or a source without
  * agency, dataset, URL, years or license, stops the build with a DataError naming the identifier (15.8).
@@ -24,6 +26,7 @@ import type {
   TrackRecord,
   ValueRecord,
 } from '../../src/types/data-files.ts';
+import type { LowUseContext } from '../../src/data/validate.ts';
 import type { BuildContext } from './context.ts';
 import type { CentroidResult } from './commute/centroids.ts';
 import type { PairingResult } from './commute/fares.ts';
@@ -50,10 +53,12 @@ import {
   type CommittedReader,
 } from './policy/step.ts';
 import type { BuildState, Step } from './run.ts';
-import type { ScalarParameter } from '../../src/types/simulation.ts';
+import type { ScalarParameter, ScheduleParameter } from '../../src/types/simulation.ts';
 import { CENSUS_PRESS_RELEASE_NOTE } from './params/census-employees.ts';
 import { FIXED_TYPE1_IDS } from './params/fixed-table.ts';
 import type { ParamsPart1 } from './params/part1.ts';
+import { OMITTED_OPTIONAL_IDS } from './params/engine-ids.ts';
+import type { ParamsBuild } from './params/params-file.ts';
 import {
   parseUnitCostCases,
   UNIT_COST_CASES_FILE,
@@ -223,6 +228,10 @@ export interface SourcesDocInput {
   readonly paramsPart1?: ParamsPart1 | undefined;
   /** Rows of the committed unit cost table; section 11 lists them when given. */
   readonly unitCostCases?: readonly UnitCostCase[] | undefined;
+  /** The built parameter table (task 26.6); when absent, section 12 is not written. */
+  readonly params?: ParamsBuild | undefined;
+  /** The low-use build result (task 27.5); when absent, section 13 is not written. */
+  readonly lowUse?: LowUseContext | undefined;
 }
 
 /** Everything section 10 states, taken from the build state (task 24.5). */
@@ -914,6 +923,185 @@ function section11(input: SourcesDocInput, p: ParamsPart1): string[] {
   return out;
 }
 
+/** Defaults the engine applies to the Omitted_Optional_Ids (src/simulation/budget.ts, checkLimit and costSchedule). */
+const OMITTED_DEFAULTS: Readonly<Record<string, string>> = {
+  'limit.socialHousing.unitsStarted.upperMin':
+    'Absent: the upper limit is the upper factor times the real value, with a floor of 0 (budget.ts, checkLimit).',
+  'limit.socialHousing.unitsStarted.min':
+    'Absent: the lower limit is the lower factor times the real value (budget.ts, checkLimit).',
+  'limit.socialHousing.unitsStarted.max':
+    'Absent: the upper limit is the upper factor times the real value, raised to the upper minimum when that is present (budget.ts, checkLimit).',
+  'commuterPass.costSchedule':
+    'Absent: the whole cost is charged once at offset 0, with share 1 (budget.ts, costSchedule).',
+  'rentSubsidy.costSchedule':
+    'Absent: the whole cost is charged once at offset 0, with share 1 (budget.ts, costSchedule).',
+};
+const CEILING_DEFAULT =
+  'Absent: the ceiling of the tool for that year is the Annual_Budget of the year (budget.ts, plan ceilings).';
+
+function formatValue(e: ScalarParameter | ScheduleParameter): string {
+  if (e.kind === 'scalar') return `${e.value} ${e.unit}`;
+  const pairs = e.offsets.map((o, i) => `offset ${o}: ${e.shares[i] ?? 0}`).join('; ');
+  return `${pairs} (${e.unit})`;
+}
+
+/** Section 12 (task 26.8): the full parameter table, the omitted optional ids and the gap parameters. */
+function section12(p: ParamsBuild): string[] {
+  const table0 = p.file.parameters;
+  const ids = Object.keys(table0).sort(codePointCompare);
+  const counts = new Map<number, number>();
+  for (const id of ids) {
+    const t = p.sourceTypes.get(id) ?? 0;
+    counts.set(t, (counts.get(t) ?? 0) + 1);
+  }
+  const out: string[] = [
+    '## 12. Parameter table',
+    '',
+    `The file public/data/params.json holds ${ids.length} parameter ids. Parameter_Source_Type 1 is a value from published research (${counts.get(1) ?? 0} ids), type 2 is a value computed from the open data of this pipeline (${counts.get(2) ?? 0} ids), and type 3 is a gap value (${counts.get(3) ?? 0} ids).`,
+    '',
+    '### All parameter ids',
+    '',
+    ...table(
+      ['Id', 'Source type', 'Unit', 'Status', 'Source'],
+      ids.map((id) => {
+        const e = table0[id] as ScalarParameter | ScheduleParameter;
+        const src = e.source.citation === '' && e.source.url === '' ? 'none' : `${e.source.citation}, ${e.source.url}`;
+        return [code(id), String(p.sourceTypes.get(id) ?? 'n/a'), e.unit, e.status, src];
+      }),
+    ),
+    '',
+    '### Omitted optional ids',
+    '',
+    'These ids are not in params.json. When an id is absent, the engine applies the default below.',
+    '',
+    ...table(
+      ['Id', 'Default applied by the engine'],
+      [
+        ...OMITTED_OPTIONAL_IDS.map((id) => [code(id), OMITTED_DEFAULTS[id] ?? 'No default recorded.']),
+        [code('budget.ceiling.<tool>.<year>'), CEILING_DEFAULT],
+      ],
+    ),
+    '',
+    '### Gap parameters',
+    '',
+    'The values below are game defaults or approximations chosen where no suitable measurement was found. They are not research results. Each row states the assumption and the data that would replace the value.',
+    '',
+  ];
+  const gapRows: string[][] = [];
+  for (const id of ids) {
+    const e = table0[id] as ScalarParameter | ScheduleParameter;
+    if (e.status !== 'gap') continue;
+    gapRows.push([
+      code(id),
+      formatValue(e),
+      e.assumption ?? 'n/a',
+      e.kind === 'scalar' ? replacementStatement(e) : 'A published payment profile for the tool would replace the even payment assumption.',
+    ]);
+  }
+  out.push(...table(['Id', 'Value', 'Assumption', 'Data that would replace it'], gapRows));
+  return out;
+}
+
+/** The Xinyi 2019H2 comparison of the two MOI methods (Requirement 26.15). A constant: the original-method files are never read. */
+const LOW_USE_METHOD_EXAMPLE =
+  'For Xinyi in 2019H2 the current method gives 4.97 percent (3,741 dwellings) and the original method gives 5.32 percent (4,006 dwellings).';
+
+const LOW_USE_INDICATOR_IDS = ['lowUseHousingCount', 'lowUseHousingRate'] as const;
+
+/** Section 13 (task 27.5): the low-use housing indicators, generated from the build state (Requirement 26). */
+function section13(input: SourcesDocInput, lowUse: LowUseContext, registry: Registry): string[] {
+  const src = registry.sources.get('housing/moi-low-use');
+  const periods = [...lowUse.periodsPresent].sort(codePointCompare);
+  const first = periods[0];
+  const last = periods[periods.length - 1];
+  const out: string[] = ['## 13. Low-use housing', ''];
+  out.push(
+    `The indicators ${LOW_USE_INDICATOR_IDS.map(code).join(' and ')} give, for each district, the number and the share of dwellings with an average monthly electricity use of at most 60 kWh. A district has a value only for the half-years in which the MOI published one.`,
+    '',
+    '### Source',
+    '',
+  );
+  if (src === undefined) {
+    out.push('- The source `housing/moi-low-use` is not in the source registry.');
+  } else {
+    out.push(
+      `- Source id: ${code(src.id)}`,
+      `- Agency: ${src.agency}`,
+      `- Dataset: ${src.datasetEn === undefined ? src.dataset : `${src.dataset} (${src.datasetEn})`}`,
+      `- URL: ${src.url}`,
+      `- Years covered: ${years(src)}`,
+      `- License: ${src.license}`,
+    );
+  }
+
+  out.push(
+    '',
+    '### Period convention',
+    '',
+    'A period is written YYYYH1 or YYYYH2. The published value of a period is the state at the last day of the period, so it applies to the last quarter of the period only: Q2 for the first half and Q4 for the second half. That quarter is the Reference_Quarter, and its value carries the period label in `dataPeriod`.',
+    '',
+    'The annual values of ROC years 104 to 108 are mapped to 2015H2 to 2019H2 of the same calendar year. Their Reference_Quarter is Q4, which matches the last day of the year. No first-half period exists for 2015 to 2019, so Q2 of each year from 2015 to 2019 is `null`.',
+    '',
+    'Every other quarter that no published period covers is `null` with the estimate flag `false`. No value is estimated, interpolated, held, extrapolated or pooled.',
+    '',
+    '### Periods with district values',
+    '',
+    `- Number of periods: ${periods.length}`,
+    `- First period: ${first ?? 'none'}`,
+    `- Last period: ${last ?? 'none'}`,
+    `- Periods: ${periods.length === 0 ? 'none' : periods.map(code).join(', ')}`,
+    '',
+    '### Current and original methods',
+    '',
+    'The MOI publishes two methods for low-use housing. The current method (現行標準) has annual values for 2015 to 2019 and half-yearly values for 2020H1 to 2025H2. The original method (原標準) has values for 2015H2 to 2020H2.',
+    '',
+    LOW_USE_METHOD_EXAMPLE,
+    '',
+    'Only the current method is used, because it is the only one that covers 2015 to 2025 with one definition. The original-method files are kept in the raw data directory and are not read.',
+    '',
+    '### Periods without a published value, by district',
+    '',
+  );
+  const byDistrict = new Map<string, string[]>();
+  for (const m of lowUse.missing) {
+    const list = byDistrict.get(m.district) ?? [];
+    list.push(m.period);
+    byDistrict.set(m.district, list);
+  }
+  const codes = [...byDistrict.keys()].sort(codePointCompare);
+  if (codes.length === 0) {
+    out.push('Every district has a published value in every period.');
+  } else {
+    out.push(
+      'In each period listed, the Reference_Quarter of the district is `null` and not estimated.',
+      '',
+      ...table(
+        ['District', 'Periods without a published value'],
+        codes.map((c) => [districtLabel(input, c), [...(byDistrict.get(c) as string[])].sort(codePointCompare).join(', ')]),
+      ),
+    );
+  }
+
+  out.push('', '### Data gaps of the low-use indicators', '');
+  const gaps = [...lowUse.dataGaps].sort(codePointCompare);
+  if (gaps.length === 0) {
+    out.push('No district is entirely without a published value.');
+  } else {
+    out.push(
+      'These districts have no published value in any period. Every quarter of these districts is `null` and not estimated.',
+      '',
+      ...table(
+        ['District_Code', 'District', 'Indicator'],
+        gaps.flatMap((c) => {
+          const name = input.districtsFile.districts.find((d) => d.code === c)?.name ?? c;
+          return LOW_USE_INDICATOR_IDS.map((id) => [c, name, code(id)]);
+        }),
+      ),
+    );
+  }
+  return out;
+}
+
 /** Renders the full text of data/SOURCES.md. Throws a DataError when a referenced source or method is missing. */
 export function renderSourcesDoc(input: SourcesDocInput): string {
   const registry = unionRegistry(input);
@@ -932,6 +1120,8 @@ export function renderSourcesDoc(input: SourcesDocInput): string {
   ];
   if (input.commute !== undefined) blocks.push(section10(input, input.commute));
   if (input.paramsPart1 !== undefined) blocks.push(section11(input, input.paramsPart1));
+  if (input.params !== undefined) blocks.push(section12(input.params));
+  if (input.lowUse !== undefined) blocks.push(section13(input, input.lowUse, registry));
   return `${blocks.map((b) => b.join('\n')).join('\n\n')}\n`;
 }
 
@@ -964,6 +1154,8 @@ export function sourcesDocStep(readCommitted: CommittedReader = fsCommittedReade
         policyTrackFile,
         commute,
         paramsPart1: state.paramsPart1,
+        params: state.params,
+        lowUse: state.lowUse,
         unitCostCases:
           state.paramsPart1 === undefined ? undefined : parseUnitCostCases(readCommitted(UNIT_COST_CASES_FILE), UNIT_COST_CASES_FILE),
         rentReferences: state.rentReferences,

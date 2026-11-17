@@ -12,7 +12,7 @@ describe("source registry", () => {
   it("has unique ids and absolute http(s) URLs without credential values", () => {
     const ids = SOURCE_REGISTRY.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(ids).toHaveLength(29);
+    expect(ids).toHaveLength(30);
     for (const s of SOURCE_REGISTRY) {
       expect(s.url).toMatch(/^https?:\/\/\S+$/);
       expect(s.url).not.toMatch(/api_?key=(?!REDACTED)/i);
@@ -57,7 +57,7 @@ describe("redactUrl", () => {
 });
 
 describe("indicator lists", () => {
-  it("lists 10 district then 2 city indicators in the fixed order", () => {
+  it("lists 12 district then 2 city indicators in the fixed order", () => {
     expect(INDICATOR_SPECS.map((i) => i.id)).toEqual([
       "population",
       "moveIn",
@@ -69,11 +69,13 @@ describe("indicator lists", () => {
       "mrtEntries",
       "socialHousingCompletions",
       "socialHousingStock",
+      "lowUseHousingCount",
+      "lowUseHousingRate",
       "cityDisposableIncome",
       "priceToIncomeRatio",
     ]);
-    expect(INDICATOR_SPECS.filter((i) => i.level === "district")).toHaveLength(10);
-    expect(INDICATOR_SPECS.slice(10).every((i) => i.level === "city")).toBe(true);
+    expect(INDICATOR_SPECS.filter((i) => i.level === "district")).toHaveLength(12);
+    expect(INDICATOR_SPECS.slice(12).every((i) => i.level === "city")).toBe(true);
   });
 
   it("lists 10 policy series in the fixed order, only the first at district level", () => {

@@ -24,7 +24,7 @@ const dir = (...p: string[]) => raw('stations', ...p);
 const TDX = 'https://tdx.transportdata.tw/api/basic/v2/Rail/Metro';
 const OPERATORS = ['TRTC', 'NTMC'] as const;
 /**
- * Danhai LRT and Ankeng LRT: TDX returns HTTP 400 for their S2STravelTime (2026-11-19), so no such request is
+ * Danhai LRT and Ankeng LRT: TDX returns HTTP 400 for their S2STravelTime (2026-11-17), so no such request is
  * sent. Their stations come from the NLSC shapefile, so no LRT station list is fetched either.
  */
 

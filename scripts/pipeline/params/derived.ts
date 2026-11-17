@@ -1,0 +1,102 @@
+/**
+ * Derived parameter entries (task 26.3, Requirements 23.4, 23.5). Pure functions of the part 1 entries.
+ *
+ *   ghost.shareBoth             shareRent * (1 - shareCommuteWithin.value), independence assumed;
+ *                               checked against min(shareRent, 1 - shareCommuteWithin.high)
+ *   socialHousing.costSchedule  equal shares over offsets 0 to lag - 1, the last share absorbs the rounding
+ */
+import { checkParameterEntry } from '../../../src/data/validate-params.ts';
+import type { ScalarParameter, ScheduleParameter } from '../../../src/types/simulation.ts';
+import { DataError } from '../errors.ts';
+
+export const SHARE_BOTH_ID = 'ghost.shareBoth';
+export const COST_SCHEDULE_ID = 'socialHousing.costSchedule';
+
+const SHARE_RENT_ID = 'ghost.shareRent';
+const SHARE_COMMUTE_WITHIN_ID = 'ghost.shareCommuteWithin';
+const LAG_ID = 'socialHousing.lag';
+
+/** Largest accepted rounding difference when comparing the product with its bound. */
+const BOUND_TOLERANCE = 1e-12;
+
+export type EntryMap = ReadonlyMap<string, ScalarParameter>;
+
+function scalar(entries: EntryMap, id: string): ScalarParameter {
+  const e = entries.get(id);
+  if (e === undefined) throw new DataError('derived-input-missing', id);
+  return e;
+}
+
+function checked<T extends ScalarParameter | ScheduleParameter>(id: string, entry: T): T {
+  const issues = checkParameterEntry(id, entry);
+  if (issues.length > 0) throw new DataError('derived-entry-invalid', id, issues.map((i) => i.problem));
+  return entry;
+}
+
+/** `ghost.shareBoth`: share of residents with a rent burden above the threshold and a commute above the threshold. */
+export function deriveShareBoth(entries: EntryMap): ScalarParameter {
+  const rent = scalar(entries, SHARE_RENT_ID);
+  const within = scalar(entries, SHARE_COMMUTE_WITHIN_ID);
+  const withinHigh = within.range?.high ?? within.value;
+  const value = rent.value * (1 - within.value);
+  const bound = Math.min(rent.value, 1 - withinHigh);
+  if (value > bound + BOUND_TOLERANCE) {
+    throw new DataError('share-both-above-bound', SHARE_BOTH_ID, [
+      `shareRent ${rent.value}`,
+      `shareCommuteWithin value ${within.value}, high ${withinHigh}`,
+      `shareBoth ${value} is above min(shareRent, 1 - shareCommuteWithin.high) = ${bound}`,
+    ]);
+  }
+  const entry: ScalarParameter = {
+    kind: 'scalar',
+    value,
+    unit: 'share of residents',
+    status: 'gap',
+    source: {
+      citation: `Derived from ${SHARE_RENT_ID} and ${SHARE_COMMUTE_WITHIN_ID}; see their sources`,
+      url: rent.source.url,
+    },
+    estimated: {
+      method: `${SHARE_RENT_ID} (${rent.value}) times (1 - ${SHARE_COMMUTE_WITHIN_ID}) (1 - ${within.value}); checked to be at most min(shareRent, 1 - shareCommuteWithin.high) = ${bound}`,
+    },
+    assumption:
+      'Independence: a resident being rent burdened and a resident having a long commute are treated as independent events, so the joint share is the product of the two shares. No data on the joint distribution was found; it would replace this assumption.',
+  };
+  return checked(SHARE_BOTH_ID, entry);
+}
+
+/** `socialHousing.costSchedule`: equal shares over offsets 0 to lag - 1; the last share absorbs the rounding. */
+export function deriveCostSchedule(entries: EntryMap): ScheduleParameter {
+  const lagEntry = scalar(entries, LAG_ID);
+  const lag = lagEntry.value;
+  if (!Number.isInteger(lag) || lag < 1) {
+    throw new DataError('cost-schedule-lag-invalid', LAG_ID, [`lag ${lag} is not an integer of at least 1`]);
+  }
+  const offsets = Array.from({ length: lag }, (_, i) => i);
+  const each = 1 / lag;
+  const shares = offsets.map(() => each);
+  let head = 0;
+  for (let i = 0; i < lag - 1; i += 1) head += shares[i] as number;
+  shares[lag - 1] = 1 - head;
+  const sum = shares.reduce((a, b) => a + b, 0);
+  if (Math.abs(sum - 1) > 1e-9) {
+    throw new DataError('cost-schedule-sum', COST_SCHEDULE_ID, [`shares sum to ${sum}`]);
+  }
+  const entry: ScheduleParameter = {
+    kind: 'schedule',
+    offsets,
+    shares,
+    unit: 'share of the project cost per quarter after the start',
+    status: 'gap',
+    source: {
+      citation: `Derived from ${LAG_ID} (${lag} quarters); see its source`,
+      url: lagEntry.source.url,
+    },
+    estimated: {
+      method: `Equal shares of 1/${lag} at offsets 0 to ${lag - 1} (${LAG_ID} = ${lag}); the last share is 1 minus the sum of the others so the shares sum to 1`,
+    },
+    assumption:
+      'Even payment: the cost of a project is paid in equal amounts in every quarter from start to completion. Payment schedules of completed projects would replace this assumption.',
+  };
+  return checked(COST_SCHEDULE_ID, entry);
+}

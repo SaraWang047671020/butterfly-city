@@ -119,7 +119,7 @@ describe('validateHistoryFile', () => {
     expect(brief(validateHistoryFile(f, ctx))).toEqual([
       `estimate ${p}[0].method`,
       `estimate ${p}[1].method`,
-      `estimate ${p}[2].value`,
+      `no-data ${p}[2].value`,
       `method-ref ${p}[3].method`,
     ]);
   });

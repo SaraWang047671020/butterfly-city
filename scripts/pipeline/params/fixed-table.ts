@@ -26,9 +26,44 @@ export const FIXED_TYPE1_IDS: readonly string[] = [
   'rentSubsidy.lag',
 ];
 
+/** Type 3 gap ids held as fixed values. `migration.threshold`, `.share`, `.exitShare`, `ghost.shareBoth` and `socialHousing.costSchedule` are computed elsewhere. */
+export const FIXED_TYPE3_IDS: readonly string[] = [
+  'migration.weightTime',
+  'migration.weightBurden',
+  'migration.weightCost',
+  'ghost.size',
+  'commuterPass.lag',
+  'commuterPass.unitCost',
+  'rentSubsidy.unitCost',
+  'limit.socialHousing.unitsStarted.lowerFactor',
+  'limit.socialHousing.unitsStarted.upperFactor',
+  'limit.commuterPass.subsidy.lowerFactor',
+  'limit.rentSubsidy.households.lowerFactor',
+  'limit.rentSubsidy.households.upperFactor',
+  'limit.rentSubsidy.amount.lowerFactor',
+  'limit.rentSubsidy.amount.upperFactor',
+];
+
 export type FixedType1Params = Readonly<Record<string, ScalarParameter>>;
 
 export function readFixedType1Params(readCommitted: CommittedReader = fsCommittedReader): FixedType1Params {
+  return readFixedScalars(FIXED_TYPE1_IDS, readCommitted);
+}
+
+/** Reads the fixed type 3 gap entries; each must be a scalar entry with status `gap` and a non-blank assumption. */
+export function readFixedType3Params(readCommitted: CommittedReader = fsCommittedReader): FixedType1Params {
+  const out = readFixedScalars(FIXED_TYPE3_IDS, readCommitted);
+  const details: string[] = [];
+  for (const [id, e] of Object.entries(out)) {
+    if (e.status !== 'gap') details.push(`${id}: status must be gap`);
+    if (e.assumption === undefined || e.assumption.trim() === '') details.push(`${id}: assumption is blank`);
+    if (e.estimated === undefined || e.estimated.method.trim() === '') details.push(`${id}: estimated.method is blank`);
+  }
+  if (details.length > 0) throw new PipelineError(`${FIXED_PARAMS_FILE}: invalid gap entries`, details);
+  return out;
+}
+
+function readFixedScalars(ids: readonly string[], readCommitted: CommittedReader): FixedType1Params {
   let doc: unknown;
   try {
     doc = JSON.parse(readCommitted(FIXED_PARAMS_FILE));
@@ -46,7 +81,7 @@ export function readFixedType1Params(readCommitted: CommittedReader = fsCommitte
 
   const details: string[] = [];
   const out: Record<string, ScalarParameter> = {};
-  for (const id of FIXED_TYPE1_IDS) {
+  for (const id of ids) {
     const entry = table[id];
     const issues = checkParameterEntry(id, entry);
     if (issues.length > 0) {

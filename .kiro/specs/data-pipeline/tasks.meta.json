@@ -67,6 +67,22 @@
     "25.11 Write property test for the commute shares": {
       "status": "passed",
       "lastRunTimestamp": 1794903389567
+    },
+    "26.10 Write property test for the id-set difference": {
+      "status": "passed",
+      "lastRunTimestamp": 1794905018802
+    },
+    "26.11 Write property test for the parameter validator": {
+      "status": "passed",
+      "lastRunTimestamp": 1794905067930
+    },
+    "26.12 Write property test for the params and matrix round trip": {
+      "status": "passed",
+      "lastRunTimestamp": 1794905201346
+    },
+    "27.7 Write property test for the low-use builder": {
+      "status": "passed",
+      "lastRunTimestamp": 1794906927227
     }
   },
   "executionHistory": {
@@ -1982,6 +1998,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184568
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903866103
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904108778
       }
     ],
     "26.2 Implement `params/migration-anchors.ts`": [
@@ -1989,6 +2015,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184604
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903866193
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904230350
       }
     ],
     "26.3 Implement `params/derived.ts`": [
@@ -1996,6 +2032,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184636
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903866251
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904108832
       }
     ],
     "26.4 Implement `params/engine-ids.ts`": [
@@ -2003,6 +2049,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184667
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903866770
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904108882
       }
     ],
     "26.5 Implement `validateParamsFile`": [
@@ -2010,6 +2066,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184696
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794903867640
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904231107
       }
     ],
     "26.6 Implement `params/params-file.ts` and `paramsStep`": [
@@ -2017,6 +2083,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184726
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904256529
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904454925
       }
     ],
     "26.7 Write `public/data/params.json` in the validation, write and summary steps": [
@@ -2024,6 +2100,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184758
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904480406
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904755052
       }
     ],
     "26.8 Add the parameter table sections to `sources-doc.ts`": [
@@ -2031,6 +2117,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184793
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904784057
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904951179
       }
     ],
     "26.9 Write example tests for the parameter table": [
@@ -2038,6 +2134,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184826
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904977402
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794905118209
       }
     ],
     "26.10 Write property test for the id-set difference": [
@@ -2045,6 +2151,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184858
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904978257
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794905118876
       }
     ],
     "26.11 Write property test for the parameter validator": [
@@ -2052,6 +2168,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184886
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794904979205
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794905119940
       }
     ],
     "26.12 Write property test for the params and matrix round trip": [
@@ -2059,6 +2185,31 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184916
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794905145475
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794905215780
+      },
+      {
+        "executionId": "db9a29e9-32eb-4f95-b329-9f5de625d469",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794905760273
+      },
+      {
+        "executionId": "372ffe2d-d807-4196-b1a0-869485a732d6",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794905935618
+      },
+      {
+        "executionId": "372ffe2d-d807-4196-b1a0-869485a732d6",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906059751
       }
     ],
     "26.13 Write property test for the derived gap parameters": [
@@ -2066,6 +2217,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184946
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794905146288
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794905216560
       }
     ],
     "26.14 Build `public/data/params.json` and confirm": [
@@ -2073,6 +2234,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889184976
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794905243791
+      },
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794905599595
       }
     ],
     "27.1 Implement `parsers/low-use.ts`": [
@@ -2080,6 +2251,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889185005
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906183666
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906430168
       }
     ],
     "27.2 Add the periodic-indicator rules to the types and the validator": [
@@ -2087,6 +2268,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889185039
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906183844
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906430653
       }
     ],
     "27.3 Add the two indicators to the registries and the id list": [
@@ -2094,6 +2285,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889185069
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906451495
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906577059
       }
     ],
     "27.4 Implement `scripts/pipeline/low-use.ts` and `lowUseStep`": [
@@ -2101,6 +2302,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889185102
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906597875
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906791891
       }
     ],
     "27.5 Add the low-use sections to `sources-doc.ts`": [
@@ -2108,6 +2319,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889185130
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906814826
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906982591
       }
     ],
     "27.6 Write example tests for the low-use parser, builder and validator": [
@@ -2115,6 +2336,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889185166
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906815833
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906983797
       }
     ],
     "27.7 Write property test for the low-use builder": [
@@ -2122,6 +2353,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889185203
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906816515
+      },
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906984414
       }
     ],
     "28.1 Rebuild every output and confirm": [
@@ -2181,6 +2422,20 @@
         "executionId": "ff559532-6b57-4810-8769-e5ead508b4d9",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794903637242
+      }
+    ],
+    "26. Parameter table part 2: gap parameters, id-set check and `params.json`": [
+      {
+        "executionId": "8779e74e-115e-4db1-8add-ab6515e8fed1",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794905599628
+      }
+    ],
+    "27. Low-use housing indicators (method decided: current-method files only; the period review of 22.8 is done)": [
+      {
+        "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794906984435
       }
     ]
   }

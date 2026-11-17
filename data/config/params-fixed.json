@@ -150,6 +150,202 @@
       "estimated": {
         "method": "Derived from the 2022 program dates: applications opened on 2022-07-01 and the first payments were made in October 2022, which is one quarter later."
       }
+    },
+    "migration.weightTime": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "weight (dimensionless)",
+      "status": "gap",
+      "assumption": "The commute-time term counts as much as each of the other two terms in the destination score.",
+      "source": {
+        "citation": "Project assumption of equal weights; no study of destination choice for Taipei was found",
+        "url": ".kiro/specs/data-pipeline/design.md"
+      },
+      "estimated": {
+        "method": "Equal weights 1, 1, 1 for time, burden and cost (design gap table). Data that would replace it: a destination-choice study or survey of moves between Taipei City and New Taipei City districts. Not a research result."
+      }
+    },
+    "migration.weightBurden": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "weight (dimensionless)",
+      "status": "gap",
+      "assumption": "The rent-burden term counts as much as each of the other two terms in the destination score.",
+      "source": {
+        "citation": "Project assumption of equal weights; no study of destination choice for Taipei was found",
+        "url": ".kiro/specs/data-pipeline/design.md"
+      },
+      "estimated": {
+        "method": "Equal weights 1, 1, 1 for time, burden and cost (design gap table). Data that would replace it: a destination-choice study or survey of moves between Taipei City and New Taipei City districts. Not a research result."
+      }
+    },
+    "migration.weightCost": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "weight (dimensionless)",
+      "status": "gap",
+      "assumption": "The commute-cost term counts as much as each of the other two terms in the destination score.",
+      "source": {
+        "citation": "Project assumption of equal weights; no study of destination choice for Taipei was found",
+        "url": ".kiro/specs/data-pipeline/design.md"
+      },
+      "estimated": {
+        "method": "Equal weights 1, 1, 1 for time, burden and cost (design gap table). Data that would replace it: a destination-choice study or survey of moves between Taipei City and New Taipei City districts. Not a research result."
+      }
+    },
+    "ghost.size": {
+      "kind": "scalar",
+      "value": 1000,
+      "unit": "persons per ghost",
+      "status": "gap",
+      "assumption": "One ghost stands for 1,000 residents; the value is a display scale.",
+      "source": {
+        "citation": "Product default for the display scale (product.md); not a research result",
+        "url": ".kiro/steering/product.md"
+      },
+      "estimated": {
+        "method": "Default from product.md. Data that would replace it: none needed; a different scale is a display choice."
+      }
+    },
+    "commuterPass.lag": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "quarters",
+      "status": "gap",
+      "assumption": "The fare elasticities are short-run responses to a price change and are taken to act in the quarter of the change.",
+      "source": {
+        "citation": "Project assumption; fare elasticities in RESEARCH-NOTES 2e are short-run responses",
+        "url": ".kiro/specs/data-pipeline/design.md"
+      },
+      "estimated": {
+        "method": "Assumed 0 quarters from the short-run elasticities. Data that would replace it: a measured time profile of ridership after a fare change in Taipei."
+      }
+    },
+    "commuterPass.unitCost": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "TWD of budget per TWD of subsidy",
+      "status": "gap",
+      "assumption": "One TWD of budget pays one TWD of subsidy, with no administration overhead.",
+      "source": {
+        "citation": "Project assumption; no administration overhead was found",
+        "url": ".kiro/specs/data-pipeline/design.md"
+      },
+      "estimated": {
+        "method": "Assumed 1. Data that would replace it: published administration cost of the commuter pass and rent subsidy programs."
+      }
+    },
+    "rentSubsidy.unitCost": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "TWD of budget per TWD of subsidy",
+      "status": "gap",
+      "assumption": "One TWD of budget pays one TWD of subsidy, with no administration overhead.",
+      "source": {
+        "citation": "Project assumption; no administration overhead was found",
+        "url": ".kiro/specs/data-pipeline/design.md"
+      },
+      "estimated": {
+        "method": "Assumed 1. Data that would replace it: published administration cost of the commuter pass and rent subsidy programs."
+      }
+    },
+    "limit.socialHousing.unitsStarted.lowerFactor": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.",
+      "source": {
+        "citation": "game default (.kiro/steering/simulation.md, policy tool limits)",
+        "url": ".kiro/steering/simulation.md"
+      },
+      "estimated": {
+        "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program."
+      }
+    },
+    "limit.socialHousing.unitsStarted.upperFactor": {
+      "kind": "scalar",
+      "value": 2,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.",
+      "source": {
+        "citation": "game default (.kiro/steering/simulation.md, policy tool limits)",
+        "url": ".kiro/steering/simulation.md"
+      },
+      "estimated": {
+        "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program."
+      }
+    },
+    "limit.rentSubsidy.households.lowerFactor": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.",
+      "source": {
+        "citation": "game default (.kiro/steering/simulation.md, policy tool limits)",
+        "url": ".kiro/steering/simulation.md"
+      },
+      "estimated": {
+        "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program."
+      }
+    },
+    "limit.rentSubsidy.households.upperFactor": {
+      "kind": "scalar",
+      "value": 2,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.",
+      "source": {
+        "citation": "game default (.kiro/steering/simulation.md, policy tool limits)",
+        "url": ".kiro/steering/simulation.md"
+      },
+      "estimated": {
+        "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program."
+      }
+    },
+    "limit.rentSubsidy.amount.lowerFactor": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.",
+      "source": {
+        "citation": "game default (.kiro/steering/simulation.md, policy tool limits)",
+        "url": ".kiro/steering/simulation.md"
+      },
+      "estimated": {
+        "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program."
+      }
+    },
+    "limit.rentSubsidy.amount.upperFactor": {
+      "kind": "scalar",
+      "value": 2,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.",
+      "source": {
+        "citation": "game default (.kiro/steering/simulation.md, policy tool limits)",
+        "url": ".kiro/steering/simulation.md"
+      },
+      "estimated": {
+        "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program."
+      }
+    },
+    "limit.commuterPass.subsidy.lowerFactor": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.",
+      "source": {
+        "citation": "game default (.kiro/steering/simulation.md, policy tool limits)",
+        "url": ".kiro/steering/simulation.md"
+      },
+      "estimated": {
+        "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program."
+      }
     }
   }
 }

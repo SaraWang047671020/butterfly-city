@@ -127,8 +127,8 @@ node scripts/download.ts fares timetables   # needs TDX_CLIENT_ID and TDX_CLIENT
 node scripts/download.ts stations           # TRTC, NTMC travel times
 ```
 
-Date retrieved: 2026-11-17 (`fares` 4 of 4 files, `timetables` 6 of 8, `stations` LRT S2STravelTime 0 of 2); the four unsupported requests were removed on 2026-11-19, so `timetables` now requests 6 files and `stations` requests S2STravelTime for TRTC and NTMC only. License: as stated by TDX, else `not stated`.
-Not served by TDX (2026-11-19): HTTP 400 (not supported) for `S2STravelTime` NTDLRT, `S2STravelTime` NTALRT, `Frequency` NTDLRT and `Frequency` NTALRT. These four requests are not sent. The API answer lists the accepted
+Date retrieved: 2026-11-17 (`fares` 4 of 4 files, `timetables` 6 of 8, `stations` LRT S2STravelTime 0 of 2); the four unsupported requests were removed on 2026-11-17, so `timetables` now requests 6 files and `stations` requests S2STravelTime for TRTC and NTMC only. License: as stated by TDX, else `not stated`.
+Not served by TDX (2026-11-17): HTTP 400 (not supported) for `S2STravelTime` NTDLRT, `S2STravelTime` NTALRT, `Frequency` NTDLRT and `Frequency` NTALRT. These four requests are not sent. The API answer lists the accepted
 `S2STravelTime` operators as TRTC, KRTC, TYMC, KLRT, TMRT, NTMC and the accepted `Frequency` operators as TRTC, KRTC, TYMC, TMRT, NTMC.
 `ODFare` and `StationTimeTable` work for all four operators. A 429 (rate limit) can occur on a first run; re-running fetches the missing files.
 Operator codes: `TRTC` Taipei Metro, `NTMC` New Taipei Metro (Circular Line), `NTDLRT` Danhai LRT, `NTALRT` Ankeng LRT.

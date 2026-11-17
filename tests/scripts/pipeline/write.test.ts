@@ -9,9 +9,10 @@ const D = path.resolve('/virtual/out');
 const P = (name: string): string => path.join(D, name);
 const writes: PlannedWrite[] = [
   { path: P('districts.json'), text: 'new-districts\n' },
-  { path: P('history.json'), text: 'new-history ?î˜¾n' },
+  { path: P('history.json'), text: 'new-history ??¾n' },
   { path: P('policy-track.json'), text: 'new-policy\n' },
   { path: P('commute-matrix.json'), text: 'new-commute\n' },
+  { path: P('params.json'), text: 'new-params\n' },
   { path: P('SOURCES.md'), text: 'new-sources\r\n' },
 ];
 const old = { [P('districts.json')]: 'old-d', [P('policy-track.json')]: 'old-p' };
@@ -81,11 +82,14 @@ describe('writeStep', () => {
     state.policyTrackFile = { c: 3 } as never;
     expect(() => planWrites(state)).toThrow(/commute-matrix/);
     state.commuteMatrix = { d: 4 } as never;
+    expect(() => planWrites(state)).toThrow(/params/);
+    state.params = { file: { e: 5 } } as never;
     expect(planWrites(state).map((w) => path.basename(w.path))).toEqual([
       'districts.json',
       'history.json',
       'policy-track.json',
       'commute-matrix.json',
+      'params.json',
     ]);
     state.sourcesDoc = '# S\n';
     const planned = planWrites(state);
@@ -94,10 +98,11 @@ describe('writeStep', () => {
       'history.json',
       'policy-track.json',
       'commute-matrix.json',
+      'params.json',
       'SOURCES.md',
     ]);
     const fake = new FakeWriteFs();
     writeStep(fake).run({} as never, state);
-    expect(fake.text(planned[4]?.path as string)).toBe('# S\n');
+    expect(fake.text(planned[5]?.path as string)).toBe('# S\n');
   });
 });

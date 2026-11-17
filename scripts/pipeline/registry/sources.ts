@@ -183,6 +183,15 @@ export const SOURCE_REGISTRY: readonly SourceEntry[] = [
     license: NOT_STATED,
   },
   {
+    id: 'housing/moi-low-use',
+    agency: MOI_PIP,
+    dataset: '低度使用(用電)住宅統計結果查詢(縣市及鄉鎮市區)',
+    datasetEn: 'Low-use (low electricity use) housing statistics by district',
+    url: 'https://pip.moi.gov.tw/Publicize/Info/E1040',
+    years: [2015, 2025],
+    license: NOT_STATED,
+  },
+  {
     id: 'affordability/moi-e1050',
     agency: MOI_PIP,
     dataset: '房價負擔能力統計',

@@ -11,7 +11,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { CommuteMatrixFile, DistrictsFile, HistoryFile, PolicyTrackFile } from '../../src/types/data-files.ts';
-import type { ValidationContext } from '../../src/data/validate.ts';
+import type { LowUseContext, ValidationContext } from '../../src/data/validate.ts';
 import { PUBLIC_DATA, ROOT } from '../lib/paths.ts';
 import { bannedTermsStep } from './banned-terms.ts';
 import { createContext, type BuildContext, type Logger } from './context.ts';
@@ -23,6 +23,7 @@ import type { SurveyCheckResult } from './commute/survey-check.ts';
 import { districtsStep } from './districts-file.ts';
 import { censusCheckStep } from './params/census-employees.ts';
 import { paramsPart1Step, type ParamsPart1 } from './params/part1.ts';
+import { formatParamsSummary, paramsStep, type ParamsBuild } from './params/params-file.ts';
 import { PipelineError } from './errors.ts';
 import type { DistrictShape } from './geo.ts';
 import { historyFileStep } from './history-file.ts';
@@ -37,6 +38,7 @@ import { salePriceStep } from './indicators/sale-price.ts';
 import type { CitySeries, DistrictSeries } from './indicators/series.ts';
 import { socialHousingStep, type ProjectExclusion, type SocialHousingLoad } from './indicators/social-housing.ts';
 import { fsCommittedExists, preflight } from './manifest.ts';
+import { lowUseStep } from './low-use.ts';
 import { policyFileStep } from './policy-file.ts';
 import { policyStep, type CommittedReader } from './policy/step.ts';
 import type { PolicyTrackSeries } from './policy/track.ts';
@@ -95,6 +97,10 @@ export interface BuildState {
   socialHousingCompletions?: DistrictSeries;
   socialHousingStock?: DistrictSeries;
   socialHousingExclusions?: readonly ProjectExclusion[];
+  /** Set by the low-use step (task 27.4): the two periodic series and the validator context. */
+  lowUseHousingCount?: DistrictSeries;
+  lowUseHousingRate?: DistrictSeries;
+  lowUse?: LowUseContext;
   /** Set by the policy track step (task 12.1): the ten real policy series. */
   policyTrack?: PolicyTrackSeries;
   /** Set by the policy file step (task 12.2): the assembled policy-track.json content. */
@@ -113,6 +119,8 @@ export interface BuildState {
   commuteCentroids?: CentroidResult;
   /** Set by the params part 1 step (task 25.7): the entries of tasks 25.1 to 25.6 and their method notes. */
   paramsPart1?: ParamsPart1;
+  /** Set by the params step (task 26.6): the assembled params.json content and the source type of each id. */
+  params?: ParamsBuild;
   /** Set by the commute matrix step (task 24.5): the nearest station of Linkou, for SOURCES.md. */
   commuteLinkou?: NearestStationInfo | undefined;
   /** Set by the SOURCES.md step (task 15.2): the full text of data/SOURCES.md. */
@@ -198,12 +206,14 @@ export function createDefaultSteps(options: DefaultStepsOptions = {}): readonly 
     mrtStep(),
     socialHousingStep(),
     policyStep(options.committedReader),
+    lowUseStep(),
     historyFileStep(),
     policyFileStep(),
     networkStep(options.committedReader),
     fareSlopeStep(options.committedReader),
     commuteMatrixStep(options.committedReader),
     paramsPart1Step(options.committedReader),
+    paramsStep(options.committedReader),
     validateStep(options.validationContext),
     sourcesDocStep(options.committedReader),
     bannedTermsStep(options.committedReader),
@@ -262,6 +272,7 @@ export function runPipeline(options: RunOptions = {}): number {
   if (state.commuteSurvey !== undefined) {
     logger.info(`commute-matrix: 41 x 41 minutes, mean modelled commute time ${state.commuteSurvey.modelled.toFixed(1)} min`);
   }
+  if (state.params !== undefined) for (const line of formatParamsSummary(state.params)) logger.info(line);
   // The social housing and policy track steps can report the same exclusion; print each note once.
   for (const note of new Set(state.notes)) logger.info(note);
   return 0;

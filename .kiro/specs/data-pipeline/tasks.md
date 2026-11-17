@@ -370,7 +370,7 @@ The order follows the design: shared helpers first, then the district file and e
 - [x] 23. Commute inputs: constants, timetables, rail network and fare slope
   - [x] 23.0 Remove the four unsupported TDX requests and test the request builders
     - Edit `scripts/sources/tdx-rail.ts` (and `scripts/sources/stations.ts`, which has the S2STravelTime requests) so that no S2STravelTime or Frequency request is sent for NTDLRT or NTALRT; the `timetables` source requests the StationTimeTable of TRTC, NTMC, NTDLRT and NTALRT and the Frequency of TRTC and NTMC only; the `stations` source requests S2STravelTime for TRTC and NTMC only
-    - Record in `data/DOWNLOAD.md` that TDX returns HTTP 400 (not supported) for S2STravelTime NTDLRT, S2STravelTime NTALRT, Frequency NTDLRT and Frequency NTALRT, with the date 2026-11-19
+    - Record in `data/DOWNLOAD.md` that TDX returns HTTP 400 (not supported) for S2STravelTime NTDLRT, S2STravelTime NTALRT, Frequency NTDLRT and Frequency NTALRT, with the date 2026-11-17
     - Add the request-builder unit test (`tests/scripts/sources/`, no network): the request list of the two sources contains no S2STravelTime or Frequency request for NTDLRT or NTALRT, contains the four StationTimeTable requests and the Frequency requests for TRTC and NTMC
     - _Requirements: 27.2, 27.3, 27.4, 27.16_
   - [x] 23.1 Implement the Parameter_Entry checker and the Commute_Config_File reader
@@ -387,7 +387,7 @@ The order follows the design: shared helpers first, then the district file and e
   - [x] 23.3 Create `data/config/commute-params.json` with the confirmed constants
     - Eight Parameter_Entries with the values, units, ranges, statuses and sources of Requirement 25 criteria 9 to 15 and 29.7: `commute.detourFactor` 1.417 (secondary, range 1.2 to 1.6, Boscoe et al. 2012, Cole and King 1968), `commute.walkSpeed` 1.37 (secondary, 1.07 to 1.46, Bohannon 1997, MUTCD 2009), `commute.roadSpeed.taipei` 16.7 (secondary, TomTom Traffic Index 2025, single quoted figure), `commute.roadSpeed.newTaipei` 16.7 (gap, assumption), `commute.accessTime` 5 (gap, range 0 to 10 as a sensitivity range, `lowSource` and `highSource` citation "sensitivity range, no study", url `.kiro/specs/data-pipeline/design.md`), `commute.transferWalk` 4.29 (verified, dataset 128417, range 1 to 11), `commute.transferWait` (secondary), `commute.tripsPerMonth` 44 (gap)
     - `commute.transferWait.value` is **filled from the timetables**: run the 23.2 parser on `data/raw/timetables/` (weekday 07:00 to 09:00) with a throwaway command, take the median of the per-line half-headways (all 12 headway groups count as lines; SOURCES.md lists the lines without timetable data; currently "BR (Wenhu Line) has no data in the TDX timetables and uses the default value", default = median of the other lines' half-headways, 2.5 minutes) and write it with its `estimated.method` (the window, the morning-work-commute trip type, no survey figure given as a reason). IF `data/raw/timetables/` is absent, THEN stop and ask the user to finish 22.8; for a line the timetables do not cover, use the weekday morning peak headway published on the Taipei Metro website and cite the page for that line
-    - No `data/config/lrt-timetable.csv` is created and the preflight step does not require it (decided 2026-11-19). Cite no Wikipedia page for any entry, opening date, headway or run time
+    - No `data/config/lrt-timetable.csv` is created and the preflight step does not require it (decided 2026-11-17). Cite no Wikipedia page for any entry, opening date, headway or run time
     - _Requirements: 25.2, 25.3, 25.9, 25.10, 25.11, 25.12, 25.13, 25.14, 25.15, 25.16, 29.7_
   - [x] 23.4 Implement `scripts/pipeline/commute/network.ts`
     - Stations from the TDX station files, edges from the station-to-station files (`RunTime` plus the `StopTime` of each intermediate station), the 2025Q4 line sections from the opening-date table of Requirement 11 criterion 4 (nothing after 2025-12-31), transfer walking time per interchange from dataset 128417 (an interchange the file lacks uses the mean and is listed as estimated); the Sanying Line (`LB`) and the Taoyuan Airport MRT are excluded; Danhai and Ankeng LRT edges from the station-to-station files, else `timetable.ts`; a Danhai LRT that `timetable.ts` cannot supply is excluded from the network (no fallback table)
@@ -501,74 +501,74 @@ The order follows the design: shared helpers first, then the district file and e
     - Run `npx vitest --run` and `npm run typecheck` and report both exit codes
     - _Requirements: 22.1, 22.7, 22.9, 29.3_
 
-- [ ] 26. Parameter table part 2: gap parameters, id-set check and `params.json`
-  - [~] 26.1 Add the type 3 entries to `data/config/params-fixed.json`
+- [x] 26. Parameter table part 2: gap parameters, id-set check and `params.json`
+  - [x] 26.1 Add the type 3 entries to `data/config/params-fixed.json`
     - `migration.threshold`, `migration.weightTime`, `migration.weightBurden`, `migration.weightCost`, `ghost.size` 1,000, `commuterPass.lag` 0, `commuterPass.unitCost` and `rentSubsidy.unitCost` 1, and the seven `limit.*` factors (0 for each `lowerFactor`, 2 for each `upperFactor`; source "game default" with the repository path of `simulation.md`), each with Parameter_Status `gap`, an `estimated.method`, a non-blank `assumption` and the data that would replace it; `migration.commuteCostPerMinute` is not a gap entry
     - _Requirements: 23.1, 23.2, 23.3, 23.7_
-  - [~] 26.2 Implement `params/migration-anchors.ts`
+  - [x] 26.2 Implement `params/migration-anchors.ts`
     - `migration.share` and `migration.exitShare` from their anchors in `data/raw/` as defined in the design's gap table, status `gap`, with an `assumption` that states why the anchor is only an approximation
     - _Requirements: 23.6_
-  - [~] 26.3 Implement `params/derived.ts`
+  - [x] 26.3 Implement `params/derived.ts`
     - `ghost.shareBoth` = `shareRent × (1 − shareCommuteWithin.value)` with the independence assumption stated, checked against `min(shareRent, 1 − shareCommuteWithin.high)`; `socialHousing.costSchedule` equal shares over offsets 0 to `lag − 1`, the last share absorbing the rounding so the shares sum to 1 within 1e-9, with the even-payment assumption
     - _Requirements: 23.4, 23.5_
-  - [~] 26.4 Implement `params/engine-ids.ts`
+  - [x] 26.4 Implement `params/engine-ids.ts`
     - `ENGINE_EXTRA_IDS`, `OMITTED_OPTIONAL_IDS` (the five fixed ids plus the `budget.ceiling.` prefix), `engineIdSet()` from `collectParameterSpecs(RULE_REGISTRY)` minus `commuterPass.price.*` minus the omitted ids plus the extra ids and the 41 job-share ids, and `idSetDiff(built, engine)` returning `missing` and `extra` sorted by code point; an omitted optional id in the built table is `extra`, its absence is no difference; a present extra id once declared by the engine is counted once
     - _Requirements: 20.4, 20.5, 20.6, 20.7, 20.13_
-  - [~] 26.5 Implement `validateParamsFile`
+  - [x] 26.5 Implement `validateParamsFile`
     - In `src/data/validate-params.ts`: the wrapped form with no other top-level key, ascending ids, `checkParameterEntry` on each entry, the engine's stage 0 checks (share and positive checks, schedule offsets and shares summing to 1 within 1e-9, `socialHousing.lag` containing `NLMA`, no `range` on `ghost.rentThreshold`, `shareBoth ≤ min(shareRent, 1 − shareCommuteWithin.high)`, the 41 job shares summing to 1 within 1e-9), the id set against `ctx.engineIdSet`, the Parameter_Source_Type counts; reuse the engine's pure functions if `src/simulation/params.ts` exports them, otherwise carry a copy with a parity test on one fixture set (Decision D33). `ParamsFile` type, `ValidationError.file` accepts `'params.json'`, `ValidationContext` gains `engineIdSet` and `sourceTypes`
     - _Requirements: 20.1, 20.2, 20.3, 20.8, 20.9, 23.8, 27.4_
-  - [~] 26.6 Implement `params/params-file.ts` and `paramsStep`
+  - [x] 26.6 Implement `params/params-file.ts` and `paramsStep`
     - Merge the part 1 entries, the fixed gap entries, the anchors and the derived entries; round each value to the decimals documented for its id; sort ids by code point; run `idSetDiff` and IF any id is missing or extra, THEN throw `DataError('params-id-set', ...)` that prints each id with its side, before any file is written; `BuildState.params`
     - _Requirements: 20.1, 20.4, 20.5, 20.6, 20.11_
-  - [~] 26.7 Write `public/data/params.json` in the validation, write and summary steps
+  - [x] 26.7 Write `public/data/params.json` in the validation, write and summary steps
     - The validation step validates `params.json` with the other files and collects every error; `write.ts` stages and commits `params.json` after `commute-matrix.json`; the summary prints the number of ids, the entries by Parameter_Source_Type and by Parameter_Status. Update the runner and writer tests
     - _Requirements: 16.5, 16.6, 20.1, 27.10, 27.7_
-  - [~] 26.8 Add the parameter table sections to `sources-doc.ts`
+  - [x] 26.8 Add the parameter table sections to `sources-doc.ts`
     - Every id with its Parameter_Source_Type (1, 2 or 3), unit, status and source; the Omitted_Optional_Ids with the default that the engine applies; every gap parameter with its value, assumption and the data that would replace it, with the statement that these values are not research results; the banned-term check must pass
     - _Requirements: 20.12, 23.7_
-  - [~] 26.9 Write example tests for the parameter table
-    - The Id_Set_Check with a missing id, an extra id and an omitted optional id present; malformed Params_File objects to the validator (one defect each); the counts on the built table (81 ids, 8 type 1, 54 type 2, 19 type 3; 8 `verified`, 1 `check`, 53 `secondary`, 19 `gap`); `shareBoth` and cost schedule on small fixtures; the validator parity test of Decision D33 when a copy is used
+  - [x] 26.9 Write example tests for the parameter table
+    - The Id_Set_Check with a missing id, an extra id and an omitted optional id present; malformed Params_File objects to the validator (one defect each); the counts on the built table (81 ids, 8 type 1, 54 type 2, 19 type 3; 8 `verified`, 53 `secondary`, 20 `gap`); `shareBoth` and cost schedule on small fixtures; the validator parity test of Decision D33 when a copy is used
     - _Requirements: 20.4, 20.8, 23.4, 23.5, 27.8_
-  - [~] 26.10 Write property test for the id-set difference
+  - [x] 26.10 Write property test for the id-set difference
     - **Property 37: Id-set difference is the symmetric difference**
     - In `tests/scripts/pipeline/properties-params.test.ts`
     - **Validates: Requirements 20.4, 20.5, 20.6, 20.7, 20.13**
-  - [~] 26.11 Write property test for the parameter validator
+  - [x] 26.11 Write property test for the parameter validator
     - **Property 38: The parameter validator reports every injected defect at its path**
     - In `tests/data/properties-params.test.ts`
     - **Validates: Requirements 20.1, 20.2, 20.3, 20.8, 20.9, 23.8, 27.4**
-  - [~] 26.12 Write property test for the params and matrix round trip
+  - [x] 26.12 Write property test for the params and matrix round trip
     - **Property 39: Params and commute matrix files round-trip**
     - In `tests/data/properties-params.test.ts`
     - **Validates: Requirements 24.1, 24.2, 27.4, 27.5**
-  - [~] 26.13 Write property test for the derived gap parameters
+  - [x] 26.13 Write property test for the derived gap parameters
     - **Property 43: Derived gap parameters meet the engine constraints**
     - In `tests/scripts/pipeline/properties-params.test.ts`
     - **Validates: Requirements 23.4, 23.5**
-  - [~] 26.14 Build `public/data/params.json` and confirm
+  - [x] 26.14 Build `public/data/params.json` and confirm
     - Run `npm run data`, confirm exit code 0, 81 ids and the printed counts; a second run gives a byte-identical `params.json`. Run `npx vitest --run` and `npm run typecheck` and report both exit codes
     - _Requirements: 20.1, 20.4, 27.7_
 
-- [ ] 27. Low-use housing indicators (method decided: current-method files only; the period review of 22.8 is done)
-  - [~] 27.1 Implement `parsers/low-use.ts`
+- [x] 27. Low-use housing indicators (method decided: current-method files only; the period review of 22.8 is done)
+  - [x] 27.1 Implement `parsers/low-use.ts`
     - `parseLowUse` returns `{ period, districtCode, count, ratePercent }` rows for the layout of the `moi-low-use-current-{period}-{63000,65000}.csv` files (district names matched with `districtByZh`; percentage or fraction detected; unknown layout stops with file, row, expected and found columns); annual values of ROC 104 to 108 map to 2015H2 to 2019H2, half-yearly values 2020H1 to 2025H2 are read as they are; the reader never opens a file named `moi-low-use-original-*`; `periodsPresent(rows)` returns the sorted periods with a district value; manifest rows for the 34 current-method files, so the preflight step lists each missing file with `node scripts/download.ts low-use` and exits non-zero before any output is written
     - _Requirements: 2.3, 2.4, 26.1, 26.3, 26.14_
-  - [~] 27.2 Add the periodic-indicator rules to the types and the validator
+  - [x] 27.2 Add the periodic-indicator rules to the types and the validator
     - `ValueRecord` accepts `null` with `estimated: false` and an optional `dataPeriod`; indicator specs get a `periodic` flag; `validateHistoryFile` gains `no-data` (a `null` with `estimated: false` only in a periodic indicator), `data-period` (`YYYYH1` or `YYYYH2` whose Reference_Quarter equals the record's quarter; rejected elsewhere), the range rules (rate 0 to 100, count a non-negative integer) and `low-use-gap` with `ctx.lowUse = { dataGaps, periodsPresent, missing }`: (a) the districts whose 44 records are all `null` equal `dataGaps` exactly; (b) read per district: a `null` is accepted at a Q1 or Q3, at any Q2 of 2015 to 2019, and at the Reference_Quarter of a period only when that district has no published value for that period; a `null` at the Reference_Quarter of a period with a published value for that district is rejected; (c) more than 5 entirely `null` districts for one indicator is an error that lists their District_Codes
     - _Requirements: 26.9, 26.13_
-  - [~] 27.3 Add the two indicators to the registries and the id list
+  - [x] 27.3 Add the two indicators to the registries and the id list
     - `registry/sources.ts` entry for the low-use dataset (agency, dataset name, URL, years, license or `not stated`); `registry/indicators.ts` specs for `lowUseHousingCount` (unit `dwellings`, kind `count`, 0 decimals) and `lowUseHousingRate` (unit `percent of dwellings`, kind `percent`, 2 decimals), both `periodic`, after `socialHousingStock`; `HISTORY_INDICATOR_IDS` and the 17.x and 18.x registry and runner tests that list 13 indicators (11 district) are updated to 15 (13 district and 2 city) as Requirement 4.11 states; the header comment of `history-file.ts` is updated
     - _Requirements: 4.11, 14.2, 26.2, 26.9_
-  - [~] 27.4 Implement `scripts/pipeline/low-use.ts` and `lowUseStep`
+  - [x] 27.4 Implement `scripts/pipeline/low-use.ts` and `lowUseStep`
     - For each district and each of the 44 quarters: the published value with `estimated: false`, no method and `dataPeriod` at the Reference_Quarter (Q2 of H1, Q4 of H2) of each period that has a value for that district; every other record `{ value: null, estimated: false }`; nothing is interpolated, held, extrapolated or pooled; `dataGaps` is computed from the built records; more than 5 entirely `null` districts (including no published period at all) throws `low-use-too-many-gaps` listing exactly those District_Codes before any file is written; `lowUseStep` runs before `historyFileStep`; the `null` records do not count in the estimated total printed by the summary
     - _Requirements: 1.4, 26.2, 26.3, 26.4, 26.5, 26.6, 26.7_
-  - [~] 27.5 Add the low-use sections to `sources-doc.ts`
+  - [x] 27.5 Add the low-use sections to `sources-doc.ts`
     - Agency, dataset, URL, years, license, the period convention with its reason, the periods with district values and the first and last, the mapping of ROC 104 to 108 to 2015H2 to 2019H2 (Reference_Quarter Q4) with the statement that Q2 of 2015 to 2019 is `null`, the statement that other quarters are `null` and not estimated, and the text of Requirement 26.15 (current and original methods, Xinyi 2019H2: 4.97 percent / 3,741 dwellings vs 5.32 percent / 4,006, only the current method used, original files kept and not read); per district the periods without a published value; the heading for the data gaps of the low-use indicators with one row per district and indicator (District_Code, romanized name, indicator id), or the sentence that no district is entirely without a value
     - _Requirements: 26.6, 26.8, 26.12, 26.15_
-  - [~] 27.6 Write example tests for the low-use parser, builder and validator
+  - [x] 27.6 Write example tests for the low-use parser, builder and validator
     - Fixtures of at most 50 rows: a Reference_Quarter value with its `dataPeriod`; a quarter that no period covers; a period without a value for one district; an annual value of ROC 104 mapped to `2015H2` and quarter `2015Q4` with `2015Q2` `null`; a fixture directory with an `original` file holding a different value for the same district and period (the built value is the current-method value and the file is not opened); a district with no value in any period (44 `null`, on the gap list, the build continues); exactly 5 such districts (continues) and 6 (stops, the error lists the 6 codes); validator tests for a `null` accepted in a low-use indicator, a `null` rejected in another, a missing `dataPeriod`, a `dataPeriod` whose Reference_Quarter differs from the Quarter_Key, an entirely `null` district not on the list, a listed district with a non-null value, a `null` at the Reference_Quarter of a period that has a published value for that district, and more than 5 entirely `null` districts
     - _Requirements: 26.1, 26.10, 26.13, 27.15_
-  - [~] 27.7 Write property test for the low-use builder
+  - [x] 27.7 Write property test for the low-use builder
     - **Property 45: Low-use quarters hold published values at their Reference_Quarter only**
     - In `tests/scripts/pipeline/properties-low-use.test.ts`
     - **Validates: Requirements 26.3, 26.4, 26.5, 26.6, 26.7, 26.12, 26.13**

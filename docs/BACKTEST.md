@@ -8,10 +8,67 @@ The simulation is not a prediction. Errors are reported as numbers, whether they
 ## Versions
 
 - Engine version: 1.0.0
-- Parameter_Table version (SHA-256 of params.json): not available (params.json missing)
+- Parameter_Table version (SHA-256 of params.json): 1a3ff32c714a93b7bfab102b0b671ef455b093d8bbae7e8fe9c11e603b8a0b54
 
-## Case tpass-2023
+## Case tpass-2023: 2023 TPASS commuter pass
 
-Result: not computed
+Label: validation
 
-Reason: missing input: params.json
+No Parameter value or range was chosen or changed after seeing the outcome of this case.
+
+### Change and quarters
+
+- Policy tool: commuterPass
+- Changed field: commuterPassPrice in Taipei, New Taipei
+- First quarter of the change: 2023Q3
+- Value before: 1280.00
+- Value after: 1200.00
+- Compared indicator: mrtEntries
+- Compared areas: Taipei, New Taipei
+- Evaluation quarters: 2023Q3, 2023Q4
+
+### Simulated effect
+
+| Minimum | Central | Maximum |
+| ---: | ---: | ---: |
+| 4590931.59 | 6886397.38 | 11477328.97 |
+
+### Observed effect
+
+- Observed effect: -797951.00
+- Source: history.json, indicator mrtEntries
+- Cities: Taipei, New Taipei (41 districts)
+- Comparison year: 2019
+- Change year: 2023
+- Method: Total MRT entries of all districts of Taipei and New Taipei. Observed effect = (2023 Q3+Q4 minus 2019 Q3+Q4) minus (2023 Q1+Q2 minus 2019 Q1+Q2). The year 2019 is the pre-COVID-19 comparison year; 2022 is not used. Computed from history.json values by the backtest script; no value is entered by hand.
+
+| Period | Quarters | Sum |
+| --- | --- | ---: |
+| Post-change year 2023 | Q3, Q4 | 367274527.00 |
+| Post-comparison year 2019 | Q3, Q4 | 401119301.00 |
+| Pre-change year 2023 | Q1, Q2 | 354804329.00 |
+| Pre-comparison year 2019 | Q1, Q2 | 387851152.00 |
+
+Known confounders:
+- Incomplete recovery of ridership after COVID-19
+- Ankeng LRT opening on 2023-02-10
+
+### Errors and checks
+
+- Absolute error (simulated central minus observed): +7684348.38
+- Relative error: +963.0 percent
+- Magnitude ratio (simulated central divided by observed): -8.630
+- Tolerance interval for the ratio: 0.500 to 2.000
+
+| Check | Result |
+| --- | --- |
+| Direction (central simulated effect has the same sign as the observed effect) | not met |
+| Magnitude ratio inside the tolerance interval | not met |
+| Range (observed effect lies between simulated minimum and maximum) | not met |
+
+### Secondary context, not used in any check
+
+These news-report figures are quoted for context only. They are not the observed effect above and no check uses them.
+
+- Taipei Metro entries, first month after launch, year on year: +22.0 percent. Source: [CNA, 2023-08-01](https://www.cna.com.tw/news/ahel/202308010407.aspx). Includes post-COVID-19 recovery.
+- New Taipei Metro entries, 2023, year on year: +24.0 percent. Source: [New Taipei City Department of Rapid Transit Systems (DORTS) report](https://www.dorts.ntpc.gov.tw/cdn/file/20260821/95396612-4f8a-40cc-9e2d-fd55818f57f4.pdf). Includes post-COVID-19 recovery.

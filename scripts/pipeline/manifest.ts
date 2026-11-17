@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { ROOT } from '../lib/paths.ts';
 import { MissingInputsError, type MissingInput } from './errors.ts';
+import { lowUseFiles } from './parsers/low-use.ts';
 import type { RawReader } from './raw-reader.ts';
 
 export interface RequiredInput {
@@ -185,6 +186,7 @@ export function staticInputs(): RequiredInput[] {
       'policy/housing/datagov-169800.csv',
       'policy/housing/datagov-6742.csv',
     ),
+    ...raw('low-use', ...lowUseFiles()),
     ...raw(
       'social-housing',
       'social-housing/nlma-portal-GetScheduleData-A.json',

@@ -1,0 +1,727 @@
+{
+  "schemaVersion": 1,
+  "parameters": {
+    "commute.jobShare.63000010": {
+      "kind": "scalar",
+      "value": 0.067142,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.63000020": {
+      "kind": "scalar",
+      "value": 0.065966,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.63000030": {
+      "kind": "scalar",
+      "value": 0.07736,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.63000040": {
+      "kind": "scalar",
+      "value": 0.106344,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.63000050": {
+      "kind": "scalar",
+      "value": 0.053882,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.63000060": {
+      "kind": "scalar",
+      "value": 0.02627,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.63000070": {
+      "kind": "scalar",
+      "value": 0.015142,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.63000080": {
+      "kind": "scalar",
+      "value": 0.011808,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.63000090": {
+      "kind": "scalar",
+      "value": 0.028417,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.63000100": {
+      "kind": "scalar",
+      "value": 0.074573,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.63000110": {
+      "kind": "scalar",
+      "value": 0.023178,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.63000120": {
+      "kind": "scalar",
+      "value": 0.021175,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年臺北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000010": {
+      "kind": "scalar",
+      "value": 0.048826,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000020": {
+      "kind": "scalar",
+      "value": 0.03938,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000030": {
+      "kind": "scalar",
+      "value": 0.053245,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000040": {
+      "kind": "scalar",
+      "value": 0.014159,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000050": {
+      "kind": "scalar",
+      "value": 0.045031,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000060": {
+      "kind": "scalar",
+      "value": 0.033034,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000070": {
+      "kind": "scalar",
+      "value": 0.02731,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000080": {
+      "kind": "scalar",
+      "value": 0.008899,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000090": {
+      "kind": "scalar",
+      "value": 0.008594,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000100": {
+      "kind": "scalar",
+      "value": 0.014283,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000110": {
+      "kind": "scalar",
+      "value": 0.039058,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000120": {
+      "kind": "scalar",
+      "value": 0.002763,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000130": {
+      "kind": "scalar",
+      "value": 0.027412,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000140": {
+      "kind": "scalar",
+      "value": 0.012011,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000150": {
+      "kind": "scalar",
+      "value": 0.01924,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000160": {
+      "kind": "scalar",
+      "value": 0.008663,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000170": {
+      "kind": "scalar",
+      "value": 0.013979,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000180": {
+      "kind": "scalar",
+      "value": 0.002958,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000190": {
+      "kind": "scalar",
+      "value": 0.000219,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000200": {
+      "kind": "scalar",
+      "value": 0.000151,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000210": {
+      "kind": "scalar",
+      "value": 0.001263,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000220": {
+      "kind": "scalar",
+      "value": 0.000536,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000230": {
+      "kind": "scalar",
+      "value": 0.0046,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000240": {
+      "kind": "scalar",
+      "value": 0.00012,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000250": {
+      "kind": "scalar",
+      "value": 0.000164,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000260": {
+      "kind": "scalar",
+      "value": 0.000505,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000270": {
+      "kind": "scalar",
+      "value": 0.001075,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000280": {
+      "kind": "scalar",
+      "value": 0.00105,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commute.jobShare.65000290": {
+      "kind": "scalar",
+      "value": 0.000215,
+      "unit": "share of the 41-district total",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2021 Industry and Service Census report, table 10, page 140: persons engaged at year end by township and district", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11768/233846/110年新北市工業及服務業普查報告.pdf" },
+      "estimated": { "method": "District share of the 2021 DGBAS Industry and Service Census count of persons engaged (從業員工人數, table 10, owners and unpaid family workers included), divided by the total of the 41 districts. The census excludes government agencies, schools and the armed forces, so districts where public employers concentrate (for example Zhongzheng) are under-counted." }
+    },
+    "commuterPass.elasticity": {
+      "kind": "scalar",
+      "value": -0.3,
+      "unit": "percent change in ridership per percent change in fare",
+      "status": "secondary",
+      "source": { "citation": "Simpson-Curtin rule (fare elasticity of transit ridership of about -0.3), as reported in Litman, Transit Price Elasticities and Cross-Elasticities (Victoria Transport Policy Institute)", "url": "https://www.vtpi.org/tranelas.pdf" },
+      "estimated": { "method": "Range ends cited via review; the original tables were not read. The individual Litman table entries for -0.5 and -0.2 are still to be read." },
+      "range": {
+        "low": -0.5,
+        "high": -0.2,
+        "lowSource": { "citation": "Litman, Transit Price Elasticities and Cross-Elasticities: long-run values are larger in absolute size (the individual table entry for -0.5 is still to be read)", "url": "https://www.vtpi.org/tranelas.pdf" },
+        "highSource": { "citation": "Litman, Transit Price Elasticities and Cross-Elasticities (the individual table entry for -0.2 is still to be read)", "url": "https://www.vtpi.org/tranelas.pdf" }
+      }
+    },
+    "commuterPass.lag": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "quarters",
+      "status": "gap",
+      "assumption": "The fare elasticities are short-run responses to a price change and are taken to act in the quarter of the change.",
+      "source": { "citation": "Project assumption; fare elasticities in RESEARCH-NOTES 2e are short-run responses", "url": ".kiro/specs/data-pipeline/design.md" },
+      "estimated": { "method": "Assumed 0 quarters from the short-run elasticities. Data that would replace it: a measured time profile of ridership after a fare change in Taipei." }
+    },
+    "commuterPass.unitCost": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "TWD of budget per TWD of subsidy",
+      "status": "gap",
+      "assumption": "One TWD of budget pays one TWD of subsidy, with no administration overhead.",
+      "source": { "citation": "Project assumption; no administration overhead was found", "url": ".kiro/specs/data-pipeline/design.md" },
+      "estimated": { "method": "Assumed 1. Data that would replace it: published administration cost of the commuter pass and rent subsidy programs." }
+    },
+    "ghost.commuteThreshold": {
+      "kind": "scalar",
+      "value": 60,
+      "unit": "minutes one way",
+      "status": "gap",
+      "assumption": "project rule; no study found for 60 minutes",
+      "source": { "citation": "Project rule, no study for the value of 60 minutes. The 45-minute low end is a TVBS report on a survey of tolerable one-way commute time (original study unknown)", "url": "https://news.tvbs.com.tw/life/832402" },
+      "range": {
+        "low": 45,
+        "high": 60,
+        "lowSource": { "citation": "TVBS report on a survey of tolerable one-way commute time (about 45 minutes); original study unknown", "url": "https://news.tvbs.com.tw/life/832402" },
+        "highSource": { "citation": "project rule, no study", "url": ".kiro/specs/data-pipeline/design.md" }
+      },
+      "estimated": { "method": "The low end is the survey figure as reported by TVBS. The value and the high end of 60 minutes are a project rule, without a cited study. A MOTC daily transport survey, reported by TVBS in 2017, gives about 57 minutes for trips from New Taipei City to Taipei City." }
+    },
+    "ghost.rentThreshold": {
+      "kind": "scalar",
+      "value": 50,
+      "unit": "percent of income",
+      "status": "verified",
+      "source": { "citation": "U.S. Department of Housing and Urban Development (HUD), definition of a severely cost-burdened household (rent above 50 percent of income)", "url": "https://www.huduser.gov/portal/node/10587" }
+    },
+    "ghost.sensitivityCommute": {
+      "kind": "scalar",
+      "value": 0.007913,
+      "unit": "share of employed residents per minute of one-way commute time",
+      "status": "secondary",
+      "source": { "citation": "DGBAS, 2020 Population and Housing Census, table 14 (employed residents by place of work), Taipei City and New Taipei City reports; Open Government Data License 1.0", "url": "https://data.gov.tw/dataset/10906" },
+      "estimated": { "method": "ghost.sensitivityCommute = share of the same estimated workplace distribution whose time lies above 59 and at most 60 minutes; it is the change of the share above 60 minutes per 1 minute of commute time. The workplace distribution is estimated as for ghost.shareCommuteWithin: same-district commutes count as 0 minutes, other districts of the same city and the other city of the pair are weighted by commute.jobShare. The placement of the category of workers in another county, city or overseas into the other city of the pair can shift mass across the threshold, so the Ghost counts derived from it may be under-estimated." }
+    },
+    "ghost.sensitivityRent": {
+      "kind": "scalar",
+      "value": 0.005415,
+      "unit": "share of renter persons per percentage point of rent burden",
+      "status": "secondary",
+      "source": { "citation": "Ministry of Finance (Fiscal Information Agency), comprehensive income tax statistics by village, income year 2023 (112_165-9.csv); Open Government Data License 1.0", "url": "https://data.gov.tw/dataset/103066" },
+      "estimated": { "method": "ghost.sensitivityRent = sum over the 41 districts of renter persons x (P(burden > 49) - P(burden > 50)), divided by total renter persons; this is the change of the share per 1 percentage point of burden. Renter persons are 2023Q4 population x renterRate(city). Reference year 2023, the last year with observed FIA data (2024 and 2025 are extrapolated). Household income of each district is assumed log-normal. Its median is the mean of the district householdIncome indicator over the four quarters of 2023, which is the income the engine uses. Its scale is (ln Q3 - ln Q1) / (2 x 0.6745) from the first and third quartile of the district total row of the FIA file for income year 2023, so the spread is that of FIA income: FIA income is per tax unit, not per household, and excludes transfer income (for example pensions, allowances and subsidies), so it can be more or less dispersed than household disposable income. The log-normal form is a two-parameter approximation: it has no heavy upper tail or mass at low incomes, and the tail at a burden near the threshold depends on that form. Renters are assumed to have the same income distribution as all households of the district, although renter households usually have lower income, which would raise the share. The rent of the reference dwelling is the district mean 2023 rent indicator multiplied by housing.dwellingSize. Burden is monthly rent divided by monthly income (annual income / 12), in percent; a household has a rent burden above the threshold when its income is below 1200 x rent / threshold. The renter rate is the 2020 census value of the city (a single-year value) applied to the 2023Q4 population of each district." }
+    },
+    "ghost.shareBoth": {
+      "kind": "scalar",
+      "value": 0.004442,
+      "unit": "share of residents",
+      "status": "gap",
+      "source": { "citation": "Derived from ghost.shareRent and ghost.shareCommuteWithin; see their sources", "url": "https://data.gov.tw/dataset/103066" },
+      "estimated": { "method": "ghost.shareRent (0.032495705499674184) times (1 - ghost.shareCommuteWithin) (1 - 0.8633022947490726); checked to be at most min(shareRent, 1 - shareCommuteWithin.high) = 0.032495705499674184" },
+      "assumption": "Independence: a resident being rent burdened and a resident having a long commute are treated as independent events, so the joint share is the product of the two shares. No data on the joint distribution was found; it would replace this assumption."
+    },
+    "ghost.shareCommuteWithin": {
+      "kind": "scalar",
+      "value": 0.863302,
+      "unit": "share of employed residents",
+      "status": "secondary",
+      "range": {
+        "low": 0.731669,
+        "high": 0.863302,
+        "lowSource": { "citation": "DGBAS, 2020 Population and Housing Census, table 14 (employed residents by place of work), Taipei City and New Taipei City reports; Open Government Data License 1.0", "url": "https://data.gov.tw/dataset/10906" },
+        "highSource": { "citation": "DGBAS, 2020 Population and Housing Census, table 14 (employed residents by place of work), Taipei City and New Taipei City reports; Open Government Data License 1.0", "url": "https://data.gov.tw/dataset/10906" }
+      },
+      "source": { "citation": "DGBAS, 2020 Population and Housing Census, table 14 (employed residents by place of work), Taipei City and New Taipei City reports; Open Government Data License 1.0", "url": "https://data.gov.tw/dataset/10906" },
+      "estimated": { "method": "ghost.shareCommuteWithin = share of the employed residents of the 41 districts (2020 census table 14) whose one-way time in the Commute_Matrix to the workplace district is at most 60 minutes; the range low is the share at most 45 minutes and the range high equals the value. Table 14 gives, for each residence district, the employed residents working in the same district, in another district of the same city, and in another county, city or overseas, and it gives no count by workplace district. Workplace districts are therefore estimated: residents working in the same district have time 0; residents working in another district of the same city are spread over the other districts of that city in proportion to commute.jobShare; residents working in another county, city or overseas are spread over the districts of the other city of the pair in proportion to commute.jobShare. Effect of the spreading, in both directions. (a) Setting commutes within one district to 0 minutes barely changes the share within the threshold, because commutes inside one district are under 45 minutes. (b) Placing the whole category of workers in another county, city or overseas into the other city of the pair raises the share within the threshold when the real destinations lie outside both cities (for example Linkou or Shulin to Taoyuan, and Xizhi to Keelung, are longer trips), so the Ghost counts derived from this share may be under-estimated. Commute times come from the modelled Commute_Matrix, and the census counts are for 2020 only." }
+    },
+    "ghost.shareRent": {
+      "kind": "scalar",
+      "value": 0.032496,
+      "unit": "share of residents",
+      "status": "secondary",
+      "source": { "citation": "Ministry of Finance (Fiscal Information Agency), comprehensive income tax statistics by village, income year 2023 (112_165-9.csv); Open Government Data License 1.0", "url": "https://data.gov.tw/dataset/103066" },
+      "estimated": { "method": "ghost.shareRent = sum over the 41 districts of population x renterRate(city) x P(burden > 50 percent), divided by the total population; population is 2023Q4. Reference year 2023, the last year with observed FIA data (2024 and 2025 are extrapolated). Household income of each district is assumed log-normal. Its median is the mean of the district householdIncome indicator over the four quarters of 2023, which is the income the engine uses. Its scale is (ln Q3 - ln Q1) / (2 x 0.6745) from the first and third quartile of the district total row of the FIA file for income year 2023, so the spread is that of FIA income: FIA income is per tax unit, not per household, and excludes transfer income (for example pensions, allowances and subsidies), so it can be more or less dispersed than household disposable income. The log-normal form is a two-parameter approximation: it has no heavy upper tail or mass at low incomes, and the tail at a burden near the threshold depends on that form. Renters are assumed to have the same income distribution as all households of the district, although renter households usually have lower income, which would raise the share. The rent of the reference dwelling is the district mean 2023 rent indicator multiplied by housing.dwellingSize. Burden is monthly rent divided by monthly income (annual income / 12), in percent; a household has a rent burden above the threshold when its income is below 1200 x rent / threshold. The renter rate is the 2020 census value of the city (a single-year value) applied to the 2023Q4 population of each district." }
+    },
+    "ghost.size": {
+      "kind": "scalar",
+      "value": 1000,
+      "unit": "persons per ghost",
+      "status": "gap",
+      "assumption": "One ghost stands for 1,000 residents; the value is a display scale.",
+      "source": { "citation": "Product default for the display scale (product.md); not a research result", "url": ".kiro/steering/product.md" },
+      "estimated": { "method": "Default from product.md. Data that would replace it: none needed; a different scale is a display choice." }
+    },
+    "housing.dwellingSize": {
+      "kind": "scalar",
+      "value": 89.9,
+      "unit": "m² per rented dwelling",
+      "source": { "citation": "MOI Department of Land Administration, real-price registration rental records (data.gov.tw 25118)", "url": "https://data.gov.tw/dataset/25118" },
+      "status": "verified",
+      "estimated": { "method": "Median 建物總面積平方公尺 of whole-dwelling rental records, lease date 2015Q1 to 2025Q4, Taipei and New Taipei together, duplicates by 編號 removed. Filters: 主要用途 contains 住家用 or 住宅; rent and area above 0; keep 出租型態 blank or 整棟(戶)出租; exclude records with a parking space (車位N above 0 in 租賃筆棟數, or 交易標的 containing 車位) and 出租型態 獨立套房, 分租套房, 分租雅房 or 分層出租. Records: 171949 qualifying (residential, valid, rent and area above 0), 123168 kept, 48781 excluded (parking 22241; suite, room or floor-share types 26540). Reason: the Ghost rule compares household income with the rent of a reference dwelling, which should be a whole dwelling rented by a household. Area and rent per m² both use the building total area including shared space, so rent per m² × area equals the actual monthly rent. Blank-type records before 2023 may include suites that cannot be identified. Suite and room renters are not included in the reference dwelling." }
+    },
+    "housing.householdSize.New Taipei": {
+      "kind": "scalar",
+      "value": 2.508662,
+      "unit": "persons per household",
+      "source": { "citation": "MOI Department of Household Registration, ODRP014 households and population by village, December 2020", "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP014" },
+      "status": "verified",
+      "estimated": { "method": "Σ people_total (4030954) ÷ Σ household_no (1606814) over the village rows of New Taipei in the ODRP014 file of 2020-12. Constant for all quarters." }
+    },
+    "housing.householdSize.Taipei": {
+      "kind": "scalar",
+      "value": 2.452797,
+      "unit": "persons per household",
+      "source": { "citation": "MOI Department of Household Registration, ODRP014 households and population by village, December 2020", "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP014" },
+      "status": "verified",
+      "estimated": { "method": "Σ people_total (2602418) ÷ Σ household_no (1061000) over the village rows of Taipei in the ODRP014 file of 2020-12. Constant for all quarters." }
+    },
+    "housing.renterRate.New Taipei": {
+      "kind": "scalar",
+      "value": 0.145059,
+      "unit": "share of households",
+      "source": { "citation": "DGBAS 2020 Population and Housing Census, table 34 (home ownership of ordinary households), New Taipei", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11065/230886/s034.ods" },
+      "status": "verified",
+      "estimated": { "method": "Renting households (221157) ÷ ordinary households living in housing units (1524598) of New Taipei, 2020 census table 34 (November 2020). The renter rate is a single-year value (census of November 2020) and is used as a constant for all quarters." }
+    },
+    "housing.renterRate.Taipei": {
+      "kind": "scalar",
+      "value": 0.13841,
+      "unit": "share of households",
+      "source": { "citation": "DGBAS 2020 Population and Housing Census, table 34 (home ownership of ordinary households), Taipei", "url": "https://ws.dgbas.gov.tw/001/Upload/463/relfile/11065/230887/s034.ods" },
+      "status": "verified",
+      "estimated": { "method": "Renting households (129267) ÷ ordinary households living in housing units (933940) of Taipei, 2020 census table 34 (November 2020). The renter rate is a single-year value (census of November 2020) and is used as a constant for all quarters." }
+    },
+    "limit.commuterPass.subsidy.lowerFactor": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.",
+      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
+      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
+    },
+    "limit.rentSubsidy.amount.lowerFactor": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.",
+      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
+      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
+    },
+    "limit.rentSubsidy.amount.upperFactor": {
+      "kind": "scalar",
+      "value": 2,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.",
+      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
+      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
+    },
+    "limit.rentSubsidy.households.lowerFactor": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.",
+      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
+      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
+    },
+    "limit.rentSubsidy.households.upperFactor": {
+      "kind": "scalar",
+      "value": 2,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.",
+      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
+      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
+    },
+    "limit.socialHousing.unitsStarted.lowerFactor": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.",
+      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
+      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
+    },
+    "limit.socialHousing.unitsStarted.upperFactor": {
+      "kind": "scalar",
+      "value": 2,
+      "unit": "multiple of the real value",
+      "status": "gap",
+      "assumption": "The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.",
+      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
+      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
+    },
+    "migration.commuteCostPerMinute": {
+      "kind": "scalar",
+      "value": 30.602311,
+      "unit": "TWD per minute per commuter per month",
+      "status": "secondary",
+      "source": { "citation": "TDX Rail/Metro ODFare, Taipei Metro (TRTC), New Taipei Metro (NTMC), Danhai LRT (NTDLRT) and Ankeng LRT (NTALRT), adult single-journey full fare, Ministry of Transport and Communications", "url": "https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/ODFare/{TRTC,NTMC,NTDLRT,NTALRT}?%24format=JSON" },
+      "range": {
+        "low": 0,
+        "high": 30.602311,
+        "lowSource": { "citation": "Taipei Metro, commuter pass and TPASS product table (policy/trtc-products): a pass holder pays no per-trip fare", "url": "https://www.metro.taipei/cp.aspx?n=CEF54168B23F73B4&s=BB3631329CC1A297" },
+        "highSource": { "citation": "TDX Rail/Metro ODFare, Taipei Metro (TRTC), New Taipei Metro (NTMC), Danhai LRT (NTDLRT) and Ankeng LRT (NTALRT), adult single-journey full fare, Ministry of Transport and Communications", "url": "https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/ODFare/{TRTC,NTMC,NTDLRT,NTALRT}?%24format=JSON" }
+      },
+      "estimated": { "method": "Regression: least squares with an intercept of the adult full fare (TWD) on the rail-graph in-vehicle path time (minutes) over 14774 station pairs gives 0.6955 TWD per minute per trip; value is this slope multiplied by the monthly trips. Selection: high is the larger of value and the same regression over the Uncapped_Range multiplied by the monthly trips, 0.6928 TWD per minute per trip. The Uncapped_Range is the 14603 pairs with a path time below 59.783333333333324 minutes, the shortest pair charged the Fare_Cap of 65 TWD. low is 0, the marginal cost of a minute for a pass holder. Monthly trips: commute.tripsPerMonth = 44 one-way trips per commuter per month, Parameter_Status gap. Fare cap: fares are capped (maximum 65 TWD), so a linear per-minute cost over-estimates long trips. The Fare_Cap affects only 48 of 14,774 station pairs (0.3 percent). The slope does not rise after excluding them (0.6928 against 0.6955 TWD per minute per trip), so high equals value (30.60). The uncertainty range is provided by low = 0. Stations not in the network: R01, V01, V02, V03, V04, V05, V06, V07, V08, V09, V10, V11, V26, V27, V28 do not appear in the TDX station-to-station travel time files or the Ankeng StationTimeTable run times; 424 station pairs are excluded. Migration weights: the fares are cited, but the migration weights (migration.weight*, migration.threshold, migration.share) are gap, so how strongly the commuter pass subsidy moves migration is an assumption. Backtest: the TPASS backtest validates MRT entries only and does not validate migration." }
+    },
+    "migration.exitShare": {
+      "kind": "scalar",
+      "value": 0.379541,
+      "unit": "share of registered move-outs",
+      "status": "gap",
+      "source": { "citation": "Ministry of the Interior, Department of Household Registration, registered move-in and move-out by village (ODRP002 for 2016 to 2017, ODRP011 from 2018) and population by village; Open Government Data License 1.0", "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP011" },
+      "estimated": { "method": "migration.exitShare = (total registered move-outs - moves to the other city - moves to another district of the same city) / total registered move-outs, summed over all villages and the 120 months of 2016Q1 to 2025Q4 (3253971 move-outs, 2018955 of them within the two cities). Destinations outside the two cities include abroad, Taoyuan, other counties and cities, and cancelled registrations." },
+      "assumption": "The share of residents who leave their district under rent pressure and also leave the two cities is assumed equal to the share of all registered move-outs that go outside the two cities. This is only an approximation: the files give the destination at the level of city or county and not district to district, they hold all moves and not only moves driven by rent burden, and the registered total includes cancelled registrations and \"other\" cases whose destination is unknown, which count as exits. Residents who leave because of rent may go to Taoyuan or Keelung more often or less often than other movers. A published measure of the destinations of rent-driven movers would replace it. This value is an assumption and not a research result."
+    },
+    "migration.share": {
+      "kind": "scalar",
+      "value": 0.011891,
+      "unit": "share of residents per quarter",
+      "status": "gap",
+      "source": { "citation": "Ministry of the Interior, Department of Household Registration, registered move-in and move-out by village (ODRP002 for 2016 to 2017, ODRP011 from 2018) and population by village; Open Government Data License 1.0", "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP011" },
+      "estimated": { "method": "migration.share = mean of moveOut / population over 1640 district-quarters (41 districts, 2016Q1 to 2025Q4); moveOut is the registered move-out count of the quarter (all destinations, including moves between districts of the same city) and population is the end-of-quarter population." },
+      "assumption": "The share of residents who leave when the burden excess passes the threshold is assumed equal to the ordinary quarterly move-out rate. This is only an approximation: the registered rate measures all moves, made for any reason (work, family, housing), not moves caused by a rise in rent burden, and the baseline already contains this ordinary movement, so the simulated movement partly counts it again. No study of the share of residents who leave because of a rent-burden rise in Taipei or New Taipei was found. A published measure of rent-driven displacement for the two cities, for example from a household survey of reasons for moving, would replace it. This value is an assumption and not a research result."
+    },
+    "migration.threshold": {
+      "kind": "scalar",
+      "value": 0.5,
+      "unit": "percentage points of rent burden",
+      "status": "gap",
+      "source": { "citation": "Computed from the baseline rent indicator (Ministry of the Interior actual-price registration rental records), the householdIncome indicator (DGBAS Survey of Family Income and Expenditure with the 2021 Industry, Commerce and Services Census), and housing.dwellingSize; Open Government Data License 1.0", "url": "https://plvr.land.moi.gov.tw/DownloadOpenData" },
+      "estimated": { "method": "migration.threshold = population standard deviation, over 1640 district-quarters (41 districts, 2016Q1 to 2025Q4), of the 4-quarter change of baseline rent burden in percentage points, rounded to 0.1. Burden = rent * housing.dwellingSize (89.9 m2) / (householdIncome / 12) * 100. Each quarter is compared with the same quarter one year earlier, so consecutive changes overlap." },
+      "assumption": "A rent-burden rise is assumed to move people only when it exceeds the ordinary year-to-year variation of the burden across districts. This is only an approximation: the spread of the baseline measures how much burden varied in the past for any reason, including income estimates that are interpolated, and not the rise at which households decide to move. No study of the rent-burden rise that triggers a move in Taipei or New Taipei was found. A household survey or panel study of rent burden before and after moves in the two cities would replace it. This value is an assumption and not a research result."
+    },
+    "migration.weightBurden": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "weight (dimensionless)",
+      "status": "gap",
+      "assumption": "The rent-burden term counts as much as each of the other two terms in the destination score.",
+      "source": { "citation": "Project assumption of equal weights; no study of destination choice for Taipei was found", "url": ".kiro/specs/data-pipeline/design.md" },
+      "estimated": { "method": "Equal weights 1, 1, 1 for time, burden and cost (design gap table). Data that would replace it: a destination-choice study or survey of moves between Taipei City and New Taipei City districts. Not a research result." }
+    },
+    "migration.weightCost": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "weight (dimensionless)",
+      "status": "gap",
+      "assumption": "The commute-cost term counts as much as each of the other two terms in the destination score.",
+      "source": { "citation": "Project assumption of equal weights; no study of destination choice for Taipei was found", "url": ".kiro/specs/data-pipeline/design.md" },
+      "estimated": { "method": "Equal weights 1, 1, 1 for time, burden and cost (design gap table). Data that would replace it: a destination-choice study or survey of moves between Taipei City and New Taipei City districts. Not a research result." }
+    },
+    "migration.weightTime": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "weight (dimensionless)",
+      "status": "gap",
+      "assumption": "The commute-time term counts as much as each of the other two terms in the destination score.",
+      "source": { "citation": "Project assumption of equal weights; no study of destination choice for Taipei was found", "url": ".kiro/specs/data-pipeline/design.md" },
+      "estimated": { "method": "Equal weights 1, 1, 1 for time, burden and cost (design gap table). Data that would replace it: a destination-choice study or survey of moves between Taipei City and New Taipei City districts. Not a research result." }
+    },
+    "rentSubsidy.lag": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "quarters",
+      "status": "secondary",
+      "source": { "citation": "GVM (2022), expanded central rent subsidy program: applications opened 2022-07-01, first payments in October 2022", "url": "https://city.gvm.com.tw/article/88542" },
+      "estimated": { "method": "Derived from the 2022 program dates: applications opened on 2022-07-01 and the first payments were made in October 2022, which is one quarter later." }
+    },
+    "rentSubsidy.nationalBudget": {
+      "kind": "scalar",
+      "value": 30000000000,
+      "unit": "TWD per year",
+      "status": "verified",
+      "source": { "citation": "TechNews (2022-06-30), expanded central rent subsidy program from 2022-07-01", "url": "https://finance.technews.tw/2022/06/30/expanded-rental-subsidy-program/" },
+      "estimated": { "method": "The value describes the national program from 2022. No engine rule reads it." }
+    },
+    "rentSubsidy.nationalHouseholds": {
+      "kind": "scalar",
+      "value": 500000,
+      "unit": "households",
+      "status": "verified",
+      "source": { "citation": "TechNews (2022-06-30), expanded central rent subsidy program from 2022-07-01 (target of 500,000 households, up from about 120,000)", "url": "https://finance.technews.tw/2022/06/30/expanded-rental-subsidy-program/" },
+      "estimated": { "method": "The value describes the national program from 2022. No engine rule reads it." }
+    },
+    "rentSubsidy.passThrough": {
+      "kind": "scalar",
+      "value": 0.5,
+      "unit": "share of the subsidy that reaches market rent",
+      "status": "secondary",
+      "source": { "citation": "Gibbons and Manning (2006), United Kingdom, about 50 percent, as summarized in Berard (2023), LIS working paper", "url": "https://www.lisdatacenter.org/wp-content/uploads/files/2023-LIS2ER-B%C3%A9rard.pdf" },
+      "range": {
+        "low": 0.16,
+        "high": 0.78,
+        "lowSource": { "citation": "United States housing allowances, about 16 percent, as summarized in Berard (2023), LIS working paper", "url": "https://www.lisdatacenter.org/wp-content/uploads/files/2023-LIS2ER-B%C3%A9rard.pdf" },
+        "highSource": { "citation": "Fack (2006), France, about 78 percent, as summarized in Berard (2023), LIS working paper (Laferrere and Le Blanc 2004 report 50 to 80 percent)", "url": "https://www.lisdatacenter.org/wp-content/uploads/files/2023-LIS2ER-B%C3%A9rard.pdf" }
+      },
+      "estimated": { "method": "Range ends cited via review; the original tables were not read. The value is the figure for the United Kingdom, taken from a summary and not from the original paper. The studies cover France, the United Kingdom and the United States; no Taiwan estimate was found. Finnish work on the same question is VATT Working Paper 149." }
+    },
+    "rentSubsidy.unitCost": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "TWD of budget per TWD of subsidy",
+      "status": "gap",
+      "assumption": "One TWD of budget pays one TWD of subsidy, with no administration overhead.",
+      "source": { "citation": "Project assumption; no administration overhead was found", "url": ".kiro/specs/data-pipeline/design.md" },
+      "estimated": { "method": "Assumed 1. Data that would replace it: published administration cost of the commuter pass and rent subsidy programs." }
+    },
+    "socialHousing.costSchedule": {
+      "kind": "schedule",
+      "offsets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+      "shares": [0.066667, 0.066667, 0.066667, 0.066667, 0.066667, 0.066667, 0.066667, 0.066667, 0.066667, 0.066667, 0.066667, 0.066667, 0.066667, 0.066667, 0.066662],
+      "unit": "share of the project cost per quarter after the start",
+      "status": "gap",
+      "source": { "citation": "Derived from socialHousing.lag (15 quarters); see its source", "url": "https://socialhousing.nlma.gov.tw/CPA_SocialHousing_Portal/" },
+      "estimated": { "method": "Equal shares of 1/15 at offsets 0 to 14 (socialHousing.lag = 15); the last share is 1 minus the sum of the others so the shares sum to 1" },
+      "assumption": "Even payment: the cost of a project is paid in equal amounts in every quarter from start to completion. Payment schedules of completed projects would replace this assumption."
+    },
+    "socialHousing.lag": {
+      "kind": "scalar",
+      "value": 15,
+      "unit": "quarters",
+      "status": "secondary",
+      "source": { "citation": "National Land Management Agency, MOI: social housing real-time information portal (project list)", "url": "https://socialhousing.nlma.gov.tw/CPA_SocialHousing_Portal/" },
+      "range": {
+        "low": 12,
+        "high": 17,
+        "lowSource": { "citation": "National Land Management Agency, MOI: social housing real-time information portal (project list)", "url": "https://socialhousing.nlma.gov.tw/CPA_SocialHousing_Portal/" },
+        "highSource": { "citation": "National Land Management Agency, MOI: social housing real-time information portal (project list)", "url": "https://socialhousing.nlma.gov.tw/CPA_SocialHousing_Portal/" }
+      },
+      "estimated": { "method": "NLMA social housing portal: median of start-to-completion quarters of 116 completed projects 2015Q1-2025Q4; range is the first and third quartile" }
+    },
+    "socialHousing.rentPerUnit": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "TWD per m² per month per dwelling of stock difference",
+      "status": "secondary",
+      "source": { "citation": "Diamond and McQuade (2019), Who Wants Affordable Housing in Their Backyard?, Journal of Political Economy 127(3)", "url": "https://www.nber.org/papers/w22204" },
+      "range": {
+        "low": -0.081736,
+        "high": 0.212514,
+        "lowSource": { "citation": "Diamond and McQuade (2019), Who Wants Affordable Housing in Their Backyard?, Journal of Political Economy 127(3): -2.5 % price effect in high-income areas", "url": "https://www.nber.org/papers/w22204" },
+        "highSource": { "citation": "Diamond and McQuade (2019), Who Wants Affordable Housing in Their Backyard?, Journal of Political Economy 127(3): +6.5 % price effect in low-income areas", "url": "https://www.nber.org/papers/w22204" }
+      },
+      "estimated": { "method": "Price effects -2.5 %, 0 and +6.5 % (US evidence) times the median 2024 rent per m² per month over the 41 districts (235.40 TWD) divided by the median unit count of 174 completed NLMA projects (72 dwellings). The asymmetry between the two ends comes from the cited study: Diamond and McQuade (2019), Journal of Political Economy 127(3), report +6.5 % in low-income areas and -2.5 % in high-income areas, so the ratio of the two ends (2.60) equals 6.5 / 2.5; average effect about 0 (effect within 0.1 mile). Assumptions: rent changes in the same proportion as price (the study measures price), and the effect of one project is spread evenly over its units." }
+    },
+    "socialHousing.rentRatio": {
+      "kind": "scalar",
+      "value": 0.8,
+      "unit": "ratio of market rent",
+      "status": "secondary",
+      "source": { "citation": "Tenant rent of the social housing sublease and management program: 80 percent of market rent, as reported by CNA (Kaohsiung program, 2021) and Money Weekly", "url": "https://www.cna.com.tw/news/aloc/202110270245.aspx" },
+      "range": {
+        "low": 0.5,
+        "high": 0.9,
+        "lowSource": { "citation": "Money Weekly: rent of 50 to 70 percent of market rent for disadvantaged households (the low end is the lower bound of that range)", "url": "https://www.moneyweekly.com.tw/_Article?AID=59942" },
+        "highSource": { "citation": "project assumption; no independent source", "url": ".kiro/specs/data-pipeline/design.md" }
+      },
+      "estimated": { "method": "The Taipei City and New Taipei City social housing rent rules are still to be checked against the program rules. The high value 0.9 has no independent source." }
+    },
+    "socialHousing.unitCost": {
+      "kind": "scalar",
+      "value": 7800000,
+      "unit": "TWD per dwelling",
+      "status": "secondary",
+      "source": { "citation": "Dongxin: total cost TWD 690000000 for 88 dwellings. Project totals and dwelling counts of Jingfeng, Dongxin and Peiying (budget), from three sources taken together: Storm Media (https://www.storm.mg/article/3088809), Central News Agency (https://www.cna.com.tw/news/aloc/202512040148.aspx), Control Yuan report (https://www.cy.gov.tw/AP_Home/Op_Upload/eDoc/%E5%87%BA%E7%89%88%E5%93%81/109/1090000021010801895p.pdf); table in data/config/social-housing-unit-cost-cases.csv", "url": "https://www.storm.mg/article/3088809" },
+      "range": {
+        "low": 5450000,
+        "high": 8600000,
+        "lowSource": { "citation": "Jingfeng: total cost TWD 490000000 for 90 dwellings. Project totals and dwelling counts of Jingfeng, Dongxin and Peiying (budget), from three sources taken together: Storm Media (https://www.storm.mg/article/3088809), Central News Agency (https://www.cna.com.tw/news/aloc/202512040148.aspx), Control Yuan report (https://www.cy.gov.tw/AP_Home/Op_Upload/eDoc/%E5%87%BA%E7%89%88%E5%93%81/109/1090000021010801895p.pdf); table in data/config/social-housing-unit-cost-cases.csv", "url": "https://www.storm.mg/article/3088809" },
+        "highSource": { "citation": "Peiying (budget): total cost TWD 822700000 for 96 dwellings. Project totals and dwelling counts of Jingfeng, Dongxin and Peiying (budget), from three sources taken together: Storm Media (https://www.storm.mg/article/3088809), Central News Agency (https://www.cna.com.tw/news/aloc/202512040148.aspx), Control Yuan report (https://www.cy.gov.tw/AP_Home/Op_Upload/eDoc/%E5%87%BA%E7%89%88%E5%93%81/109/1090000021010801895p.pdf); table in data/config/social-housing-unit-cost-cases.csv", "url": "https://www.storm.mg/article/3088809" }
+      },
+      "estimated": { "method": "Per-dwelling cost of three Taipei social housing projects (Jingfeng, Dongxin, Peiying (budget)) from the committed table; value is the middle figure, range ends are the smallest and largest. The sources (Storm Media, Central News Agency, Control Yuan) are cited together for all three projects because the research notes do not state which source covers which project. Three projects only; Peiying is a budget figure." }
+    }
+  }
+}

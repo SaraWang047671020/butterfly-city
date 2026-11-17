@@ -8,6 +8,7 @@ export interface IndicatorSpec {
   readonly unit: string;
   readonly kind: IndicatorKind;
   readonly decimals: number;
+  readonly periodic?: true; // published per half-year; no-data records allowed (Req 26)
   readonly description: string;
   readonly sources: readonly string[];
 }
@@ -26,7 +27,7 @@ const MIGRATION_SOURCES = [
 
 const HOLDING_TAX_RATE_SOURCES = ['policy/house-tax-act', 'policy/taipei-ordinance', 'policy/ntpc-ordinance'] as const;
 
-/** Fixed order: the 10 district indicators first, then the 2 city indicators. */
+/** Fixed order: the 12 district indicators first, then the 2 city indicators. */
 export const INDICATOR_SPECS: readonly IndicatorSpec[] = [
   {
     id: 'population',
@@ -117,6 +118,26 @@ export const INDICATOR_SPECS: readonly IndicatorSpec[] = [
     decimals: 0,
     description: 'Social housing units in operation in the district at the end of the quarter.',
     sources: ['social-housing/nlma-portal'],
+  },
+  {
+    id: 'lowUseHousingCount',
+    level: 'district',
+    unit: 'dwellings',
+    kind: 'count',
+    decimals: 0,
+    periodic: true,
+    description: 'Dwellings in the district with an average monthly electricity use of at most 60 kWh.',
+    sources: ['housing/moi-low-use'],
+  },
+  {
+    id: 'lowUseHousingRate',
+    level: 'district',
+    unit: 'percent of dwellings',
+    kind: 'percent',
+    decimals: 2,
+    periodic: true,
+    description: 'Share of the dwellings in the district with an average monthly electricity use of at most 60 kWh.',
+    sources: ['housing/moi-low-use'],
   },
   {
     id: 'cityDisposableIncome',

@@ -28,7 +28,9 @@ function fixture(estimatedFrom = 99): Record<string, Record<string, ValueRecord[
   const out: Record<string, Record<string, ValueRecord[]>> = {};
   for (const spec of INDICATOR_SPECS) {
     const keys = spec.level === 'district' ? DISTRICTS.map((d) => d.code) : ['Taipei', 'New Taipei'];
-    out[spec.id] = Object.fromEntries(keys.map((k) => [k, records(estimatedFrom)]));
+    // Periodic indicators carry no-data records here; real low-use values come with the builder (task 27.4).
+    const make = () => (spec.periodic === true ? quarters.map((): ValueRecord => ({ value: null, estimated: false })) : records(estimatedFrom));
+    out[spec.id] = Object.fromEntries(keys.map((k) => [k, make()]));
   }
   return out;
 }
@@ -38,13 +40,13 @@ describe('buildHistoryFile', () => {
 
   it('lists the indicators in the fixed order, district first', () => {
     expect(file.indicators.map((i) => i.id)).toEqual(INDICATOR_SPECS.map((s) => s.id));
-    expect(file.indicators.map((i) => i.level)).toEqual([...Array(10).fill('district'), 'city', 'city']);
+    expect(file.indicators.map((i) => i.level)).toEqual([...Array(12).fill('district'), 'city', 'city']);
     expect(file.schemaVersion).toBe(1);
     expect(file.quarters).toEqual(quarters);
   });
 
   it('rounds each value to the indicator decimals', () => {
-    for (const ind of file.indicators) {
+    for (const ind of file.indicators.filter((i) => i.periodic !== true)) {
       const first = Object.values(ind.series)[0] as ValueRecord[];
       expect(first[0]?.value).toBe(Number(RAW.toFixed(ind.decimals)));
     }
@@ -111,8 +113,8 @@ describe('historyFileStep', () => {
     const state = createState();
     Object.assign(state, fixture(40));
     historyFileStep().run(ctx, state);
-    expect(state.historyFile?.indicators.length).toBe(12);
-    expect(state.summaries.length).toBe(12);
+    expect(state.historyFile?.indicators.length).toBe(14);
+    expect(state.summaries.length).toBe(14);
     expect(state.summaries[0]).toEqual({ id: 'population', values: 41 * 44, estimated: 41 * 4 });
   });
 

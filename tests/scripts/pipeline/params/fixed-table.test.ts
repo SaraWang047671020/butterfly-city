@@ -94,3 +94,13 @@ describe('readFixedType1Params', () => {
     expect(read('{"schemaVersion":1}')).toThrow(/expected/);
   });
 });
+
+describe('readFixedType3Params', () => {
+  it('reads the committed type 3 entries as gap entries', async () => {
+    const { readFixedType3Params, FIXED_TYPE3_IDS } = await import('../../../../scripts/pipeline/params/fixed-table.ts');
+    const out = readFixedType3Params();
+    expect(Object.keys(out).sort()).toEqual([...FIXED_TYPE3_IDS].sort());
+    expect(out['ghost.size']?.value).toBe(1000);
+    expect(out['limit.rentSubsidy.amount.upperFactor']?.value).toBe(2);
+  });
+});
