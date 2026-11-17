@@ -1,0 +1,234 @@
+{
+  "schemaVersion": 1,
+  "notes": [
+    "Draft content for the model limitations page (story-layer spec). English, neutral wording (neutrality.md).",
+    "Every item describes a decision recorded in the specs or in data/SOURCES.md. Values that the build computes are placeholders in braces, filled from SOURCES.md or BACKTEST.md, never typed here.",
+    "When a limitation is removed or a new one is decided, update this file in the same commit."
+  ],
+  "page": {
+    "title": "What this model can and cannot tell you",
+    "intro": "Butterfly City starts from real open data for 41 districts of Taipei and New Taipei, 2015 to 2025. What happens after you change a policy is simulated with a simple model. This page lists where the model is simplified, where data is missing and what we assumed instead, so that you can judge the results yourself.",
+    "disclosure": "Initial data and events come from real open data. Policy outcomes are simulated, not predicted.",
+    "sourcesLink": "Every number, source and method is listed in data/SOURCES.md in the project repository."
+  },
+  "sections": [
+    {
+      "id": "basics",
+      "title": "How to read the results",
+      "items": [
+        {
+          "id": "simulation-not-prediction",
+          "title": "A simulation, not a forecast",
+          "text": "If you change nothing, every number equals real history. When you change a policy, the model estimates the difference from history. It cannot say what would really have happened; it shows what follows from the assumptions listed here."
+        },
+        {
+          "id": "ranges",
+          "title": "Ranges come from disagreeing studies",
+          "text": "Some parameters have no single accepted value. The model runs with the lowest, middle and highest values found in studies and shows the range of results. The range is not a statistical confidence interval, and the real outcome could lie outside it."
+        },
+        {
+          "id": "events-not-added",
+          "title": "Events are shown, not added",
+          "text": "Real events such as interest rate changes, COVID-19 or credit controls are already in the real data. The model never adds their effect a second time. It also does not model how an event would change the effect of your policies."
+        },
+        {
+          "id": "five-tools",
+          "title": "Only five policy tools",
+          "text": "The game covers five housing and commuting tools. Many other forces that shape rents and commutes, such as interest rates, wages, construction by private developers and jobs moving between districts, follow real history and cannot be changed."
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "title": "Policy tools",
+      "items": [
+        {
+          "id": "tools-not-yet-modelled",
+          "title": "Two tools are not yet in the model",
+          "text": "Sublease and rental management and the holding tax are shown with their real history, but changing them has no effect in this version. They are marked 'Coming soon'."
+        },
+        {
+          "id": "social-housing-spillover",
+          "title": "Effect of social housing on nearby rents",
+          "text": "The study used measured home prices near new subsidised housing in the United States, within about 0.1 mile of each project. The model assumes rents move like prices and spreads the effect over the whole district. Evidence for Taiwan is limited."
+        },
+        {
+          "id": "social-housing-costs",
+          "title": "Social housing cost and construction time",
+          "text": "The cost per home comes from three Taipei projects. The construction time is the median time from start to completion in the national social housing records. Real projects vary widely in both."
+        },
+        {
+          "id": "rent-subsidy-others",
+          "title": "Rent subsidy and other tenants",
+          "text": "Part of a rent subsidy may end up as higher rent. The model applies this only to households that receive the subsidy. A possible effect on the rents of other tenants is not modelled."
+        },
+        {
+          "id": "rent-subsidy-amount",
+          "title": "Average subsidy per household",
+          "text": "Only one year of the average subsidy per household was published, so that average is used for every quarter."
+        },
+        {
+          "id": "admin-costs",
+          "title": "No administration costs",
+          "text": "Each dollar of rent subsidy or commuter pass subsidy is counted as one dollar of budget. Administration costs are not included because no sourced figure was found."
+        },
+        {
+          "id": "commuter-pass-sales",
+          "title": "Commuter pass sales",
+          "text": "Monthly pass sales were not published as a full series. The number of passes is estimated from one published sales figure, so pass-related budget figures are approximate."
+        }
+      ]
+    },
+    {
+      "id": "housing-data",
+      "title": "Rent and income data",
+      "items": [
+        {
+          "id": "registered-leases",
+          "title": "Only registered leases",
+          "text": "Rents come from leases registered in the government actual price registration system. Many leases are not registered, so the data may not represent every renter."
+        },
+        {
+          "id": "thin-districts",
+          "title": "Districts with few rental records",
+          "text": "Three rural districts had no rental records. Their rents are estimated from a nearby reference district, for example Pinglin from Xindian. These values are marked as estimated."
+        },
+        {
+          "id": "small-homes",
+          "title": "Small homes",
+          "text": "Rent is calculated from the district median rent per square metre. Small studios usually cost more per square metre, so the rent burden of people in small homes, including some of the citizens you can follow, may be underestimated."
+        },
+        {
+          "id": "income-estimates",
+          "title": "Household income is estimated",
+          "text": "District income combines tax records with the national household survey. Tax records leave out transfer income such as pensions and benefits. The latest observed tax year is 2023; 2024 and 2025 are extrapolated. The tax series changes method between 2018 and 2019, and values are not compared across that break."
+        },
+        {
+          "id": "income-distribution",
+          "title": "Income distribution",
+          "text": "To count people above the rent line, the model assumes incomes in each district follow a log-normal distribution with the spread seen in tax data, and that renters have the same income distribution as all households."
+        },
+        {
+          "id": "price-to-income",
+          "title": "Price-to-income ratio by district",
+          "text": "The district ratio is the median sale price divided by estimated household income. It is an estimate made for this game, not an official statistic."
+        }
+      ]
+    },
+    {
+      "id": "commute",
+      "title": "Commute times",
+      "items": [
+        {
+          "id": "one-network",
+          "title": "One rail network for all years",
+          "text": "Commute times come from the rail network at the end of 2025 and are used for every quarter. Before lines opened between 2018 and 2023, real trips in some districts were longer than shown."
+        },
+        {
+          "id": "estimated-trips",
+          "title": "Estimated, not measured, trips",
+          "text": "Each district is represented by its centre. A trip is the walk to the nearest station, the rail time from timetables, transfers, and the walk at the other end, or a road trip, whichever is shorter. Distances are straight lines multiplied by a detour factor from a United States study. Buses are not included."
+        },
+        {
+          "id": "excluded-lines",
+          "title": "Lines not included",
+          "text": "The Taoyuan Airport MRT and the Sanying Line are not in the network. Linkou has no other rail line, so its commute times come from the road model only and are probably too long. The Danhai LRT is also left out; it lies entirely within Tamsui and affects only trips inside that district."
+        },
+        {
+          "id": "constants",
+          "title": "Walking speed, road speed and waiting time",
+          "text": "Walking speed and the detour factor come from foreign studies. Road speed for Taipei comes from a published traffic index and is assumed to be the same in New Taipei, where suburban roads are often faster. Waiting time is half the morning peak interval between trains; the Wenhu Line had no timetable data and uses the median of the other lines."
+        },
+        {
+          "id": "jobs-by-district",
+          "title": "Where jobs are",
+          "text": "The number of jobs in each district comes from the 2021 Industry and Service Census, which does not count government offices, schools or the military. Districts with many public employers, such as Zhongzheng, have more jobs than shown."
+        },
+        {
+          "id": "census-workplaces",
+          "title": "Who works where",
+          "text": "The 2020 census tells where residents work only as same district, other district in the same city, or another city. The model spreads the last two groups over districts by number of jobs, and counts everyone working outside Taipei and New Taipei as working in the other city. People who commute to Taoyuan or Keelung therefore appear to have shorter trips, and the number of long commutes may be too low."
+        },
+        {
+          "id": "survey-check",
+          "title": "Check against a survey",
+          "text": "The modelled average trip from New Taipei to Taipei is {commuteModelled} minutes. A Ministry of Transportation and Communications survey reported about {commuteSurvey} minutes. The model was not adjusted to match it."
+        }
+      ]
+    },
+    {
+      "id": "moving",
+      "title": "Moving between districts",
+      "items": [
+        {
+          "id": "migration-assumed",
+          "title": "Moving choices are assumed",
+          "text": "No data on moves between districts of Taipei and New Taipei was found. How strongly rent, commute time and commuting cost affect where people move is an assumption, marked as a gap in the sources."
+        },
+        {
+          "id": "pass-and-moving",
+          "title": "Commuter pass and moving",
+          "text": "The cost of commuting uses the Taipei Metro fare per minute. Fares stop rising at the maximum fare, so long trips may be given too high a cost. The commuter pass check against real data covers MRT trips only, not moves."
+        }
+      ]
+    },
+    {
+      "id": "ghosts",
+      "title": "Ghosts",
+      "items": [
+        {
+          "id": "ghost-lines",
+          "title": "Where the lines are drawn",
+          "text": "A resident counts as at risk above 30% of income spent on rent and as a ghost above 50%, the cost-burden lines used by housing agencies in the United States. For commutes, the lines come from a Taiwan survey of what commuters accept. Other lines would give other counts."
+        },
+        {
+          "id": "ghost-overlap",
+          "title": "People with both problems",
+          "text": "Data on people with both a high rent burden and a long commute does not exist. The model assumes the two are independent when it removes double counting."
+        },
+        {
+          "id": "ghost-size",
+          "title": "One ghost, many people",
+          "text": "Each ghost on the map stands for 1,000 people. This is a display scale. The exact number is always shown next to the map."
+        }
+      ]
+    },
+    {
+      "id": "citizens",
+      "title": "Citizens you can follow",
+      "items": [
+        {
+          "id": "illustrative",
+          "title": "Illustrative households",
+          "text": "The six citizens are invented households, not real people. Their numbers are calculated from the district results at a chosen point of the income distribution, so they move with your policies, but a real household in the same district could be very different."
+        },
+        {
+          "id": "citizen-simplifications",
+          "title": "Simplifications",
+          "text": "Each citizen has one commute, even in households where two people work. The model does not decide whether an individual citizen moves away; moving is calculated for districts as a whole."
+        }
+      ]
+    },
+    {
+      "id": "validation",
+      "title": "How the model was checked",
+      "items": [
+        {
+          "id": "zero-delta",
+          "title": "No change means real history",
+          "text": "Automated tests check that the model returns real history exactly when no policy is changed, for many generated inputs."
+        },
+        {
+          "id": "backtest",
+          "title": "Check against a real policy change",
+          "text": "The commuter pass part of the model was compared with the real change in MRT use after TPASS started in 2023, with tolerances fixed before the result was computed. Result: {backtestResult}. The other tools could not be checked this way."
+        },
+        {
+          "id": "low-use-housing",
+          "title": "Low-use housing",
+          "text": "The map can show the share of homes with very low electricity use, an indicator of empty homes, for the periods in which it was published. No policy in this version changes it."
+        }
+      ]
+    }
+  ]
+}
