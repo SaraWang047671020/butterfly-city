@@ -1,4 +1,4 @@
-# Obtaining the raw data
+﻿# Obtaining the raw data
 
 Raw files live in `data/raw/`, which is gitignored. They are downloaded by the scripts in `scripts/`.
 Sources, coverage and known gaps are documented in `data/DATA-CHECK.md`.
@@ -52,6 +52,7 @@ District boundaries are built into `public/data/districts.json` by `npm run data
 | `stations` | TDX metro stations and station-to-station travel times (TRTC, NTMC), NLSC LRT stations, transfer walking times | 0.2 MB | TDX works without a key at a low rate limit; optional `TDX_CLIENT_ID` / `TDX_CLIENT_SECRET` |
 | `fares` | TDX adult single-journey station-pair fares, 4 operators | not measured yet | Needs `TDX_CLIENT_ID` and `TDX_CLIENT_SECRET` |
 | `timetables` | TDX station timetables and line headways, 4 operators | not measured yet | Needs `TDX_CLIENT_ID` and `TDX_CLIENT_SECRET` |
+| `villages` | ODRP019 village population (ROC 114, 4 pages) and village boundary shapefile (data.gov.tw 130549, ROC 114 edition) | 2.7 MB + 22.2 MB | |
 | `commute` | 2020 census table 14: where employed residents of each district work | 40 KB | |
 | `social-housing` | NLMA portal project list and 275 project details | 6 MB | About 280 API calls on the first run |
 | `macro` | Central Bank rates, DGBAS CPI, Taipei CPI | 43 MB | |
@@ -158,3 +159,15 @@ PDFs and the pipeline never reads them. The extracted figures (`pdftotext`) are 
 | Table id | 10 |
 | Page | 140 (printed page number, both reports) |
 | Date retrieved | 2026-11-17 |
+
+### Village population and boundaries (`villages`)
+
+```bash
+node scripts/download.ts villages
+```
+
+Date retrieved: 2026-11-17 (ODRP019 and the boundary zip).
+
+- ODRP019 households and population by household type and sex, ROC year 114 (MOI Department of Household Registration): https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP019/114 with `?PAGE=1..4`. 4 pages, 7,752 rows (2,000 + 2,000 + 2,000 + 1,752), saved as `data/raw/villages/moi-odrp019-114-page{1..4}.json`. There is no district total row.
+- Village boundaries (TWD97 longitude and latitude), ROC 114 edition, data.gov.tw dataset 130549 "村里界歷史圖資(TWD97經緯度)" (National Land Surveying and Mapping Center): https://www.land.moi.gov.tw/chhtml/DownloadGovDoc?gsno=PY9YAR&gdid=533, saved as `data/raw/villages/village-boundaries-114.zip` (22.2 MB, read in place, not extracted). Nested structure: the outer zip holds one inner zip (`202609301104109864.zip`); the inner zip holds the folder `村里界歷史圖資_114/` with `VILLAGE_NLSC_11401031.shp/.dbf/.shx/.prj/.cpg/.qmd` (UTF-8 per its `.cpg`) and the unused `Village_Sanhe.*`. The layer is matched by the `VILLAGE_NLSC_` prefix. Entry names are Chinese; names without the zip UTF-8 flag are decoded as Big5. DBF fields used: `VILLCODE`, `COUNTYNAME`, `TOWNNAME`, `VILLNAME`.
+- License: as stated, else `not stated`.

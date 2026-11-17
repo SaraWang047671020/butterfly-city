@@ -21,7 +21,7 @@ import {
   type FareSlopes,
   type PairingResult,
 } from './fares.ts';
-import { loadRailNetwork } from './network.ts';
+import { defaultWaitStatement, loadRailNetwork } from './network.ts';
 import { readCommuteParams, type CommuteParams } from './params.ts';
 import { loadTimetableModel } from './timetable.ts';
 
@@ -44,9 +44,18 @@ export function networkStep(readCommitted?: CommittedReader): Step {
     run(ctx: BuildContext, state: BuildState) {
       const params = readCommuteParams(readCommitted);
       const timetable = loadTimetableModel(ctx.reader);
-      state.network = loadRailNetwork(ctx.reader, timetable, {
+      const network = loadRailNetwork(ctx.reader, timetable, {
         defaultTransferWait: paramValue(params, 'commute.transferWait'),
       });
+      const statement = defaultWaitStatement(network.defaultWaitLines);
+      const method = params['commute.transferWait']?.estimated?.method ?? '';
+      if (statement !== '' && !method.includes(statement)) {
+        throw new DataError('transfer-wait-method-stale', 'commute.transferWait', [
+          `lines without a headway: ${network.defaultWaitLines.join(', ')}`,
+          `the estimated.method in data/config/commute-params.json must contain: ${statement}`,
+        ]);
+      }
+      state.network = network;
     },
   };
 }
@@ -59,7 +68,8 @@ export function formatFareLine(result: FareSlopeResult): string {
     .join(', ');
   const range = entry.range;
   return (
-    `fares: ${pairing.pairs.length} pairs used, excluded: ${reasons === '' ? 'none' : reasons}; ` +
+    `fares: ${pairing.pairs.length} pairs used, excluded: ${reasons === '' ? 'none' : reasons}` +
+    `${pairing.excludedStations.length === 0 ? '' : ` (stations not in network: ${pairing.excludedStations.join(', ')})`}; ` +
     `slope all ${slopes.allSlope.toFixed(4)}, uncapped ${slopes.uncappedSlope.toFixed(4)} TWD/min/trip; ` +
     `${entry.value.toFixed(2)} (low ${range?.low.toFixed(2) ?? 'n/a'}, high ${range?.high.toFixed(2) ?? 'n/a'}) TWD/min/month`
   );
@@ -81,12 +91,17 @@ export function fareSlopeStep(readCommitted?: CommittedReader): Step {
         const rel = FARE_FILES[op];
         rows.push(...parseFares(ctx.reader.display(rel), ctx.reader.readText(rel)));
       }
-      const pairing = pairFaresWithTimes(rows, (a, b) => network.pathTime(a, b));
+      const pairing = pairFaresWithTimes(
+        rows,
+        (a, b) => network.pathTime(a, b),
+        (id) => network.inNetwork(id),
+      );
       const slopes = fareSlopes(pairing.pairs, pairing.cap);
       const entry = commuteCostEntry(pairing.pairs, tripsParam.value, {
         ...(pairing.cap === undefined ? {} : { cap: pairing.cap }),
         tripsStatus: tripsParam.status,
-        notOpenPairs: pairing.excluded['not-open-2025Q4']?.count ?? 0,
+        excludedStations: pairing.excludedStations,
+        excludedPairs: pairing.excluded['station-not-in-network']?.count ?? 0,
       });
       const result: FareSlopeResult = { pairing, slopes, entry };
       state.fareSlope = result;

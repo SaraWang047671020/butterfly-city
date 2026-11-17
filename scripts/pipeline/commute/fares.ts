@@ -43,20 +43,14 @@ export interface FarePair {
   readonly minutes: number;
 }
 
-export type ExcludeReason = 'same-station' | 'no-adult-fare' | 'not-open-2025Q4' | 'no-path-time' | 'duplicate-pair';
-
-/**
- * Stations in the Fare_Table that are not open by 2025-12-31 (reason 
-ot-open-2025Q4). R01 (Guangci/Fengtian
- * Temple, Xinyi Line east extension) is in the TDX files but has no opening date in the opening-date table of
- * Requirement 11 criterion 4 (DATA-CHECK.md item 10.5 gives about 2026-08, news only) and no run time.
- */
-export const NOT_OPEN_2025Q4: ReadonlySet<string> = new Set(['R01']);
+export type ExcludeReason = 'same-station' | 'no-adult-fare' | 'station-not-in-network' | 'no-path-time' | 'duplicate-pair';
 
 export interface PairingResult {
   readonly pairs: readonly FarePair[];
   /** Count and first examples (at most 5, "from>to") per reason; a reason with no pair is absent. */
   readonly excluded: Readonly<Partial<Record<ExcludeReason, { readonly count: number; readonly examples: readonly string[] }>>>;
+  /** Sorted codes of the fare-table stations that are not in the network (reason station-not-in-network). */
+  readonly excludedStations: readonly string[];
   /** Highest adult fare among all rows with a fare and distinct stations (the Fare_Cap). undefined when none. */
   readonly cap: number | undefined;
   readonly rows: number;
@@ -100,9 +94,10 @@ export function parseFares(file: string, text: string): FareRow[] {
 export function pairFaresWithTimes(
   rows: readonly FareRow[],
   pathTime: (a: string, b: string) => number | undefined,
-  notOpen: ReadonlySet<string> = NOT_OPEN_2025Q4,
+  inNetwork: (id: string) => boolean = () => true,
 ): PairingResult {
   const pairs: FarePair[] = [];
+  const missing = new Set<string>();
   const counts = new Map<ExcludeReason, { count: number; examples: string[] }>();
   const exclude = (reason: ExcludeReason, r: FareRow): void => {
     const e = counts.get(reason) ?? { count: 0, examples: [] };
@@ -122,8 +117,10 @@ export function pairFaresWithTimes(
       continue;
     }
     if (cap === undefined || r.fare > cap) cap = r.fare;
-    if (notOpen.has(r.from) || notOpen.has(r.to)) {
-      exclude('not-open-2025Q4', r);
+    if (!inNetwork(r.from) || !inNetwork(r.to)) {
+      if (!inNetwork(r.from)) missing.add(r.from);
+      if (!inNetwork(r.to)) missing.add(r.to);
+      exclude('station-not-in-network', r);
       continue;
     }
     const key = `${r.from}>${r.to}`;
@@ -141,7 +138,7 @@ export function pairFaresWithTimes(
   }
   const excluded: Record<string, { count: number; examples: readonly string[] }> = {};
   for (const [k, v] of counts) excluded[k] = v;
-  return { pairs, excluded, cap, rows: rows.length };
+  return { pairs, excluded, excludedStations: [...missing].sort(), cap, rows: rows.length };
 }
 
 export interface FareSlopes {
@@ -208,7 +205,7 @@ const PASS_CITATION = {
 export function commuteCostEntry(
   pairs: readonly FarePair[],
   tripsPerMonth: number,
-  options: { readonly cap?: number; readonly tripsStatus?: string; readonly notOpenPairs?: number } = {},
+  options: { readonly cap?: number; readonly tripsStatus?: string; readonly excludedStations?: readonly string[]; readonly excludedPairs?: number } = {},
 ): ScalarParameter {
   const s = fareSlopes(pairs, options.cap);
   const value = s.allSlope * tripsPerMonth;
@@ -231,13 +228,16 @@ export function commuteCostEntry(
     uncappedValue > value
       ? `The Uncapped_Range slope is higher than the all-pairs slope, so high is the Uncapped_Range slope multiplied by the monthly trips (${high.toFixed(2)}), not value (${value.toFixed(2)}); the Fare_Cap is charged on ${capText}.`
       : `The Fare_Cap affects only ${capText}. The slope does not rise after excluding them (${s.uncappedSlope.toFixed(4)} against ${s.allSlope.toFixed(4)} TWD per minute per trip), so high equals value (${value.toFixed(2)}). The uncertainty range is provided by low = 0.`;
-  const notOpen = options.notOpenPairs ?? 0;
+  const excludedPairs = options.excludedPairs ?? 0;
+  const excludedStations = options.excludedStations ?? [];
   const method = [
     `Regression: least squares with an intercept of the adult full fare (TWD) on the rail-graph in-vehicle path time (minutes) over ${s.pairCount} station pairs gives ${s.allSlope.toFixed(4)} TWD per minute per trip; value is this slope multiplied by the monthly trips.`,
     `Selection: high is the larger of value and the same regression over the Uncapped_Range multiplied by the monthly trips, ${s.uncappedSlope.toFixed(4)} TWD per minute per trip. ${rangeRule} low is 0, the marginal cost of a minute for a pass holder.`,
     `Monthly trips: commute.tripsPerMonth = ${tripsPerMonth} one-way trips per commuter per month, Parameter_Status ${tripsStatus}.`,
     `Fare cap: fares are capped (maximum ${s.cap ?? 'none'} TWD), so a linear per-minute cost over-estimates long trips. ${rangeText}`,
-    notOpen > 0 ? `Not yet open: R01 is not yet open; ${notOpen} station pairs are excluded.` : '',
+    excludedPairs > 0
+      ? `Stations not in the network: ${excludedStations.join(', ')} ${excludedStations.length === 1 ? 'does' : 'do'} not appear in the TDX station-to-station travel time files or the Ankeng StationTimeTable run times; ${excludedPairs} station pairs are excluded.`
+      : '',
     'Migration weights: the fares are cited, but the migration weights (migration.weight*, migration.threshold, migration.share) are gap, so how strongly the commuter pass subsidy moves migration is an assumption.',
     'Backtest: the TPASS backtest validates MRT entries only and does not validate migration.',
   ]

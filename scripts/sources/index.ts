@@ -15,8 +15,9 @@ import { socialHousing } from './social-housing.ts';
 import { stations } from './stations.ts';
 import { fares, timetables } from './tdx-rail.ts';
 import type { Source, SourceOptions } from './types.ts';
+import { villages } from './villages.ts';
 
-export const SOURCES: readonly Source[] = [income, lvr, rent, population, mrt, stations, commute, socialHousing, macro, affordability, air, boundaries, policy, fares, timetables, lowUse];
+export const SOURCES: readonly Source[] = [income, lvr, rent, population, mrt, stations, commute, socialHousing, macro, affordability, air, boundaries, policy, fares, timetables, lowUse, villages];
 
 export interface Cli {
   readonly sources: readonly Source[];

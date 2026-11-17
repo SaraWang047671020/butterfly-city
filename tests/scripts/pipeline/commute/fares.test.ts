@@ -80,7 +80,11 @@ describe('pairFaresWithTimes', () => {
     { from: 'R01', to: 'A', fare: 40 },
   ];
   const times = new Map([['A>B', 4]]);
-  const result = pairFaresWithTimes(rows, (a, b) => times.get(`${a}>${b}`));
+  const result = pairFaresWithTimes(
+    rows,
+    (a, b) => times.get(`${a}>${b}`),
+    (id) => id !== 'R01',
+  );
 
   it('keeps the pair that has a fare and a path time', () => {
     expect(result.pairs).toEqual([{ from: 'A', to: 'B', fare: 20, minutes: 4 }]);
@@ -93,16 +97,21 @@ describe('pairFaresWithTimes', () => {
       'no-adult-fare': { count: 1, examples: ['A>C'] },
       'no-path-time': { count: 1, examples: ['A>D'] },
       'duplicate-pair': { count: 1, examples: ['A>B'] },
-      'not-open-2025Q4': { count: 1, examples: ['R01>A'] },
+      'station-not-in-network': { count: 1, examples: ['R01>A'] },
     });
+    expect(result.excludedStations).toEqual(['R01']);
   });
 
-  it('does not look up a path time for a station that is not open by 2025Q4', () => {
+  it('does not look up a path time for a station that is not in the network', () => {
     const asked: string[] = [];
-    pairFaresWithTimes([{ from: 'R01', to: 'A', fare: 40 }], (a, b) => {
-      asked.push(`${a}>${b}`);
-      return 9;
-    });
+    pairFaresWithTimes(
+      [{ from: 'R01', to: 'A', fare: 40 }],
+      (a, b) => {
+        asked.push(`${a}>${b}`);
+        return 9;
+      },
+      (id) => id !== 'R01',
+    );
     expect(asked).toEqual([]);
   });
 });
@@ -200,9 +209,11 @@ describe('commuteCostEntry', () => {
     expect((error as DataError).subject).toBe(COMMUTE_COST_ID);
   });
 
-  it('adds the not-open statement only when pairs were excluded for it', () => {
-    expect(commuteCostEntry(CAPPED, 44, { notOpenPairs: 2 }).estimated?.method).toContain('R01 is not yet open; 2 station pairs are excluded.');
-    expect(commuteCostEntry(CAPPED, 44).estimated?.method).not.toContain('R01');
+  it('adds the not-in-network statement only when pairs were excluded for it', () => {
+    const m = commuteCostEntry(CAPPED, 44, { excludedStations: ['R01', 'V01'], excludedPairs: 2 }).estimated?.method;
+    expect(m).toContain('R01, V01 do not appear');
+    expect(m).toContain('2 station pairs are excluded.');
+    expect(commuteCostEntry(CAPPED, 44).estimated?.method).not.toContain('not in the network');
   });
 });
 

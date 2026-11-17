@@ -91,12 +91,12 @@
                                                                 "low":  0,
                                                                 "high":  10,
                                                                 "lowSource":  {
-                                                                                  "citation":  "Sensitivity range lower end; no study is cited",
-                                                                                  "url":  ".kiro/specs/data-pipeline/requirements.md"
+                                                                                  "citation":  "sensitivity range, no study",
+                                                                                  "url":  ".kiro/specs/data-pipeline/design.md"
                                                                               },
                                                                 "highSource":  {
-                                                                                   "citation":  "Sensitivity range upper end; no study is cited",
-                                                                                   "url":  ".kiro/specs/data-pipeline/requirements.md"
+                                                                                   "citation":  "sensitivity range, no study",
+                                                                                   "url":  ".kiro/specs/data-pipeline/design.md"
                                                                                }
                                                             },
                                                   "estimated":  {
@@ -136,7 +136,7 @@
                                                                    "url":  "https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/StationTimeTable/{TRTC,NTMC,NTDLRT,NTALRT}?%24format=JSON"
                                                                },
                                                     "estimated":  {
-                                                                      "method":  "Weekday (Monday to Friday) departures from 07:00 to before 09:00, per direction. A direction headway is the median gap between consecutive departures at a station that every train of the line serves; the line headway is the mean of its two directions, and the wait is half of it. The value is the median of the per-line half-headways (BL, G, G-3, O, R, R-3 Xinbeitou branch, Y, LB, K), used for a line without a headway. G-3 and Xinbeitou are separate lines. The Danhai LRT is excluded from the network (all of it lies in Tamsui District). The matrix represents morning work commutes."
+                                                                      "method":  "Weekday (Monday to Friday) departures from 07:00 to before 09:00, per direction. A direction headway is the median gap between consecutive departures at a station that every train of the line serves; the line headway is the mean of its two directions, and the wait is half of it. The value is the median of the per-line half-headways (BL, G, G-3, O, R, R-3 Xinbeitou branch, Y, LB, K), used for a line without a headway. BR (Wenhu Line) has no data in the TDX timetables and uses the default value. G-3 and Xinbeitou are separate lines. The Danhai LRT is excluded from the network (all of it lies in Tamsui District). The matrix represents morning work commutes."
                                                                   }
                                                 },
                        "commute.tripsPerMonth":  {

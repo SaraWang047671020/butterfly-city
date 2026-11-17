@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { COMMUTE_PARAMS_FILE, readCommuteParams } from '../../../../scripts/pipeline/commute/params.ts';
 import { TIMETABLE_FILES, defaultTransferWait, loadTimetableModel } from '../../../../scripts/pipeline/commute/timetable.ts';
+import { defaultWaitStatement } from '../../../../scripts/pipeline/commute/network.ts';
 import { MemoryRawReader } from '../../../../scripts/pipeline/raw-reader.ts';
 import { fsCommittedReader } from '../../../../scripts/pipeline/policy/step.ts';
 
@@ -52,6 +53,9 @@ describe('committed data/config/commute-params.json', () => {
   });
 
   it('has the committed commute.transferWait value that the same computation gives', () => {
+    expect(defaultWaitStatement(['BR'])).toBe('BR (Wenhu Line) has no data in the TDX timetables and uses the default value.');
+    expect(defaultWaitStatement([])).toBe('');
+    expect(params['commute.transferWait']?.estimated?.method).toContain(defaultWaitStatement(['BR']));
     // Fixture whose per-line half-headways are 2, 2.5 and 3
     const computed = transferWaitOf([...line('BL', 4), ...line('G', 5), ...line('R', 6)]);
     expect(computed).toBe(2.5);

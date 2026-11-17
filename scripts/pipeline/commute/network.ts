@@ -121,6 +121,8 @@ export interface RailNetwork {
   readonly defaultWaitLines: readonly string[];
   /** Transfer wait in minutes per line key. */
   readonly transferWait: ReadonlyMap<string, number>;
+  /** True when the station has at least one edge (it appears in the S2S or StationTimeTable run times). */
+  inNetwork(id: string): boolean;
   /** Shortest in-vehicle path time in minutes between two station ids; undefined when unknown or unreachable. */
   pathTime(a: string, b: string): number | undefined;
 }
@@ -521,6 +523,7 @@ export function buildRailNetwork(input: NetworkInputs, options: NetworkOptions):
     excluded,
     defaultWaitLines,
     transferWait: waits,
+    inNetwork: (id: string) => nodeKeys.has(id),
     pathTime(a: string, b: string): number | undefined {
       if (!nodeKeys.has(a) || !nodeKeys.has(b)) return undefined;
       if (a === b) return 0;
@@ -528,6 +531,16 @@ export function buildRailNetwork(input: NetworkInputs, options: NetworkOptions):
       return t === undefined ? undefined : Math.max(0, t);
     },
   };
+}
+
+const LINE_NAMES: Readonly<Record<string, string>> = { BR: 'Wenhu Line' };
+
+/** The statement about lines that have no headway and use the default wait; '' when there are none. */
+export function defaultWaitStatement(lines: readonly string[]): string {
+  if (lines.length === 0) return '';
+  const names = lines.map((k) => (LINE_NAMES[k] === undefined ? k : `${k} (${LINE_NAMES[k]})`));
+  const list = names.length === 1 ? (names[0] as string) : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1] as string}`;
+  return `${list} ${lines.length === 1 ? 'has' : 'have'} no data in the TDX timetables and ${lines.length === 1 ? 'uses' : 'use'} the default value.`;
 }
 
 /** Reads the station, S2S and transfer-walk files and the timetable model, and builds the network. */

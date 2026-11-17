@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Preflight manifest: every raw input the pipeline reads, with the download id that produces it, plus the
  * committed tables in data/config/. `preflight` checks all of them and throws one MissingInputsError that
  * lists every missing path (Requirement 2.3).
@@ -162,6 +162,11 @@ export function staticInputs(): RequiredInput[] {
       'fares/tdx-metro-od-fare-NTMC.json',
       'fares/tdx-metro-od-fare-NTDLRT.json',
       'fares/tdx-metro-od-fare-NTALRT.json',
+    ),
+    ...raw(
+      'villages',
+      ...[1, 2, 3, 4].map((n) => `villages/moi-odrp019-114-page${n}.json`),
+      'villages/village-boundaries-114.zip',
     ),
     ...raw(
       'timetables',
