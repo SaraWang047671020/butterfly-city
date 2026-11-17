@@ -138,7 +138,12 @@ function buildEntries(): Record<string, ParameterEntry> {
   p['migration.weightTime'] = scalar(0.05, { unit: 'per minute' });
   p['migration.weightBurden'] = scalar(0.05, { unit: 'per percentage point' });
   p['migration.weightCost'] = scalar(0.001, { unit: 'per TWD' });
-  p['migration.commuteCostPerMinute'] = scalar(10, { unit: 'TWD per minute per month' });
+  p['migration.commuteCostPerMinute'] = scalar(10, {
+    unit: 'TWD per minute per month',
+    status: 'secondary',
+    range: [0, 20],
+    estimated: 'Range of commute cost per minute, fixture value.',
+  });
 
   // Ghost
   p['ghost.size'] = scalar(1000, { unit: 'residents per ghost' });

@@ -243,20 +243,27 @@ function effects(
     const spill = zero(rentPerUnit * x);
     const market = baseRent + spill;
     const perHouseholdPp = (ratio * market - baseRent) * f.k;
-    const direct = (x * (ratio * market - baseRent) * f.k) / f.renterHouseholds;
+    // The direct term is an average over the renter households. A district with none (population 0 is valid,
+    // Requirement 3.8) can only reach here with a negative X_d (4.17 rejects a positive one); it has no
+    // renter average to change, so the direct term is 0 instead of a division by 0 (Requirement 13.9).
+    const direct =
+      f.renterHouseholds > 0 ? (x * (ratio * market - baseRent) * f.k) / f.renterHouseholds : 0;
     const spillBurden = spill * f.k;
 
     rent[d.code] = spill;
     burden[d.code] = zero(direct + spillBurden);
 
-    const housedPersons = x * f.householdSize;
+    // Requirement 4.20: with 0 renter households the housed group is empty, like the direct term.
+    const noRenters = !(f.renterHouseholds > 0);
+    const housedPersons = noRenters ? 0 : x * f.householdSize;
+    const housedPp = noRenters ? 0 : perHouseholdPp;
     const spillPp = zero(spill * f.k);
     groups[d.code] = [
       {
         source: 'housed',
         persons: housedPersons,
-        burdenChangePp: perHouseholdPp,
-        personPp: zero(housedPersons * perHouseholdPp),
+        burdenChangePp: housedPp,
+        personPp: zero(housedPersons * housedPp),
         links: ghostLinks(incomeSources, rentSources),
       },
       {

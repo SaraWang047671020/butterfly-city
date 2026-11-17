@@ -35,7 +35,7 @@ function migrationSpecs(): readonly ParameterSpec[] {
     { id: 'migration.weightTime', role: 'derivation', check: { kind: 'non-negative' } },
     { id: 'migration.weightBurden', role: 'derivation', check: { kind: 'non-negative' } },
     { id: 'migration.weightCost', role: 'derivation', check: { kind: 'non-negative' } },
-    { id: 'migration.commuteCostPerMinute', role: 'derivation', check: { kind: 'non-negative' } },
+    { id: 'migration.commuteCostPerMinute', role: 'effect', check: { kind: 'non-negative' } },
   ];
 }
 

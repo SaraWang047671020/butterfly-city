@@ -27,7 +27,7 @@
     },
     "11.8 Write property test for Cause_Breakdown sums": {
       "status": "passed",
-      "lastRunTimestamp": 1794813546551
+      "lastRunTimestamp": 1794882625142
     },
     "11.5 Write property test for tool limits and ceilings": {
       "status": "passed",
@@ -1209,6 +1209,59 @@
         "executionId": "60ae6747-a9c3-4cdb-96c2-89bd8298e23a",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794817167770
+      }
+    ],
+    "17.1 Implement Scenario_Directions in `src/simulation/params.ts` and `src/simulation/rules/population.ts`": [
+      {
+        "executionId": "83e8ea6d-6ece-4f68-aad6-9c4617734e5c",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794879480379
+      },
+      {
+        "executionId": "83e8ea6d-6ece-4f68-aad6-9c4617734e5c",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794880953273
+      }
+    ],
+    "17.2 Update the Scenario tests": [
+      {
+        "executionId": "83e8ea6d-6ece-4f68-aad6-9c4617734e5c",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794881038105
+      },
+      {
+        "executionId": "83e8ea6d-6ece-4f68-aad6-9c4617734e5c",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794881185169
+      }
+    ],
+    "17.3 Checkpoint - Ensure all tests pass": [
+      {
+        "executionId": "83e8ea6d-6ece-4f68-aad6-9c4617734e5c",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794881278605
+      },
+      {
+        "executionId": "83e8ea6d-6ece-4f68-aad6-9c4617734e5c",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794882660440
+      },
+      {
+        "executionId": "fb7dd935-9c26-4d4a-a728-eccaa3322aae",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794883006667
+      },
+      {
+        "executionId": "fb7dd935-9c26-4d4a-a728-eccaa3322aae",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794883253012
+      }
+    ],
+    "17. Add direction-based Scenario selection (`migration.commuteCostPerMinute`)": [
+      {
+        "executionId": "83e8ea6d-6ece-4f68-aad6-9c4617734e5c",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794882660472
       }
     ]
   }

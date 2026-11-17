@@ -251,14 +251,29 @@ export function checkSpecs(
  * The ranged effect parameters that vary between Scenarios (design, "Parameters").
  * Every other parameter, ranged or not, keeps its `value`.
  */
-export const SCENARIO_EFFECT_IDS: readonly string[] = [
-  'socialHousing.rentPerUnit',
-  'socialHousing.rentRatio',
-  'commuterPass.elasticity',
-  'rentSubsidy.passThrough',
-  'ghost.commuteThreshold',
-  'ghost.shareCommuteWithin',
+export type ScenarioDirection = 'low-is-strongest' | 'high-is-strongest';
+
+export interface ScenarioEffectParameter {
+  readonly id: string;
+  readonly direction: ScenarioDirection;
+}
+
+/**
+ * The Scenario effect parameters and the end of their range that gives the strongest effect.
+ * The direction belongs to the model rule that reads the parameter, so it is declared here
+ * and not in `params.json`.
+ */
+export const SCENARIO_EFFECT_PARAMETERS: readonly ScenarioEffectParameter[] = [
+  { id: 'socialHousing.rentPerUnit', direction: 'low-is-strongest' },
+  { id: 'socialHousing.rentRatio', direction: 'low-is-strongest' },
+  { id: 'commuterPass.elasticity', direction: 'low-is-strongest' },
+  { id: 'rentSubsidy.passThrough', direction: 'low-is-strongest' },
+  { id: 'ghost.commuteThreshold', direction: 'low-is-strongest' },
+  { id: 'ghost.shareCommuteWithin', direction: 'low-is-strongest' },
+  { id: 'migration.commuteCostPerMinute', direction: 'high-is-strongest' },
 ];
+
+export const SCENARIO_EFFECT_IDS: readonly string[] = SCENARIO_EFFECT_PARAMETERS.map((e) => e.id);
 
 /**
  * A new table for one Scenario. Only the listed effect parameters that have a `range`
@@ -267,19 +282,22 @@ export const SCENARIO_EFFECT_IDS: readonly string[] = [
 export function scenarioTable(
   params: ParameterTable,
   scenario: ScenarioName,
-  effectIds: readonly string[] = SCENARIO_EFFECT_IDS,
+  effects: readonly ScenarioEffectParameter[] = SCENARIO_EFFECT_PARAMETERS,
 ): ParameterTable {
   const out: Record<string, ScalarParameter | ScheduleParameter> = {};
   for (const id of Object.keys(params)) {
     const p = params[id];
     if (p === undefined) continue;
+    const effect = effects.find((e) => e.id === id);
     if (
       scenario !== 'central' &&
-      effectIds.includes(id) &&
+      effect !== undefined &&
       p.kind === 'scalar' &&
       p.range !== undefined
     ) {
-      out[id] = { ...p, value: scenario === 'low' ? p.range.low : p.range.high };
+      const strongest = effect.direction === 'low-is-strongest' ? p.range.low : p.range.high;
+      const weakest = effect.direction === 'low-is-strongest' ? p.range.high : p.range.low;
+      out[id] = { ...p, value: scenario === 'low' ? strongest : weakest };
     } else {
       out[id] = p;
     }

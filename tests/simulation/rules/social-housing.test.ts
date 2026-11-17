@@ -80,6 +80,27 @@ describe('social housing rule', () => {
     expect(groups.every((g) => g.personPp === 0)).toBe(true);
   });
 
+  it('gives a finite zero direct term for a negative X in a district with 0 renter households', () => {
+    // Population 0 gives Hr = 0. With rent-per-unit 0 there is no spillover, so the burden delta is exactly 0.
+    const ctx: RuleContext = {
+      ...context(0),
+      baseline: buildBaseline({ population: () => 0, householdIncome: () => 720_000, rent: () => 600 }),
+    };
+    expect(checkRenterCapacity({ [TAIPEI]: -1 }, '2018Q1', ctx)).toBeNull();
+    const out = socialHousingRule.effects({ [TAIPEI]: -1 }, '2018Q1', ctx);
+    expect(out.deltas['socialHousingStock']?.[TAIPEI]).toBe(-1);
+    expect(out.deltas['rentBurden']?.[TAIPEI]).toBe(0);
+    // Hand-checked: without the rule the housed group would be -1 x household size persons with a
+    // nonzero burden change ((0.8 - 1) x 600 x k); with 0 renter households all three fields are exactly 0.
+    const housed = out.ghostGroups?.[TAIPEI]?.find((g) => g.source === 'housed');
+    expect(Object.is(housed?.persons, 0)).toBe(true);
+    expect(Object.is(housed?.burdenChangePp, 0)).toBe(true);
+    expect(Object.is(housed?.personPp, 0)).toBe(true);
+    const spillover = out.ghostGroups?.[TAIPEI]?.find((g) => g.source === 'spillover');
+    expect(Object.is(spillover?.persons, 0)).toBe(true);
+    expect(Object.is(spillover?.personPp, 0)).toBe(true);
+  });
+
   it('rejects a stock difference above the renter households', () => {
     const ctx = context(0);
     expect(checkRenterCapacity({ [TAIPEI]: 16_000 }, '2018Q1', ctx)).toBeNull();

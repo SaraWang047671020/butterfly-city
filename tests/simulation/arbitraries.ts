@@ -196,6 +196,7 @@ export function arbParams(options: ParamsOptions = {}): fc.Arbitrary<ParameterTa
       sensitivityRent: fc.oneof(fc.constant(0), dbl(0.0001, 1)),
       sensitivityCommute: dbl(0, 0.01),
       ghostSize: fc.integer({ min: 1, max: 5000 }),
+      perMinuteExtra: dbl(0, 50),
       other: fc.record({
         unitCosts: fc.tuple(dbl(0.5, 2), dbl(0.5, 2)),
         dwelling: dbl(15, 80),
@@ -281,7 +282,10 @@ export function arbParams(options: ParamsOptions = {}): fc.Arbitrary<ParameterTa
       o['migration.weightTime'] = scalar(mTime, { unit: 'per minute' });
       o['migration.weightBurden'] = scalar(mBurden, { unit: 'per percentage point' });
       o['migration.weightCost'] = scalar(mCost, { unit: 'per TWD' });
-      o['migration.commuteCostPerMinute'] = scalar(mPerMinute, { unit: 'TWD per minute per month' });
+      o['migration.commuteCostPerMinute'] = scalar(mPerMinute, {
+        unit: 'TWD per minute per month',
+        range: [0, mPerMinute + g.perMinuteExtra],
+      });
 
       for (const city of CITIES) {
         for (let q = 0; q < 44; q++) {

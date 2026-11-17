@@ -2,6 +2,8 @@ import fc from 'fast-check';
 import { describe, expect as vitestExpect, it } from 'vitest';
 import { CAUSE_TOLERANCE } from '../../../src/simulation/constants.ts';
 import { run } from '../../../src/simulation/engine.ts';
+import { scalar } from '../../../src/simulation/params.ts';
+import { quarterIndex } from '../../../src/simulation/quarter.ts';
 import { RULE_REGISTRY } from '../../../src/simulation/registry.ts';
 import type { QuarterKey } from '../../../src/types/data-files.ts';
 import type { Cause, SimState } from '../../../src/types/simulation.ts';
@@ -122,10 +124,12 @@ function checkState(state: SimState, inputs: EngineInputs): number {
       } else {
         expect(Number.isInteger(value), where).toBe(true);
         expect(value, where).toBeGreaterThanOrEqual(0);
-        // Other counts round to the nearest integer (|bound| <= 0.5); the Ghost count rounds down, so its
-        // Bound_Adjustment lies in (-1, 0] plus the floor tolerance (Requirement 12.4, 10.1).
-        const limit = ind.id === GHOST_INDICATOR ? 1 : 0.5;
-        expect(Math.abs(bound), where).toBeLessThanOrEqual(limit + tol + 1e9 * Number.EPSILON * Math.max(1, Math.abs(value)));
+        if (ind.id === GHOST_INDICATOR) {
+          checkGhostBound(state, inputs, code, causes, bound, value, where);
+        } else {
+          // Other counts round to the nearest integer, so |bound| <= 0.5 (Requirement 12.4).
+          expect(Math.abs(bound), where).toBeLessThanOrEqual(0.5 + tol + 1e9 * Number.EPSILON * Math.max(1, Math.abs(value)));
+        }
       }
 
       // Links that are present point at known ids (13.7). Non-empty links and the metadata are asserted by
@@ -138,6 +142,42 @@ function checkState(state: SimState, inputs: EngineInputs): number {
     }
   }
   return checked;
+}
+
+/**
+ * Ghost Bound_Adjustment (Requirement 10.6, design "Cause_Breakdown (10.6)"): it covers the floor, the clamp
+ * of R to [0, P] and the zero-population rule.
+ * - P = 0: the count is 0 and the Bound_Adjustment absorbs every other Cause, so only the value is checked.
+ * - P > 0: the other Causes sum to exact(R unclamped) + (floor0 - exact0), where the Baseline Cause floor0 is
+ *   floor(exact0) of the Derived_Baseline. Removing the R-clamp part (Rc - Ru) / G leaves
+ *   (floor(exact) - exact) - (floor0 - exact0); each floor difference lies in (-1, 0] plus the floor
+ *   tolerance, so the remainder lies strictly within 1 of 0, up to rounding.
+ */
+function checkGhostBound(
+  state: SimState,
+  inputs: EngineInputs,
+  code: string,
+  causes: readonly Cause[],
+  bound: number,
+  value: number,
+  where: string,
+): void {
+  const P = state.values['population']?.[code] as number;
+  expect(Number.isFinite(P), `${where} population`).toBe(true);
+  if (P === 0) {
+    expect(value, `${where} zero-population rule`).toBe(0);
+    return;
+  }
+  const P0 = inputs.baseline.indicators['population']?.[code]?.[quarterIndex(state.quarter as QuarterKey)] as number;
+  const bR = scalar(inputs.params, 'ghost.shareRent');
+  const G = scalar(inputs.params, 'ghost.size');
+  let rentCauses = 0;
+  for (const c of causes) if (c.id.startsWith('ghost-rent-')) rentCauses += c.contribution;
+  const unclamped = P0 * bR + rentCauses * G;
+  const clampPart = (Math.min(Math.max(unclamped, 0), P) - unclamped) / G;
+  // Rounding in the reconstruction scales with the persons involved, not with the count.
+  const scale = Math.max(1, Math.abs(value), (Math.abs(P) + Math.abs(P0) + Math.abs(unclamped)) / G);
+  expect(Math.abs(bound - clampPart), `${where} floor part`).toBeLessThanOrEqual(1 + 1e-8 * scale);
 }
 
 function rank(kind: string): number {
