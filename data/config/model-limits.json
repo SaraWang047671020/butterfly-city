@@ -127,12 +127,12 @@
         {
           "id": "estimated-trips",
           "title": "Estimated, not measured, trips",
-          "text": "Each district is represented by its centre. A trip is the walk to the nearest station, the rail time from timetables, transfers, and the walk at the other end, or a road trip, whichever is shorter. Distances are straight lines multiplied by a detour factor from a United States study. Buses are not included."
+          "text": "Each district is represented by its population-weighted centre, computed from village populations. A trip is the trip to the nearest station (walking, or by road when that is faster, for people who live far from a station), the rail time, transfers, and the trip from the station at the other end; or a road trip, whichever is shorter. Distances are straight lines multiplied by a detour factor from a United States study. Buses are not modelled as a separate mode."
         },
         {
           "id": "excluded-lines",
           "title": "Lines not included",
-          "text": "The Taoyuan Airport MRT and the Sanying Line are not in the network. Linkou has no other rail line, so its commute times come from the road model only and are probably too long. The Danhai LRT is also left out; it lies entirely within Tamsui and affects only trips inside that district."
+          "text": "The Taoyuan Airport MRT and the Sanying Line are not in the network. Linkou has no station in the model: its residents reach the network by road at Huilong station on the Zhonghe-Xinlu Line, about 7.6 km from the centre of Linkou, and for some destinations the road alone is faster. Because road speed is an assumption, Linkou commute times may be too long. The Danhai LRT is also left out; it lies entirely within Tamsui and affects only trips inside that district."
         },
         {
           "id": "constants",
@@ -179,7 +179,12 @@
         {
           "id": "ghost-lines",
           "title": "Where the lines are drawn",
-          "text": "A resident counts as at risk above 30% of income spent on rent and as a ghost above 50%, the cost-burden lines used by housing agencies in the United States. For commutes, the lines come from a Taiwan survey of what commuters accept. Other lines would give other counts."
+          "text": "A resident counts as at risk above 30% of income spent on rent and as a ghost above 50%, the cost-burden lines used by housing agencies in the United States. For commutes, 45 minutes comes from a Taiwan survey of what commuters accept; 60 minutes is a line set by this project, with no study behind it. Other lines would give other counts."
+        },
+        {
+          "id": "reference-dwelling",
+          "title": "Which homes the district count uses",
+          "text": "The district ghost count compares household income with the median rent of a whole home, the kind of lease a household rents. People renting studios or rooms pay less but often earn less, and their burden may differ. Before 2023 the lease records do not say whether a home is whole or a room, so some rooms may be included."
         },
         {
           "id": "ghost-overlap",

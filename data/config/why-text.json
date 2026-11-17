@@ -28,7 +28,7 @@
       "whyItVaries": "Each city sets social housing rents, and the discount can differ by project and by the income of the tenant household, so tenants in the same city can pay different shares.",
       "ifLower": "At the lower end, tenants pay a smaller share of market rent and their rent burden drops more. The city collects less rent from each unit.",
       "ifHigher": "At the higher end, tenants pay closer to market rent and their rent burden drops less. The city collects more rent from each unit.",
-      "limits": "The highest value has no separate study; it is the top of the published discount schedules."
+      "limits": "The lower and middle values come from published rent rules reported in the press. The highest value is a project assumption with no independent source."
     },
     "commuterPass.elasticity": {
       "displayName": "How much MRT use responds to the pass price",
@@ -49,10 +49,10 @@
     "ghost.commuteThreshold": {
       "displayName": "Commute time counted as too long",
       "whatItIs": "A resident is counted as at risk when the one-way trip to work takes longer than this many minutes.",
-      "whyItVaries": "A survey in Taiwan found that many commuters accept a one-way trip of up to about 45 minutes; 60 minutes is also widely used as a line. The model runs with both.",
+      "whyItVaries": "A survey in Taiwan found that many commuters accept a one-way trip of up to about 45 minutes. The 60-minute line is set by this project; no study for it was found. The model runs with both.",
       "ifLower": "With a lower line, more residents count as having a long commute, and more ghosts appear in outer districts.",
       "ifHigher": "With a higher line, fewer residents count as having a long commute, and fewer ghosts appear.",
-      "limits": "The line is a survey answer about what people accept, not a measured health or income effect."
+      "limits": "The 45-minute line is a survey answer about what people accept, and the 60-minute line is a project rule. Neither is a measured health or income effect."
     },
     "ghost.shareCommuteWithin": {
       "displayName": "Share of workers whose commute is under the line",
