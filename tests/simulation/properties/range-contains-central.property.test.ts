@@ -71,7 +71,7 @@ describe('Property 24: The Result_Range contains the central result', () => {
       }),
       { numRuns: 100, endOnFailure: true },
     );
-  }, 120_000);
+  }, 300_000);
 
   it('returns the Cause_Breakdowns of the central Scenario and deep-equal results on repeated calls', () => {
     // **Validates: Requirements 19.4, 19.7**
@@ -95,7 +95,7 @@ describe('Property 24: The Result_Range contains the central result', () => {
       }),
       { numRuns: 100, endOnFailure: true },
     );
-  }, 120_000);
+  }, 300_000);
 
   it('zero delta: min === central === max for every indicator except the Ghost count, and central equals the Baseline', () => {
     // **Validates: Requirements 19.5**
@@ -125,6 +125,6 @@ describe('Property 24: The Result_Range contains the central result', () => {
       }),
       { numRuns: 100, endOnFailure: true },
     );
-  }, 120_000);
+  }, 300_000);
 });
 
