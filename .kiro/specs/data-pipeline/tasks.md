@@ -427,31 +427,31 @@ The order follows the design: shared helpers first, then the district file and e
     - Rail time = access time to the nearest station + in-vehicle path time + per transfer the transfer walk and `commute.transferWait` + egress time from the destination station; `access(i, s) = min(walk(i, s), haversineKm × detourFactor ÷ roadSpeed(city of i) × 60 + accessTime)`; road time = straight-line distance between Population_Weighted_Centroids × detour factor ÷ road speed of the origin district's city + access time; walking time = distance × detour factor ÷ walking speed; all distances use the Population_Weighted_Centroid from task 24.2a; cell = the smaller of the two; diagonal 0; values rounded to 1 decimal place
     - A district without a centroid stops the build with its District_Code; the result does not depend on input order
     - _Requirements: 24.2, 24.3, 24.4, 24.5, 24.9, 24.10, 24.12, 24.13_
-  - [~] 24.3 Implement `survey-check.ts`, `commute-file.ts` and `validateCommuteMatrix`
+  - [x] 24.3 Implement `survey-check.ts`, `commute-file.ts` and `validateCommuteMatrix`
     - `survey-check.ts`: mean time from the New Taipei districts to the Taipei districts weighted by origin population (mean of 2025) and `jobShare` renormalized over the Taipei districts; the step prints `commute check: modelled <x> min, survey about 57 min, difference <±y>`. It changes no matrix cell, no constant, no parameter and not the exit code
     - `commute-file.ts` assembles `{ codes, minutes }` (exactly these two keys); `src/types/data-files.ts` gains `CommuteMatrixFile`; `src/data/validate.ts` gains `validateCommuteMatrix` (41 sorted codes equal to the district codes, 41 rows of 41 finite non-negative numbers, diagonal 0, one decimal place) and `ValidationError.file` accepts `'commute-matrix.json'`
     - _Requirements: 24.1, 24.2, 24.8, 27.4_
-  - [~] 24.4 Add `commuteMatrixStep` and write the matrix file
+  - [x] 24.4 Add `commuteMatrixStep` and write the matrix file
     - `jobShare`, `commuteMatrix` and `commuteSurvey` in `BuildState`; the step runs after `networkStep`; the validation step validates the matrix with the other files; `write.ts` stages and commits `public/data/commute-matrix.json` after `policy-track.json` and before `SOURCES.md` with the same rollback; the summary prints the mean commute time for the comparison. Update the runner and writer tests that list files or steps
     - _Requirements: 16.5, 16.6, 24.1, 24.10, 27.10, 27.7_
-  - [~] 24.5 Add the commute sections to `sources-doc.ts`
+  - [x] 24.5 Add the commute sections to `sources-doc.ts`
     - Each constant of `commute-params.json` with value, range, status, sources and, for `gap` entries, the assumption; the input that supplied the run times of each line; the interchanges that use the mean walking time; the pairs used and excluded for the fare slope; the model limitations (one fixed matrix for the 2025Q4 network, no change with the 2018 to 2023 openings, every off-diagonal cell estimated with the Commute_Model method, Airport MRT, buses and the Sanying Line not modelled, **Linkou has no other rail line so its times come from the road model only and are likely over-estimated**); the modelled mean, the survey figure of about 57 minutes and the signed difference reported as they are, with the statement that no constant, parameter or input was changed because of it
     - The banned-term check must pass on the new text
     - Also state: the Population_Weighted_Centroid method with its two sources and the retrieval date 2026-11-17; the access rule `min(walk, road + accessTime)` with the reason that residents far from a station usually reach it by scooter or bus; the 5 districts with the largest weighted-to-geometric centroid distance
     - _Requirements: 24.7, 24.8, 24.11, 24.12, 24.13, 24.16, 25.2, 25.3, 25.8, 25.14, 29.2_
-  - [~] 24.6 Write example tests for the model, survey check, matrix file and validator
+  - [x] 24.6 Write example tests for the model, survey check, matrix file and validator
     - Fixtures of at most 50 rows with literal expected values: a rail cell with one transfer, a road cell that is faster than rail, the diagonal, a missing centroid stops the build, the survey mean on a 2 × 2 fixture, a matrix validator accepting a valid file and rejecting a non-zero diagonal, a negative cell, a wrong row count and wrong `codes`, and two runs on permuted inputs that give byte-identical serialized files
     - Centroid tests (fixtures of at most 50 rows): join by village code and not by name (two villages with the same name, different codes); an unmatched village code in either file stops the build and lists the code, except an unassigned area record (empty VILLNAME, code with R or P) which is skipped with weight 0; the district village population sum check fails with the District_Code on a mismatch; a district with no village stops the build; the weighted centroid on a fixture with literal expected coordinates; the access min rule (a near station picks walk, a far station picks the road branch with `accessTime`)
     - _Requirements: 24.1, 24.2, 24.3, 24.9, 24.10, 24.12, 24.13, 24.14, 24.15, 27.8_
-  - [~] 24.7 Write property test for job shares
+  - [x] 24.7 Write property test for job shares
     - **Property 40: Job shares are largest-remainder shares that sum to 1**
     - In `tests/scripts/pipeline/properties-job-share.test.ts`
     - **Validates: Requirements 20.11, 22.10, 28.5**
-  - [~] 24.8 Write property test for the commute model
+  - [x] 24.8 Write property test for the commute model
     - **Property 44: The commute model takes the faster mode and is order independent**
     - In `tests/scripts/pipeline/properties-commute-model.test.ts`
     - **Validates: Requirements 24.2, 24.3, 24.4, 24.5, 24.10, 25.1**
-  - [~] 24.9 Build `public/data/commute-matrix.json` and confirm
+  - [x] 24.9 Build `public/data/commute-matrix.json` and confirm
     - Stop with the preflight list if `data/raw/` lacks a file. Run `npm run data` twice and confirm exit code 0 and that the two `commute-matrix.json` files are byte-identical; confirm 41 × 41 values, a zero diagonal and the printed `commute check` line. Report the modelled mean and the signed difference to about 57 minutes as they are, with no adjustment
     - Also report the 5 districts with the largest distance between the Population_Weighted_Centroid and the geometric centroid (District_Code and kilometers)
     - Run `npx vitest --run` and `npm run typecheck` and report both exit codes

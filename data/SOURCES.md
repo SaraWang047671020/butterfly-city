@@ -816,3 +816,88 @@ A district and quarter with fewer than 10 qualifying sales uses the median of a 
 | Shuangxi (65000250) | 0 | radius 1: 8 quarters; radius 2: 18 quarters; radius 3: 13 quarters; radius 4: 3 quarters; radius 5: 2 quarters |
 | Gongliao (65000260) | 0 | radius 1: 27 quarters; radius 2: 14 quarters; radius 3: 2 quarters; radius 4: 1 quarter |
 | Wulai (65000290) | 0 | radius 10: 2 quarters; radius 11: 4 quarters; radius 12: 4 quarters; radius 13: 7 quarters; radius 14: 5 quarters; radius 15: 5 quarters; radius 16: 5 quarters; radius 17: 2 quarters; radius 18: 2 quarters; radius 19: 2 quarters; radius 20: 2 quarters; radius 21: 2 quarters; radius 22: 1 quarter; radius 23: 1 quarter |
+
+## 10. Commute matrix
+
+The file public/data/commute-matrix.json holds the 41 × 41 commute times in minutes, estimated with the commute model from the constants, inputs and centroids below.
+
+### Constants
+
+| Constant | Value | Range | Status | Source | Method | Assumption (gap entries) |
+| --- | --- | --- | --- | --- | --- | --- |
+| `commute.detourFactor` | 1.417 ratio | 1.2 to 1.6 (low: Cole & King (1968), Quantitative Geography, as reported by Boscoe et al. (2012), https://pmc.ncbi.nlm.nih.gov/articles/PMC3835347/; high: Cole & King (1968), Quantitative Geography, as reported by Boscoe et al. (2012), https://pmc.ncbi.nlm.nih.gov/articles/PMC3835347/) | secondary | Boscoe, Henry & Zdeb (2012), A Nationwide Comparison of Driving Distance Versus Straight-Line Distance to Hospitals, The Professional Geographer 64(2), https://pmc.ncbi.nlm.nih.gov/articles/PMC3835347/ | Value taken from a foreign study. It is a United States average that includes rural tracts and is likely high for Taipei. | n/a |
+| `commute.walkSpeed` | 1.37 meters per second | 1.07 to 1.46 (low: Manual on Uniform Traffic Control Devices 2009, section 4E.06 (3.5 ft/s), https://mutcd.fhwa.dot.gov/htm/2009r1r2/part4/part4e.htm; high: Bohannon (1997), fastest group mean (146.2 cm/s), https://doi.org/10.1093/ageing/26.1.15) | secondary | Bohannon (1997), Comfortable and maximum walking speed of adults aged 20-79 years, Age and Ageing 26(1), https://doi.org/10.1093/ageing/26.1.15 | The value is the midpoint of the two group means 127.2 and 146.2 cm/s in Bohannon (1997). It is a derived midpoint and not a figure printed in the paper. The high end is the fastest group mean. | n/a |
+| `commute.roadSpeed.taipei` | 16.7 km per hour | none | secondary | TomTom Traffic Index 2025, Taipei City: average of the rush-hour speeds (morning 19, evening 15.2 km/h), https://www.tomtom.com/traffic-index/taipei-traffic/ | Three searches on data.taipei and data.gov.tw found no average travel speed dataset. The single published TomTom figure is used under the exception in tech.md: the figure is quoted with its citation, and no TomTom data is downloaded or redistributed. | n/a |
+| `commute.roadSpeed.newTaipei` | 16.7 km per hour | none | gap | none | The Taipei City value is used for New Taipei City because no New Taipei figure was found. | No New Taipei figure was found. Suburban New Taipei speeds are likely higher, so road commute times may be too long. |
+| `commute.accessTime` | 5 minutes | 0 to 10 (low: sensitivity range, no study, .kiro/specs/data-pipeline/design.md; high: sensitivity range, no study, .kiro/specs/data-pipeline/design.md) | gap | none | A fixed planning value with a 0 to 10 minute sensitivity range; no study is cited. | A fixed time per road trip for parking and access. No citable study was found. |
+| `commute.transferWalk` | 4.29 minutes | 1 to 11 (low: Taipei Rapid Transit Corporation, Transfer walking times (dataset 128417, OGDL v1.0), data.gov.tw, https://data.gov.tw/dataset/128417; high: Taipei Rapid Transit Corporation, Transfer walking times (dataset 128417, OGDL v1.0), data.gov.tw, https://data.gov.tw/dataset/128417) | verified | Taipei Rapid Transit Corporation, Transfer walking times (dataset 128417, OGDL v1.0), data.gov.tw, https://data.gov.tw/dataset/128417 | n/a | n/a |
+| `commute.transferWait` | 2.5 minutes | none | secondary | TDX Rail/Metro StationTimeTable, Taipei Metro (TRTC), New Taipei Metro (NTMC), Danhai LRT (NTDLRT) and Ankeng LRT (NTALRT), Ministry of Transport and Communications, https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/StationTimeTable/{TRTC,NTMC,NTDLRT,NTALRT}?%24format=JSON | Weekday (Monday to Friday) departures from 07:00 to before 09:00, per direction. A direction headway is the median gap between consecutive departures at a station that every train of the line serves; the line headway is the mean of its two directions, and the wait is half of it. The value is the median of the per-line half-headways (BL, G, G-3, O, R, R-3 Xinbeitou branch, Y, LB, K), used for a line without a headway. BR (Wenhu Line) has no data in the TDX timetables and uses the default value. G-3 and Xinbeitou are separate lines. The Danhai LRT is excluded from the network (all of it lies in Tamsui District). The matrix represents morning work commutes. | n/a |
+| `commute.tripsPerMonth` | 44 one-way trips per commuter per month | none | gap | none | 2 one-way trips per working day multiplied by 22 working days per month. | No cited survey of commute trips per working day and no published count of working days per month was found. A survey of one-way commute trips per working day and a published count of working days per month would replace it. |
+
+### Run time input by line
+
+| Line | Input of the run times | Stations | Edges | Reason |
+| --- | --- | --- | --- | --- |
+| `BL` | TDX S2S | 23 | 22 | n/a |
+| `BR` | TDX S2S | 24 | 23 | n/a |
+| `G` | TDX S2S | 20 | 19 | n/a |
+| `K` | TDX StationTimeTable | 9 | 8 | n/a |
+| `O` | TDX S2S | 26 | 25 | n/a |
+| `R` | TDX S2S | 29 | 27 | n/a |
+| `Y` | TDX S2S | 14 | 13 | n/a |
+| `V` | not included | 0 | 0 | The Danhai LRT is not included; the whole line lies within Tamsui District, so this affects only access times within Tamsui. |
+| `LB` | not included | 0 | 0 | The Sanying Line (LB) opened on 2026-06-30, after the 2025-12-31 cut-off of the 2025Q4 network. |
+| `AIRPORT` | not included | 0 | 0 | The Taoyuan Airport MRT is not in the TDX files and is excluded from the rail graph (user decision 2026-11-18). |
+
+### Lines using the default transfer wait
+
+BR (Wenhu Line) has no data in the TDX timetables and uses the default value.
+
+### Interchanges using the mean walking time
+
+These interchanges have no row in the Taipei Metro transfer walking time table (dataset 128417) and use the mean of the table.
+
+| Interchange | Stations | Walking time (minutes) |
+| --- | --- | --- |
+| 十四張 | `K09`, `Y08` | 4.29 |
+| 大坪林 | `G04`, `Y07` | 4.29 |
+
+### Fare slope
+
+- Station pairs used: 14774 of 15357 fare table rows.
+- Pairs excluded, by reason:
+  - `same-station`: 159 (examples: BL01>BL01, BL02>BL02, BL03>BL03, BL04>BL04, BL05>BL05)
+  - `station-not-in-network`: 424 (examples: BL01>R01, BL02>R01, BL03>R01, BL04>R01, BL05>R01)
+- Station codes excluded because they are not in the network: `R01`, `V01`, `V02`, `V03`, `V04`, `V05`, `V06`, `V07`, `V08`, `V09`, `V10`, `V11`, `V26`, `V27`, `V28`.
+
+### Population-weighted centroids
+
+- The district centroid is the mean of the village polygon centroids weighted by village population. The village population is the sum of the six household fields of ODRP019 (ordinary, business and single households, male and female).
+- Population source: MOI Department of Household Registration, dataset ODRP019, ROC year 114, https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP019/114. Date retrieved: 2026-11-17.
+- Boundary source: National Land Surveying and Mapping Center, village boundaries historical map data (TWD97 longitude and latitude), data.gov.tw dataset 130549, ROC 114 edition, https://www.land.moi.gov.tw/chhtml/DownloadGovDoc?gsno=PY9YAR&gdid=533. Date retrieved: 2026-11-17.
+- The two files are joined by the 11-digit village code only. The District_Code is the first 8 digits of the village code.
+- 17 unassigned area codes (empty village name, code containing R or P) are skipped with weight 0: `65000020R01`, `65000040R01`, `65000100R01`, `65000120P01`, `65000120P02`, `65000120P03`, `65000140R01`, `65000170P01`, `65000220P01`, `65000220P02`, `65000260P01`, `65000260P02`, `65000270P01`, `65000280P01`, `65000280P02`, `65000280P03`, `65000280P04`.
+- Access and egress rule: access(i, s) = min(walk(i, s), road(i, s) + accessTime). The rule takes the smaller of the walking time and the road time plus the access time, because residents far from a station usually reach it by scooter or bus.
+- The five districts with the largest distance between the population-weighted centroid and the geometric centroid:
+
+| District | Distance (km) |
+| --- | --- |
+| Sanxia (65000090) | 6.54 |
+| Wulai (65000290) | 6.01 |
+| Xindian (65000060) | 3.84 |
+| Shilin (63000110) | 3.79 |
+| Shuangxi (65000250) | 3.52 |
+
+### Model limitations
+
+- The matrix is one fixed matrix for the 2025Q4 network. It does not change with the rail openings of 2018 to 2023.
+- Every off-diagonal cell is estimated with the commute model method. No cell is observed.
+- The Taoyuan Airport MRT, buses and the Sanying Line are not modelled.
+- Linkou has no other rail line, so its times come from the road model only and are likely over-estimated.
+
+### Survey comparison
+
+- Modelled mean commute time from the New Taipei districts to the Taipei districts: 54.0 minutes.
+- Survey figure: about 57 minutes.
+- Difference (modelled minus survey): -3.0 minutes.
+- No constant, parameter or input was changed because of this difference.

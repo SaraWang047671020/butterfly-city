@@ -8,6 +8,7 @@
  *   1 generated-file notice and disclosure   2 output format          3 fields by output file
  *   4 sources                                5 methods                6 rent reference districts
  *   7 MRT notes                              8 policy series          9 known data gaps
+ *   10 commute matrix (when the commute steps have run)
  *
  * A source or method that an output field refers to but the embedded registries lack, or a source without
  * agency, dataset, URL, years or license, stops the build with a DataError naming the identifier (15.8).
@@ -23,6 +24,11 @@ import type {
   ValueRecord,
 } from '../../src/types/data-files.ts';
 import type { BuildContext } from './context.ts';
+import type { CentroidResult } from './commute/centroids.ts';
+import type { PairingResult } from './commute/fares.ts';
+import { defaultWaitStatement, type RailNetwork } from './commute/network.ts';
+import { COMMUTE_PARAM_IDS, readCommuteParams, type CommuteParams } from './commute/params.ts';
+import type { SurveyCheckResult } from './commute/survey-check.ts';
 import { DataError } from './errors.ts';
 import type { RentReferenceInfo } from './indicators/rent.ts';
 import { codePointCompare } from './numeric.ts';
@@ -199,6 +205,17 @@ export interface SourcesDocInput {
   readonly subleasePhases: readonly SubleasePhaseRow[];
   /** Defaults to KNOWN_GAPS. */
   readonly gaps?: readonly DataGap[] | undefined;
+  /** Results of the commute steps; when absent, section 10 is not written. */
+  readonly commute?: CommuteDocInput | undefined;
+}
+
+/** Everything section 10 states, taken from the build state (task 24.5). */
+export interface CommuteDocInput {
+  readonly params: CommuteParams;
+  readonly network: RailNetwork;
+  readonly fares: PairingResult;
+  readonly centroids: CentroidResult;
+  readonly survey: SurveyCheckResult;
 }
 
 // ---- text helpers ----
@@ -614,6 +631,119 @@ function section9(input: SourcesDocInput): string[] {
   return out;
 }
 
+/** Section 10 (task 24.5): the commute matrix, generated from the build state. */
+function section10(input: SourcesDocInput, c: CommuteDocInput): string[] {
+  const { params, network, fares, centroids, survey } = c;
+  const out: string[] = [
+    '## 10. Commute matrix',
+    '',
+    'The file public/data/commute-matrix.json holds the 41 × 41 commute times in minutes, estimated with the commute model from the constants, inputs and centroids below.',
+    '',
+    '### Constants',
+    '',
+  ];
+  const constantRows: string[][] = [];
+  for (const id of COMMUTE_PARAM_IDS) {
+    const p = params[id];
+    if (p === undefined) continue;
+    const range =
+      p.range === undefined
+        ? 'none'
+        : `${p.range.low} to ${p.range.high} (low: ${p.range.lowSource.citation}, ${p.range.lowSource.url}; high: ${p.range.highSource.citation}, ${p.range.highSource.url})`;
+    const source = p.source.citation === '' && p.source.url === '' ? 'none' : `${p.source.citation}, ${p.source.url}`;
+    constantRows.push([
+      code(id),
+      `${p.value} ${p.unit}`,
+      range,
+      p.status,
+      source,
+      p.estimated?.method ?? 'n/a',
+      p.status === 'gap' ? (p.assumption ?? 'n/a') : 'n/a',
+    ]);
+  }
+  out.push(...table(['Constant', 'Value', 'Range', 'Status', 'Source', 'Method', 'Assumption (gap entries)'], constantRows));
+
+  out.push('', '### Run time input by line', '');
+  const sourceLabel = (s: string): string =>
+    s === 'tdx-s2s' ? 'TDX S2S' : s === 'timetable' ? 'TDX StationTimeTable' : 'not included';
+  out.push(
+    ...table(
+      ['Line', 'Input of the run times', 'Stations', 'Edges', 'Reason'],
+      network.lines.map((l) => [code(l.lineId), sourceLabel(l.source), String(l.stations), String(l.edges), l.reason ?? 'n/a']),
+    ),
+  );
+  out.push('', '### Lines using the default transfer wait', '');
+  const waitStatement = defaultWaitStatement(network.defaultWaitLines);
+  out.push(waitStatement === '' ? 'No line uses the default transfer wait.' : waitStatement);
+
+  out.push('', '### Interchanges using the mean walking time', '');
+  const meanSites = network.transferSites.filter((s) => s.estimated);
+  if (meanSites.length === 0) {
+    out.push('No interchange uses the mean walking time.');
+  } else {
+    out.push(
+      'These interchanges have no row in the Taipei Metro transfer walking time table (dataset 128417) and use the mean of the table.',
+      '',
+      ...table(
+        ['Interchange', 'Stations', 'Walking time (minutes)'],
+        meanSites.map((s) => [s.site, s.stations.map(code).join(', '), s.walkMinutes.toFixed(2)]),
+      ),
+    );
+  }
+
+  out.push('', '### Fare slope', '');
+  out.push(`- Station pairs used: ${fares.pairs.length} of ${fares.rows} fare table rows.`);
+  const reasons = Object.entries(fares.excluded).sort((a, b) => codePointCompare(a[0], b[0]));
+  if (reasons.length === 0) out.push('- Pairs excluded: none.');
+  else {
+    out.push('- Pairs excluded, by reason:');
+    for (const [reason, e] of reasons) {
+      out.push(`  - ${code(reason)}: ${e.count} (examples: ${e.examples.join(', ')})`);
+    }
+  }
+  out.push(
+    `- Station codes excluded because they are not in the network: ${
+      fares.excludedStations.length === 0 ? 'none' : fares.excludedStations.map(code).join(', ')
+    }.`,
+  );
+
+  out.push('', '### Population-weighted centroids', '');
+  out.push(
+    '- The district centroid is the mean of the village polygon centroids weighted by village population. The village population is the sum of the six household fields of ODRP019 (ordinary, business and single households, male and female).',
+    '- Population source: MOI Department of Household Registration, dataset ODRP019, ROC year 114, https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP019/114. Date retrieved: 2026-11-17.',
+    '- Boundary source: National Land Surveying and Mapping Center, village boundaries historical map data (TWD97 longitude and latitude), data.gov.tw dataset 130549, ROC 114 edition, https://www.land.moi.gov.tw/chhtml/DownloadGovDoc?gsno=PY9YAR&gdid=533. Date retrieved: 2026-11-17.',
+    '- The two files are joined by the 11-digit village code only. The District_Code is the first 8 digits of the village code.',
+    `- ${centroids.unassigned.length} unassigned area codes (empty village name, code containing R or P) are skipped with weight 0: ${
+      centroids.unassigned.length === 0 ? 'none' : centroids.unassigned.map(code).join(', ')
+    }.`,
+    '- Access and egress rule: access(i, s) = min(walk(i, s), road(i, s) + accessTime). The rule takes the smaller of the walking time and the road time plus the access time, because residents far from a station usually reach it by scooter or bus.',
+    '- The five districts with the largest distance between the population-weighted centroid and the geometric centroid:',
+    '',
+    ...table(
+      ['District', 'Distance (km)'],
+      centroids.largestOffsets.map((d) => [districtLabel(input, d.code), d.offsetKm.toFixed(2)]),
+    ),
+  );
+
+  out.push('', '### Model limitations', '');
+  out.push(
+    '- The matrix is one fixed matrix for the 2025Q4 network. It does not change with the rail openings of 2018 to 2023.',
+    '- Every off-diagonal cell is estimated with the commute model method. No cell is observed.',
+    '- The Taoyuan Airport MRT, buses and the Sanying Line are not modelled.',
+    '- Linkou has no other rail line, so its times come from the road model only and are likely over-estimated.',
+  );
+
+  out.push('', '### Survey comparison', '');
+  const sign = survey.difference >= 0 ? '+' : '-';
+  out.push(
+    `- Modelled mean commute time from the New Taipei districts to the Taipei districts: ${survey.modelled.toFixed(1)} minutes.`,
+    `- Survey figure: about ${survey.survey} minutes.`,
+    `- Difference (modelled minus survey): ${sign}${Math.abs(survey.difference).toFixed(1)} minutes.`,
+    '- No constant, parameter or input was changed because of this difference.',
+  );
+  return out;
+}
+
 /** Renders the full text of data/SOURCES.md. Throws a DataError when a referenced source or method is missing. */
 export function renderSourcesDoc(input: SourcesDocInput): string {
   const registry = unionRegistry(input);
@@ -630,6 +760,7 @@ export function renderSourcesDoc(input: SourcesDocInput): string {
     section8(input),
     section9(input),
   ];
+  if (input.commute !== undefined) blocks.push(section10(input, input.commute));
   return `${blocks.map((b) => b.join('\n')).join('\n\n')}\n`;
 }
 
@@ -644,10 +775,22 @@ export function sourcesDocStep(readCommitted: CommittedReader = fsCommittedReade
           'run the districts, history file and policy file steps before the SOURCES.md step',
         ]);
       }
+      const { network, fareSlope, commuteCentroids, commuteSurvey } = state;
+      const commute: CommuteDocInput | undefined =
+        network !== undefined && fareSlope !== undefined && commuteCentroids !== undefined && commuteSurvey !== undefined
+          ? {
+              params: readCommuteParams(readCommitted),
+              network,
+              fares: fareSlope.pairing,
+              centroids: commuteCentroids,
+              survey: commuteSurvey,
+            }
+          : undefined;
       state.sourcesDoc = renderSourcesDoc({
         districtsFile,
         historyFile,
         policyTrackFile,
+        commute,
         rentReferences: state.rentReferences,
         mrtBorderNotes: state.mrtBorderNotes,
         mrtComparableNotes: state.mrtComparableNotes,

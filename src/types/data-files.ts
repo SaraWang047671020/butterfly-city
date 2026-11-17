@@ -109,6 +109,12 @@ export interface DistrictsFile {
   readonly methods: readonly MethodEntry[];
 }
 
+/** public/data/commute-matrix.json: minutes[i][j] is the time from codes[i] to codes[j]. */
+export interface CommuteMatrixFile {
+  readonly codes: readonly DistrictCode[]; // 41, ascending
+  readonly minutes: readonly (readonly number[])[]; // 41 x 41, diagonal 0, one decimal
+}
+
 export type PolicyToolId = 'socialHousing' | 'sublease' | 'rentSubsidy' | 'holdingTax' | 'commuterPass';
 
 export const POLICY_TOOL_IDS = [

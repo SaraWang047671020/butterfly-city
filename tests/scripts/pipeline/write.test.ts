@@ -9,8 +9,9 @@ const D = path.resolve('/virtual/out');
 const P = (name: string): string => path.join(D, name);
 const writes: PlannedWrite[] = [
   { path: P('districts.json'), text: 'new-districts\n' },
-  { path: P('history.json'), text: 'new-history ✓\n' },
+  { path: P('history.json'), text: 'new-history ?n' },
   { path: P('policy-track.json'), text: 'new-policy\n' },
+  { path: P('commute-matrix.json'), text: 'new-commute\n' },
   { path: P('SOURCES.md'), text: 'new-sources\r\n' },
 ];
 const old = { [P('districts.json')]: 'old-d', [P('policy-track.json')]: 'old-p' };
@@ -72,23 +73,31 @@ describe('writeAll', () => {
 });
 
 describe('writeStep', () => {
-  it('requires the three JSON files and plans four writes in order', () => {
+  it('requires the four JSON files and plans five writes in order', () => {
     const state = createState();
     expect(() => planWrites(state)).toThrow(/districts/);
     state.districtsFile = { a: 1 } as never;
     state.historyFile = { b: 2 } as never;
     state.policyTrackFile = { c: 3 } as never;
-    expect(planWrites(state).map((w) => path.basename(w.path))).toEqual(['districts.json', 'history.json', 'policy-track.json']);
+    expect(() => planWrites(state)).toThrow(/commute-matrix/);
+    state.commuteMatrix = { d: 4 } as never;
+    expect(planWrites(state).map((w) => path.basename(w.path))).toEqual([
+      'districts.json',
+      'history.json',
+      'policy-track.json',
+      'commute-matrix.json',
+    ]);
     state.sourcesDoc = '# S\n';
     const planned = planWrites(state);
     expect(planned.map((w) => path.basename(w.path))).toEqual([
       'districts.json',
       'history.json',
       'policy-track.json',
+      'commute-matrix.json',
       'SOURCES.md',
     ]);
     const fake = new FakeWriteFs();
     writeStep(fake).run({} as never, state);
-    expect(fake.text(planned[3]?.path as string)).toBe('# S\n');
+    expect(fake.text(planned[4]?.path as string)).toBe('# S\n');
   });
 });

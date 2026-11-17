@@ -5,13 +5,13 @@ import { summarizePolicyTrack } from '../../../scripts/pipeline/policy-file.ts';
 import { MemoryRawReader } from '../../../scripts/pipeline/raw-reader.ts';
 import { createDefaultSteps, runPipeline, type Step } from '../../../scripts/pipeline/run.ts';
 import { serializeJson } from '../../../scripts/pipeline/serialize.ts';
-import type { DistrictsFile, HistoryFile, PolicyTrackFile } from '../../../src/types/data-files.ts';
-import { validContext, validDistrictsFile, validHistoryFile, validPolicyTrackFile } from '../../data/helpers.ts';
+import type { CommuteMatrixFile, DistrictsFile, HistoryFile, PolicyTrackFile } from '../../../src/types/data-files.ts';
+import { DISTRICT_CODES, validContext, validDistrictsFile, validHistoryFile, validPolicyTrackFile } from '../../data/helpers.ts';
 import { FakeWriteFs } from './helpers-write.ts';
 
 const NAMES = [
   'preflight', 'census-check', 'districts', 'population', 'migration', 'income', 'sale-price', 'price-to-income', 'rent',
-  'mrt', 'social-housing', 'policy-track', 'history-file', 'policy-file', 'network', 'fare-slope', 'validate', 'sources-doc', 'banned-terms', 'write',
+  'mrt', 'social-housing', 'policy-track', 'history-file', 'policy-file', 'network', 'fare-slope', 'commute-matrix', 'validate', 'sources-doc', 'banned-terms', 'write',
 ];
 
 /** Text of the written file whose path ends with the given name. */
@@ -25,7 +25,12 @@ function allCalls(fake: FakeWriteFs): number {
 }
 
 /** A stub that fills the three files in the state, then the real validate and write steps follow. */
-function setup(files: { districts: unknown; history: unknown; policy: unknown }, extra: Step[] = []) {
+function validCommuteFile(): CommuteMatrixFile {
+  const codes = [...DISTRICT_CODES].sort();
+  return { codes, minutes: codes.map((_, i) => codes.map((__, j) => (i === j ? 0 : 10))) };
+}
+
+function setup(files: { districts: unknown; history: unknown; policy: unknown; commute?: unknown }, extra: Step[] = []) {
   const fake = new FakeWriteFs();
   const all = createDefaultSteps({ writeFs: fake, validationContext: validContext() });
   const fill: Step = {
@@ -34,6 +39,7 @@ function setup(files: { districts: unknown; history: unknown; policy: unknown },
       state.districtsFile = files.districts as DistrictsFile;
       state.historyFile = files.history as HistoryFile;
       state.policyTrackFile = files.policy as PolicyTrackFile;
+      state.commuteMatrix = (files.commute ?? validCommuteFile()) as CommuteMatrixFile;
       state.summaries.push(...summarizeHistory(state.historyFile), ...summarizePolicyTrack(state.policyTrackFile));
       state.notes.push('note A', 'note B', 'note A');
     },
@@ -67,7 +73,7 @@ describe('default steps', () => {
 });
 
 describe('validate and write', () => {
-  it('prints one summary line per indicator and policy series, then the notes once, and writes the three files', () => {
+  it('prints one summary line per indicator and policy series, then the notes once, and writes the four files', () => {
     const districts = validDistrictsFile();
     const history = validHistoryFile();
     const policy = validPolicyTrackFile();
@@ -82,6 +88,7 @@ describe('validate and write', () => {
     expect(logger.lines).toContain('commuterPassesSold: 88 values, 0 estimated');
     expect(logger.lines.slice(-2)).toEqual(['note A', 'note B']);
     expect(logger.lines.length).toBe(3 + 10 + 2);
+    expect(written(fake, 'commute-matrix.json')).toBe(serializeJson(validCommuteFile()));
     expect(written(fake, 'districts.json')).toBe(serializeJson(districts));
     expect(written(fake, 'history.json')).toBe(serializeJson(history));
     expect(written(fake, 'policy-track.json')).toBe(serializeJson(policy));

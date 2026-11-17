@@ -10,13 +10,15 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import type { DistrictsFile, HistoryFile, PolicyTrackFile } from '../../src/types/data-files.ts';
+import type { CommuteMatrixFile, DistrictsFile, HistoryFile, PolicyTrackFile } from '../../src/types/data-files.ts';
 import type { ValidationContext } from '../../src/data/validate.ts';
 import { PUBLIC_DATA, ROOT } from '../lib/paths.ts';
 import { bannedTermsStep } from './banned-terms.ts';
 import { createContext, type BuildContext, type Logger } from './context.ts';
+import type { CentroidResult } from './commute/centroids.ts';
 import type { RailNetwork } from './commute/network.ts';
-import { fareSlopeStep, networkStep, type FareSlopeResult } from './commute/step.ts';
+import { commuteMatrixStep, fareSlopeStep, networkStep, type FareSlopeResult } from './commute/step.ts';
+import type { SurveyCheckResult } from './commute/survey-check.ts';
 import { districtsStep } from './districts-file.ts';
 import { censusCheckStep } from './params/census-employees.ts';
 import { PipelineError } from './errors.ts';
@@ -101,6 +103,12 @@ export interface BuildState {
   network?: RailNetwork;
   /** Set by the fare slope step (task 23.6): paired fares, slopes and the commute cost entry. */
   fareSlope?: FareSlopeResult;
+  /** Set by the commute matrix step (task 24.4): job shares, the matrix file content and the survey check. */
+  jobShare?: ReadonlyMap<string, number>;
+  commuteMatrix?: CommuteMatrixFile;
+  commuteSurvey?: SurveyCheckResult;
+  /** Set by the commute matrix step (task 24.5): the population-weighted centroids, for SOURCES.md. */
+  commuteCentroids?: CentroidResult;
   /** Set by the SOURCES.md step (task 15.2): the full text of data/SOURCES.md. */
   sourcesDoc?: string;
   /** Lines about the policy track, e.g. social housing starts excluded from it (also added to `notes`). */
@@ -188,6 +196,7 @@ export function createDefaultSteps(options: DefaultStepsOptions = {}): readonly 
     policyFileStep(),
     networkStep(options.committedReader),
     fareSlopeStep(options.committedReader),
+    commuteMatrixStep(options.committedReader),
     validateStep(options.validationContext),
     sourcesDocStep(options.committedReader),
     bannedTermsStep(options.committedReader),
@@ -243,6 +252,9 @@ export function runPipeline(options: RunOptions = {}): number {
   }
 
   for (const summary of state.summaries) logger.info(formatSummaryLine(summary));
+  if (state.commuteSurvey !== undefined) {
+    logger.info(`commute-matrix: 41 x 41 minutes, mean modelled commute time ${state.commuteSurvey.modelled.toFixed(1)} min`);
+  }
   // The social housing and policy track steps can report the same exclusion; print each note once.
   for (const note of new Set(state.notes)) logger.info(note);
   return 0;

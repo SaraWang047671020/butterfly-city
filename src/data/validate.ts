@@ -7,7 +7,7 @@ import type { IndicatorKind } from '../types/data-files.ts';
 
 /** Structurally the same as `ValidationIssue` in scripts/pipeline/errors.ts. */
 export interface ValidationError {
-  readonly file: 'districts.json' | 'history.json' | 'policy-track.json';
+  readonly file: 'districts.json' | 'history.json' | 'policy-track.json' | 'commute-matrix.json';
   readonly path: string; // JSON path, e.g. $.indicators[2].series["65000200"][17].value
   readonly rule: string;
   readonly message: string;
@@ -543,6 +543,53 @@ export function validateHistoryFile(x: unknown, ctx: ValidationContext): Validat
     const sourceIds = checkSources(c, x);
     const methods = checkMethods(c, x, sourceIds);
     checkSeriesList(c, x, 'indicators', ctx, sourceIds, methods);
+  } catch (e) {
+    c.add('$', 'type', `validator could not read the file: ${e instanceof Error ? e.message : String(e)}`);
+  }
+  return c.errors;
+}
+
+export function validateCommuteMatrix(x: unknown, ctx: ValidationContext): ValidationError[] {
+  const c = new Checker('commute-matrix.json');
+  try {
+    if (!isObj(x)) {
+      c.add('$', 'type', `expected an object, found ${describe(x)}`);
+      return c.errors;
+    }
+    for (const k of Object.keys(x)) {
+      if (k !== 'codes' && k !== 'minutes') c.add(sub('$', k), 'unknown-field', `unexpected field "${k}"`);
+    }
+    const codes = c.arr(x, '$', 'codes');
+    const rows = c.arr(x, '$', 'minutes');
+    if (codes !== undefined) {
+      const expected = [...ctx.districtCodes].sort();
+      const ok = codes.length === expected.length && codes.every((v, i) => v === expected[i]);
+      if (!ok) c.add('$.codes', 'codes', `expected the ${expected.length} district codes in ascending order`);
+    }
+    if (rows !== undefined) {
+      const n = ctx.districtCodes.length;
+      if (rows.length !== n) c.add('$.minutes', 'shape', `expected ${n} rows, found ${rows.length}`);
+      rows.forEach((row, i) => {
+        const rp = at('$.minutes', i);
+        if (!Array.isArray(row)) {
+          c.add(rp, 'type', `expected an array, found ${describe(row)}`);
+          return;
+        }
+        if (row.length !== n) c.add(rp, 'shape', `expected ${n} values, found ${row.length}`);
+        row.forEach((v, j) => {
+          const p = at(rp, j);
+          if (typeof v !== 'number' || !Number.isFinite(v)) {
+            c.add(p, 'type', `expected a finite number, found ${describe(v)}`);
+          } else if (v < 0) {
+            c.add(p, 'range', `value ${v} is negative`);
+          } else if (i === j && v !== 0) {
+            c.add(p, 'diagonal', `diagonal value must be 0, found ${v}`);
+          } else if (roundTo(v, 1) !== v) {
+            c.add(p, 'decimals', `value ${v} has more than 1 decimal`);
+          }
+        });
+      });
+    }
   } catch (e) {
     c.add('$', 'type', `validator could not read the file: ${e instanceof Error ? e.message : String(e)}`);
   }

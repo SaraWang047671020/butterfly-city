@@ -4,6 +4,7 @@
  * after this step, so nothing is written when validation fails.
  */
 import {
+  validateCommuteMatrix,
   validateDistrictsFile,
   validateHistoryFile,
   validatePolicyTrackFile,
@@ -38,7 +39,13 @@ export function validateStep(
       if (state.districtsFile === undefined) missing.push('districts file: run the districts step first');
       if (state.historyFile === undefined) missing.push('history file: run the history file step first');
       if (state.policyTrackFile === undefined) missing.push('policy-track file: run the policy file step first');
-      if (state.districtsFile === undefined || state.historyFile === undefined || state.policyTrackFile === undefined) {
+      if (state.commuteMatrix === undefined) missing.push('commute matrix: run the commute matrix step first');
+      if (
+        state.districtsFile === undefined ||
+        state.historyFile === undefined ||
+        state.policyTrackFile === undefined ||
+        state.commuteMatrix === undefined
+      ) {
         throw new DataError('missing-step-output', 'validation input', missing);
       }
       const vctx = override ?? buildValidationContext(ctx);
@@ -46,6 +53,7 @@ export function validateStep(
         ...validateDistrictsFile(state.districtsFile, vctx),
         ...validateHistoryFile(state.historyFile, vctx),
         ...validatePolicyTrackFile(state.policyTrackFile, vctx),
+        ...validateCommuteMatrix(state.commuteMatrix, vctx),
       ];
       // A file that cannot be serialized (for example a non-finite number) is already reported by the
       // validators above, so it is left out of the scan instead of throwing here.
@@ -54,6 +62,7 @@ export function validateStep(
         ['public/data/districts.json', state.districtsFile],
         ['public/data/history.json', state.historyFile],
         ['public/data/policy-track.json', state.policyTrackFile],
+        ['public/data/commute-matrix.json', state.commuteMatrix],
       ];
       for (const [p, value] of named) {
         try {

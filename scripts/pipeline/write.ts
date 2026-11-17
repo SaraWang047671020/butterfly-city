@@ -111,10 +111,12 @@ export function planWrites(state: BuildState): PlannedWrite[] {
   if (state.districtsFile === undefined) throw new Error('write: districts file is missing');
   if (state.historyFile === undefined) throw new Error('write: history file is missing');
   if (state.policyTrackFile === undefined) throw new Error('write: policy-track file is missing');
+  if (state.commuteMatrix === undefined) throw new Error('write: commute-matrix file is missing');
   const writes: PlannedWrite[] = [
     { path: path.join(PUBLIC_DATA, 'districts.json'), text: serializeJson(state.districtsFile) },
     { path: path.join(PUBLIC_DATA, 'history.json'), text: serializeJson(state.historyFile) },
     { path: path.join(PUBLIC_DATA, 'policy-track.json'), text: serializeJson(state.policyTrackFile) },
+    { path: path.join(PUBLIC_DATA, 'commute-matrix.json'), text: serializeJson(state.commuteMatrix) },
   ];
   if (state.sourcesDoc !== undefined) writes.push({ path: SOURCES_FILE, text: state.sourcesDoc });
   return writes;

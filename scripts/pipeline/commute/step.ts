@@ -8,7 +8,7 @@
 import type { ScalarParameter } from '../../../src/types/simulation.ts';
 import type { BuildContext } from '../context.ts';
 import { DataError } from '../errors.ts';
-import type { CommittedReader } from '../policy/step.ts';
+import { fsCommittedReader, type CommittedReader } from '../policy/step.ts';
 import type { BuildState, Step } from '../run.ts';
 import {
   FARE_FILES,
@@ -23,6 +23,12 @@ import {
 } from './fares.ts';
 import { defaultWaitStatement, loadRailNetwork } from './network.ts';
 import { readCommuteParams, type CommuteParams } from './params.ts';
+import { loadVillageCentroids } from './centroids.ts';
+import { buildCommuteFile } from './commute-file.ts';
+import { buildCommuteMatrix, loadLrtStationCoords, modelConstants, type LonLat } from './model.ts';
+import { population2025Mean, surveyCheck, surveyCheckLine } from './survey-check.ts';
+import { jobShares } from '../params/job-share.ts';
+import { CENSUS_EMPLOYEES_TABLE, parseCensusEmployees } from '../params/census-employees.ts';
 import { loadTimetableModel } from './timetable.ts';
 
 /** Result of the fare slope step, kept in `BuildState.fareSlope`. */
@@ -73,6 +79,45 @@ export function formatFareLine(result: FareSlopeResult): string {
     `slope all ${slopes.allSlope.toFixed(4)}, uncapped ${slopes.uncappedSlope.toFixed(4)} TWD/min/trip; ` +
     `${entry.value.toFixed(2)} (low ${range?.low.toFixed(2) ?? 'n/a'}, high ${range?.high.toFixed(2) ?? 'n/a'}) TWD/min/month`
   );
+}
+
+/**
+ * Builds the commute matrix (Requirements 24.1, 24.8): village centroids, the model, the file content and the
+ * survey check. The survey check is only printed; it never changes the matrix or the exit code.
+ */
+export function commuteMatrixStep(readCommitted: CommittedReader = fsCommittedReader): Step {
+  return {
+    name: 'commute-matrix',
+    run(ctx: BuildContext, state: BuildState) {
+      const { network, shapes, population } = state;
+      if (network === undefined) throw new DataError('missing-step-output', 'rail network', ['run the network step first']);
+      if (shapes === undefined) throw new DataError('missing-step-output', 'district shapes', ['run the districts step first']);
+      if (population === undefined) throw new DataError('missing-step-output', 'population', ['run the population step first']);
+      const params = readCommuteParams(readCommitted);
+      const centroids = loadVillageCentroids(ctx.reader, shapes);
+      const jobShare = jobShares(parseCensusEmployees(readCommitted(CENSUS_EMPLOYEES_TABLE)));
+      const result = buildCommuteMatrix({
+        districts: ctx.districts,
+        centroids: new Map([...centroids.districts].map(([code, c]) => [code, c.weighted as LonLat])),
+        network,
+        constants: modelConstants(params),
+        lrtCoords: loadLrtStationCoords(ctx.reader),
+      });
+      const cityOf = new Map(ctx.districts.map((d) => [d.code, d.city]));
+      const survey = surveyCheck({
+        codes: result.codes,
+        minutes: result.minutes,
+        cityOf,
+        population: population2025Mean(population),
+        jobShare,
+      });
+      state.jobShare = jobShare;
+      state.commuteMatrix = buildCommuteFile(result);
+      state.commuteSurvey = survey;
+      state.commuteCentroids = centroids;
+      ctx.logger.info(surveyCheckLine(survey));
+    },
+  };
 }
 
 export function fareSlopeStep(readCommitted?: CommittedReader): Step {
