@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "notes": [
+    "Draft content for the Why? view. Numbers are never typed here: values, units, citations and URLs come from params.json through scenarioTable (game-ui Requirement 20.2).",
+    "Fixed sentences already set by the game-ui spec (Requirements 5.4, 5.7, 20.3 to 20.6) are not repeated here.",
+    "Each parameter text covers the same points for both ends of its range (neutrality.md: same detail for benefits and costs)."
+  ],
+  "rangeView": {
+    "intro": "This value depends on a few numbers that studies do not agree on. Below are the assumptions that give the lowest and the highest result.",
+    "lowestHeading": "Lowest result",
+    "highestHeading": "Highest result",
+    "assumptionLine": "{displayName}: {value} {unit}",
+    "sourceLine": "Source: {citation}",
+    "readMore": "What does this assumption mean?"
+  },
+  "parameters": {
+    "socialHousing.rentPerUnit": {
+      "displayName": "Effect of new social housing on nearby rents",
+      "whatItIs": "When a social housing project opens, the rents of homes around it can change. This number is the change in market rent per extra unit of social housing in the district.",
+      "whyItVaries": "The main study, from the United States, found that new subsidised housing raised nearby home prices in lower-income areas and lowered them in higher-income areas. Evidence for Taiwan is limited, so the model runs with a fall, no change and a rise.",
+      "ifLower": "At the lower end, nearby market rents fall a little. Renters outside social housing in the district pay slightly less.",
+      "ifHigher": "At the higher end, nearby market rents rise a little. Renters outside social housing pay slightly more, while owners of nearby homes see their value rise.",
+      "limits": "The study measured prices, not rents, and effects within about 0.1 mile of a project. The model spreads the effect over the whole district."
+    },
+    "socialHousing.rentRatio": {
+      "displayName": "Social housing rent as a share of market rent",
+      "whatItIs": "Households in social housing pay a rent set below the market. This number is that rent as a share of the market rent in the district.",
+      "whyItVaries": "Each city sets social housing rents, and the discount can differ by project and by the income of the tenant household, so tenants in the same city can pay different shares.",
+      "ifLower": "At the lower end, tenants pay a smaller share of market rent and their rent burden drops more. The city collects less rent from each unit.",
+      "ifHigher": "At the higher end, tenants pay closer to market rent and their rent burden drops less. The city collects more rent from each unit.",
+      "limits": "The highest value has no separate study; it is the top of the published discount schedules."
+    },
+    "commuterPass.elasticity": {
+      "displayName": "How much MRT use responds to the pass price",
+      "whatItIs": "When a monthly pass gets cheaper, some people ride more. This number is the percentage change in trips for a 1% change in price.",
+      "whyItVaries": "Transport studies from many cities give values in a range. A common rule of thumb is -0.3; short-term effects tend to be smaller than long-term ones.",
+      "ifLower": "At the stronger end, a cheaper pass brings more extra trips, and a more expensive pass loses more.",
+      "ifHigher": "At the weaker end, ridership changes little when the price changes, so a subsidy mainly lowers the cost for people who already ride.",
+      "limits": "The model applies one value to every district and every quarter, including the COVID-19 period."
+    },
+    "rentSubsidy.passThrough": {
+      "displayName": "Share of rent subsidy that ends up as higher rent",
+      "whatItIs": "When tenants receive a rent subsidy, landlords may raise rents. This number is the share of each subsidy dollar that ends up as higher rent instead of lower costs for the tenant.",
+      "whyItVaries": "Studies from the United States, the United Kingdom and France found very different shares, depending on how tight the rental market was and how the subsidy was paid.",
+      "ifLower": "At the lower end, most of the subsidy stays with tenants and their rent burden drops more.",
+      "ifHigher": "At the higher end, most of the subsidy goes to landlords as higher rent and the tenants' burden drops less.",
+      "limits": "The model applies this only to the rent of households that receive the subsidy. A possible effect on the rent of other tenants is not modelled."
+    },
+    "ghost.commuteThreshold": {
+      "displayName": "Commute time counted as too long",
+      "whatItIs": "A resident is counted as at risk when the one-way trip to work takes longer than this many minutes.",
+      "whyItVaries": "A survey in Taiwan found that many commuters accept a one-way trip of up to about 45 minutes; 60 minutes is also widely used as a line. The model runs with both.",
+      "ifLower": "With a lower line, more residents count as having a long commute, and more ghosts appear in outer districts.",
+      "ifHigher": "With a higher line, fewer residents count as having a long commute, and fewer ghosts appear.",
+      "limits": "The line is a survey answer about what people accept, not a measured health or income effect."
+    },
+    "ghost.shareCommuteWithin": {
+      "displayName": "Share of workers whose commute is under the line",
+      "whatItIs": "For each district, the share of employed residents whose trip to work is shorter than the commute line. It is computed from the 2020 census and the model's commute times.",
+      "whyItVaries": "It changes with the commute line above: a lower line leaves fewer workers under it.",
+      "ifLower": "A lower share means more workers in the district have a long commute.",
+      "ifHigher": "A higher share means fewer workers in the district have a long commute.",
+      "limits": "Commute times come from one fixed 2025 rail network and straight-line distances, not measured door-to-door trips."
+    },
+    "migration.commuteCostPerMinute": {
+      "displayName": "Money cost of each extra minute of commuting",
+      "whatItIs": "When people choose where to live, a longer commute can cost more money each month. This number is that cost per extra minute, used when the model decides where moving households go.",
+      "whyItVaries": "For riders without a monthly pass, MRT fares rise with distance; the model takes the fare per minute from the Taipei Metro fare table. For riders with a flat-price monthly pass, an extra minute costs nothing.",
+      "ifLower": "At the lower end (zero), the pass price has no effect on where people move.",
+      "ifHigher": "At the higher end, cheaper passes make farther districts more attractive to people who move, and more expensive passes make them less attractive.",
+      "limits": "How strongly money cost affects moving choices is an assumption: no data on moves between districts in Taipei and New Taipei was found."
+    }
+  },
+  "causes": {
+    "notes": "For the cause breakdown section, shown as 'coming soon' in this version. One line per Cause kind and Ghost group.",
+    "baseline": "Real data for this quarter: {value}.",
+    "tool": "Your change to {toolName}: {value}.",
+    "event": "{eventTitle}: shown for context. Its effect is already in the real data and is not added again.",
+    "migration": "People moving between districts after your changes: {value}.",
+    "bound": "Adjustment to keep the value within possible limits (for example a share between 0 and 100%): {value}.",
+    "ghostGroups": {
+      "housed": "Renters who move into extra social housing and pay a lower rent: {value} ghosts.",
+      "spillover": "Renters whose market rent changes near extra social housing: {value} ghosts.",
+      "subsidy": "Households whose rent subsidy changed: {value} ghosts.",
+      "ghost-commute": "Residents whose commute is above the line: {value} ghosts.",
+      "ghost-overlap": "Residents counted for both rent and commute, counted once: {value} ghosts.",
+      "ghost-displaced": "Residents who moved out because rent was above the line: {value} ghosts."
+    }
+  },
+  "tools": {
+    "socialHousing": "social housing construction",
+    "rentSubsidy": "rent subsidy",
+    "commuterPass": "commuter pass subsidy",
+    "sublease": "sublease and rental management",
+    "holdingTax": "holding tax"
+  }
+}

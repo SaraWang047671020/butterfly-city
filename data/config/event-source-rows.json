@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "rows": [
+    {
+      "id": "rate-cut-2015-09-25",
+      "section": "1a",
+      "notesDate": "2015-09-25",
+      "role": "narrative"
+    },
+    {
+      "id": "rate-cut-2015-12-18",
+      "section": "1a",
+      "notesDate": "2015-12-18",
+      "role": "narrative"
+    },
+    {
+      "id": "rate-cut-2016-03-25",
+      "section": "1a",
+      "notesDate": "2016-03-25",
+      "role": "narrative"
+    },
+    {
+      "id": "rate-cut-2016-07-01",
+      "section": "1a",
+      "notesDate": "2016-07-01",
+      "role": "narrative"
+    },
+    {
+      "id": "rate-cut-2020-03-20",
+      "section": "1a",
+      "notesDate": "2020-03-20",
+      "role": "narrative"
+    },
+    {
+      "id": "rate-hike-2022-03-18",
+      "section": "1a",
+      "notesDate": "2022-03-18",
+      "role": "narrative"
+    },
+    {
+      "id": "rate-hike-2022-06-17",
+      "section": "1a",
+      "notesDate": "2022-06-17",
+      "role": "narrative"
+    },
+    {
+      "id": "rate-hike-2022-09-23",
+      "section": "1a",
+      "notesDate": "2022-09-23",
+      "role": "narrative"
+    },
+    {
+      "id": "rate-hike-2022-12-16",
+      "section": "1a",
+      "notesDate": "2022-12-16",
+      "role": "narrative"
+    },
+    {
+      "id": "rate-hike-2023-03-24",
+      "section": "1a",
+      "notesDate": "2023-03-24",
+      "role": "narrative"
+    },
+    {
+      "id": "rate-hike-2024-03-22",
+      "section": "1a",
+      "notesDate": "2024-03-22",
+      "role": "narrative"
+    },
+    {
+      "id": "credit-control-wave-1",
+      "section": "1b",
+      "notesDate": "2020-12-07",
+      "role": "narrative"
+    },
+    {
+      "id": "credit-control-wave-2",
+      "section": "1b",
+      "notesDate": "2021-03-18",
+      "role": "narrative"
+    },
+    {
+      "id": "credit-control-wave-3",
+      "section": "1b",
+      "notesDate": "2021-09-23",
+      "role": "narrative"
+    },
+    {
+      "id": "credit-control-wave-4",
+      "section": "1b",
+      "notesDate": "2021-12-16",
+      "role": "narrative"
+    },
+    {
+      "id": "credit-control-wave-5",
+      "section": "1b",
+      "notesDate": "2023-06-15",
+      "role": "narrative"
+    },
+    {
+      "id": "credit-control-wave-6",
+      "section": "1b",
+      "notesDate": "2024-06-13",
+      "role": "narrative"
+    },
+    {
+      "id": "credit-control-wave-7",
+      "section": "1b",
+      "notesDate": "2024-09-19",
+      "role": "narrative"
+    },
+    {
+      "id": "house-land-tax-1-0",
+      "section": "1c",
+      "notesDate": "2016-01-01",
+      "role": "narrative"
+    },
+    {
+      "id": "house-land-tax-2-0",
+      "section": "1c",
+      "notesDate": "2021-07-01",
+      "role": "narrative"
+    },
+    {
+      "id": "land-rights-act-amendment-2023",
+      "section": "1c",
+      "notesDate": "2023-07-01",
+      "role": "narrative"
+    },
+    {
+      "id": "holding-tax-2-0",
+      "section": "1c",
+      "notesDate": "2024-07-01",
+      "role": "baseline"
+    },
+    {
+      "id": "sublease-pilot-2017",
+      "section": "1d",
+      "notesDate": "2017-04-18",
+      "role": "baseline"
+    },
+    {
+      "id": "commuter-pass-2018",
+      "section": "1d",
+      "notesDate": "2018-04-16",
+      "role": "baseline"
+    },
+    {
+      "id": "rent-subsidy-expansion-2022",
+      "section": "1d",
+      "notesDate": "2022-07-01",
+      "role": "baseline"
+    },
+    {
+      "id": "tpass-2023",
+      "section": "1d",
+      "notesDate": "2023-07-01",
+      "role": "baseline"
+    },
+    {
+      "id": "new-youth-housing-loan",
+      "section": "1d",
+      "notesDate": "2023-08-01",
+      "role": "narrative"
+    },
+    {
+      "id": "bank-mortgage-limits-2024",
+      "section": "1d",
+      "notesDate": "2024-08",
+      "role": "narrative"
+    },
+    {
+      "id": "airport-mrt-opens",
+      "section": "1e",
+      "notesDate": "2017-03-02",
+      "role": "baseline"
+    },
+    {
+      "id": "danhai-lrt-opens",
+      "section": "1e",
+      "notesDate": "2018-12-24",
+      "role": "baseline"
+    },
+    {
+      "id": "circular-line-opens",
+      "section": "1e",
+      "notesDate": "2020-01-31",
+      "role": "baseline"
+    },
+    {
+      "id": "covid-first-cases",
+      "section": "1e",
+      "notesDate": "2020-01-21",
+      "role": "narrative"
+    },
+    {
+      "id": "covid-level-3-alert",
+      "section": "1e",
+      "notesDate": "2021-05-15",
+      "role": "narrative"
+    },
+    {
+      "id": "ankeng-lrt-opens",
+      "section": "1e",
+      "notesDate": "2023-02-10",
+      "role": "baseline"
+    },
+    {
+      "id": "hualien-earthquake-2024",
+      "section": "1e",
+      "notesDate": "2024-04-03",
+      "role": "narrative"
+    }
+  ]
+}

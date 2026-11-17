@@ -21,16 +21,16 @@ Exact dates must be taken from the Central Bank file already downloaded (`webF1.
 
 | Effective date | Change | Discount rate after | Status |
 |---|---|---|---|
-| 2015-09-25 | cut 0.125 | 1.750% | check against `webF1.csv` |
-| 2015-12-18 | cut 0.125 | 1.625% | check |
-| 2016-03-25 | cut 0.125 | 1.500% | check |
-| 2016-07-01 | cut 0.125 | 1.375% | check |
-| 2020-03-20 | cut 0.25 (COVID) | 1.125% | check |
-| 2022-03-18 | hike 0.25 | 1.375% | check |
-| 2022-06-17 | hike 0.125 | 1.500% | check |
-| 2022-09-23 | hike 0.125 | 1.625% | check |
-| 2022-12-16 | hike 0.125 | 1.750% | check |
-| 2023-03-24 | hike 0.125 | 1.875% | check |
+| 2015-09-25 | cut 0.125 | 1.750% | verified against `cbc-webF1-discount-rate.csv` (2026-11-17) |
+| 2015-12-18 | cut 0.125 | 1.625% | verified (file) |
+| 2016-03-25 | cut 0.125 | 1.500% | verified (file) |
+| 2016-07-01 | cut 0.125 | 1.375% | verified (file) |
+| 2020-03-20 | cut 0.125 (COVID) | 1.250% | verified (file); corrected 2026-11-17, earlier draft said cut 0.25 to 1.125% |
+| 2022-03-18 | hike 0.125 | 1.375% | verified (file); corrected 2026-11-17, earlier draft said hike 0.25 |
+| 2022-06-17 | hike 0.125 | 1.500% | verified (file) |
+| 2022-09-23 | hike 0.125 | 1.625% | verified (file) |
+| 2022-12-16 | hike 0.125 | 1.750% | verified (file) |
+| 2023-03-24 | hike 0.125 | 1.875% | verified (file) |
 | 2024-03-22 | hike 0.125 | 2.000% | verified (`DATA-CHECK.md` item 6) |
 
 Suggested role: **modifier**. While rates are rising, a district with more social housing or more subsidized renters than reality is less exposed to the rent increase. Needs a cited modifier parameter (gap, see 2f).
@@ -39,10 +39,10 @@ Suggested role: **modifier**. While rates are rising, a district with more socia
 
 | Wave | Announced | Main content | Status |
 |---|---|---|---|
-| 1 | 2020-12-08 (some reports: 12-03) | Limits on corporate buyers, third-plus homes, land loans | secondary; confirm date in CBC press release |
-| 2 | 2021-03-18 | Tighter loan-to-value for corporate buyers, third-plus homes, luxury homes | secondary |
-| 3 | 2021 Q3 board meeting (2021-09-23) | Further tightening | check |
-| 4 | 2021-12-16 | Land loans must commit to construction; further tightening | check |
+| 1 | 2020-12-07 (effective 12-08; corrected 2026-11-17, earlier draft said 12-08) | Corporate buyers: first home max LTV 60%, further homes 50%, no grace period; third-plus homes 60%; land loans 65% | verified ([CBC press release](https://www.cbc.gov.tw/tw/cp-302-124848-b6248-1.html)) |
+| 2 | 2021-03-18 (effective 03-19) | Corporate buyers 40%; third home 55%; fourth-plus homes 50%; high-value homes 55% | verified ([CBC press release](https://www.cbc.gov.tw/tw/cp-302-132477-e11d9-1.html)) |
+| 3 | 2021-09-23 (effective 09-24) | No grace period on second-home loans in the six special municipalities and Hsinchu; land loans 60% | verified ([CBC press release](https://www.cbc.gov.tw/tw/cp-357-141562-49221-1.html)) |
+| 4 | 2021-12-16 (effective 12-17) | High-value and third-plus homes 40%; land loans 50% with a commitment to start construction | verified ([CBC press release](https://www.cbc.gov.tw/tw/cp-302-145044-c2737-1.html)) |
 | 5 | 2023-06-15 (effective 06-16) | Second home in six special municipalities and Hsinchu: max LTV 70% | verified ([TechNews](https://finance.technews.tw/2023/06/16/the-fifth-wave-of-housing-market-regulation/)) |
 | 6 | 2024-06-13 | Second home in special areas: max LTV 60% | verified ([TechNews](https://finance.technews.tw/2024/07/26/the-housing-market-shows-no-signs-of-cooling-down/)) |
 | 7 | 2024-09-19 (effective 09-20) | Second home max LTV 50% nationwide; no grace period on first loan for existing owners; corporate, luxury and third-plus homes max 30% | verified ([CNA](https://cna.com.tw/news/afe/202410090292.aspx), [CTEE](https://www.ctee.com.tw/news/20240919701806-430301)) |
@@ -53,8 +53,8 @@ Suggested role: **narrative only** in the MVP (these act on buyers, not on the p
 
 | Date | Event | Status | Suggested role |
 |---|---|---|---|
-| 2016-01-01 | House and Land Consolidated Income Tax 1.0 takes effect | check (well known; cite MOF) | narrative |
-| 2021-07-01 | House and Land Consolidated Income Tax 2.0 (longer holding periods for lower rates) | check (cite MOF) | narrative |
+| 2016-01-01 | House and Land Consolidated Income Tax 1.0 takes effect | verified ([MOF history archive](https://museum.mof.gov.tw/singlehtml/2646203fe1924614b3df4c43bbde02a2?cntId=b7e0a498b02e498c93abd809f6c5a981)) | narrative |
+| 2021-07-01 | House and Land Consolidated Income Tax 2.0 (longer holding periods for lower rates) | verified ([MOF](https://www.mof.gov.tw/singlehtml/979b54e408fb499eae3c1d9efe978868?cntId=e8e486a87e6a4489adfb8bdbcb6f33cd)) | narrative |
 | 2023-07-01 | Equalization of Land Rights Act amendments: pre-sale contract resale ban, permit system for corporate home purchases, fines up to NT$50 million | verified ([LTN](https://ec.ltn.com.tw/article/breakingnews/4331743), [Business Weekly](https://www.businessweekly.com.tw/business/blog/3011349)) | narrative |
 | 2024-07-01 | Holding tax 2.0: non-owner-occupied residential rate range 1.5–3.6% → 2–4.8%, national aggregation of holdings; first bills May 2025 | verified ([cnyes](https://news.cnyes.com/news/id/5414648), [CTEE](https://ctee.com.tw/news/policy/924197.html)) | **this is the player's holding-tax tool**: real value in the policy track, not an event effect |
 
@@ -62,24 +62,24 @@ Suggested role: **narrative only** in the MVP (these act on buyers, not on the p
 
 | Date | Event | Status | Suggested role |
 |---|---|---|---|
-| 2017 | Social housing sublease and management (包租代管) pilot starts in the six special municipalities | secondary ([NLMA PDF](https://www.nlma.gov.tw/uploads/files/ff7affc3e0db7ba1b01b8dc7bca9e5d9.pdf)); exact start date: check | player tool (policy track) |
+| 2017-04-18 | Social housing sublease and management (包租代管) pilot approved by the Executive Yuan for the six special municipalities (10,000 homes over 3 years); all six had started by January 2018. Earlier draft gave only "2017" | verified ([MOI report to the Executive Yuan, 2018-06-21](https://www.ey.gov.tw/File/163B867C023309D1?A=C)); also [NLMA PDF](https://www.nlma.gov.tw/uploads/files/ff7affc3e0db7ba1b01b8dc7bca9e5d9.pdf) | player tool (policy track) |
 | 2018-04-16 | Taipei–New Taipei NT$1,280 30-day pass (MRT, city buses, first 30 min YouBike free) | verified ([NTPC Q&A PDF](https://www.traffic.ntpc.gov.tw/userfiles/1130901/files/1070315-%E5%AE%9A%E6%9C%9F%E7%A5%A8QA(%E4%BF%AE).pdf), [TVBS](https://news.tvbs.com.tw/life/1010600)) | player tool (commuter pass track) |
 | 2022-07-01 | NT$30 billion expanded central rent subsidy: applications open; target 500,000 households (from about 120,000); first payments October 2022; top-ups for ages 20–35 (×1.2), newlyweds (×1.3), families with children (×1.4–1.8) | verified ([TechNews](https://finance.technews.tw/2022/06/30/expanded-rental-subsidy-program/), [GVM](https://city.gvm.com.tw/article/88542)) | player tool (rent subsidy track) |
 | 2023-07-01 | TPASS Keelung–Taipei–New Taipei–Taoyuan NT$1,200 pass usable (sales from 06-15) | verified ([CNA](https://www.cna.com.tw/news/ahel/202306150164.aspx)) | commuter pass track (central); see open question 8 in the engine spec |
 | 2023-08-01 | New Youth Housing Loan (新青安): max loan NT$10 million, 40 years, 5-year grace period, subsidized rate 1.775% | verified ([GVM](https://www.gvm.com.tw/article/104998), [cnyes](https://m.cnyes.com/news/id/5659125)) | narrative (or modifier on sale prices if wanted later) |
-| 2024-08 | Banks tighten mortgage lending as real-estate loan concentration nears the legal cap (peak 37.61% at end of June 2024) | secondary ([UDN](https://money.udn.com/money/story/5613/9761283)); date of first bank actions: check | narrative |
+| 2024-08 | Central Bank asks banks to set their own targets for total real-estate lending; several banks limit new mortgage lending (real-estate loans 37.61% of total lending at end of June 2024) | verified, month only ([CBC report](https://www.cbc.gov.tw/dl-223320-cbe9df80e89d4cf49b52d17e1cec140b.html), [UDN](https://money.udn.com/money/story/5613/9761283)) | narrative |
 
 ### 1e. Shocks and rail openings
 
 | Date | Event | Status | Suggested role |
 |---|---|---|---|
-| 2017-03-02 | Taoyuan Airport MRT opens (stations in New Taipei: Sanchong, Xinzhuang, Taishan, Linkou) | check | baseline (commute matrix changes) |
-| 2018-12-24 | Danhai LRT first section opens (Tamsui) | check | baseline |
-| 2020-01-31 | MRT Circular Line first section opens (Xindian–Zhonghe–Banqiao–Xinzhuang) | check | baseline |
-| 2020-01 | First COVID-19 cases in Taiwan | check (CDC) | narrative |
-| 2021-05-15 | COVID-19 Level 3 alert in Taipei and New Taipei (nationwide 05-19; lowered 07-27) | check (CDC) | narrative; possible modifier on commuter pass effect (ridership collapsed) |
-| 2023-02-10 | Ankeng LRT opens (Xindian) | check | baseline |
-| 2024-04-03 | Hualien M7.2 earthquake, felt strongly in Taipei | check (CWA) | narrative |
+| 2017-03-02 | Taoyuan Airport MRT opens (stations in New Taipei: Sanchong, Xinzhuang, Taishan, Linkou) | verified ([Taoyuan Metro](https://www.tymetro.com.tw/tymetro-new/tw/_pages/news/show-343-31.html)) | baseline (commute matrix changes) |
+| 2018-12-24 | Danhai LRT first section opens (Tamsui; ceremony 12-23, passenger service from 12-24) | verified ([New Taipei Metro](https://ntmetro.com.tw/news/?id=794&mode=data&parent_id=10436&type_id=10449)) | baseline |
+| 2020-01-31 | MRT Circular Line first section opens (Xindian–Zhonghe–Banqiao–Xinzhuang) | verified ([New Taipei DORTS](https://www.dorts.ntpc.gov.tw/about/route/zj6Dd5ajdA1o)) | baseline |
+| 2020-01-21 | First COVID-19 case in Taiwan (earlier draft gave only "2020-01") | verified ([CDC](https://www.cdc.gov.tw/Bulletin/Detail/6oHuoqzW9e_onW0AaMEemg?typeid=9)) | narrative |
+| 2021-05-15 | COVID-19 Level 3 alert in Taipei and New Taipei (nationwide 05-19; lowered 07-27) | verified ([CDC 05-15](https://www.cdc.gov.tw/Bulletin/Detail/E7bi2j8UYj1Rmz73OPE7Yg?typeid=9), [05-19](https://www.cdc.gov.tw/Bulletin/Detail/abDtRS-xzztQeAchjX9fqw?typeid=9), [07-27](https://www.cdc.gov.tw/Bulletin/Detail/e0v8zImE3rGJ0072A86NHA?typeid=9)) | narrative; possible modifier on commuter pass effect (ridership collapsed) |
+| 2023-02-10 | Ankeng LRT opens (Xindian) | verified ([New Taipei Metro](https://www.ntmetro.com.tw/basic/?mode=detail&node=578)) | baseline |
+| 2024-04-03 | Hualien earthquake, magnitude 7.1 (CWA report No. 019; centred in Shoufeng; intensity 5- in Taipei and New Taipei). Corrected 2026-11-17, earlier draft said M7.2 | verified ([CWA](https://scweb.cwa.gov.tw/zh-tw/earthquake/details/2024040307580971019)) | narrative |
 
 ---
 
