@@ -12,6 +12,8 @@ import {
 import type { BuildContext } from './context.ts';
 import { DataError, ValidationFailedError, type ValidationIssue } from './errors.ts';
 import { INDICATOR_SPECS, POLICY_SERIES_SPECS } from './registry/indicators.ts';
+import { readRawTextFiles, readTdxSecrets, scanForCredentials, type ScanFile } from './credentials-scan.ts';
+import { serializeJson } from './serialize.ts';
 import type { BuildState, Step } from './run.ts';
 
 /** The expected sets: the 41 district codes, the 44 quarters, the indicator ids and the policy series ids. */
@@ -25,7 +27,10 @@ export function buildValidationContext(ctx: BuildContext): ValidationContext {
 }
 
 /** `override` replaces the context built from the registry; tests use it with synthetic files. */
-export function validateStep(override?: ValidationContext): Step {
+export function validateStep(
+  override?: ValidationContext,
+  envOverride?: Readonly<Record<string, string | undefined>>,
+): Step {
   return {
     name: 'validate',
     run(ctx: BuildContext, state: BuildState) {
@@ -42,6 +47,31 @@ export function validateStep(override?: ValidationContext): Step {
         ...validateHistoryFile(state.historyFile, vctx),
         ...validatePolicyTrackFile(state.policyTrackFile, vctx),
       ];
+      // A file that cannot be serialized (for example a non-finite number) is already reported by the
+      // validators above, so it is left out of the scan instead of throwing here.
+      const outputs: ScanFile[] = [];
+      const named: [string, unknown][] = [
+        ['public/data/districts.json', state.districtsFile],
+        ['public/data/history.json', state.historyFile],
+        ['public/data/policy-track.json', state.policyTrackFile],
+      ];
+      for (const [p, value] of named) {
+        try {
+          outputs.push({ path: p, text: serializeJson(value) });
+        } catch {
+          // reported by the validators
+        }
+      }
+      const env = envOverride ?? process.env;
+      const findings = scanForCredentials([...outputs, ...readRawTextFiles(ctx.reader)], readTdxSecrets(env));
+      for (const f of findings) {
+        errors.push({
+          file: f.path,
+          path: `line ${f.line}`,
+          rule: 'credential',
+          message: `contains a credential (${f.kind}); the value is not shown`,
+        });
+      }
       if (errors.length > 0) throw new ValidationFailedError(errors);
     },
   };

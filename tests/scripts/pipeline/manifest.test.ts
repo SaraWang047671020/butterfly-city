@@ -74,6 +74,10 @@ describe('preflight', () => {
       'mrt/taipei-133184-annual-station.csv': 'mrt',
       'mrt/daily/taipei-entries-2016-12.csv': 'mrt',
       'stations/tdx-station-NTMC.json': 'stations',
+      'stations/tdx-s2s-travel-time-NTMC.json': 'stations',
+      'stations/trtc-128417-transfer-walk.csv': 'stations',
+      'fares/tdx-metro-od-fare-NTALRT.json': 'fares',
+      'timetables/tdx-timetable-TRTC.json': 'timetables',
       'policy/housing/datagov-6742.csv': 'policy',
       'policy/housing/pip-e3010-6_1_3-taipei-newtaipei.json': 'policy',
       'social-housing/nlma-portal-GetScheduleData-A.json': 'social-housing',
@@ -136,6 +140,9 @@ describe('preflight', () => {
       'data/config/holding-tax-rates.csv',
       'data/config/commuter-pass-products.csv',
       'data/config/sublease-phases.csv',
+      'data/config/commute-params.json',
+      'data/config/census-employees-2021.csv',
+      'data/config/census-employees-2021-totals.csv',
     ]);
     const missing = findMissingInputs(new MemoryRawReader(completeFiles()), () => false);
     expect(missing.map((m) => m.path)).toEqual([...COMMITTED_TABLES]);
@@ -166,8 +173,8 @@ describe('preflight', () => {
       (i) => i.committed !== true && i.directory !== true,
     );
     // 2 boundaries; population: ODRP005 36, ODRP014 64, ODRP002 25, ODRP011 191, 2 annual;
-    // 11 income, 188 lvr, 1 rent, 2 macro, 25 mrt, 2 stations, 4 policy, 2 social housing.
+    // 11 income, 188 lvr, 1 rent, 2 macro, 25 mrt, 5 stations, 4 fares, 4 timetables, 4 policy, 2 social housing.
     const population = 36 + 64 + 25 + 191 + 2;
-    expect(raws.length).toBe(2 + population + 11 + 188 + 1 + 2 + 25 + 2 + 4 + 2);
+    expect(raws.length).toBe(2 + population + 11 + 188 + 1 + 2 + 25 + 5 + 4 + 4 + 4 + 2);
   });
 });

@@ -2,7 +2,7 @@
  * Metro and light-rail stations with coordinates, assigned to districts by point-in-polygon.
  *   - TDX (MOTC Transport Data eXchange) Rail/Metro/Station and S2STravelTime for TRTC (Taipei Metro)
  *     and NTMC (New Taipei Metro: Circular Line, Sanying Line). Anonymous access is rate-limited;
- *     if TDX_CLIENT_ID and TDX_CLIENT_SECRET are set, an access token is used instead.
+ *     if TDX_CLIENT_ID and TDX_CLIENT_SECRET are set, an access token (kept in memory only) is used instead.
  *   - NLSC 輕軌捷運車站 point shapefile (data.gov.tw 73230, OGDL v1) for the Danhai and Ankeng LRT,
  *     which TDX's metro API does not cover. Coordinates are TWD97 TM2 (EPSG:3826).
  *   - Taipei Metro transfer walking times (data.gov.tw 128417, OGDL v1).
@@ -13,6 +13,7 @@ import { datasetMeta } from '../lib/datagov.ts';
 import { DISTRICTS, type DistrictRef } from '../lib/districts.ts';
 import { downloadFile, notHtml } from '../lib/http.ts';
 import { raw } from '../lib/paths.ts';
+import { openTdxSession, readTdxCredentials, tdxDownload } from '../lib/tdx.ts';
 import { readZip } from '../lib/zip.ts';
 import { pointInRing, readDbf, readShpPoints, type Polygon, type Position } from '../geo/shapefile.ts';
 import { tm2ToLonLat } from '../geo/twd97.ts';
@@ -22,19 +23,26 @@ import { logResult, type Source } from './types.ts';
 const dir = (...p: string[]) => raw('stations', ...p);
 const TDX = 'https://tdx.transportdata.tw/api/basic/v2/Rail/Metro';
 const OPERATORS = ['TRTC', 'NTMC'] as const;
+/**
+ * Danhai LRT and Ankeng LRT: TDX returns HTTP 400 for their S2STravelTime (2026-11-19), so no such request is
+ * sent. Their stations come from the NLSC shapefile, so no LRT station list is fetched either.
+ */
 
-async function tdxHeaders(): Promise<Record<string, string>> {
-  const id = process.env['TDX_CLIENT_ID'];
-  const secret = process.env['TDX_CLIENT_SECRET'];
-  if (!id || !secret) return {};
-  const res = await fetch('https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'client_credentials', client_id: id, client_secret: secret }),
-  });
-  if (!res.ok) throw new Error(`TDX token request failed: HTTP ${res.status}`);
-  const token = ((await res.json()) as { access_token: string }).access_token;
-  return { Authorization: `Bearer ${token}` };
+/** One TDX download of the `stations` source: label, URL and destination file. */
+export interface StationRequest {
+  readonly label: string;
+  readonly url: string;
+  readonly dest: string;
+}
+
+/** Station and S2STravelTime requests for TRTC and NTMC only. */
+export function stationRequests(): StationRequest[] {
+  return OPERATORS.flatMap((op) =>
+    ([['station', 'Station'], ['s2s-travel-time', 'S2STravelTime']] as const).map(([kind, path]) => ({
+      label: `TDX ${path} ${op}`,
+      url: `${TDX}/${path}/${op}?%24format=JSON`,
+      dest: dir(`tdx-${kind}-${op}.json`),
+    })));
 }
 
 export interface StationRow {
@@ -111,14 +119,13 @@ export const stations: Source = {
   id: 'stations',
   title: 'Metro / LRT station coordinates (TDX, NLSC) and travel times, assigned to districts',
   async download({ force }) {
-    const headers = await tdxHeaders();
-    for (const op of OPERATORS) {
-      for (const [kind, path] of [['station', 'Station'], ['s2s-travel-time', 'S2STravelTime']] as const) {
-        logResult(`TDX ${path} ${op}`, await downloadFile(`${TDX}/${path}/${op}?%24format=JSON`, dir(`tdx-${kind}-${op}.json`), {
-          force, headers, validate: (b) => (b.toString('utf8').trimStart().startsWith('[') ? undefined : b.toString('utf8').slice(0, 120)),
-        }));
-      }
-    }
+    const credentials = readTdxCredentials();
+    const session = credentials ? await openTdxSession(credentials) : undefined;
+    const tdxFile = async (url: string, dest: string) =>
+      session
+        ? tdxDownload(session, url, dest, force)
+        : downloadFile(url, dest, { force, validate: (b) => (b.toString('utf8').trimStart().startsWith('[') ? undefined : b.toString('utf8').slice(0, 120)) });
+    for (const r of stationRequests()) logResult(r.label, await tdxFile(r.url, r.dest));
     const lrt = (await datasetMeta(73230)).distribution.find((r) => r.resourceFormat === 'SHP');
     if (lrt) {
       const url = lrt.resourceDownloadUrl.replace(/[^/]+$/, (n) => encodeURIComponent(n));

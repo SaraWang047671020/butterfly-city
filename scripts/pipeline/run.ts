@@ -15,7 +15,10 @@ import type { ValidationContext } from '../../src/data/validate.ts';
 import { PUBLIC_DATA, ROOT } from '../lib/paths.ts';
 import { bannedTermsStep } from './banned-terms.ts';
 import { createContext, type BuildContext, type Logger } from './context.ts';
+import type { RailNetwork } from './commute/network.ts';
+import { fareSlopeStep, networkStep, type FareSlopeResult } from './commute/step.ts';
 import { districtsStep } from './districts-file.ts';
+import { censusCheckStep } from './params/census-employees.ts';
 import { PipelineError } from './errors.ts';
 import type { DistrictShape } from './geo.ts';
 import { historyFileStep } from './history-file.ts';
@@ -94,6 +97,10 @@ export interface BuildState {
   policyTrackFile?: PolicyTrackFile;
   /** Set by the history file step (task 13.2): the assembled history.json content. */
   historyFile?: HistoryFile;
+  /** Set by the network step (task 23.6): the rail graph of the commute model. */
+  network?: RailNetwork;
+  /** Set by the fare slope step (task 23.6): paired fares, slopes and the commute cost entry. */
+  fareSlope?: FareSlopeResult;
   /** Set by the SOURCES.md step (task 15.2): the full text of data/SOURCES.md. */
   sourcesDoc?: string;
   /** Lines about the policy track, e.g. social housing starts excluded from it (also added to `notes`). */
@@ -166,6 +173,7 @@ export interface DefaultStepsOptions {
 export function createDefaultSteps(options: DefaultStepsOptions = {}): readonly Step[] {
   return [
     PREFLIGHT_STEP,
+    censusCheckStep(options.committedReader),
     districtsStep(),
     populationStep(),
     migrationStep(),
@@ -178,6 +186,8 @@ export function createDefaultSteps(options: DefaultStepsOptions = {}): readonly 
     policyStep(options.committedReader),
     historyFileStep(),
     policyFileStep(),
+    networkStep(options.committedReader),
+    fareSlopeStep(options.committedReader),
     validateStep(options.validationContext),
     sourcesDocStep(options.committedReader),
     bannedTermsStep(options.committedReader),

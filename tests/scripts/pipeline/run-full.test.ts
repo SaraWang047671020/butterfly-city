@@ -10,8 +10,8 @@ import { validContext, validDistrictsFile, validHistoryFile, validPolicyTrackFil
 import { FakeWriteFs } from './helpers-write.ts';
 
 const NAMES = [
-  'preflight', 'districts', 'population', 'migration', 'income', 'sale-price', 'price-to-income', 'rent',
-  'mrt', 'social-housing', 'policy-track', 'history-file', 'policy-file', 'validate', 'sources-doc', 'banned-terms', 'write',
+  'preflight', 'census-check', 'districts', 'population', 'migration', 'income', 'sale-price', 'price-to-income', 'rent',
+  'mrt', 'social-housing', 'policy-track', 'history-file', 'policy-file', 'network', 'fare-slope', 'validate', 'sources-doc', 'banned-terms', 'write',
 ];
 
 /** Text of the written file whose path ends with the given name. */
@@ -60,7 +60,7 @@ describe('default steps', () => {
     const logger = memoryLogger();
     const ctx = createContext({ reader: new MemoryRawReader(), logger });
     expect(runPipeline({ steps, ctx, logger, cleanStale: () => {} })).toBe(1);
-    expect(ran).toEqual(['preflight', 'districts', 'population', 'migration']);
+    expect(ran).toEqual(['preflight', 'census-check', 'districts', 'population', 'migration']);
     expect(logger.lines[0]).toBe('warning: step income failed: income broke');
     expect(allCalls(fake)).toBe(0);
   });

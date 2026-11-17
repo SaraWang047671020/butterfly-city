@@ -30,6 +30,9 @@ export const COMMITTED_TABLES: readonly string[] = [
   'data/config/holding-tax-rates.csv',
   'data/config/commuter-pass-products.csv',
   'data/config/sublease-phases.csv',
+  'data/config/commute-params.json',
+  'data/config/census-employees-2021.csv',
+  'data/config/census-employees-2021-totals.csv',
 ];
 
 const CITY_NAMES = ['臺北市', '新北市'] as const;
@@ -145,7 +148,28 @@ export function staticInputs(): RequiredInput[] {
       'mrt/taipei-133184-annual-station.csv',
       ...isoMonths('2015-01', '2016-12').map((m) => `mrt/daily/taipei-entries-${m}.csv`),
     ),
-    ...raw('stations', 'stations/tdx-station-TRTC.json', 'stations/tdx-station-NTMC.json'),
+    ...raw(
+      'stations',
+      'stations/tdx-station-TRTC.json',
+      'stations/tdx-station-NTMC.json',
+      'stations/tdx-s2s-travel-time-TRTC.json',
+      'stations/tdx-s2s-travel-time-NTMC.json',
+      'stations/trtc-128417-transfer-walk.csv',
+    ),
+    ...raw(
+      'fares',
+      'fares/tdx-metro-od-fare-TRTC.json',
+      'fares/tdx-metro-od-fare-NTMC.json',
+      'fares/tdx-metro-od-fare-NTDLRT.json',
+      'fares/tdx-metro-od-fare-NTALRT.json',
+    ),
+    ...raw(
+      'timetables',
+      'timetables/tdx-timetable-TRTC.json',
+      'timetables/tdx-timetable-NTMC.json',
+      'timetables/tdx-timetable-NTDLRT.json',
+      'timetables/tdx-timetable-NTALRT.json',
+    ),
     ...raw(
       'policy',
       'policy/housing/pip-e3010-6_1_3-taipei-newtaipei.json',

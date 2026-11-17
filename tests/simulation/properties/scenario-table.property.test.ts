@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from 'node:util';
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { scenarioTable } from '../../../src/simulation/params.ts';
@@ -25,36 +26,44 @@ const FIXED_NAMED = [
   'ghost.atRiskThreshold',
 ] as const;
 
+// Plain loops collect mismatches and assert once, because per-field expect() calls dominate the run time.
 function checkTable(params: ParameterTable): void {
   const snapshot = JSON.stringify(params);
+  const mismatches: string[] = [];
   for (const scenario of ['central', 'low', 'high'] as const) {
     const out = scenarioTable(params, scenario);
-    expect(Object.keys(out).sort()).toEqual(Object.keys(params).sort());
-    for (const id of Object.keys(params)) {
+    const inKeys = Object.keys(params).sort();
+    if (!isDeepStrictEqual(Object.keys(out).sort(), inKeys)) {
+      mismatches.push(`${scenario}: key set differs`);
+      continue;
+    }
+    for (const id of inKeys) {
       const before = params[id];
       const after = out[id];
-      expect(before).toBeDefined();
-      expect(after).toBeDefined();
-      if (before === undefined || after === undefined) continue;
+      if (before === undefined || after === undefined) {
+        mismatches.push(`${scenario}: ${id} missing`);
+        continue;
+      }
       const varies = (VARYING as readonly string[]).includes(id);
       if (varies && scenario !== 'central' && before.kind === 'scalar' && before.range !== undefined) {
-        expect(after.kind).toBe('scalar');
-        if (after.kind === 'scalar') {
-          const strongestHigh = id === HIGH_IS_STRONGEST;
-          const lowEnd = strongestHigh ? before.range.high : before.range.low;
-          const highEnd = strongestHigh ? before.range.low : before.range.high;
-          expect(after.value).toBe(scenario === 'low' ? lowEnd : highEnd);
+        const strongestHigh = id === HIGH_IS_STRONGEST;
+        const lowEnd = strongestHigh ? before.range.high : before.range.low;
+        const highEnd = strongestHigh ? before.range.low : before.range.high;
+        const want = scenario === 'low' ? lowEnd : highEnd;
+        if (after.kind !== 'scalar' || !Object.is(after.value, want)) {
+          mismatches.push(`${scenario}: ${id} expected ${want}`);
         }
-      } else {
-        expect(after).toEqual(before);
+      } else if (!isDeepStrictEqual(after, before)) {
+        mismatches.push(`${scenario}: ${id} changed`);
       }
     }
     for (const id of FIXED_NAMED) {
-      expect(out[id]).toEqual(params[id]);
+      if (!isDeepStrictEqual(out[id], params[id])) mismatches.push(`${scenario}: ${id} not fixed`);
     }
   }
   // The input table is never changed.
-  expect(JSON.stringify(params)).toBe(snapshot);
+  if (JSON.stringify(params) !== snapshot) mismatches.push('input table was mutated');
+  expect(mismatches).toEqual([]);
 }
 
 describe('scenario tables', () => {
@@ -67,7 +76,7 @@ describe('scenario tables', () => {
       }),
       { numRuns: 100 },
     );
-  });
+  }, 120_000);
 
   it('moves the seven effect parameters of the fixture table by direction', () => {
     const params = buildParams();

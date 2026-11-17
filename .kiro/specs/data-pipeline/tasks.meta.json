@@ -39,6 +39,18 @@
     "15.3 Write property tests for SOURCES.md and the banned-term check": {
       "status": "passed",
       "lastRunTimestamp": 1794804658167
+    },
+    "22.7 Write property test for the credentials scan": {
+      "status": "passed",
+      "lastRunTimestamp": 1794886393720
+    },
+    "22.6 Write property test for the census totals check": {
+      "status": "passed",
+      "lastRunTimestamp": 1794886399051
+    },
+    "23.9 Write property test for the commute cost entry order": {
+      "status": "passed",
+      "lastRunTimestamp": 1794896493582
     }
   },
   "executionHistory": {
@@ -1026,6 +1038,809 @@
         "executionId": "e9d6aa88-f0da-4640-a35b-9c6d1469bd96",
         "chatSessionId": "sess_706c43cb-f29f-4605-a58a-b87a8636df1d",
         "timestamp": 1794805580307
+      }
+    ],
+    "22.1 Add the TDX sources `fares` and `timetables` and the LRT operators of `stations` to `scripts/download.ts`": [
+      {
+        "executionId": "dfe08b58-05c1-4e7d-856e-b960643fa1bd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794883598523
+      },
+      {
+        "executionId": "dfe08b58-05c1-4e7d-856e-b960643fa1bd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794883790981
+      }
+    ],
+    "22.3 Create the census employee tables and the reader `scripts/pipeline/params/census-employees.ts`": [
+      {
+        "executionId": "dfe08b58-05c1-4e7d-856e-b960643fa1bd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794883606683
+      },
+      {
+        "executionId": "dfe08b58-05c1-4e7d-856e-b960643fa1bd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794883793924
+      },
+      {
+        "executionId": "2a8334ea-5929-477b-8251-77fc0cd8a3be",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794884975029
+      },
+      {
+        "executionId": "2a8334ea-5929-477b-8251-77fc0cd8a3be",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794885182807
+      }
+    ],
+    "22.4 Implement `scripts/pipeline/credentials-scan.ts` and add it to the validation step": [
+      {
+        "executionId": "dfe08b58-05c1-4e7d-856e-b960643fa1bd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794883606726
+      },
+      {
+        "executionId": "dfe08b58-05c1-4e7d-856e-b960643fa1bd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794883792177
+      }
+    ],
+    "22.2 Add the `low-use` source to `scripts/download.ts` and the `low-use` command to `scripts/check.ts`": [
+      {
+        "executionId": "ed83c52f-2087-456b-9232-d2be17941dfe",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794885767296
+      },
+      {
+        "executionId": "ed83c52f-2087-456b-9232-d2be17941dfe",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794886214986
+      }
+    ],
+    "22.5 Write example tests for the download sources, the census reader and the scan": [
+      {
+        "executionId": "ed83c52f-2087-456b-9232-d2be17941dfe",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794886345674
+      },
+      {
+        "executionId": "ed83c52f-2087-456b-9232-d2be17941dfe",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794886428457
+      }
+    ],
+    "22.6 Write property test for the census totals check": [
+      {
+        "executionId": "ed83c52f-2087-456b-9232-d2be17941dfe",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794886346420
+      },
+      {
+        "executionId": "ed83c52f-2087-456b-9232-d2be17941dfe",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794886429666
+      }
+    ],
+    "22.7 Write property test for the credentials scan": [
+      {
+        "executionId": "ed83c52f-2087-456b-9232-d2be17941dfe",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794886347402
+      },
+      {
+        "executionId": "ed83c52f-2087-456b-9232-d2be17941dfe",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794886430189
+      }
+    ],
+    "22.8 Run the downloads and list the low-use periods, then STOP for user review": [
+      {
+        "executionId": "ed83c52f-2087-456b-9232-d2be17941dfe",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794886563409
+      },
+      {
+        "executionId": "ed83c52f-2087-456b-9232-d2be17941dfe",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794886878144
+      }
+    ],
+    "22. Data supplement downloads, census employee table and credential scan": [
+      {
+        "executionId": "ed83c52f-2087-456b-9232-d2be17941dfe",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794886878178
+      }
+    ],
+    "16.1 Add `totalPriceSales` to `scripts/pipeline/indicators/lvr-input.ts` and switch the price-to-income builder to it": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889182830
+      },
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889193503
+      },
+      {
+        "executionId": "10c0b157-00b8-4085-b4de-5d4f946cd809",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794889370909
+      },
+      {
+        "executionId": "10c0b157-00b8-4085-b4de-5d4f946cd809",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794889370978
+      }
+    ],
+    "16.2 Create `scripts/pipeline/indicators/pooled-window.ts` and switch the sale price builder to it": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889182866
+      },
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889193563
+      },
+      {
+        "executionId": "10c0b157-00b8-4085-b4de-5d4f946cd809",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794889370944
+      },
+      {
+        "executionId": "10c0b157-00b8-4085-b4de-5d4f946cd809",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794889371012
+      }
+    ],
+    "16.3 Check that `salePrice` and `priceToIncomeRatio` are unchanged after the refactor": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889182898
+      }
+    ],
+    "17.1 Add `HISTORY_INDICATOR_IDS` and `HistoryIndicatorId` to `src/types/data-files.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889182936
+      },
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889193971
+      }
+    ],
+    "17.2 Add the `medianTotalPrice` spec and the `median-total-price-pooled-window` method to the registries": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183015
+      }
+    ],
+    "17.3 Implement `scripts/pipeline/indicators/median-total-price.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183054
+      }
+    ],
+    "17.4 Add `medianTotalPriceStep` and wire it into `run.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183093
+      }
+    ],
+    "17.5 Write the Requirement 19.10 example tests in `tests/scripts/pipeline/median-total-price.test.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183151
+      }
+    ],
+    "17.6 Write property test for the shared total-price filter": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183185
+      }
+    ],
+    "17.7 Write property test for median total price values": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183245
+      }
+    ],
+    "17.8 Write property test for the shared window rule": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183278
+      }
+    ],
+    "18.1 Add the `indicator-set` rule to `validateHistoryFile` in `src/data/validate.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183313
+      }
+    ],
+    "18.2 Write validator and registry example tests": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183341
+      }
+    ],
+    "19. Checkpoint - Ensure all tests pass": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183372
+      }
+    ],
+    "20.1 Update `scripts/pipeline/sources-doc.ts` and pass the window counts from `run.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183410
+      }
+    ],
+    "20.2 Write rendering tests in `tests/scripts/pipeline/sources-doc.test.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183444
+      }
+    ],
+    "20.3 Edit `data/DATA-CHECK.md` items 2a and 7": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183473
+      }
+    ],
+    "21.1 Rebuild `public/data/` and confirm the outputs": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183504
+      }
+    ],
+    "23.0 Remove the four unsupported TDX requests and test the request builders": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183535
+      },
+      {
+        "executionId": "10c0b157-00b8-4085-b4de-5d4f946cd809",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794889382241
+      },
+      {
+        "executionId": "10c0b157-00b8-4085-b4de-5d4f946cd809",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794889448267
+      }
+    ],
+    "23.1 Implement the Parameter_Entry checker and the Commute_Config_File reader": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183565
+      },
+      {
+        "executionId": "10c0b157-00b8-4085-b4de-5d4f946cd809",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794889562963
+      },
+      {
+        "executionId": "10c0b157-00b8-4085-b4de-5d4f946cd809",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794889679852
+      }
+    ],
+    "23.2 Implement `scripts/pipeline/commute/timetable.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183628
+      },
+      {
+        "executionId": "10c0b157-00b8-4085-b4de-5d4f946cd809",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794889811885
+      },
+      {
+        "executionId": "4a1e4087-da5a-4cb9-bf23-78f265aa34ba",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794890570839
+      },
+      {
+        "executionId": "b79e13b7-afa1-45e5-a6a9-f37d8c97772c",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794891544833
+      },
+      {
+        "executionId": "8259c0a0-cc36-4680-bbc4-89d408eea940",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794891794016
+      },
+      {
+        "executionId": "12ebf770-3511-4052-8403-967975240cc6",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794893567671
+      },
+      {
+        "executionId": "8c58197f-7896-42a1-a060-18dc052496e8",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794894094781
+      },
+      {
+        "executionId": "8c58197f-7896-42a1-a060-18dc052496e8",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794894193385
+      }
+    ],
+    "23.3 Create `data/config/commute-params.json` with the confirmed constants": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183660
+      },
+      {
+        "executionId": "8c58197f-7896-42a1-a060-18dc052496e8",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794894330277
+      },
+      {
+        "executionId": "8c58197f-7896-42a1-a060-18dc052496e8",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794894445815
+      }
+    ],
+    "23.4 Implement `scripts/pipeline/commute/network.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183692
+      },
+      {
+        "executionId": "8c58197f-7896-42a1-a060-18dc052496e8",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794894588202
+      },
+      {
+        "executionId": "8c58197f-7896-42a1-a060-18dc052496e8",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794894901496
+      }
+    ],
+    "23.5 Implement `scripts/pipeline/commute/fares.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183722
+      },
+      {
+        "executionId": "8c58197f-7896-42a1-a060-18dc052496e8",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794895026480
+      },
+      {
+        "executionId": "4837dc64-ca88-4180-9c3e-b75f72c0f0dd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794895291152
+      },
+      {
+        "executionId": "4837dc64-ca88-4180-9c3e-b75f72c0f0dd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794895500949
+      }
+    ],
+    "23.6 Wire `networkStep` and `fareSlopeStep` into `run.ts` and the manifest": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183758
+      },
+      {
+        "executionId": "4837dc64-ca88-4180-9c3e-b75f72c0f0dd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794895572350
+      },
+      {
+        "executionId": "4837dc64-ca88-4180-9c3e-b75f72c0f0dd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794895732388
+      }
+    ],
+    "23.7 Write example tests for the commute inputs": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183791
+      },
+      {
+        "executionId": "4837dc64-ca88-4180-9c3e-b75f72c0f0dd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794895807618
+      },
+      {
+        "executionId": "4837dc64-ca88-4180-9c3e-b75f72c0f0dd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794896134850
+      }
+    ],
+    "23.8 Write property test for the fare slope": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183823
+      },
+      {
+        "executionId": "4837dc64-ca88-4180-9c3e-b75f72c0f0dd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794896242925
+      },
+      {
+        "executionId": "4837dc64-ca88-4180-9c3e-b75f72c0f0dd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794896307947
+      }
+    ],
+    "23.9 Write property test for the commute cost entry order": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183855
+      },
+      {
+        "executionId": "4837dc64-ca88-4180-9c3e-b75f72c0f0dd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794896437584
+      },
+      {
+        "executionId": "4837dc64-ca88-4180-9c3e-b75f72c0f0dd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794896521011
+      }
+    ],
+    "24.1 Implement `scripts/pipeline/params/job-share.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183885
+      }
+    ],
+    "24.2 Implement `scripts/pipeline/commute/model.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183915
+      }
+    ],
+    "24.3 Implement `survey-check.ts`, `commute-file.ts` and `validateCommuteMatrix`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183944
+      }
+    ],
+    "24.4 Add `commuteMatrixStep` and write the matrix file": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889183979
+      }
+    ],
+    "24.5 Add the commute sections to `sources-doc.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184015
+      }
+    ],
+    "24.6 Write example tests for the model, survey check, matrix file and validator": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184049
+      }
+    ],
+    "24.7 Write property test for job shares": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184080
+      }
+    ],
+    "24.8 Write property test for the commute model": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184114
+      }
+    ],
+    "24.9 Build `public/data/commute-matrix.json` and confirm": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184146
+      }
+    ],
+    "25.1 Create the type 1 entries of `data/config/params-fixed.json` and the reader `params/fixed-table.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184178
+      }
+    ],
+    "25.2 Implement `params/social-housing.ts` and `data/config/social-housing-unit-cost-cases.csv`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184211
+      }
+    ],
+    "25.3 Implement `params/housing.ts` and `parsers/census-tenure.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184242
+      }
+    ],
+    "25.4 Implement the rent-burden calculation in `params/ghost.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184273
+      }
+    ],
+    "25.5 Implement the commute shares in `params/ghost.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184318
+      }
+    ],
+    "25.6 Create the job-share and commute-cost Parameter_Entries": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184349
+      }
+    ],
+    "25.7 Add `paramsPart1Step` to `run.ts` and the manifest": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184378
+      }
+    ],
+    "25.8 Add the type 1 and type 2 sections to `sources-doc.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184406
+      }
+    ],
+    "25.9 Write example tests for the part 1 parsers and builders": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184436
+      }
+    ],
+    "25.10 Write property test for the rent-burden calculation": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184469
+      }
+    ],
+    "25.11 Write property test for the commute shares": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184501
+      }
+    ],
+    "25.12 Run the build and report the computed values": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184537
+      }
+    ],
+    "26.1 Add the type 3 entries to `data/config/params-fixed.json`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184568
+      }
+    ],
+    "26.2 Implement `params/migration-anchors.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184604
+      }
+    ],
+    "26.3 Implement `params/derived.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184636
+      }
+    ],
+    "26.4 Implement `params/engine-ids.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184667
+      }
+    ],
+    "26.5 Implement `validateParamsFile`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184696
+      }
+    ],
+    "26.6 Implement `params/params-file.ts` and `paramsStep`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184726
+      }
+    ],
+    "26.7 Write `public/data/params.json` in the validation, write and summary steps": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184758
+      }
+    ],
+    "26.8 Add the parameter table sections to `sources-doc.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184793
+      }
+    ],
+    "26.9 Write example tests for the parameter table": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184826
+      }
+    ],
+    "26.10 Write property test for the id-set difference": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184858
+      }
+    ],
+    "26.11 Write property test for the parameter validator": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184886
+      }
+    ],
+    "26.12 Write property test for the params and matrix round trip": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184916
+      }
+    ],
+    "26.13 Write property test for the derived gap parameters": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184946
+      }
+    ],
+    "26.14 Build `public/data/params.json` and confirm": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889184976
+      }
+    ],
+    "27.1 Implement `parsers/low-use.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889185005
+      }
+    ],
+    "27.2 Add the periodic-indicator rules to the types and the validator": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889185039
+      }
+    ],
+    "27.3 Add the two indicators to the registries and the id list": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889185069
+      }
+    ],
+    "27.4 Implement `scripts/pipeline/low-use.ts` and `lowUseStep`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889185102
+      }
+    ],
+    "27.5 Add the low-use sections to `sources-doc.ts`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889185130
+      }
+    ],
+    "27.6 Write example tests for the low-use parser, builder and validator": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889185166
+      }
+    ],
+    "27.7 Write property test for the low-use builder": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889185203
+      }
+    ],
+    "28.1 Rebuild every output and confirm": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889185232
+      }
+    ],
+    "28.2 Run the backtest and update `docs/BACKTEST.md`": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889185262
+      }
+    ],
+    "28.3 Report the gap parameters and the commute survey gap": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889185299
+      }
+    ],
+    "28.4 Run the final checks": [
+      {
+        "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
+        "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
+        "timestamp": 1794889185333
+      }
+    ],
+    "23. Commute inputs: constants, timetables, rail network and fare slope": [
+      {
+        "executionId": "4837dc64-ca88-4180-9c3e-b75f72c0f0dd",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794896521043
       }
     ]
   }

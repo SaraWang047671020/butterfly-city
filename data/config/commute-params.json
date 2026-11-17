@@ -1,0 +1,157 @@
+﻿{
+    "schemaVersion":  1,
+    "parameters":  {
+                       "commute.detourFactor":  {
+                                                    "kind":  "scalar",
+                                                    "value":  1.417,
+                                                    "unit":  "ratio",
+                                                    "status":  "secondary",
+                                                    "source":  {
+                                                                   "citation":  "Boscoe, Henry \u0026 Zdeb (2012), A Nationwide Comparison of Driving Distance Versus Straight-Line Distance to Hospitals, The Professional Geographer 64(2)",
+                                                                   "url":  "https://pmc.ncbi.nlm.nih.gov/articles/PMC3835347/"
+                                                               },
+                                                    "range":  {
+                                                                  "low":  1.2,
+                                                                  "high":  1.6,
+                                                                  "lowSource":  {
+                                                                                    "citation":  "Cole \u0026 King (1968), Quantitative Geography, as reported by Boscoe et al. (2012)",
+                                                                                    "url":  "https://pmc.ncbi.nlm.nih.gov/articles/PMC3835347/"
+                                                                                },
+                                                                  "highSource":  {
+                                                                                     "citation":  "Cole \u0026 King (1968), Quantitative Geography, as reported by Boscoe et al. (2012)",
+                                                                                     "url":  "https://pmc.ncbi.nlm.nih.gov/articles/PMC3835347/"
+                                                                                 }
+                                                              },
+                                                    "estimated":  {
+                                                                      "method":  "Value taken from a foreign study. It is a United States average that includes rural tracts and is likely high for Taipei."
+                                                                  }
+                                                },
+                       "commute.walkSpeed":  {
+                                                 "kind":  "scalar",
+                                                 "value":  1.37,
+                                                 "unit":  "meters per second",
+                                                 "status":  "secondary",
+                                                 "source":  {
+                                                                "citation":  "Bohannon (1997), Comfortable and maximum walking speed of adults aged 20-79 years, Age and Ageing 26(1)",
+                                                                "url":  "https://doi.org/10.1093/ageing/26.1.15"
+                                                            },
+                                                 "range":  {
+                                                               "low":  1.07,
+                                                               "high":  1.46,
+                                                               "lowSource":  {
+                                                                                 "citation":  "Manual on Uniform Traffic Control Devices 2009, section 4E.06 (3.5 ft/s)",
+                                                                                 "url":  "https://mutcd.fhwa.dot.gov/htm/2009r1r2/part4/part4e.htm"
+                                                                             },
+                                                               "highSource":  {
+                                                                                  "citation":  "Bohannon (1997), fastest group mean (146.2 cm/s)",
+                                                                                  "url":  "https://doi.org/10.1093/ageing/26.1.15"
+                                                                              }
+                                                           },
+                                                 "estimated":  {
+                                                                   "method":  "The value is the midpoint of the two group means 127.2 and 146.2 cm/s in Bohannon (1997). It is a derived midpoint and not a figure printed in the paper. The high end is the fastest group mean."
+                                                               }
+                                             },
+                       "commute.roadSpeed.taipei":  {
+                                                        "kind":  "scalar",
+                                                        "value":  16.7,
+                                                        "unit":  "km per hour",
+                                                        "status":  "secondary",
+                                                        "source":  {
+                                                                       "citation":  "TomTom Traffic Index 2025, Taipei City: average of the rush-hour speeds (morning 19, evening 15.2 km/h)",
+                                                                       "url":  "https://www.tomtom.com/traffic-index/taipei-traffic/"
+                                                                   },
+                                                        "estimated":  {
+                                                                          "method":  "Three searches on data.taipei and data.gov.tw found no average travel speed dataset. The single published TomTom figure is used under the exception in tech.md: the figure is quoted with its citation, and no TomTom data is downloaded or redistributed."
+                                                                      }
+                                                    },
+                       "commute.roadSpeed.newTaipei":  {
+                                                           "kind":  "scalar",
+                                                           "value":  16.7,
+                                                           "unit":  "km per hour",
+                                                           "status":  "gap",
+                                                           "source":  {
+                                                                          "citation":  "",
+                                                                          "url":  ""
+                                                                      },
+                                                           "estimated":  {
+                                                                             "method":  "The Taipei City value is used for New Taipei City because no New Taipei figure was found."
+                                                                         },
+                                                           "assumption":  "No New Taipei figure was found. Suburban New Taipei speeds are likely higher, so road commute times may be too long."
+                                                       },
+                       "commute.accessTime":  {
+                                                  "kind":  "scalar",
+                                                  "value":  5,
+                                                  "unit":  "minutes",
+                                                  "status":  "gap",
+                                                  "source":  {
+                                                                 "citation":  "",
+                                                                 "url":  ""
+                                                             },
+                                                  "range":  {
+                                                                "low":  0,
+                                                                "high":  10,
+                                                                "lowSource":  {
+                                                                                  "citation":  "Sensitivity range lower end; no study is cited",
+                                                                                  "url":  ".kiro/specs/data-pipeline/requirements.md"
+                                                                              },
+                                                                "highSource":  {
+                                                                                   "citation":  "Sensitivity range upper end; no study is cited",
+                                                                                   "url":  ".kiro/specs/data-pipeline/requirements.md"
+                                                                               }
+                                                            },
+                                                  "estimated":  {
+                                                                    "method":  "A fixed planning value with a 0 to 10 minute sensitivity range; no study is cited."
+                                                                },
+                                                  "assumption":  "A fixed time per road trip for parking and access. No citable study was found."
+                                              },
+                       "commute.transferWalk":  {
+                                                    "kind":  "scalar",
+                                                    "value":  4.29,
+                                                    "unit":  "minutes",
+                                                    "status":  "verified",
+                                                    "source":  {
+                                                                   "citation":  "Taipei Rapid Transit Corporation, Transfer walking times (dataset 128417, OGDL v1.0), data.gov.tw",
+                                                                   "url":  "https://data.gov.tw/dataset/128417"
+                                                               },
+                                                    "range":  {
+                                                                  "low":  1,
+                                                                  "high":  11,
+                                                                  "lowSource":  {
+                                                                                    "citation":  "Taipei Rapid Transit Corporation, Transfer walking times (dataset 128417, OGDL v1.0), data.gov.tw",
+                                                                                    "url":  "https://data.gov.tw/dataset/128417"
+                                                                                },
+                                                                  "highSource":  {
+                                                                                     "citation":  "Taipei Rapid Transit Corporation, Transfer walking times (dataset 128417, OGDL v1.0), data.gov.tw",
+                                                                                     "url":  "https://data.gov.tw/dataset/128417"
+                                                                                 }
+                                                              }
+                                                },
+                       "commute.transferWait":  {
+                                                    "kind":  "scalar",
+                                                    "value":  2.5,
+                                                    "unit":  "minutes",
+                                                    "status":  "secondary",
+                                                    "source":  {
+                                                                   "citation":  "TDX Rail/Metro StationTimeTable, Taipei Metro (TRTC), New Taipei Metro (NTMC), Danhai LRT (NTDLRT) and Ankeng LRT (NTALRT), Ministry of Transport and Communications",
+                                                                   "url":  "https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/StationTimeTable/{TRTC,NTMC,NTDLRT,NTALRT}?%24format=JSON"
+                                                               },
+                                                    "estimated":  {
+                                                                      "method":  "Weekday (Monday to Friday) departures from 07:00 to before 09:00, per direction. A direction headway is the median gap between consecutive departures at a station that every train of the line serves; the line headway is the mean of its two directions, and the wait is half of it. The value is the median of the per-line half-headways (BL, G, G-3, O, R, R-3 Xinbeitou branch, Y, LB, K), used for a line without a headway. G-3 and Xinbeitou are separate lines. The Danhai LRT is excluded from the network (all of it lies in Tamsui District). The matrix represents morning work commutes."
+                                                                  }
+                                                },
+                       "commute.tripsPerMonth":  {
+                                                     "kind":  "scalar",
+                                                     "value":  44,
+                                                     "unit":  "one-way trips per commuter per month",
+                                                     "status":  "gap",
+                                                     "source":  {
+                                                                    "citation":  "",
+                                                                    "url":  ""
+                                                                },
+                                                     "estimated":  {
+                                                                       "method":  "2 one-way trips per working day multiplied by 22 working days per month."
+                                                                   },
+                                                     "assumption":  "No cited survey of commute trips per working day and no published count of working days per month was found. A survey of one-way commute trips per working day and a published count of working days per month would replace it."
+                                                 }
+                   }
+}
