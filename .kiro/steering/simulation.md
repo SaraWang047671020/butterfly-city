@@ -46,7 +46,7 @@ fileMatchPattern: 'src/simulation/**'
 
 ## Inter-district linkage
 
-- When rent in a district rises too much, part of its population moves to nearby districts reachable by commute, using the 41×41 commute-time matrix. The matrix follows the real rail network of each quarter; the player cannot change the network.
+- When rent in a district rises too much, part of its population moves to nearby districts reachable by commute, using the 41×41 commute-time matrix. The MVP uses a single matrix for the 2025Q4 rail network in every quarter; per-quarter matrices are future work and are listed in the model limitations. The player cannot change the network.
 - Migration conserves people: total outflow from districts equals total inflow to other districts (plus any explicitly modeled exit from the metro area).
 - Migration thresholds and shares are cited parameters.
 

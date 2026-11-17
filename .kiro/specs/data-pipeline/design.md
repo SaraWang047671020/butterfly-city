@@ -2,17 +2,19 @@
 
 ## Overview
 
-The data pipeline is one Node command, `npm run data`, that turns the raw open data in `data/raw/` and a small set of committed tables into four outputs:
+The data pipeline is one Node command, `npm run data`, that turns the raw open data in `data/raw/` and a small set of committed tables into six outputs:
 
 - `public/data/districts.json`: the 41 districts with city, romanized name, land area, centroid and simplified boundary geometry.
-- `public/data/history.json`: the real quarterly baseline, 2015Q1 to 2025Q4, for 11 district indicators and 2 city indicators, with an estimate flag and a method id on every estimated value. It also embeds the source registry and method list it references, so the web app can show provenance without parsing Markdown.
+- `public/data/history.json`: the real quarterly baseline, 2015Q1 to 2025Q4, for 13 district indicators and 2 city indicators, with an estimate flag and a method id on every estimated value. It also embeds the source registry and method list it references, so the web app can show provenance without parsing Markdown.
 - `public/data/policy-track.json`: the real quarterly track of the 5 player policy tools, 2015Q1 to 2025Q4, 10 series, each value with its source and an estimate flag (and a method id when estimated). It embeds its own source and method registry.
-- `data/SOURCES.md`: a generated document listing every source, every method, the reference-district table, the MRT station notes, the policy-series assumptions and the known data gaps.
+- `public/data/params.json`: the simulation parameter table (81 ids) in the wrapped form the engine reads. Values come from cited research, from our own data, or from documented assumptions (Requirements 20 to 23, section "Data supplement").
+- `public/data/commute-matrix.json`: the 41×41 one-way commute-time matrix, one fixed matrix for the 2025Q4 rail network (Requirements 24 and 25).
+- `data/SOURCES.md`: a generated document listing every source, every method, the reference-district table, the MRT station notes, the policy-series assumptions, the parameter table with its source types, the commute model and the known data gaps.
 
 The pipeline:
 
 - reads only `data/raw/` and committed repository files, and never imports the HTTP helpers;
-- builds and validates all four outputs in memory before writing anything;
+- builds and validates all six outputs in memory before writing anything;
 - writes all outputs in one transaction that restores the previous files if any write fails;
 - produces byte-identical output for identical input, in PowerShell and Git Bash, on any machine.
 
@@ -23,7 +25,7 @@ It reuses the existing code: `scripts/lib/` (CSV parser, district table, ROC tim
 1. **Pure core, thin I/O shell.** Every parser takes text or bytes and returns records. Every indicator builder takes parsed records and returns value series. Only `raw-reader.ts` and `write.ts` touch the file system. Tests can therefore run on in-memory fixtures with an empty `data/raw/` (Requirement 18.8).
 2. **Fail early, fail completely.** A preflight step lists every missing raw file before any parsing starts. Validation collects every error before stopping.
 3. **One registry.** Sources, methods and indicator metadata are defined once in TypeScript and used to build the JSON files, the embedded registry and `SOURCES.md`.
-4. **Every cell gets a number.** Each indicator's method chain always yields a finite number or stops the build with a named error. The validator still accepts `null` with a reason method (Requirement 4.8) so the schema stays honest, but the pipeline never emits one (Decision D11).
+4. **Every cell gets a number, except low-use quarters that no published period covers.** Each indicator's method chain always yields a finite number or stops the build with a named error. The two low-use indicators are the one exception: a quarter that no published half-year covers is `null` with `estimated: false` and no method, and nothing is filled in (Requirement 26 criterion 5; Decision D35). A district with no published value in any half-year is all `null` and does not stop the build, up to 5 such districts (Decision D49). The validator also accepts `null` with a reason method (Requirement 4.8), but the pipeline never emits one (Decision D11).
 
 ### Research findings that shape the design
 
@@ -38,6 +40,17 @@ It reuses the existing code: `scripts/lib/` (CSV parser, district table, ROC tim
 - **Node string sort is by UTF-16 code unit, and `localeCompare` depends on the ICU locale.** `scripts/build-boundaries.ts` uses `localeCompare` to sort features; the pipeline replaces it with an explicit code-point comparator.
 - **`fs.renameSync` on Windows** replaces an existing destination (Node uses `MoveFileEx` with `MOVEFILE_REPLACE_EXISTING`), but fails if another process holds the file open. The writer treats a failed rename like a failed write and rolls back.
 - **Git line endings**: with `core.autocrlf=true` (the Git for Windows default), LF files can be checked out as CRLF. A `.gitattributes` entry forces LF for the generated files.
+- **Data supplement findings (2026-11-17)**:
+  - **TDX station-to-station times already on disk.** `data/raw/stations/tdx-s2s-travel-time-TRTC.json` has the lines BL, BR, G, O, R; `tdx-s2s-travel-time-NTMC.json` has only the lines `Y` (Circular Line) and `LB` (the Sanying Line, stations LB01 Dingpu to Hengxi, opened after 2025-12-31). The Danhai LRT and the Ankeng LRT are **not** in either file, and no transfer or run time exists for the Taoyuan Airport MRT. The first download worked without credentials (anonymous, rate-limited); `TDX_CLIENT_ID` and `TDX_CLIENT_SECRET` are optional for `scripts/download.ts stations`. Whether TDX serves the LRT operators was not verified (open item for the download task).
+  - **District employees.** The DGBAS Industry and Service Census publishes year-end persons engaged by township and district (editions 2016 and 2021, tables "按行政區別分", PDF on ws.dgbas.gov.tw). No machine-readable edition was found. Decided 2026-11-18: the 2021 counts are transcribed by hand into a committed table (Requirement 28; see "Employee table and job shares" below). The earlier assumption that 2020 census table 14 could serve as a fallback was wrong (see the checks of 2026-11-18).
+- **Checks done on 2026-11-18 (recorded as research findings):**
+  - **2020 census table 14** (`data/raw/census/census2020-{taipei,ntpc}-s014-workplace.ods`): the rows are RESIDENCE districts; the columns are total employed, working in the same district, in another district of the same city, and in another county, city or overseas. It has no count of employed persons by WORKPLACE district, so it cannot give `commute.jobShare`. Five web searches found no census table grouped by workplace district. The same property limits `ghost.shareCommuteWithin`, which is therefore estimated with a spreading rule (see Computations).
+  - **No fare data in `data/raw/`.** `data/raw/stations/` holds only the TDX station-to-station travel times for TRTC and NTMC and the station lists. The fare tables come from a new `fares` download source, added in the first implementation task.
+  - **Engine.** `SCENARIO_EFFECT_IDS` in `src/simulation/params.ts` does not include `migration.commuteCostPerMinute`. A simulation-engine spec change (handled separately) adds it with direction-aware Scenario values: the strongest-effect Scenario takes `high` and the weakest takes `low`, which is 0. This design depends on that change and does not make it.
+  - **Units of K_o.** `commuter-pass.ts` declares the field `subsidy` in TWD per pass per month, `difference` returns player minus real subsidy per city, and `effects` copies it to `commuteCostDelta` of each district. `engine.ts` sums `commuteCostDelta` over the tools into `commuteCostOffset`, and `migration.ts` computes `cost = max(0, commuteCostPerMinute × minutes − commuteCostOffset)`. So K_o is TWD per pass per month and `commuteCostPerMinute × minutes` must be TWD per commuter per month. The `commuterPassSubsidy` Policy_Series unit is `TWD per 30-day pass`; one 30-day pass per month is assumed (Open Question 24).
+  - **Census tenure** (table 34, ODS on disk) gives households and renting households per district, from which `housing.renterRate.<city>` follows.
+  - **MOI low-use housing statistics** (checked 2026-11-19). No district-level low-use file is in `data/raw/`: `data/raw/_meta` holds only saved MOI real estate platform pages, and the data.gov.tw catalog lists a county-level dataset of the Ministry of Economic Affairs, which has no district values. The first implementation step of Requirement 26 therefore downloads the district-level files through `scripts/download.ts` (source `low-use`, recorded in `data/DOWNLOAD.md`), lists the half-year periods actually present with `scripts/check.ts low-use`, and stops for the user's review before the indicator is built (Requirement 26 criterion 1). The design fills no missing period.
+  - **ODRP014** village rows hold `household_no` and `people_total`, so persons per household needs no new source.
 
 ## Architecture
 
@@ -101,7 +114,24 @@ scripts/
     ├── districts-file.ts         # builds DistrictsFile from shapes
     ├── history-file.ts           # assembles HistoryFile from IndicatorSeries + registries
     ├── sources-doc.ts            # renders data/SOURCES.md from registries and build notes
-    └── banned-terms.ts           # neutrality check on SOURCES.md text
+    ├── banned-terms.ts           # neutrality check on SOURCES.md text
+    ├── params/                   # Data supplement: parameter table (Requirements 20 to 23)
+    │   ├── engine-ids.ts         # engineIdSet(): collectParameterSpecs(RULE_REGISTRY) + ENGINE_EXTRA_IDS - OMITTED_OPTIONAL_IDS; idSetDiff()
+    │   ├── fixed-table.ts        # reads data/config/params-fixed.json (type 1 and type 3 entries), entry checks
+    │   ├── social-housing.ts     # lag, unitCost, rentPerUnit, costSchedule
+    │   ├── housing.ts            # dwellingSize, householdSize.<city>, renterRate.<city>
+    │   ├── ghost.ts              # lognormal tail share, shareRent, sensitivityRent, shareCommuteWithin, sensitivityCommute, shareBoth
+    │   ├── job-share.ts          # commute.jobShare.<code>, largest-remainder shares
+    │   ├── migration-anchors.ts  # migration.share and migration.exitShare anchors
+    │   └── params-file.ts        # assembles ParamsFile, runs the Id_Set_Check
+    ├── commute/                  # Data supplement: commute matrix (Requirements 24 and 25)
+    │   ├── network.ts            # stations, edges (TDX S2S), opening-date filter, transfers, LRT fallback edges
+    │   ├── timetable.ts        # TDX timetable files: line headways and, where S2S is missing, inter-station run times (Requirements 25.2, 25.15)
+    │   ├── model.ts              # rail time, road time, cell = min; matrix assembly
+    │   ├── survey-check.ts       # weighted New Taipei to Taipei mean vs 57 minutes
+    │   └── commute-file.ts       # assembles CommuteMatrixFile
+    ├── credentials-scan.ts       # Requirement 25 criterion 6: scan outputs for TDX credential values
+    └── low-use.ts                # parser and builder for lowUseHousingCount / lowUseHousingRate (Requirement 26)
 
 src/
 ├── types/data-files.ts           # schema types and constants shared with the web app
@@ -113,7 +143,11 @@ data/config/
 ├── moi-price-to-income.csv       # optional hand-entered MOI ratios (Requirement 10.5)
 ├── holding-tax-rates.csv         # effective-dated rates with legal text, article and source (Requirement 12.9)
 ├── commuter-pass-products.csv    # pass products with start date, price and source (Requirement 12.12)
-└── sublease-phases.csv           # phase start dates and cumulative totals with source (Requirement 12.8)
+├── sublease-phases.csv           # phase start dates and cumulative totals with source (Requirement 12.8)
+├── params-fixed.json             # type 1 (research) and type 3 (gap) Parameter_Entries (Requirements 21, 23)
+├── commute-params.json           # commute model constants, 8 Parameter_Entries (Requirement 25.3, 25.9 to 25.15)
+├── lrt-timetable.csv             # last-resort inter-station time per LRT line, operator page cited per line, no Wikipedia (Requirement 25.2)
+└── social-housing-unit-cost-cases.csv  # three Taipei project costs (Requirement 22.4)
 
 .gitattributes                    # public/data/*.json and data/SOURCES.md: text eol=lf
 ```
@@ -198,6 +232,12 @@ export interface RawReader {
 | `stations` | `stations/tdx-station-TRTC.json`, `stations/tdx-station-NTMC.json` |
 | `policy` | `policy/housing/pip-e3010-6_1_3-taipei-newtaipei.json`, `policy/housing/pip-e3010-6_3_1-taipei-newtaipei.json`, `policy/housing/datagov-169800.csv`, `policy/housing/datagov-6742.csv` |
 | `social-housing` | `social-housing/nlma-portal-GetScheduleData-{A,F}.json`; `social-housing/nlma-portal-dashboard/` |
+| `rent` | `census/census2020-{taipei,ntpc}-s034-tenure.ods` (Data supplement) |
+| `commute` | `census/census2020-{taipei,ntpc}-s014-workplace.ods` (Data supplement) |
+| `stations` (extended) | `stations/tdx-s2s-travel-time-{TRTC,NTMC}.json`, `stations/trtc-128417-transfer-walk.csv`, `stations/nlsc-73230-lrt-stations.zip`; plus the Danhai LRT and Ankeng LRT S2S files if TDX serves them |
+| `fares` (new) | `fares/tdx-metro-od-fare-{TRTC,NTMC}.json` (exact file names and fare type fixed by the first implementation task). The 2021 census employee counts are not a download: they are the committed tables `data/config/census-employees-2021.csv` and `census-employees-2021-totals.csv` (Requirement 28), and `data/DOWNLOAD.md` records how to obtain the PDF. |
+| `low-use` (new) | `low-use/moi-low-use-{period}.*` or one combined file (fixed by the download task). Run in the first implementation step of Requirement 26, which lists the periods present and stops for the user's review. |
+| `timetables` (new) | `timetables/tdx-timetable-{TRTC,NTMC}.json` and the Danhai LRT and Ankeng LRT timetable files (exact file names fixed by the download task); TDX credentials only from `TDX_CLIENT_ID` and `TDX_CLIENT_SECRET` |
 
 Preflight checks all entries and throws one `MissingInputsError` listing each missing path and `node scripts/download.ts <downloadId>` (Requirement 2.3). Missing per-project detail files are not a preflight error; Requirement 13.5 handles them as exclusions. The three committed tables in `data/config/` (holding tax rates, commuter pass products, sublease phases) are checked in the same step. A missing table is reported as a missing committed file, with no download command.
 
@@ -320,7 +360,10 @@ Checks for `history.json`:
 | `indicator-set` | The `id`s of `indicators` equal `ctx.indicatorIds` exactly and in the same order (Requirement 4.11). A missing id is reported at `$.indicators`; an unexpected id, or an expected id at the wrong position, at `$.indicators[i].id`. The pipeline passes the ids of `INDICATOR_SPECS`; the web app will pass `HISTORY_INDICATOR_IDS` from `src/types/data-files.ts` (Decision D29). |
 | `description` | 1–200 characters. |
 | `finite` | Every non-null `value` is a finite number (`Number.isFinite`). |
-| `estimate` | `estimated` is a boolean. `true` → exactly one `method`; `false` → non-null `value` and no `method`. `null` value → `estimated: true` and a method whose `kind` is `missing-reason`. |
+| `estimate` | `estimated` is a boolean. `true` → exactly one `method`; `false` → non-null `value` and no `method`, except the no-data record of a `periodic` indicator. `null` value with `estimated: true` → a method whose `kind` is `missing-reason`. |
+| `no-data` | A `null` value with `estimated: false` (no `method`, no `dataPeriod`) is accepted only in an indicator with `periodic: true`; in any other indicator it is reported at its path (Requirement 26.9). |
+| `data-period` | In a `periodic` indicator every non-null record has a `dataPeriod` matching `^\d{4}H[12]$` whose Reference_Quarter (`H1` → `Q2`, `H2` → `Q4` of that year) equals the record's Quarter_Key; a `dataPeriod` in any other indicator, or on a null or estimated record, is reported (Requirement 26.9). |
+| `low-use-gap` | For each `periodic` indicator, with `ctx.lowUse = { dataGaps, periodsPresent, missing }` from the build: (a) the districts whose 44 records are all `null` equal `dataGaps` exactly (a missing or an extra district is reported at the district's path); (b) a `null` record is accepted at a Q1 or Q3, and at a Q2 or Q4 only when its period is not in `periodsPresent` or `(district, period)` is in `missing`; a `null` at the Reference_Quarter of a period that has a published value for that district is reported at the record's path; (c) more than 5 entirely `null` districts is reported once with the list of their District_Codes (Requirement 26.13). The rule is skipped when `ctx.lowUse` is absent (the web app loader checks types and ranges only). |
 | `method-ref`, `source-ref` | Every method id and source id referenced anywhere is defined in the embedded `methods` and `sources`. |
 | `source-entry` | Each source has non-empty agency, dataset, license; absolute `http`/`https` URL; four-digit years with `first ≤ last`. |
 | `credential` | No URL anywhere contains `api_key` (or another credential parameter) with a value other than `REDACTED`. |
@@ -354,9 +397,10 @@ export type CityName = 'Taipei' | 'New Taipei';
 
 /** One value for one district or city and one quarter. Aligned by index with HistoryFile.quarters. */
 export type ValueRecord =
-  | { readonly value: number; readonly estimated: false }
+  | { readonly value: number; readonly estimated: false; readonly dataPeriod?: string } // dataPeriod only in periodic indicators (Req 26.4)
   | { readonly value: number; readonly estimated: true; readonly method: string }
-  | { readonly value: null; readonly estimated: true; readonly method: string }; // allowed by schema (Req 4.8), never emitted
+  | { readonly value: null; readonly estimated: true; readonly method: string }          // allowed by schema (Req 4.8), never emitted
+  | { readonly value: null; readonly estimated: false };                                 // no data: periodic indicators only (Req 26.5)
 
 export type IndicatorKind = 'count' | 'positive' | 'non-negative' | 'percent' | 'index-0-100';
 
@@ -365,6 +409,7 @@ interface IndicatorBase {
   readonly unit: string;          // e.g. "persons", "TWD per m² per month"
   readonly kind: IndicatorKind;   // drives the range check
   readonly decimals: number;      // 0..6
+  readonly periodic?: true;       // published per half-year; quarters no period covers are no-data records (the two low-use indicators)
   readonly description: string;   // English, 1..200 characters, neutral wording
   readonly sources: readonly string[]; // Source_Ids, at least one
 }
@@ -378,7 +423,7 @@ export interface CityIndicator extends IndicatorBase {
 }
 export type Indicator = DistrictIndicator | CityIndicator;
 
-/** Indicator ids of history.json in file order (Requirement 4.11): 11 district indicators, then 2 city indicators. */
+/** Indicator ids of history.json in file order (Requirement 4.11): 13 district indicators, then 2 city indicators. */
 export const HISTORY_INDICATOR_IDS = [
   'population',
   'moveIn',
@@ -391,6 +436,8 @@ export const HISTORY_INDICATOR_IDS = [
   'mrtEntries',
   'socialHousingCompletions',
   'socialHousingStock',
+  'lowUseHousingCount',
+  'lowUseHousingRate',
   'cityDisposableIncome',
   'priceToIncomeRatio',
 ] as const;
@@ -518,8 +565,12 @@ This is the order of Requirement 4.11 and of `INDICATOR_SPECS` and `HISTORY_INDI
 | 9 | `mrtEntries` | district | entries per quarter | count | 0 | mrt/trtc-133184, mrt/trtc-128683, stations/tdx-metro-station, boundaries/moi-7441 |
 | 10 | `socialHousingCompletions` | district | units per quarter | count | 0 | social-housing/nlma-portal |
 | 11 | `socialHousingStock` | district | units | count | 0 | social-housing/nlma-portal |
-| 12 | `cityDisposableIncome` | city | TWD per household per year | positive | 0 | income/dgbas-9415 |
-| 13 | `priceToIncomeRatio` | city | years of income | positive | 2 | lvr/moi-25119, income/dgbas-9415 |
+| 12 | `lowUseHousingCount` | district | dwellings | count | 0 | housing/moi-low-use |
+| 13 | `lowUseHousingRate` | district | percent of dwellings | percent | 2 | housing/moi-low-use |
+| 14 | `cityDisposableIncome` | city | TWD per household per year | positive | 0 | income/dgbas-9415 |
+| 15 | `priceToIncomeRatio` | city | years of income | positive | 2 | lvr/moi-25119, income/dgbas-9415 |
+
+Requirement 26 (2026-11-17) inserts `lowUseHousingCount` and `lowUseHousingRate` after `socialHousingStock`, so the two city indicators move to positions 14 and 15 and the district indicators number 13. Positions 1 to 11 are unchanged, so every JSON path of `medianTotalPrice` (`$.indicators[6]`) stays valid. The comments of `INDICATOR_SPECS` and `history-file.ts` change to "13 district indicators" and "fifteen indicator series". Both indicators are `periodic: true`: their non-null records carry `dataPeriod` (for example `2023H2` at `2023Q4`), and quarters that no published half-year covers are `{ value: null, estimated: false }`. The engine does not read these two indicators as baseline Indicators, so the `null` values never enter the zero-delta identity.
 
 Registry entry for `medianTotalPrice` in `registry/indicators.ts`, placed directly after `salePrice`:
 
@@ -714,6 +765,13 @@ One `SourceEntry` per dataset. The id prefix is the `scripts/download.ts` id tha
 | `mrt/trtc-128683` | Taipei Rapid Transit Corporation | 臺北捷運各站進出量統計 | https://data.gov.tw/dataset/128683 | 2015–2016 | OGDL v1.0 |
 | `stations/tdx-metro-station` | MOTC Transport Data eXchange | Rail/Metro/Station TRTC, NTMC | https://tdx.transportdata.tw/ | 2025–2026 | not stated |
 | `social-housing/nlma-portal` | National Land Management Agency, MOI | 社會住宅即時資訊平台 | https://socialhousing.nlma.gov.tw/CPA_SocialHousing_Portal/ | 1971–2026 | not stated |
+| `housing/moi-low-use` | MOI (Real Estate Information Platform) | 低度使用(用電)住宅 semi-annual statistics by township and district | URL fixed by the `low-use` download task (data.gov.tw or pip.moi.gov.tw) | first period found–2025 | as stated, else not stated |
+| `census/dgbas-10906-tenure` | DGBAS | 2020 Population and Housing Census, table 34 (households by tenure) | https://data.gov.tw/dataset/10906 | 2020–2020 | OGDL v1.0 |
+| `census/dgbas-census2020-workplace` | DGBAS | 2020 Population and Housing Census, table 14 (employed residents by workplace) | URL as recorded by the `commute` download | 2020–2020 | OGDL v1.0 |
+| `census/dgbas-ics-2021` | DGBAS | Industry and Service Census 2021, year-end employees by township and district (PDF, transcribed by hand into `data/config/census-employees-2021.csv`; excludes government agencies and public schools) | URL of the PDF, recorded in the committed table and in `data/DOWNLOAD.md` | 2021 | as stated, else not stated |
+| `fares/tdx-metro-od-fare` | Ministry of Transport and Communications (TDX platform) | Taipei Metro and New Taipei Metro station-to-station adult single-journey fares | URL and query recorded by the `fares` download in `data/DOWNLOAD.md` | 2025 | as stated by TDX, else not stated |
+| `stations/trtc-128417-transfer-walk` | Taipei Rapid Transit Corporation | Transfer walking times | https://data.gov.tw/dataset/128417 | 2025–2026 | OGDL v1.0 |
+| `params/research` | various | Studies and pages cited by `params-fixed.json`; one registry entry per citation | URL of each citation | per citation | per citation |
 | `affordability/moi-e1050` | MOI (Real Estate Information Platform) | 房價負擔能力統計 | https://pip.moi.gov.tw/Publicize/Info/E1050 | 2016–2025 | not stated |
 | `policy/moi-e3010` | MOI (Real Estate Information Platform) | 住宅補貼 tables 6_1_3 and 6_3_1 (rent subsidy households) | https://pip.moi.gov.tw/Publicize/Info/E3010 | 2015–2025 | not stated |
 | `policy/moi-169800` | MOI | 租金補貼 household-months and amounts | https://data.gov.tw/dataset/169800 | 2023–2023 | OGDL v1.0 |
@@ -751,6 +809,8 @@ TDX's terms of use were not verified (DATA-CHECK.md gap 8); "not stated" is reco
 | `house-tax-even-split` | estimation | `houseTaxRevenue` | 2015Q1–2025Q4 |
 | `commuter-subsidy-definition` | estimation | `commuterPassSubsidy` | 2015Q1–2025Q4 |
 | `commuter-passes-estimate` | estimation | `commuterPassesSold` | 2015Q1–2025Q4 |
+| `commute-model-2025q4` | estimation | commute-matrix.json (documented in SOURCES.md; no history indicator) | all off-diagonal cells |
+| `param-own-data` | estimation | params.json entries of Parameter_Source_Type 2 (one description per id in SOURCES.md) | n/a |
 | `district-area`, `district-centroid`, `boundary-simplify` | estimation | districts.json fields | n/a |
 
 `MethodEntry.appliesTo` lists indicator ids or policy series ids. `MethodEntry.steps` hold the formulas below in plain English. A method whose `kind` is `missing-reason` would document a `null` value; none is defined because none is emitted.
@@ -1166,6 +1226,344 @@ Both estimates are low-confidence assumptions (Decision D22). `commuterPassesSol
 
 **Assembly.** `policy-file.ts` builds the `PolicyTrackFile` with the series in the fixed order, rounds each value to its `decimals`, and embeds the referenced Source_Entries and Method_Entries.
 
+### Data supplement (Requirements 20 to 29)
+
+This section adds three outputs and one indicator pair. It follows `docs/ENGINE-INPUT-FORMATS.md` for every file format, and reuses the pipeline's registry, rounding, serializer, validator and transactional writer.
+
+#### Build order
+
+```mermaid
+flowchart LR
+  H[history indicators incl. low-use] --> PS
+  D[districts + stations + TDX S2S] --> CM[commute matrix step]
+  CE[census-employees-2021.csv + totals] --> JS[jobShare step]
+  JS --> CM
+  FA[TDX fares] --> FS[fare slope step]
+  CM --> FS
+  CT[commute.tripsPerMonth] --> FS
+  TT[TDX timetables] --> CM
+  CM --> PS[params step]
+  FS --> PS
+  H --> PS
+  FX[params-fixed.json] --> PS
+  PS --> V[validate all six files]
+  CM --> V
+```
+
+New steps in `DEFAULT_STEPS`, in this order, after the existing indicator and policy steps: `lowUseStep` (before `historyFileStep`, because it adds two indicators), `jobShareStep` (reads the committed census tables, no raw file), `commuteMatrixStep`, `fareSlopeStep` (pairs the TDX fares with the rail-graph path times of the matrix step and fits the two slopes), `paramsStep`. `BuildState` gains `lowUse`, `jobShare`, `commuteMatrix`, `fareSlope`, `params` and `commuteSurvey`. `validateStep` and `writeStep` take the two new files. `sources-doc.ts` gains the sections listed under "SOURCES.md additions" below.
+
+#### Types (`src/types/data-files.ts`)
+
+```ts
+import type { CommuteMatrix, ParameterTable } from './simulation.ts';
+
+/** public/data/params.json, the wrapped form of docs/ENGINE-INPUT-FORMATS.md section 1. */
+export interface ParamsFile {
+  readonly schemaVersion: 1;
+  readonly parameters: ParameterTable;
+}
+/** public/data/commute-matrix.json: exactly { codes, minutes }, no other key (section 2 of the format reference). */
+export type CommuteMatrixFile = CommuteMatrix;
+```
+
+`ValidationError.file` gains `'params.json'` and `'commute-matrix.json'`. `ValidationContext` gains `engineIdSet: readonly string[]` and `sourceTypes: Readonly<Record<string, 1 | 2 | 3>>` (the pipeline passes both; the web app does not validate these files). `ParameterTable`, `ScalarParameter`, `ScheduleParameter`, `ParameterRange` and `CommuteMatrix` stay in `src/types/simulation.ts`; nothing is redefined.
+
+#### Id inventory of `params.json` (81 ids)
+
+Source type 1 = cited research (Fixed_Parameter_Table), 2 = computed by the Pipeline, 3 = gap with assumption. Statuses are the Parameter_Status written to the file.
+
+| Id (group) | Type | Value (low / value / high) | Status | Source or method |
+|---|---|---|---|---|
+| `socialHousing.rentRatio` | 1 | 0.5 / 0.8 / 0.9 (share) | secondary | RESEARCH-NOTES 2b (CNA, Money Weekly). The high end 0.9 is accepted (user decision 2026-11-18) and has no independent source; `estimated.method` says so |
+| `rentSubsidy.passThrough` | 1 | 0.16 / 0.50 / 0.78 (share) | secondary | RESEARCH-NOTES 2c: United States, United Kingdom, France studies (Bérard 2023 summary) |
+| `commuterPass.elasticity` | 1 | −0.5 / −0.3 / −0.2 | check | Simpson–Curtin rule, Litman (VTPI) |
+| `ghost.rentThreshold` | 1 | 50 (percent of income), no range | verified | HUD "severely burdened" |
+| `ghost.commuteThreshold` | 1 | 45 / 60 / 60 (minutes one way) | secondary | RESEARCH-NOTES 2f (TVBS survey report) |
+| `rentSubsidy.nationalBudget`, `rentSubsidy.nationalHouseholds` | 1 | 30,000,000,000 TWD per year; 500,000 households | verified | TechNews 2022-06-30. The engine parameter is a scalar and no rule reads it, so the year dependence is not represented: the entry states "program from 2022"; earlier years are in `rentSubsidyHouseholds` of the Policy_Track_File (Decision D32) |
+| `rentSubsidy.lag` | 1 | 1 (quarter) | secondary | RESEARCH-NOTES 1d: applications 2022-07-01, first payments October 2022 |
+| `socialHousing.lag` | 2 | median / Q1 / Q3 of NLMA start-to-completion, whole quarters | secondary | NLMA portal; `estimated.method` begins "NLMA social housing portal: ..." |
+| `socialHousing.unitCost` | 2 | 7,800,000 / range 5,450,000 to 8,600,000 TWD per dwelling | secondary | committed table of three Taipei projects (Storm, CNA, Control Yuan) |
+| `socialHousing.rentPerUnit` | 2 | converted −2.5 % / 0 / +6.5 % | secondary | Diamond and McQuade (2019) plus own rent and project size data |
+| `housing.dwellingSize` | 2 | median `建物總面積平方公尺` of qualifying rentals | verified | `lvr/moi-25118` |
+| `housing.householdSize.Taipei`, `.New Taipei` | 2 | persons per household, 2020-12 | verified | ODRP014 (`population/ris-odrp014`) |
+| `housing.renterRate.Taipei`, `.New Taipei` | 2 | renting households / households, 2020 | verified | census table 34 (`census/dgbas-10906-tenure`) |
+| `ghost.shareRent`, `ghost.sensitivityRent` | 2 | log-normal calculation, reference year 2023 | secondary | FIA quartiles, `householdIncome`, `rent`, census renter rate. `ghost.sensitivityRent` is `secondary`, not `gap`: it is computed from real data with written assumptions (user decision 2026-11-18) |
+| `ghost.shareCommuteWithin` (range 45 / 60 / 60 min) and `ghost.sensitivityCommute` | 2 | shares of employed residents by matrix time, workplace districts spread by `commute.jobShare` | secondary | census table 14 (residence-based categories), `commute.jobShare` and the Commute_Matrix_File |
+| `commute.jobShare.<code>` (41) | 2 | district employees / total of 41 | secondary | 2021 DGBAS Industry and Service Census, hand-transcribed table `data/config/census-employees-2021.csv`; excludes government agencies and public schools |
+| `migration.commuteCostPerMinute` | 2 | 0 / central / high, TWD per minute per commuter per month | secondary | TDX Taipei Metro and New Taipei Metro fares, in-vehicle times of the rail graph, `commute.tripsPerMonth`; see "Commute cost per minute" |
+| `ghost.shareBoth` | 3 | `shareRent × (1 − shareCommuteWithin.value)` | gap | independence assumption |
+| `migration.threshold`, `.share`, `.exitShare`, `.weightTime`, `.weightBurden`, `.weightCost` | 3 | see the gap table | gap | no district-to-district migration data (DATA-CHECK.md 3b) |
+| `ghost.size` | 3 | 1,000 | gap | `product.md` default, a display scale, not a research result |
+| `commuterPass.lag` | 3 | 0 (quarters) | gap | see gap table |
+| `commuterPass.unitCost`, `rentSubsidy.unitCost` | 3 | 1 TWD of budget per TWD of subsidy | gap | no sourced administration overhead (simulation-engine design) |
+| `socialHousing.costSchedule` | 3 | equal shares over offsets 0 to lag − 1 | gap | even payment over the construction period |
+| `limit.socialHousing.unitsStarted.lowerFactor` / `.upperFactor` | 3 | 0 / 2 | gap | game default, `simulation.md` |
+| `limit.commuterPass.subsidy.lowerFactor` | 3 | 0 | gap | game default; the upper limit is the pass price |
+| `limit.rentSubsidy.households.lowerFactor` / `.upperFactor`, `limit.rentSubsidy.amount.lowerFactor` / `.upperFactor` | 3 | 0 / 2 | gap | game default |
+
+Counts: 35 ids declared by the rules after leaving out the Omitted_Optional_Ids, 41 `commute.jobShare.<code>` ids and 5 extra `limit.*` ids make 81. By source type: type 1 has 8 ids (`socialHousing.rentRatio`, `rentSubsidy.passThrough`, `commuterPass.elasticity`, `ghost.rentThreshold`, `ghost.commuteThreshold`, `rentSubsidy.nationalBudget`, `rentSubsidy.nationalHouseholds`, `rentSubsidy.lag`); type 2 has 54 ids (3 social housing, 1 dwelling size, 4 household ids, 2 rent ghost ids, 2 commute ghost ids, 41 job shares, `migration.commuteCostPerMinute`); type 3 has 19 ids (`ghost.shareBoth`, 6 migration ids, `ghost.size`, `commuterPass.lag`, 2 unit costs, `socialHousing.costSchedule`, 7 limit factors). By Parameter_Status the 81 ids split into `verified` 8 (`ghost.rentThreshold`, `rentSubsidy.nationalBudget`, `rentSubsidy.nationalHouseholds`, `housing.dwellingSize`, 2 `housing.householdSize` and 2 `housing.renterRate`), `check` 1 (`commuterPass.elasticity`), `secondary` 53 (4 of type 1, 49 of type 2 including the 41 job shares and `migration.commuteCostPerMinute`) and `gap` 19. A test asserts the type and status counts on the built table, so the numbers are not kept in two places.
+
+`ghost.atRiskThreshold` (30 percent) is **not** in the table: the engine never reads it and it is not in the Engine_Id_Set, so including it would break the Id_Set_Check (see Conflicts, item 5).
+
+**Commute_Config_File entries are not in the 81.** `data/config/commute-params.json` holds 8 entries of its own: `commute.detourFactor`, `commute.walkSpeed`, `commute.roadSpeed.taipei`, `commute.roadSpeed.newTaipei`, `commute.accessTime`, `commute.transferWalk`, `commute.transferWait` and `commute.tripsPerMonth`. By Parameter_Status they split into `verified` 1 (`commute.transferWalk`), `secondary` 4 (`commute.detourFactor`, `commute.walkSpeed`, `commute.roadSpeed.taipei`, `commute.transferWait`) and `gap` 3 (`commute.roadSpeed.newTaipei`, `commute.accessTime`, `commute.tripsPerMonth`). A separate test asserts these counts on the committed file; the 81-id counts of `params.json` above do not change.
+
+#### Omitted optional ids
+
+| Id | Engine default when absent |
+|---|---|
+| `budget.ceiling.<tool>.<year>` (33 ids) | the ceiling equals the Annual_Budget |
+| `limit.socialHousing.unitsStarted.upperMin`, `.min`, `.max` | limits come from the factors only |
+| `commuterPass.costSchedule`, `rentSubsidy.costSchedule` | the whole charge falls in the commit quarter |
+
+These ids are the Omitted_Optional_Ids, omitted by user decision on 2026-11-18 because no source exists. `OMITTED_OPTIONAL_IDS` is the complete list (the five fixed ids plus the `budget.ceiling.` prefix); nothing else counts as optional. The Id_Set_Check removes these ids from the engine side, so their absence is not a difference, and reports any of them found in the built table as `extra` (Requirement 20 criterion 13). Every other id the engine reads and the table lacks is `missing`.
+
+#### Id_Set_Check (`params/engine-ids.ts`)
+
+```ts
+import { collectParameterSpecs, RULE_REGISTRY } from '../../../src/simulation/registry.ts';
+
+export const ENGINE_EXTRA_IDS: readonly string[] = [
+  'limit.commuterPass.subsidy.lowerFactor',
+  'limit.rentSubsidy.households.lowerFactor', 'limit.rentSubsidy.households.upperFactor',
+  'limit.rentSubsidy.amount.lowerFactor', 'limit.rentSubsidy.amount.upperFactor',
+]; // plus commute.jobShare.<code> for the 41 codes, generated from the district table
+export const OMITTED_OPTIONAL_IDS: readonly string[] = [ /* the 5 fixed ids above; budget.ceiling.* by prefix */ ];
+
+export function engineIdSet(): ReadonlySet<string>;   // specs minus commuterPass.price.* minus omitted, plus extra
+export interface IdSetDiff { readonly missing: readonly string[]; readonly extra: readonly string[] }
+export function idSetDiff(built: Iterable<string>, engine: ReadonlySet<string>): IdSetDiff;  // both sorted by code point
+```
+
+`scripts/` may import `src/` (structure.md), and Node strips the types of `src/simulation/registry.ts` (checked: `node --input-type=module -e "import ... from './src/simulation/registry.ts'"` prints the 40 spec ids). `paramsStep` calls `idSetDiff`; any `missing` or `extra` entry throws `DataError('params-id-set', ...)` listing each id and its side. Ids of the form `commuterPass.price.*` are removed from the engine side before the comparison and are reported as `extra` if they appear in the built file. `ENGINE_EXTRA_IDS` is a committed list because the engine does not declare these ids; once it does (mismatch 4 of the format reference), `collectParameterSpecs` returns them, the union removes the duplicates, and the list can be deleted.
+
+**Engine dependency (not changed here).** `budget.checkLimit` reads `limit.commuterPass.subsidy.lowerFactor`, `limit.rentSubsidy.households.*` and `limit.rentSubsidy.amount.*` with `scalar()`, which returns NaN when the id is absent, but their rules do not declare the ids as `ParameterSpec`. The simulation-engine spec should declare them so that a missing id gives `parameters-invalid`; this pipeline writes them regardless.
+
+#### Fixed_Parameter_Table (`data/config/params-fixed.json`)
+
+The same wrapped form as the Params_File, holding the type 1 and type 3 entries that need no computation (the gap entries with a data anchor are listed in the next sections and are computed). A reader `fixed-table.ts` checks each entry with the same checker as the validator. Citations are written once, with `url`, in the entry itself. For in-repository sources (`product.md`, `simulation.md`) the `url` is the repository-relative path, because the engine check only requires a non-empty string.
+
+#### Computations (type 2)
+
+Each function is pure and takes parsed rows. `Y2023` means the four quarters of 2023.
+
+**`socialHousing.lag` (`params/social-housing.ts`).** For projects with status `已完工`, parseable `strStartDate` and `strEndDate`, and an end date in 2015Q1–2025Q4, each `setupplan_guid` once: `d = quarterIndex(end) − quarterIndex(start)`. `value = round(median(d))`, `range.low = round(Q1(d))`, `range.high = round(Q3(d))`, quartiles by linear interpolation. `estimated.method = "NLMA social housing portal: median of start-to-completion quarters of <n> completed projects 2015Q1-2025Q4; range is the first and third quartile"`. Fewer than 10 projects stops the build (Requirement 22.2). This is the derivation that the engine's `lag-derivation-missing` check looks for (the text `NLMA`). Completed projects without a parseable start date (older public rental sites) do not qualify, so the median reflects recent projects. The first derivation may exceed the engine's `MAX_LAG` of 43; the integer check applies to `value` only, and `range` is not checked against 43.
+
+**`socialHousing.unitCost` (`params/social-housing.ts`).** Table columns: `project,total_twd,dwellings,stated_per_dwelling_twd,source`. Rows: Jingfeng (490,000,000 / 90 = 5.44 M, stated 5,450,000), Dongxin (690,000,000 / 88 = 7.84 M, stated 7,800,000), Peiying (822,700,000 / 96 = 8.57 M, stated 8,600,000). The check compares `total/dwellings` with the stated figure within 1 percent. `low` = smallest stated, `high` = largest stated, `value` = the middle stated figure. The 5.44 M, 7.84 M and 8.57 M quotients agree with the stated figures to within 0.3 percent. Status `secondary`: three projects only.
+
+**`socialHousing.rentPerUnit`.**
+```
+rentRef      = median over the 41 districts and Y2024 of the rent Indicator (TWD per m² per month)
+unitsPerProj = median household_num of status 已完工 projects (each guid once)
+low   = −0.025 · rentRef / unitsPerProj
+value = 0
+high  = +0.065 · rentRef / unitsPerProj
+```
+Two assumptions are stated in `estimated.method`: rent changes in the same proportion as price (the study measures price), and one project's effect is spread over its units. The price effect applies within about 0.1 mile of a project; the engine applies the per-unit value to a district's whole stock difference, so the spillover is an upper bound on spread. Status `secondary` (US evidence; Taiwan evidence thin). The unit is "TWD per m² per month per dwelling of stock difference".
+
+**`housing.dwellingSize`.** `median(建物總面積平方公尺)` over the qualifying rental records of Requirement 9.1, all 44 quarters, both cities (this reuses `loadLvr(ctx, 'rent')` and the existing rental filter).
+
+**`housing.householdSize.<city>`, `housing.renterRate.<city>`.** `householdSize(c) = Σ people_total / Σ household_no` over village rows of city `c` in the ODRP014 file `ODRP014-202012-{county}.json`. `renterRate(c) = Σ_d renting(d) / Σ_d households(d)` from census table 34 ODS (rows per district; the existing `check.ts rent` command already reads this table). Both are single-year constants (2020-12 and November 2020), stated in the entry.
+
+**`ghost.shareRent` and `ghost.sensitivityRent` (`params/ghost.ts`).**
+```
+for each district d (c = city):
+  m_d   = mean of householdIncome(d, Y2023)                      TWD per household per year
+  σ_d   = (ln Q3_d − ln Q1_d) / (2 · 0.6745)                      Q1, Q3 from the FIA 112_165-9.csv total row (income year 2023)
+  R_d   = mean of rent(d, Y2023) · housing.dwellingSize           TWD per month for the reference dwelling
+  tail_d(t) = P(burden > t) = Φ( (ln(1200 · R_d / t) − ln m_d) / σ_d )      burden in percent, t = 50 or 49
+  renters_d = population(d, 2023Q4) · renterRate(c)
+shareRent        = Σ_d population_d · renterRate(c_d) · tail_d(50) / Σ_d population_d
+sensitivityRent  = Σ_d renters_d · (tail_d(49) − tail_d(50)) / Σ_d renters_d
+```
+`burden > t` is equivalent to `income < 1200 · R_d / t`, because burden = `R_d / (income/12) · 100`, the formula that the engine uses for the Derived_Baseline. `Φ` is the standard normal distribution function, implemented with a rational approximation (Abramowitz and Stegun 7.1.26 on `erf`, max error 1.5e-7) in `numeric.ts`; no dependency is added. The unit of `sensitivityRent` is the share of renter persons per percentage point. The assumptions in `estimated.method` are: the income distribution is log-normal; its median equals the district `householdIncome` (the engine's own income); its spread equals that of FIA tax-unit income (excluding transfer income); renters have the same distribution as all households; the rent of the reference dwelling is the district median rent. Each makes the result approximate, so the status is `secondary`. Q1 ≤ 0 or Q1 ≥ Q3 stops the build (Requirement 22.8). Reference year 2023 is the last year with observed FIA data (2024 and 2025 are extrapolated).
+
+**`ghost.shareCommuteWithin` and `ghost.sensitivityCommute`.** Table 14 gives, per residence district `o`, the number of employed persons `E(o)`, those working in the same district `S(o)`, in another district of the same city `C(o)` and in another county, city or overseas `X(o)`. It gives no workplace district, so `N(o, w)` is estimated:
+```
+N(o, o)  = S(o)
+N(o, w)  = C(o) · jobShare(w) / Σ_{w' ≠ o, same city} jobShare(w')            w in the same city, w ≠ o
+N(o, w)  = X(o) · jobShare(w) / Σ_{w' in the other city} jobShare(w')          w in the other city
+T(o, w)  = Commute_Matrix_File minutes[o][w]
+within(τ) = Σ N(o, w) · [T(o, w) ≤ τ] / Σ N(o, w)
+value = within(60), low = within(45), high = within(60)
+ghost.sensitivityCommute = Σ N(o, w) · [59 < T(o, w) ≤ 60] / Σ N(o, w)     per minute
+```
+The assumptions go to `estimated.method` and SOURCES.md, and both directions of their effect are stated (decided 2026-11-19): (a) the residents who work in the same district have time 0; this barely changes the share within the threshold, because commutes inside one district are under 45 minutes; (b) the category `X(o)` is placed wholly in the other city of the pair, although it also contains workers in other counties and overseas. The matrix gives shorter times for the districts of the other city than the real trips to Taoyuan or Keelung (for example Linkou or Shulin to Taoyuan, Xizhi to Keelung are longer trips), so the share within the threshold is raised and the Ghost counts derived from it may be under-estimated. Workplaces are otherwise spread by the district's share of employees, and the matrix itself is estimated. The status is `secondary`. The `X(o)` placement can be replaced by a workplace-district table if one is found.
+
+**`commute.jobShare.<code>` (`params/job-share.ts`).** Reads the Census_Employment_Table and the Census_Totals_File (see "Employee table and job shares"). `shares = apportion(1_000_000, employees) / 1_000_000` with the existing `apportion` helper. The 41 values then sum to exactly 1 up to floating-point addition (error below 1e-12), and each differs from the exact share by less than 1e-6. The unit is "share of the 41-district total". Status `secondary`: the table is an official count, which on its own would be `verified`, but the census excludes government agencies and public schools, so it is a proxy for jobs and under-counts districts where public employers concentrate (for example Zhongzheng). `estimated.method` states this.
+
+#### Employee table and job shares (Requirement 28)
+
+`data/config/census-employees-2021.csv` has the columns `district_code,employees,source_url,table_id,page`, 41 rows in ascending code order, transcribed by hand from the published PDF of the 2021 DGBAS Industry and Service Census. `data/config/census-employees-2021-totals.csv` has `city,employees,source_url,table_id,page` with the two printed city totals. `census-employees.ts` exports `parseCensusEmployees(text)` and `checkCensusTotals(rows, totals)`; both are pure. The check sums the 12 Taipei and the 29 New Taipei rows by the `city` of `scripts/lib/districts.ts` and compares them with the printed totals; a difference throws `DataError('census-total-mismatch', city, sum, printed)`. The parser reuses the CSV reader of `scripts/lib/`, so no dependency is added. `data/DOWNLOAD.md` records how to obtain the PDF (DGBAS page, table, date retrieved); `scripts/download.ts` does not fetch it, because the values are entered by hand and the committed CSV is the input. The source entry for SOURCES.md is `census/dgbas-ics-2021` (agency DGBAS; dataset "Industry and Service Census 2021, year-end employees by township and district"; URL of the PDF; year 2021; license as stated by the page, otherwise `not stated`).
+
+#### Commute cost per minute (Requirement 29)
+
+Inputs: the Fare_Table (`data/raw/fares/`, source id `fares/tdx-metro-od-fare`), the rail-graph path times of `commute/network.ts` (the same quantity as `path` in the Commute_Model, minutes, no walking), and `commute.tripsPerMonth` of the Commute_Config_File.
+
+```
+pairs   = { (a, b) : fare(a, b) and path(a, b) exist, a ≠ b } over the stations of the 2025Q4 network
+fit(P)  = least-squares slope β of fare on time over P, with intercept         TWD per minute per trip
+cap     = max fare in the Fare_Table (65 TWD)
+tCap    = min { path(a, b) : fare(a, b) = cap }                                (none → Uncapped_Range = all pairs)
+U       = { (a, b) ∈ pairs : path(a, b) < tCap }                               Uncapped_Range
+trips   = commute.tripsPerMonth                                                one-way trips per commuter per month
+low     = 0
+value   = fit(pairs) · trips
+high    = fit(U) · trips
+```
+`migration.commuteCostPerMinute` has the unit "TWD per minute per commuter per month". A minute of one-way travel costs β TWD per trip, and a commuter makes `trips` one-way trips per month, so a minute of commute time in the matrix costs `β · trips` TWD per month. The engine multiplies it by one-way matrix minutes and subtracts K_o (TWD per pass per month), so both terms are TWD per commuter per month.
+
+*Choice of `high`.* Three candidates were compared.
+- **Slope over pairs with fare below the cap.** Selecting rows on the dependent variable (the fare) truncates the fare distribution and biases the slope downward, so `high` could fall below `value` and the build would stop on a data artefact.
+- **Upper end of the 95 percent confidence interval of the all-pairs slope.** The fit uses every station pair, not a sample, and tens of thousands of pairs make the interval a small fraction of the slope. It would describe fitting noise and not the structural uncertainty (capped fares versus a linear cost), so the range would look precise without being so.
+- **Slope over the Uncapped_Range (chosen).** It selects pairs by time, the explanatory variable, so the selection does not bias the fit. It answers one question: what does a minute cost where the cap does not flatten the fare? Because the cap flattens the all-pairs slope, `high ≥ value` is expected. If it does not hold, the build stops (Requirement 29.5) and prints the three values and the pair count, so a surprising fare table is seen and not hidden.
+
+`low = 0` is the marginal cost for a pass holder, who pays no per-trip fare; `lowSource` cites the pass product table of `policy/trtc-products`. `highSource` cites the Fare_Table and states the Uncapped_Range rule. `value` uses the all-pairs slope and also cites the Fare_Table. Status `secondary`: the fares are cited data, and the result depends on `trips` and on the linear form.
+
+`estimated.method` states: the regression (all pairs, least squares with intercept, number of pairs); the Uncapped_Range rule and `tCap`; `commute.tripsPerMonth` and its status; that fares are capped (maximum 65 TWD), so a linear per-minute cost over-estimates long trips; that the fares are cited but the migration weights (`migration.weight*`, `migration.threshold`, `migration.share`) are `gap`, so how strongly the pass subsidy moves migration is an assumption; and that the TPASS backtest validates MRT entries only and does not validate migration.
+
+*Monthly trips.* `commute.tripsPerMonth` = 44, status `gap`, with the assumption 2 one-way trips per working day multiplied by 22 working days per month (decided 2026-11-19; no further search). The Sources_Document lists the data that would replace it: a survey of one-way commute trips per working day for the Taipei metropolitan area and a published count of working days per month. The value is an assumption and not a research result.
+
+*Unit checks.* A pipeline unit test parses the unit strings `TWD per minute per commuter per month` and `minutes` and checks that the product is `TWD per commuter per month`. A cross-check test normalises the unit of the `commuterPassSubsidy` Policy_Series (`TWD per 30-day pass`) with a documented table (`30-day pass` and `pass per month` → `commuter per month`) and checks it equals the same dimension. If the policy track unit changes, the test fails and the mismatch is visible.
+
+*Fare download.* `scripts/download.ts` gains the source `fares` in the first implementation task (the `timetables` source follows the same credential rules): TDX metro station-pair fares for TRTC and NTMC, written to `data/raw/fares/`. TDX credentials come only from `TDX_CLIENT_ID` and `TDX_CLIENT_SECRET`; the code never writes the token response, and the error handler prints `REDACTED` in place of any credential (the existing credentials scan of Requirement 25.6 also covers `data/raw/fares/`). Which TDX fare endpoint and fare type (single-journey adult ticket) the parser reads is confirmed during that task and written to `data/DOWNLOAD.md`; cross-operator pairs that have no fare are excluded and counted.
+
+#### Gap table (type 3, proposed values)
+
+| Id | Proposed value | Assumption and data anchor |
+|---|---|---|
+| `migration.threshold` | computed: standard deviation over districts and years 2016–2025 of the 4-quarter change of baseline rent burden, in percentage points, rounded to 0.1 | A rent-burden rise has to exceed ordinary year-to-year variation before it moves people. Burden = `rent · dwellingSize / (householdIncome / 12) · 100` from the baseline. No study found. |
+| `migration.share` | computed: mean of `moveOut / population` per quarter over all districts and quarters 2016Q1–2025Q4 | Residents who leave when the threshold is exceeded equal the ordinary quarterly out-move rate. The baseline already contains the ordinary movement, so this is an approximation. |
+| `migration.exitShare` | computed from ODRP011 if its columns separate moves to places outside the two cities; otherwise 0 | If the destination split is not in the files, no metro exit is modelled and people are conserved exactly. The download task checks the columns. |
+| `migration.weightTime`, `.weightBurden`, `.weightCost` | 1, 1, 1 | Equal weights; no study of destination choice for Taipei was found. The engine requires the first two positive. |
+| `ghost.shareBoth` | `shareRent · (1 − shareCommuteWithin.value)` | Rent burden and commute time are independent. The engine bound `shareBoth ≤ min(shareRent, 1 − shareCommuteWithin.high)` holds because `1 − value = 1 − high`. |
+| `ghost.size` | 1,000 | `product.md` default; display scale. |
+| `commuterPass.lag` | 0 | The fare elasticities of RESEARCH-NOTES 2e are short-run responses to a price change, taken to act in the quarter of the change. |
+| `commuterPass.unitCost`, `rentSubsidy.unitCost` | 1 | One TWD of budget per TWD of subsidy; no administration overhead was found. |
+| `socialHousing.costSchedule` | offsets 0..L−1, shares 1/L, last share absorbs rounding (`L = socialHousing.lag`) | Cost is paid evenly over the construction period; no payment schedule was found. |
+| limit factors | `lowerFactor` 0, `upperFactor` 2 | Game default (`simulation.md`: 0 to 2 times the real value). |
+
+`migration.commuteCostPerMinute` is no longer in this table: it is a type 2 entry computed from fares (section "Commute cost per minute"). The table has 19 ids (6 migration ids, `ghost.shareBoth`, `ghost.size`, `commuterPass.lag`, 2 unit costs, `socialHousing.costSchedule`, 7 limit factors). `ghost.sensitivityRent` is not here either: it is `secondary` because it is computed from real data with written assumptions; `gap` is used only for parameters that cannot be measured from data.
+
+`migration.threshold`, `migration.share` and `migration.exitShare` are computed values with Parameter_Status `gap`, because the data anchor does not measure what the parameter means (Requirement 23.6). They are written by `params/migration-anchors.ts` from the history indicators and the ODRP011 files.
+
+#### Params file assembly (`params/params-file.ts`)
+
+1. Read `params-fixed.json`; compute the type 2 entries and the anchored gap entries.
+2. Merge into one table, sort the ids by `codePointCompare`, round each `value`, `range` end and schedule share to its documented decimals (shares and rates 6, minutes 1, money 0, counts 0, elasticity 2, sensitivities 6).
+3. Call `idSetDiff`; throw on any difference.
+4. Return `{ schemaVersion: 1, parameters }`.
+
+The serializer writes each entry as a multi-line object because entries contain nested objects (`source`, `range`, `estimated`); arrays of numbers in schedules stay on one line.
+
+#### Commute matrix (`commute/`)
+
+**Decision on the model constants.** Walking speed, transfer time, detour factor, average road speed, fixed access time and `commute.tripsPerMonth` are inputs of the Commute_Model and of `migration.commuteCostPerMinute` and are **not** engine ids. Putting them in `params.json` would break the rule "`params.json` holds exactly the engine ids" (Requirement 20.4), so they live in `data/config/commute-params.json` with the same Parameter_Entry shape (Decision D31). The reader runs the same entry checker as the Params_File. They appear in SOURCES.md under the commute model.
+
+**Constants table (entered 2026-11-19, user decisions).** The eight entries have the Parameter_Entry shape and the same checks as the Params_File (Requirement 25.4). Statuses: `secondary` means a cited study or published figure that is not our own measurement; `verified` is reserved for our own data.
+
+| Id in `commute-params.json` | Unit | low / value / high | Status | Sources and notes |
+|---|---|---|---|---|
+| `commute.detourFactor` | ratio | 1.2 / 1.417 / 1.6 | secondary | Value: Boscoe, Henry and Zdeb (2012), "A Nationwide Comparison of Driving Distance Versus Straight-Line Distance to Hospitals", The Professional Geographer 64(2), https://pmc.ncbi.nlm.nih.gov/articles/PMC3835347/. Range: Cole and King (1968), Quantitative Geography, as reported by Boscoe et al. Note: a United States average that includes rural tracts, likely high for Taipei. |
+| `commute.walkSpeed` | meters per second | 1.07 / 1.37 / 1.46 | secondary | Value and high: Bohannon (1997), "Comfortable and maximum walking speed of adults aged 20-79 years", Age and Ageing 26(1), https://doi.org/10.1093/ageing/26.1.15. The value 1.37 is the midpoint of the two group means 127.2 and 146.2 cm/s, a derived midpoint and not a figure printed in the paper; 1.46 is the fastest group mean. Low: Manual on Uniform Traffic Control Devices 2009, section 4E.06 (3.5 ft/s), https://mutcd.fhwa.dot.gov/htm/2009r1r2/part4/part4e.htm. |
+| `commute.roadSpeed.taipei` | km per hour | 16.7 (no range) | secondary | TomTom Traffic Index 2025, Taipei City, average of the rush-hour speeds (morning 19, evening 15.2), https://www.tomtom.com/traffic-index/taipei-traffic/. Three searches on data.taipei and data.gov.tw found no average travel speed dataset. TomTom is used under the exception of `tech.md`: one published figure, quoted with its citation, with no download and no redistribution of TomTom data. |
+| `commute.roadSpeed.newTaipei` | km per hour | 16.7 (no range) | gap | Assumption: the Taipei value, because no New Taipei figure was found. Suburban New Taipei speeds are likely higher, so road commute times may be too long. |
+| `commute.accessTime` | minutes | 0 / 5 / 10 | gap | Assumption: a fixed time per road trip for parking and access; no citable study was found. The range is a sensitivity range, and the `lowSource` and `highSource` citations say so and name no study. |
+| `commute.transferWalk` | minutes | 1 / 4.29 / 11 | verified | Own data: Taipei Metro transfer walking time dataset 128417 (`data/raw/stations/trtc-128417-transfer-walk.csv`, 21 stations, Big5 encoding). Each interchange uses its own row; the `value` 4.29 is the mean, used for an interchange the file lacks, which SOURCES.md lists as estimated. |
+| `commute.transferWait` | minutes | per line | secondary | Half of the mean weekday 07:00 to 09:00 peak headway of the line that the passenger boards, computed from the TDX timetable files (Timetable_Files, including the Danhai LRT and the Ankeng LRT). The `value` is the mean of the per-line half-headways, used for a line without a headway. Fallback for a line the timetable files do not cover: the peak headway published on the Taipei Metro official website, cited per line. Never Wikipedia. `estimated.method` states the window and that the matrix represents morning work commutes, the trip type of the MOTC survey it is compared with (Decision D50). The committed value is entered when the timetable files have been downloaded, and a test checks that it equals the mean the build computes. |
+| `commute.tripsPerMonth` | one-way trips per commuter per month | 44 (no range) | gap | Assumption: 2 one-way trips per working day multiplied by 22 working days per month. No cited survey or published count was found, and no further search is made. |
+
+`commute.roadSpeed.newTaipei` and `commute.tripsPerMonth` are `gap` entries with a non-blank `assumption`. `commute.accessTime` is `gap` with a sensitivity range. The headway window for `commute.transferWait` is the weekday morning peak (07:00 to 09:00), decided 2026-11-19 (Decision D50): the matrix represents morning work commutes, the same trip type as the MOTC survey. The window is stated in `estimated.method`, which names the survey only to define the trip type and never as a reason for a value, so the no-tuning review of Requirement 25.8 still holds.
+
+**The build does not block on these constants.** Any constant without a cited source has status `gap`, a value, an `estimated.method` and a non-blank `assumption`, and the build continues (Requirement 25.3). The reader stops only on an absent id, a non-finite value, an empty unit, or a non-`gap` entry without a source. **No constant is adjusted to match the MOTC survey figure of about 57 minutes**; the gap to the survey is only reported by `survey-check.ts` and written to SOURCES.md (Requirement 24.8, 25.8). Tuning a constant against the survey is a defect, and a review of `commute-params.json` checks that each `source` is a citation or the `assumption` states a reason that does not mention the survey.
+
+**Network (`network.ts`).**
+- Stations: `tdx-station-TRTC.json`, `tdx-station-NTMC.json` (points) and `nlsc-73230-lrt-stations.zip` (LRT points). A line section counts when its opening date, from the table of Requirement 11.4 extended with the Danhai LRT sections (2018-12-24 and 2020-11-15) and the Ankeng LRT (2023-02-10), is on or before 2025-12-31. The NTMC line `LB` (Sanying Line, opened 2026-06-30) is excluded by this rule. The Taoyuan Airport MRT is not in the TDX files and is excluded by user decision (Open Question 20, decided 2026-11-18).
+- Edges: each `TravelTimes` record gives an undirected edge with weight `RunTime / 60` minutes plus the dwell time of its `to` station, `dwell(v) = StopTime / 60` of the record that leaves `v` on the same route (0 at a terminal). When both directions of a pair exist, the smaller weight is used. A path's time is the sum of the edge weights minus `dwell(destination)`, so the origin and destination dwell are not counted and every intermediate dwell is.
+- Transfers: stations that share a physical site are joined by an edge of `transferWalk(site) + transferWait(line boarded)`. `transferWalk(site)` is the row of `trtc-128417-transfer-walk.csv` for that interchange (Big5, 21 stations); a site with no row uses the mean 4.29 minutes (`commute.transferWalk` value) and is listed in SOURCES.md as estimated. `transferWait(line)` is half of the weekday 07:00 to 09:00 peak headway of the boarded line computed by `timetable.ts` from the Timetable_Files, or the half of the peak headway from the Taipei Metro official website for a line the files do not cover, or the `commute.transferWait` mean for a line with neither.
+- Run times of lines without S2S records (the Danhai LRT and the Ankeng LRT in the files of the first download), in this order of preference: (1) TDX S2S files, if TDX serves them for the line; (2) the TDX timetable files, where `timetable.ts` takes the inter-station time of each consecutive station pair as the median over trips of the arrival time at the next stop minus the departure time at the stop; (3) only when the Timetable_Files do not cover the line, the committed table `lrt-timetable.csv` with the average inter-station minutes and the operator page URL cited per line. Each line gets edges between consecutive stations, in the line's published order from the station IDs of the NLSC LRT file. Wikipedia is never a source (Requirement 25 criterion 16), and SOURCES.md states for each line which of the three supplied the times.
+
+**Algorithm (`model.ts`).**
+```
+for each district i: nearestStation(i) = argmin over active stations of haversineKm(centroid(i), station)   tie: lower station id
+walk(i, s)  = haversineKm · detourFactor / walkSpeed · 60                                                  minutes
+road(i, j)  = haversineKm(centroid i, centroid j) · detourFactor / roadSpeed · 60 + accessTime
+rail(i, j)  = walk(i, nearest(i)) + path(nearest(i), nearest(j)) + walk(j, nearest(j))                      path = 0 when the stations are equal
+cell(i, j)  = 0 if i = j else roundTo(min(rail(i, j), road(i, j)), 1)
+```
+`path` is one Dijkstra run per origin station over the node set (station, line); ties are broken by ascending station id and line id so the result does not depend on input order. Walking distances beyond the road alternative are never chosen because of the `min`. The matrix is not forced to be symmetric, but with undirected edges and symmetric formulas it is.
+
+**Survey comparison (`survey-check.ts`).** `mean = Σ_{o ∈ NewTaipei} Σ_{w ∈ Taipei} pop(o) · jobShare(w) · T(o, w) / Σ pop(o) · Σ jobShare(w)`, with `pop` = mean population of 2025 and `jobShare` renormalized over the 12 Taipei districts. The step prints `commute check: modelled <x> min, survey about 57 min, difference <±y>` and passes both numbers and the signed difference to SOURCES.md, which reports them as they are (one decimal place; no comment that treats the difference as an error). No constant, parameter or Commute_Model input is adjusted and the exit code does not change; a review of `commute-params.json` checks that no `assumption` or `estimated.method` mentions the survey as a reason for a value (Requirements 24.8 and 25.8).
+
+**Model limitations (SOURCES.md and the engine's model limitations).** One fixed matrix for the 2025Q4 network, written to the single file `public/data/commute-matrix.json` and used for every quarter: times before the 2018 to 2023 line openings are shorter or longer than real; every off-diagonal cell is estimated; the Taoyuan Airport MRT, buses and the Sanying Line are not in the rail graph; straight-line centroid distances stand in for door-to-door trips. **Linkou has no other rail line, so its commute times come from the road model only and are likely over-estimated** (Requirement 24.11). Constants without a cited source are `gap` entries and the matrix inherits their uncertainty. The modelled New Taipei to Taipei mean is compared with the MOTC survey figure of about 57 minutes and not tuned to it. For `migration.commuteCostPerMinute`: fares are capped (maximum 65 TWD), so a linear per-minute cost over-estimates long trips; fares are cited but the migration weights are `gap`, so the size of the commuter pass effect on migration is an assumption; the TPASS backtest validates MRT entries only, not migration.
+
+#### Low-use housing indicators (`low-use.ts`, Requirement 26)
+
+**Source and first step.** MOI statistics of low-use (low electricity use) dwellings, half-yearly, by township and district: count of dwellings with average monthly use at or below 60 kWh, and the share of all metered dwellings. No district-level file is in `data/raw/` (see Research findings). The first implementation step downloads the district-level files through the `low-use` source of `scripts/download.ts` (URL, query and date retrieved go to `data/DOWNLOAD.md`), runs `scripts/check.ts low-use`, which calls the parser and prints each half-year period present with its number of districts and the districts missing, and then **stops for the user's review**. The indicator builder, the registry entries and the validator rules are implemented only after that review. Source id `housing/moi-low-use`; the license is recorded as the page or catalog states it, otherwise `not stated`.
+
+**Period convention.** A published half-year value is the state at the last day of the period, so it applies to the period's Reference_Quarter (Q2 of the first half, Q4 of the second half) and to no other quarter. The existing quarter rule of this design (annual values are spread over four quarters by interpolation) does not apply here, because the user decided that no missing period is filled: the half-year value is kept as the observation it is, and the quarter that the period does not cover stays `null`. The `dataPeriod` label `YYYYH1` or `YYYYH2` travels with the value so that a consumer can show the data year.
+
+**Parser.** `parseLowUse(text|bytes)` returns rows `{ period: 'YYYYH1' | 'YYYYH2', districtCode, count, ratePercent }`. District names are matched with `districtByZh`; the rate may be published as a percentage or a fraction, and the parser checks which and stops on an unknown layout with file, row and the expected and found column names (Requirement 2.4). `periodsPresent(rows)` returns the sorted list of periods with the number of districts, used by `check.ts low-use`.
+
+**Builder.**
+```
+published(d, p) = the row for district d and period p, if any
+for quarter k in 0..43:
+  p = the period whose Reference_Quarter is k, if k is a Q2 or Q4 (else none)
+  if p exists and published(d, p): record = { value, estimated: false, dataPeriod: label(p) }
+  else:                            record = { value: null, estimated: false }
+no published value in any period for d → every record of d is { value: null, estimated: false }; d joins dataGaps (no error)
+dataGaps = { d : all 44 records of d are null }, computed from the built records, sorted by District_Code
+|dataGaps| > 5 (including no period with any row) → DataError('low-use-too-many-gaps', the District_Codes of dataGaps)
+```
+`dataGaps` is computed per Indicator from the built records and never from a hand-written list. More than 5 entirely `null` districts more likely means a parsing error (wrong column, district name mismatch) than missing data, so the build stops and lists them; 5 or fewer continue. The builder returns `{ records, dataGaps, periodsPresent, missing }`, where `missing` is the list of `(district, period)` pairs of a present period without a published value for that district; the validate step passes `dataGaps`, `periodsPresent` and `missing` to the validator as `ctx.lowUse`.
+
+Count and rate are taken from the same row and are never interpolated, held, extrapolated or recomputed from each other. A period that exists for some districts but not for district `d` gives a no-data record for `d` at that Reference_Quarter and adds `(d, p)` to `missing`. Quarters Q1 and Q3 are always no-data. The unit of `lowUseHousingRate` is `percent of dwellings` with kind `percent`, so the validator's 0 to 100 range applies to non-null values. `Estimate` totals printed under Requirement 1 criterion 4 do not count no-data records. The Sources_Document lists, per district, the periods without a published value, the periods found, the first and last period, and states that quarters without a period are `null` and not estimated. It also writes the `dataGaps` list under the heading "Data gaps: low-use housing" (section 9) as a table of District_Code, romanized name and Indicator id (Requirement 26 criterion 12), or the sentence that no district is entirely without a published value. The game-ui spec shows "No data" for these `null` values and never 0 (dependency 9 below).
+
+**Fixed order.** `lowUseHousingCount` and `lowUseHousingRate` come after `socialHousingStock` in `INDICATOR_SPECS` and `HISTORY_INDICATOR_IDS`, with `periodic: true`; the registry test and the validator `indicator-set` rule use the 15-element list. The `no-data`, `data-period` and `low-use-gap` validator rules (below) apply only to `periodic` indicators.
+
+#### Validator additions (`src/data/validate.ts`)
+
+```ts
+export function validateParamsFile(x: unknown, ctx: ValidationContext): ValidationError[];
+export function validateCommuteMatrixFile(x: unknown, ctx: ValidationContext): ValidationError[];
+```
+
+| Rule | Check |
+|---|---|
+| `required`, `type` | wrapped form; no other top-level key; matrix has exactly `codes` and `minutes` |
+| `id-set` | the keys of `parameters` equal `ctx.engineIdSet`; each difference is reported at `$.parameters["<id>"]` |
+| `entry` | the entry rules of `docs/ENGINE-INPUT-FORMATS.md` section 1: `kind`, finite `value`, non-empty `unit`, `source.citation` and `source.url`, `status` in the four values, `estimated.method` when `secondary` or `gap`, `assumption` when `gap` and a value exists, `range` order and sources |
+| `check-kind` | per-id value checks (`integer 0–43` for lags, `positive`, `share`, `unit-share`, `non-negative`, `finite`), taken from the engine's `ParameterSpec` checks for ids the specs declare, from a table of the five extra limit ids otherwise |
+| `schedule` | offsets distinct integers 0 to 43; shares non-negative; same length; sum 1 within 1e-9 |
+| `special` | `socialHousing.lag` has `estimated.method` containing `NLMA`; `ghost.rentThreshold` has no `range`; `shareBoth ≤ min(shareRent, 1 − shareCommuteWithin.high)`; `commute.jobShare.*` sum to 1 within 1e-9 |
+| `gap` | a `gap` entry without a non-blank `assumption` (Requirement 23.8) |
+| `credential` | the existing rule applied to every `url` |
+| `matrix` | `codes` equal `ctx.districtCodes`; 41 rows of 41 finite non-negative numbers; diagonal exactly 0 |
+
+The entry and per-id checks reuse the engine's stage 0 functions in `src/simulation/params.ts` when they are exported and pure; if they are not exported, the validator carries its own copy and a parity test runs both on one fixture set (Decision D33).
+
+#### Credentials scan (`credentials-scan.ts`)
+
+`scanForCredentials(files: readonly { path: string; text: string }[], secrets: readonly string[]): { path: string; line: number; kind: string }[]` reports a line that contains a non-empty secret value, an `access_token` key or an `Authorization` header value. It never returns the matched text. The step passes the six Output_Files, the raw files written by `download.ts` under `data/raw/stations/`, `data/raw/fares/` and `data/raw/timetables/`, and the text of the preceding log; `secrets` holds the values of `TDX_CLIENT_ID` and `TDX_CLIENT_SECRET` when set (read in the scan step only, never printed). A static test checks that `scripts/download.ts` never writes the token response and that its error handler prints `REDACTED` in place of the credentials.
+
+#### SOURCES.md additions
+
+Sections 3 and 4 gain the low-use indicators and the new sources. A new section 10 "Parameters" lists all 81 ids with source type, unit, status, source, the `estimated.method` and, for type 3, the assumption and the data that would replace it; it lists the Omitted_Optional_Ids with the engine default. A new section 11 "Commute model" has the network rules, the constants of `commute-params.json` with their status and each `gap` assumption, the source of the run times of each LRT line (S2S, TDX timetable or committed table), the weekday 07:00 to 09:00 peak headway and half-headway of each line used for `commute.transferWait` with the window and the statement that the matrix represents morning work commutes, the interchanges that use the mean transfer walking time, the survey comparison (the population-weighted mean commute time from New Taipei districts to Taipei districts and its signed difference from the MOTC survey value of about 57 minutes, reported as they are, with no tuning), the Taoyuan Airport MRT exclusion with the Linkou limitation, and the model limitations. Further entries: the source entry `census/dgbas-ics-2021` with the hand-transcription statement, the table id and pages, the exclusion of government agencies and public schools, and how to obtain the PDF (`data/DOWNLOAD.md`); the source entry `fares/tdx-metro-od-fare` with the fare regression (pairs used and excluded, the three slopes, the Uncapped_Range rule, `commute.tripsPerMonth` with its source requirement: a survey of one-way commute trips per working day and a published count of working days per month); and the per-id unit check between `migration.commuteCostPerMinute` and the commuter pass subsidy. Section 9 gains the low-use period gaps, the heading "Data gaps: low-use housing" with the computed list of entirely `null` districts (District_Code, romanized name, Indicator id; Requirement 26.12), and the data gap "district-to-district migration (DATA-CHECK.md 3b)" with the migration parameters as the affected ids.
+
+#### Dependencies, conflicts and engine gaps
+
+1. `tech.md` places the commute matrix in `districts.json`; the user chose `commute-matrix.json` (Decision D31). `tech.md` needs a one-line update.
+2. The `limit.*` ids of the commuter pass and rent subsidy tools are not declared by the engine rules (format reference mismatch 4). The Id_Set_Check carries them as Engine_Extra_Ids.
+3. The simulation-engine design lists `ghost.sensitivityRent` as `gap` until a source exists; Requirement 22.7 computes it from our own data with status `secondary` (decided 2026-11-18). The engine design table needs the matching change.
+4. `docs/ENGINE-INPUT-FORMATS.md` marks `ghost.atRiskThreshold` as optional and unread; it is not in the Engine_Id_Set and is left out.
+5. The existing `tasks.md` and `tasks.meta.json` do not cover Requirements 20 to 29 and the 15-indicator list; they are updated in the next step, after the user approves this document. The first implementation task adds the `fares` source to `scripts/download.ts`.
+6. **Engine dependency.** `SCENARIO_EFFECT_IDS` does not contain `migration.commuteCostPerMinute`; a simulation-engine spec change, handled separately, adds it with direction-aware Scenario values (strongest-effect Scenario takes `high`, weakest takes `low` = 0). Until it lands, the `range` of the entry is written but the engine reads only `value` for it.
+7. **Steering.** `tech.md` still places the matrix in `districts.json` and describes the matrix as estimated from centroid distances plus the MRT network; it is being updated to the single `public/data/commute-matrix.json` for the 2025Q4 network (user decision; not edited here).
+8. **Unit string.** The `commuterPassSubsidy` Policy_Series unit is `TWD per 30-day pass`, while the rule comment says TWD per pass per month. They are treated as the same quantity through a normalisation table (Open Question 24).
+9. **Game-ui dependency (Requirement 26 criterion 11).** The game-ui spec must show a low-use value only for quarters whose Value_Record is non-null, and must label the value with its `dataPeriod` (the data year). The map shows "No data" for a `null` value (a Q1 or Q3 quarter, a period without data, or a district on the data-gap list) and never shows it as 0. Quarters Q1 and Q3 and periods without data show no value. This spec does not edit the game-ui spec.
+10. **Download before build.** The `low-use` files must be downloaded and reviewed (Requirement 26 criterion 1) before the low-use builder, registry entries and validator rules are implemented.
+11. **Credentials.** The `timetables` download reads TDX credentials from `TDX_CLIENT_ID` and `TDX_CLIENT_SECRET` only; the credentials scan covers `data/raw/timetables/` (Requirement 25 criteria 5 and 6).
+
 ### Sources document (`sources-doc.ts`)
 
 `renderSourcesDoc(state)` returns a string built from the registries and the build notes. It contains no date, path or environment value. Sections, in fixed order:
@@ -1311,7 +1709,7 @@ All properties below test pure functions with generated in-memory inputs. None r
 
 ### Property 20: The validator detects every injected defect
 
-*For any* valid HistoryFile, DistrictsFile or PolicyTrackFile and any set of 1 to 5 defects injected at distinct locations (a removed required field, a wrong type, `NaN` or `±Infinity`, an unknown or duplicated district code, a quarter outside 2015Q1–2025Q4, a series of the wrong length, `estimated: true` without a method, `estimated: false` with a method, an unknown source or method id, a negative count, a percentage outside 0–100, a wrong ring winding, an unclosed ring, an unredacted `api_key`, a Track_Record whose source id is not defined, a negative count Track_Record, an indicator removed from, added to or moved within `indicators` relative to `ctx.indicatorIds`), the validator reports at least one error for each defect, each with the JSON path of that defect, and reports no error for the unmodified file.
+*For any* valid HistoryFile, DistrictsFile or PolicyTrackFile and any set of 1 to 5 defects injected at distinct locations (a removed required field, a wrong type, `NaN` or `±Infinity`, an unknown or duplicated district code, a quarter outside 2015Q1–2025Q4, a series of the wrong length, `estimated: true` without a method, `estimated: false` with a method, an unknown source or method id, a negative count, a percentage outside 0–100, a wrong ring winding, an unclosed ring, an unredacted `api_key`, a Track_Record whose source id is not defined, a negative count Track_Record, an indicator removed from, added to or moved within `indicators` relative to `ctx.indicatorIds`, a `null` value with `estimated: false` in an indicator that is not `periodic`, a non-null value of a `periodic` indicator without `dataPeriod` or with a `dataPeriod` whose Reference_Quarter differs from its Quarter_Key), the validator reports at least one error for each defect, each with the JSON path of that defect, and reports no error for the unmodified file.
 
 **Validates: Requirements 3.1, 3.4, 3.5, 3.9, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.11, 14.3, 14.4, 14.5, 12.2, 12.3, 14.7, 16.1, 16.2, 16.3, 16.4, 16.5**
 
@@ -1411,6 +1809,84 @@ All properties below test pure functions with generated in-memory inputs. None r
 
 **Validates: Requirements 19.4**
 
+### Property 37: Id-set difference is the symmetric difference
+
+*For any* set `B` of built parameter ids and any engine id set `E`, `idSetDiff(B, E)` returns `missing = E \ B` and `extra = B \ E`, both sorted by code point; both lists are empty exactly when `B = E`; any id of the form `commuterPass.price.<city>.<quarter>` in `B` appears in `extra`; an Omitted_Optional_Id never appears in `missing` and appears in `extra` when it is in `B`.
+
+**Validates: Requirements 20.4, 20.5, 20.6, 20.7, 20.13**
+
+### Property 38: The parameter validator reports every injected defect at its path
+
+*For any* valid generated Params_File and any single injected defect (an id removed or added, a missing `unit`, `source.citation` or `source.url`, an unknown status, a `secondary` or `gap` entry without `estimated.method`, a `gap` entry without `assumption`, a `range` with `low > value` or `value > high`, a schedule whose shares do not sum to 1, a `socialHousing.lag` method without `NLMA`, a `range` on `ghost.rentThreshold`, a `shareBoth` above its bound, job shares that do not sum to 1), `validateParamsFile` reports at least one error whose JSON path is the path of the defect, and it reports no error for the undamaged file.
+
+**Validates: Requirements 20.1, 20.2, 20.3, 20.8, 20.9, 23.8, 27.4**
+
+### Property 39: Params and commute matrix files round-trip
+
+*For any* valid Params_File and any valid Commute_Matrix_File, serializing to JSON, parsing and validating reports zero errors and gives an object deep-equal to the original, and the matrix validator reports an error for any matrix with a non-zero diagonal, a negative or non-finite cell, a wrong row count or `codes` that differ from the district codes.
+
+**Validates: Requirements 24.1, 24.2, 27.4, 27.5**
+
+### Property 40: Job shares are largest-remainder shares that sum to 1
+
+*For any* 41 non-negative integer employee counts with a positive sum, the job shares are whole multiples of 0.000001, sum to 1 within 1e-12, and each differs from `employees / total` by less than 0.000001; scaling every count by the same positive integer gives the same shares.
+
+**Validates: Requirements 20.11, 22.10, 28.5**
+
+### Property 41: Rent-burden tail share and sensitivity are bounded and monotone
+
+*For any* district median income `m > 0`, quartiles `0 < Q1 < Q3`, rent `R > 0`, dwelling size `S > 0` and threshold `t` in 1 to 100, the tail share lies in [0, 1] and the sensitivity (share above `t − 1` minus share above `t`) lies in [0, 1]; the tail share does not decrease when `R` increases and does not increase when `m` increases; and a weighted aggregate of tail shares with weights in [0, 1] lies in [0, 1].
+
+**Validates: Requirements 22.7**
+
+### Property 42: Commute shares are ordered and bounded
+
+*For any* 41×41 matrix of non-negative minutes and any non-negative counts with a positive sum, the share within 45 minutes does not exceed the share within 60 minutes, both lie in [0, 1], and the sensitivity (share in (59, 60]) lies in [0, 1] and does not exceed the share above 59 minutes.
+
+**Validates: Requirements 22.9**
+
+### Property 43: Derived gap parameters meet the engine constraints
+
+*For any* `ghost.shareRent` in [0, 1] and any `ghost.shareCommuteWithin` with `low ≤ value = high` in [0, 1], the derived `ghost.shareBoth = shareRent · (1 − value)` satisfies `shareBoth ≤ min(shareRent, 1 − high)`; and *for any* lag `L` in 1 to 43 the cost schedule has the distinct offsets 0 to `L − 1`, non-negative shares and a sum of 1 within 1e-9.
+
+**Validates: Requirements 23.4, 23.5**
+
+### Property 44: The commute model takes the faster mode and is order independent
+
+*For any* generated set of up to 41 centroids, up to 30 active stations with a connected rail graph, and positive constants, every diagonal cell is 0; every off-diagonal cell is finite, non-negative and not greater than the road time (and, when both nearest stations are defined, not greater than the rail time); the rail path time equals a brute-force shortest path on graphs of up to 8 stations; the matrix does not change when the input order of stations, edges or districts is permuted (with the district order fixed by code); and halving the road speed does not decrease any cell.
+
+**Validates: Requirements 24.2, 24.3, 24.4, 24.5, 24.10, 25.1**
+
+### Property 45: Low-use quarters hold published values at their Reference_Quarter only
+
+*For any* set of published `(district, period, count, rate)` rows over any subset of the 41 districts and the 22 half-years (counts of 0 or more, rates from 0 to 100) in which at most 5 districts have no row, the builder returns for every district exactly 44 records; the record at the Reference_Quarter of each period with a row for that district equals the published value with `estimated: false`, no method and a `dataPeriod` equal to the period label; every other record is `{ value: null, estimated: false }`; the number of non-null records of a district equals its number of rows; `dataGaps` equals exactly the set of districts with 44 `null` records; and the validator with `ctx.lowUse` from the builder reports no error. *For any* such set in which more than 5 districts have no row (including the empty set), the builder throws `low-use-too-many-gaps` whose message lists exactly those District_Codes.
+
+**Validates: Requirements 26.3, 26.4, 26.5, 26.6, 26.7, 26.12, 26.13**
+
+### Property 46: Census employee totals check accepts exactly the consistent tables
+
+*For any* 41 non-negative integer employee counts whose 12 Taipei and 29 New Taipei sums equal the printed city totals, `checkCensusTotals` accepts the table; and *for any* such table in which one count is changed by a non-zero amount (keeping it a non-negative integer), `checkCensusTotals` rejects it and names the city whose sum no longer equals its total.
+
+**Validates: Requirements 28.3, 28.4, 28.9**
+
+### Property 47: The fare slope recovers linear fares and scales with monthly trips
+
+*For any* set of at least 3 station pairs with at least 2 distinct in-vehicle times and fares exactly `a + b · time` (with `b > 0`), the all-pairs slope equals `b` within 1e-9; *for any* Monthly_Commute_Trips `m > 0`, the built entry has `low = 0`, `value = m · fit(all pairs)` and `high = m · fit(Uncapped_Range)`, so doubling `m` doubles `value` and `high` and leaves `low` at 0; and when no pair is charged the Fare_Cap, `high = value`.
+
+**Validates: Requirements 29.3, 29.4, 29.11**
+
+### Property 48: Commute cost entries keep their order or stop the build
+
+*For any* generated fare table and Monthly_Commute_Trips, the builder either returns an entry with `0 ≤ value ≤ high` or throws a `DataError` that names the id and the three values; it never returns an entry that breaks the order.
+
+**Validates: Requirements 29.5**
+
+### Property 49: The credentials scan finds every injected secret and never prints it
+
+*For any* set of text files (Output_Files and files under `data/raw/stations/`, `data/raw/fares/` and `data/raw/timetables/`) with random lines, any non-empty secret values, and any one inserted line that contains a secret value, an `access_token` key or an `Authorization` header value, `scanForCredentials` reports a finding with that file path and that line number, no finding contains the matched text, and the same files without the inserted line produce no finding.
+
+**Validates: Requirements 25.5, 25.6**
+
 ## Error Handling
 
 ### Error types (`errors.ts`)
@@ -1419,7 +1895,7 @@ All properties below test pure functions with generated in-memory inputs. None r
 |---|---|---|
 | `MissingInputsError` | preflight | One line per missing file: repository-relative path and `node scripts/download.ts <download-id>` (Requirement 2.3). |
 | `ParseError` | parsers | File path (plus `!entry` for ZIP members), 1-based row, expected columns, found columns (Requirement 2.4). |
-| `DataError` | indicator builders | The rule that failed and its subject: district code, city, quarter, month, station, project guid, values involved. Examples: Requirement 5.5, 5.6, 6.6, 6.7, 7.8, 7.9, 8.9, 9.8–9.10, 10.4, 10.6, 11.11, 12.14, 12.15, 13.6, 19.5, 3.7, 3.8. |
+| `DataError` | indicator builders | The rule that failed and its subject: district code, city, quarter, month, station, project guid, values involved. Examples: Requirement 5.5, 5.6, 6.6, 6.7, 7.8, 7.9, 8.9, 9.8–9.10, 10.4, 10.6, 11.11, 12.14, 12.15, 13.6, 19.5, 3.7, 3.8, 20.6, 21.1, 22.2, 22.4, 22.8, 22.11, 25.3, 26.7, 28.4, 29.5. |
 | `ValidationFailedError` | validation step | All `ValidationError`s of all files, each as `<file> <JSON path>: <rule>: <message>` (Requirement 16.5). |
 | `BannedTermError` | banned-term step | Each term and line number (Requirement 15.9). |
 | `WriteError` | writer | The file whose write or rename failed, after rollback (Requirement 16.8). |
@@ -1446,7 +1922,7 @@ Classes use plain field declarations and constructor assignments, no parameter p
 
 ### Property-based tests
 
-- One test per property above, 36 in total, each configured with `{ numRuns: 100 }` or more.
+- One test per property above, 49 in total, each configured with `{ numRuns: 100 }` or more.
 - Each test carries a comment tag in the form `// Feature: data-pipeline, Property <n>: <property title>`.
 - Generators build in-memory records only. File-shaped generators (CSV text, JSON rows) are used where the property is about parsing, for example Property 9.
 - Generators for file-level properties (20, 21, 23) produce full-size files: 41 codes and 44 quarters, 1 to 3 indicators. That is about 5,000 records per case, fast enough for 100 runs.
@@ -1461,6 +1937,8 @@ Classes use plain field declarations and constructor assignments, no parameter p
 - **Median total price builder** (Requirement 19.10), each with an in-memory fixture of at most 50 rows and literal expected values: a district-quarter with exactly 10 sales (own median, not estimated); a district-quarter with fewer than 10 that uses a radius-1 window (estimated, `median-total-price-pooled-window`); a sale with `總價元` = 0 that is excluded while its unit price still counts for `salePrice`; an even count whose median is the mean of the two middle values, including a .5 result rounded away from zero; and a district whose widest window has no sale with a positive total price, which throws `no-sales-for-median-total-price` naming the district and quarter. One more example checks that `buildPriceToIncome` gives the same series as before the switch to `totalPriceSales` on the existing price-to-income fixtures.
 - **Indicator order** (Requirement 4.11): `INDICATOR_SPECS.map((s) => s.id)` equals the literal list of Requirement 4.11 and `HISTORY_INDICATOR_IDS`; the `medianTotalPrice` spec has unit `TWD per transaction`, kind `positive`, decimals 0, sources `['lvr/moi-25119']` and a description of 1 to 200 characters (Requirement 19.1, 19.9). Validator examples: a history file whose `indicators` miss one id, add one, or swap two fails with rule `indicator-set` at the expected path; a `medianTotalPrice` value of 0 and one of −1 fail with rule `range` at `$.indicators[6].series["<code>"][<i>].value` (Requirement 19.9).
 - **Fixed tables**: the month → source table for population (2017-12, 2018-03); the CPI series mapping; the reference table checked against a fixture adjacency.
+- **Data supplement** (Requirements 20 to 29): one fixture test per new parser (census table 34 and 14 ODS, the Census_Employment_Table and Census_Totals_File CSVs, the TDX fare files, low-use statistics, TDX S2S, transfer walk, the committed tables) with a missing-column test each; the Id_Set_Check against the real `RULE_REGISTRY` (smoke: the built id set equals the engine set, 81 ids, counts per source type as listed in the inventory: 8, 54 and 19; statuses 8 `verified`, 1 `check`, 53 `secondary`, 19 `gap`); `idSetDiff` examples with one missing and one extra id, with a `commuterPass.price.Taipei.2020Q1` id, and with an Omitted_Optional_Id present in the table (reported as extra) or absent (no difference); the census total check with a Taipei and a New Taipei mismatch; the fare regression on a fixture of at most 50 pairs (all-pairs slope, Uncapped_Range slope, a fixture without capped pairs where `high = value`, a fixture where `high < value` stops the build); the unit test and cross-check test of Requirement 29.8 (`TWD per minute per commuter per month` × minutes = `TWD per commuter per month`, normalised `TWD per 30-day pass` equals the same dimension); a commute-constants reader test where a constant without a source and status `gap` with an assumption lets the build continue, and an absent id stops it; the lag derivation on a 12-project fixture (median and quartiles, a project without start date excluded, fewer than 10 projects stops the build); the unit cost table check with a project whose quotient differs by more than 1 percent; the rent per unit conversion with the three effects; `ghost.shareRent` on a one-district fixture with literal numbers computed by hand; the `ghost.shareCommuteWithin` spreading rule on a 2-district, 1-city-pair fixture with literal numbers; the network filter (the `LB` line, the Airport MRT and sections after 2025-12-31 are excluded; a line without S2S uses the timetable fallback); the credentials scan with an injected secret (reported by path and line, never printed), including a file under `data/raw/fares/`; the survey comparison on a 2-origin fixture, which also asserts that no constant or parameter changes; the low-use builder and validator cases of Requirement 26.10 (a published period at its Reference_Quarter with its `dataPeriod`, a quarter no period covers, a period missing for one district, a district with no period at all (all 44 records `null`, on the data-gap list, the build continues; exactly 5 such districts continue and 6 stop with the 6 codes listed), `null` accepted in a low-use indicator and rejected elsewhere, a `dataPeriod` that does not match its Quarter_Key, an all-`null` district missing from the data-gap list, a listed district with a non-null value, a `null` at the Reference_Quarter of a period that has a value for that district, more than 5 all-`null` districts); the timetable parser on a fixture of at most 50 rows (half-headway of a line in the weekday 07:00 to 09:00 window, a trip at 09:30 or on a weekend excluded, inter-station run time of an LRT line as the median over trips, a line without a timetable that falls back to the Taipei Metro headway, a missing column); the committed `data/config/commute-params.json` (8 ids, the statuses 1 `verified`, 4 `secondary`, 3 `gap`, `commute.tripsPerMonth` equal to 44 with a non-blank assumption, `commute.transferWait` value equal to the computed mean of the half-headways, and no text `Wikipedia` or `wikipedia.org` in the file or in `lrt-timetable.csv`).
+- **Static checks (supplement)**: no module under `scripts/pipeline/params/` imports `scripts/backtest/` or reads `docs/BACKTEST.md` or a save file (Requirement 20.10, 27.10); `scripts/download.ts` does not write the token response (Requirement 25.5).
 - **Runner**: a failing step stops later steps and prints its name; validation errors prevent any call to the injected `WriteFs`; the success summary is printed.
 - **Rendering**: SOURCES.md contains the generated-file notice, the disclosure sentence, the reference-district rows, the MRT notes, the policy series section, the data-gap rows and the Wikipedia attribution format. Rendered from the real registries, it has a `medianTotalPrice` row in section 3 with the `lvr/moi-25119` entry, a `median-total-price-pooled-window` entry in section 5 whose text names `總價元`, the sale price window rule and the district household income indicator (Requirement 19.7), a 2a row in section 9 that lists both indicators and both pooled-window methods (Requirement 19.8), and the "Thin median total price cells" table.
 - **Static checks**: no file under `scripts/pipeline/` imports `scripts/lib/http.ts` or `scripts/lib/datagov.ts` or calls `fetch` (Requirement 2.1); the `data` npm script contains no `rm`, `cp`, `mkdir -p` or `VAR=value` syntax (Requirement 1.6); no test file reads from `data/raw/` (Requirement 18.8).
@@ -1496,7 +1974,7 @@ Each open question from requirements.md uses its stated default unless noted. Th
 | D8 | Price-to-income level | City level only. MOI PDFs are not parsed; validation uses the optional hand-entered table. Decided 2026-11-16: the district numerator `medianTotalPrice` is published (Requirement 19); the game UI divides it by `householdIncome`. | Price-to-income, median total price |
 | D9 | PM2.5 without a station | Removed with the air-quality indicator when the scope narrowed to 5 policy tools. | none |
 | D10 | Border stations | Point-in-polygon; SOURCES.md lists point and address districts. | MRT |
-| D11 | Missing values | The pipeline never emits `null`; every method chain yields a number or stops with a named error. The validator keeps `null` support per Requirement 4.8. | History file |
+| D11 | Missing values | The pipeline never emits `null` with a reason method; every method chain yields a number or stops with a named error. The validator keeps that `null` support per Requirement 4.8. The one exception is the no-data record of the two low-use indicators (D35). | History file |
 | D12 | MRT unit | Entries only. | MRT |
 | D13 | fast-check | Needed by Requirement 18.5 and listed in `tech.md`. Approved by the user on 2026-11-11; version 4.10.2 is installed as a pinned exact devDependency. | Testing |
 | D14 | Rent base year | 2024. | Rent |
@@ -1520,5 +1998,26 @@ Further decisions made in this design:
 | D27 | Policy limits and budget | The lower and upper limit of each tool and the budget ceilings are simulation parameters in `params.json` (simulation-engine spec). This pipeline outputs only the real track. |
 | D28 | Shared helpers for the median total price | Two extractions, both behaviour-preserving. (1) `totalPriceSales` in `lvr-input.ts` is the one implementation of `總價元 > 0`; `buildPriceToIncome` and `buildMedianTotalPrice` both call it. This one is needed for Requirement 19.6: with two inline copies, a later edit to one would break filter consistency without any type error. (2) The bucketing and window loop of `buildSalePrice` move to `pooled-window.ts`, and both district builders call them. This one is needed for Requirement 19.4 ("the same pooled window"), not for 19.6. The alternative is to copy the loop of about 20 lines into the new builder and rely on Property 36 to catch drift; one implementation is simpler to keep correct. Property 7, Property 12 and the existing sale price and price-to-income unit tests must pass unchanged after both extractions. |
 | D29 | Indicator order in the schema | `src/types/data-files.ts` exports `HISTORY_INDICATOR_IDS` and `HistoryIndicatorId`, and the validator gains the `indicator-set` rule against `ctx.indicatorIds`, mirroring `policy-series-set`. Requirement 4.11 fixes the order, and the game UI reads `medianTotalPrice` by id. `history-file.ts` already writes `INDICATOR_SPECS` order, so the rule only rejects a hand-edited or stale file. The existing validator test fixtures pass their own id list in `ctx.indicatorIds`, so they keep working. An injected defect that changes an indicator `id` (for example a duplicate id) now also produces an `indicator-set` error; Property 20 requires each defect to be reported at its path, which still holds. |
+| D30 | Params file composition | `params.json` holds exactly the Engine_Id_Set: 81 ids (35 rule-declared ids without the 5 omitted optional ids, 41 job shares, 5 extra limit ids). The Id_Set_Check imports the engine's registry (scripts may import src), so the pipeline fails when the engine adds or removes an id. Optional ids without a source are omitted and the engine defaults apply (decided 2026-11-18, Open Question 16). |
+| D31 | Commute files | The matrix is its own file `commute-matrix.json` (user decision 2026-11-17; `tech.md` says `districts.json` and needs a one-line update). The model constants are in `data/config/commute-params.json` with the Parameter_Entry shape, not in `params.json`, because they are not engine ids. |
+| D32 | Year dependence of `rentSubsidy.nationalBudget` | The engine parameter is a scalar and no rule reads it. It holds the 2022 program value (30 billion TWD per year, 500,000 households) and states "program from 2022" in its note. Earlier years are in `rentSubsidyHouseholds` of the Policy_Track_File. |
+| D33 | Parameter validation code | The validator reuses the engine's stage 0 checks if `src/simulation/params.ts` exports them as pure functions; otherwise it carries a copy, with a parity test on one fixture set so that the two cannot drift. |
+| D34 | Matrix network | One matrix for the 2025Q4 network, in the single file `public/data/commute-matrix.json`, used for every quarter (steering is being updated to match). TDX S2S covers Taipei Metro and the Circular Line; the Danhai and Ankeng LRT use a timetable fallback unless TDX serves them. The Sanying Line (`LB`) and the Taoyuan Airport MRT are excluded (decided 2026-11-18); Linkou times come from the road model only and are likely over-estimated. |
+| D35 | Low-use indicators | Two periodic indicators after `socialHousingStock`. A published half-year value applies to its Reference_Quarter only and carries its `dataPeriod`; every other quarter is `null` with `estimated: false`; nothing is interpolated, held or extrapolated (user decision 2026-11-19, replacing the interpolation rule). The district-level files are downloaded and reviewed with the user before the builder is implemented. A district with no value in any period is all `null` and does not stop the build (D49). |
+| D36 | Status of computed parameters | Parameters computed with an assumption (log-normal income, single-year renter rate, estimated matrix, fare regression, census proxy for jobs) have status `secondary`; computed values whose inputs are primary data and whose method has no assumption (`housing.dwellingSize`, household size, renter rate) have status `verified` with `estimated.method`; anchored migration values stay `gap`. `gap` is used only for parameters that cannot be measured from data. Decided 2026-11-18: `ghost.sensitivityRent` is `secondary`; `commute.jobShare.<code>` is `secondary` (a transcribed official count would be `verified`, but the census excludes government agencies and public schools). |
+| D37 | Job share source | `commute.jobShare` from the 2021 DGBAS Industry and Service Census, 41 district employee counts transcribed by hand from the PDF into `data/config/census-employees-2021.csv` (district code, count, source URL, table id, page), plus the two printed city totals in `census-employees-2021-totals.csv`. No dependency, no PDF parsing, no download source (the `census-ics` source is dropped). A test checks the city sums against the printed totals. 2020 census table 14 cannot be used: its rows are residence districts and it has no count by workplace district (checks of 2026-11-18). |
+| D38 | Omitted optional ids | `budget.ceiling.*`, the absolute `limit.socialHousing.unitsStarted` limits and the two cost schedules are omitted; the Id_Set_Check treats exactly these as intentionally omitted (decided 2026-11-18). The id count stays 81. |
+| D39 | Commute constants | The build does not block: a constant without a cited source is `gap` with an assumption. No constant is tuned to the MOTC 57-minute survey; the gap is reported as it is. Values entered 2026-11-19 (table in "Commute matrix"): detour factor 1.417, walking speed 1.37 m/s, road speed 16.7 km/h for both cities (New Taipei `gap`), access time 5 minutes (`gap`), transfer walking from dataset 128417 (`verified`), transfer waiting from TDX timetable half-headways (`secondary`), 44 trips per month (`gap`). No Wikipedia source. |
+| D40 | `migration.commuteCostPerMinute` | Computed from the TDX metro fare tables: `low` = 0, `value` = all-pairs fare slope × monthly trips, `high` = Uncapped_Range slope × monthly trips (chosen over the below-cap-fare slope and the confidence-interval upper end; reasons in "Commute cost per minute"). Unit TWD per minute per commuter per month; K_o is TWD per pass per month. Status `secondary`. Depends on the engine change to `SCENARIO_EFFECT_IDS`. It leaves the gap table, so the gap count is 19 and the type 2 count 54. |
+| D41 | `socialHousing.rentRatio` high end | 0.9 accepted; `estimated.method` states it has no independent source (decided 2026-11-18). |
+| D42 | `ghost.shareCommuteWithin` from table 14 | Table 14 has residence-based categories only, so the workplace district is estimated by spreading the two non-local categories by `commute.jobShare`. Accepted 2026-11-19 with status `secondary`. The `estimated.method` states both directions: same-district commutes at 0 minutes barely change the share within the threshold (intra-district commutes are under 45 minutes), and placing the whole other-county, other-city and overseas category in the other city of the pair raises the share within the threshold (Linkou or Shulin to Taoyuan, Xizhi to Keelung are longer trips), so Ghost counts may be under-estimated. |
+| D43 | Fare download | `scripts/download.ts` gains the `fares` source in the first implementation task; TDX credentials only from `TDX_CLIENT_ID` and `TDX_CLIENT_SECRET`, never in any file, log line or error message. |
+| D44 | Pass unit | One 30-day pass is one commuter-month; `TWD per 30-day pass` and `TWD per pass per month` denote the same quantity through the normalisation table (decided 2026-11-19). |
+| D45 | Monthly trips | `commute.tripsPerMonth` = 44 (2 trips × 22 working days), status `gap`, no further search (decided 2026-11-19). |
+| D46 | `high` of `migration.commuteCostPerMinute` | The slope over the Uncapped_Range multiplied by the monthly trips (decided 2026-11-19). |
+| D47 | Timetable download | `scripts/download.ts` gains the `timetables` source (TDX timetables of the metro and LRT lines, credentials from `TDX_CLIENT_ID` and `TDX_CLIENT_SECRET` only). It supplies the headways for `commute.transferWait` and the Danhai and Ankeng LRT run times where S2S files lack them; the committed `lrt-timetable.csv` is the last resort, with the operator page cited per line. The credentials scan covers `data/raw/timetables/`. |
+| D48 | Status of foreign-study constants | `verified` is reserved for our own data. Constants from foreign studies or published figures that are not our own measurement (detour factor, walking speed, road speed, transfer waiting) are `secondary` (decided 2026-11-19). |
+| D49 | Low-use data gaps (Open Question 18) | A district with no published value in any Low_Use_Period does not stop the build: all 44 records of both indicators are `null` with no estimate. The builder computes the data-gap list from the built records and writes it to SOURCES.md under "Data gaps: low-use housing" (District_Code, romanized name, Indicator id). The validator rule `low-use-gap` checks that the all-`null` districts and the list are the same set and that other `null` records lie only in uncovered quarters. More than 5 entirely `null` districts stop the build and are listed, because that more likely means a parsing error. The map shows "No data" for `null` and never 0 (game-ui dependency; not edited here). Decided 2026-11-19. Replaces the earlier default that stopped the build. |
+| D50 | Headway window for `commute.transferWait` (Open Question 27) | Half of each line's weekday 07:00 to 09:00 peak headway from the TDX Timetable_Files, with the Taipei Metro official website peak headways as the fallback, cited per line. `estimated.method` states the window and that the matrix represents morning work commutes, the trip type of the MOTC commute survey (about 57 minutes) it is compared with; the survey is named only to define the trip type, never as a reason for a value. The all-day headway is rejected. Decided 2026-11-19. |
 
 D7 and D17 were approved on 2026-11-11, and Requirements 9.4 and 9.7 were amended to match.

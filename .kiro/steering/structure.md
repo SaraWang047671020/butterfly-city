@@ -20,6 +20,7 @@ butterflycity/
 ├── public/
 │   └── data/
 │       ├── districts.json
+│       ├── commute-matrix.json  # 41×41 commute-time matrix
 │       ├── history.json
 │       ├── policy-track.json   # real quarterly values of the 5 policy tools, with sources
 │       ├── events.json

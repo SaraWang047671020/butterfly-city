@@ -439,6 +439,22 @@ Every property test uses fast-check 4.10.2 with `fc.assert(fc.property(...), { n
 - [x] 16. Final checkpoint - Ensure all tests pass
   - Run `npx vitest --run` and `npm run typecheck`, report both exit codes; both must be 0 with no test skipped, todo or `.only`. Ensure all tests pass, ask the user if questions arise.
 
+- [ ] 17. Add direction-based Scenario selection (`migration.commuteCostPerMinute`)
+  - [ ] 17.1 Implement Scenario_Directions in `src/simulation/params.ts` and `src/simulation/rules/population.ts`
+    - Add `ScenarioDirection` (`'low-is-strongest' | 'high-is-strongest'`), `ScenarioEffectParameter { id; direction }` and `SCENARIO_EFFECT_PARAMETERS` with seven entries: the six existing ids as `low-is-strongest` and `migration.commuteCostPerMinute` as `high-is-strongest`; keep `SCENARIO_EFFECT_IDS` as the ids derived from that list
+    - `scenarioTable(params, scenario, effects = SCENARIO_EFFECT_PARAMETERS)`: `central` keeps `value`; for a listed scalar parameter with a `range`, `low` takes `range.low` (or `range.high` for `high-is-strongest`) and `high` takes the other end; a listed parameter without a `range` and every unlisted parameter keep `value`; the input table is never changed
+    - Change the `ParameterSpec` role of `migration.commuteCostPerMinute` in `population.ts` from `derivation` to `effect` (check stays `non-negative`, `range` allowed)
+    - _Requirements: 5.12, 9.8, 14.4, 19.2, 19.5, 19.10_
+
+  - [ ] 17.2 Update the Scenario tests
+    - `tests/simulation/properties/scenario-table.property.test.ts` (**Property 23: Scenario tables vary only ranged effect parameters**): seven varying ids with their directions; `migration.commuteCostPerMinute` takes `range.high` in `low` and `range.low` in `high`; the other six keep `range.low` in `low` and `range.high` in `high` (same values as the previous `scenarioTable`); every other parameter keeps `value`; the input table is unchanged
+    - Add a `range` (`low` 0, `value`, `high` ≥ `value`) for `migration.commuteCostPerMinute` to `tests/simulation/fixtures/params.ts` and to `arbParams` in `tests/simulation/arbitraries.ts` with `0 ≤ low ≤ value ≤ high`; add an example test that the fixture table gives `high` in the `low` Scenario and `low` (= 0) in the `high` Scenario; confirm `ghost-scenarios`, `ghost-count`, `migration` and `zero-delta` tests still pass unchanged
+    - **Validates: Requirements 19.2, 19.5, 19.10, 19.11, 19.12, 5.12**
+    - _Requirements: 5.12, 14.4, 19.2, 19.5, 19.10, 19.11, 19.12_
+
+  - [ ] 17.3 Checkpoint - Ensure all tests pass
+    - Run `npx vitest --run` and `npm run typecheck`; both must exit with code 0 with no test skipped, todo or `.only`. Ensure all tests pass, ask the user if questions arise.
+
 ## Notes
 
 - Tasks marked with `*` are optional and can be skipped for a faster MVP. Required (not optional): the tests Requirement 17 demands, namely Properties 1 to 8, 10, 11, 18, 23 to 29 (the design has 29 properties; 25 to 28 are the Requirement 17.12 tests, 29 is the Requirement 17.13 helping-direction test), one example test per rule file and for the Migration_Rule, the hand-worked Ghost direction tests (`ghost-directions.test.ts`), the 44-quarter example, the stub-tool test, the purity scan, the readonly type test, the engine example tests and the backtest staleness test.
@@ -465,7 +481,9 @@ Every property test uses fast-check 4.10.2 with `fc.assert(fc.property(...), { n
     { "id": 9, "tasks": ["10.3", "11.1", "11.2", "11.3", "11.4", "11.5", "11.6", "11.7", "11.8", "11.9", "11.10", "11.11", "11.12", "11.13", "11.14", "11.15", "11.16", "12.1", "12.2", "12.3", "12.4", "12.5", "12.6", "12.7", "13.1", "13.2", "13.3", "13.4", "15.3"] },
     { "id": 10, "tasks": ["15.4"] },
     { "id": 11, "tasks": ["15.5"] },
-    { "id": 12, "tasks": ["15.6", "15.7"] }
+    { "id": 12, "tasks": ["15.6", "15.7"] },
+    { "id": 13, "tasks": ["17.1"] },
+    { "id": 14, "tasks": ["17.2"] }
   ]
 }
 ```

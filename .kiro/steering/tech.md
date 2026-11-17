@@ -23,11 +23,12 @@ inclusion: always
 ## Data pipeline
 
 - Raw open data is processed **locally** by Node scripts in `scripts/` into static JSON in `public/data/`:
-  - `districts.json`: district attributes, boundaries reference, adjacency and commute-time matrix
+  - `districts.json`: district attributes, boundaries reference, adjacency
+  - `commute-matrix.json`: 41×41 commute-time matrix (minutes), produced by the data pipeline
   - `history.json`: real quarterly baseline per district (2015 Q1 – 2025 Q4)
   - `policy-track.json`: real quarterly values of the 5 policy tools, each with a source and an estimate flag
   - `events.json`: event cards
-  - `params.json`: simulation parameter table with sources
+  - `params.json`: simulation parameter table with sources, produced by the data pipeline
 - The web app only reads these JSON files. It never fetches live data at runtime.
 - Every field is documented in `data/SOURCES.md` with: agency, dataset name, URL, year, and license.
 - Raw files that are too large are **not committed**. Instead, `data/DOWNLOAD.md` records how to obtain them (URL, query, date retrieved). `data/raw/` is gitignored except for small files.
@@ -36,7 +37,7 @@ inclusion: always
 
 - **Annual to quarterly**: annual datasets are interpolated to quarters. The method is documented in `SOURCES.md`.
 - **Not yet published years** (e.g., district-level income for 2024–2025): extrapolate from the latest trend, mark the field `estimated: true`, and show the estimate flag in the UI.
-- **Commute-time matrix (41×41)**: estimated by a local script from district centroid distances plus the MRT network. The method is documented in `SOURCES.md`. If TDX is used, its API key lives only in a local environment variable and never enters the repository.
+- **Commute-time matrix (41×41)**: stored in `commute-matrix.json`, estimated by a local script from district centroid distances plus the MRT network. The method is documented in `SOURCES.md`. If TDX is used, its API key lives only in a local environment variable and never enters the repository.
 - **Transit coverage**: Taipei Metro and New Taipei Metro (Circular Line, Danhai LRT, Ankeng LRT).
 
 ### Allowed sources (free only)
@@ -45,6 +46,7 @@ Central Bank of the Republic of China (Taiwan), DGBAS, Ministry of Finance, Mini
 
 - **Wikipedia (CC BY-SA)**: do not copy text. Write event descriptions from scratch and cite Wikipedia as a reference link with attribution.
 - **FRED**: use only series that are public domain or permit redistribution. Check each series' notes.
+- **TomTom Traffic Index (exception)**: cite only single published figures (for example the city's average speed); do not download, store or redistribute TomTom data.
 - Taiwan government open data is typically under the Open Government Data License, version 1.0. Record the license per dataset anyway.
 
 ## Save system

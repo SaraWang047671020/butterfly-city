@@ -94,7 +94,7 @@ src/
     ├── errors.ts                # EngineError constructors and codes
     ├── quarter.ts               # parse, index, next, offset, year of a QuarterKey
     ├── numeric.ts               # roundHalfUp, clamp, apportion, splitBySchedule
-    ├── params.ts                # parameter access, ParameterSpec checks, metadata checks (status, estimated, assumption), scenarioTable
+    ├── params.ts                # parameter access, ParameterSpec checks, metadata checks (status, estimated, assumption), scenarioTable, SCENARIO_EFFECT_PARAMETERS (id and direction)
     ├── validate.ts              # stage-0 checks; returns the first error
     ├── registry.ts              # RULE_REGISTRY: 3 tool rules and 7 indicator rules
     ├── derived.ts               # Derived_Baseline: households, renter shares, rent burden, commute time
@@ -196,7 +196,29 @@ type ParameterCheck =
 interface ParameterSpec { id: string; role: ParameterRole; check: ParameterCheck; optional?: boolean }
 ```
 
-`scenarioTable(params, 'central' | 'low' | 'high')` returns a new table. Every `effect` parameter that has a `range` takes `range.low` or `range.high`. Every other role keeps `value` (Requirement 19.2), including `socialHousing.unitCost` (which has a `range` that is only shown in Cause links, Requirement 4.12), the fixed Ghost definitions and the reference parameters. The six ranged effect parameters in this spec are `socialHousing.rentPerUnit`, `socialHousing.rentRatio`, `commuterPass.elasticity`, `rentSubsidy.passThrough`, `ghost.commuteThreshold` and `ghost.shareCommuteWithin`. For `socialHousing.rentRatio`, `rentSubsidy.passThrough` and `commuterPass.elasticity`, `low` is the strongest response (Requirements 4.14, 5.11, 6.12). The input table is never changed.
+`scenarioTable(params, 'central' | 'low' | 'high')` returns a new table. The Scenario names keep their meaning from the current code: `low` is the **strongest-effect** Scenario and `high` is the **weakest-effect** Scenario, and `central` uses `value`. They are not the numerically lowest and highest values of a Parameter.
+
+The Engine declares the Scenario effect parameters and their directions in `params.ts`, not in `params.json`, because the direction is a property of the model rule that reads the parameter and not a data fact:
+
+```typescript
+type ScenarioDirection = 'low-is-strongest' | 'high-is-strongest';
+interface ScenarioEffectParameter { id: string; direction: ScenarioDirection }
+export const SCENARIO_EFFECT_PARAMETERS: readonly ScenarioEffectParameter[];  // seven entries
+export const SCENARIO_EFFECT_IDS: readonly string[];                          // derived: the ids of the list above
+```
+
+For every listed parameter that has a `range` (scalar kind), the Scenarios take: `central` → `value`; `low` → `range.low` if `low-is-strongest`, else `range.high`; `high` → the other end. A listed parameter without a `range` keeps `value`. Every other parameter keeps `value` (Requirement 19.2), including `socialHousing.unitCost` (which has a `range` that is only shown in Cause links, Requirement 4.12), the fixed Ghost definitions and the reference parameters. The third argument of `scenarioTable` (a list of ids today, used only by the default) becomes the `ScenarioEffectParameter` list, defaulting to `SCENARIO_EFFECT_PARAMETERS`. The input table is never changed.
+
+The seven Scenario effect parameters in this spec are:
+
+| Id | Direction | `low` Scenario takes | `high` Scenario takes |
+|---|---|---|---|
+| `socialHousing.rentPerUnit`, `socialHousing.rentRatio`, `commuterPass.elasticity`, `rentSubsidy.passThrough`, `ghost.commuteThreshold`, `ghost.shareCommuteWithin` | `low-is-strongest` | `range.low` | `range.high` |
+| `migration.commuteCostPerMinute` | `high-is-strongest` | `range.high` | `range.low` (= 0, no marginal cost for a pass holder) |
+
+The six existing parameters are `low-is-strongest`, so their values in all three Scenarios are exactly those of the previous convention (`range.low` in `low`, `range.high` in `high`). The numeric order `low ≤ value ≤ high` of the stored range is unchanged for all seven (Requirement 19.5, invariant 11), including `0 ≤ value ≤ high` for the new parameter. The values and sources of `migration.commuteCostPerMinute` (`low` 0, `value` the fare-table regression slope, `high` a higher estimate) come from the data-pipeline spec (Requirements 20 to 27 there); this spec fixes only its id, check, range and direction.
+
+**Effect on existing properties.** Adding the parameter cannot change a zero-delta result, because the Migration_Rule moves nobody when every Policy_Difference is 0 (Requirement 9.2) and the commute cost term only reweights destinations of persons who move. Property 28 (Ghost count `low` ≥ `high` at zero deltas, from the commute threshold and its share) and Property 24 (Result_Range min ≤ central ≤ max, computed as the minimum and maximum of the three Scenario values and not from the Scenario names) therefore hold unchanged. Property 29 and the example tests run in the central Scenario, where the parameter keeps `value`. With non-zero deltas, `min` and `max` of a Result_Range can come from any Scenario (Requirement 19.3), so the new direction needs no ordering assumption. The only tests that can change are those that list the varying parameters or build tables with a `range` for this parameter (Property 23 and the fixtures).
 
 #### Required parameters
 
@@ -223,7 +245,7 @@ Ids containing `<city>`, `<code>`, `<quarter>` or `<year>` expand to one scalar 
 | `migration.threshold` | effect | non-negative | out-movement test | 9.1 |
 | `migration.share`, `migration.exitShare` | effect | share | out-movement, exits | 9.1, 9.4 |
 | `migration.weightTime`, `migration.weightBurden`, `migration.weightCost` | effect | non-negative, the first two positive | allocation weights | 9.3 |
-| `migration.commuteCostPerMinute` | derivation | non-negative | monthly commute cost of a district pair | 5.5 |
+| `migration.commuteCostPerMinute` | effect | non-negative; `range` (`low` 0, `high-is-strongest`), varied between Scenarios | monthly commute cost of a district pair | 5.5, 5.12, 19.2, 19.10 |
 | `ghost.size` | ghost-size | integer ≥ 1 | Ghost_Size | 10.2 |
 | `ghost.rentThreshold` | derivation | non-negative; no `range` allowed (fixed definition, 50 percent) | cited definition of the rent base share | 10.2 |
 | `ghost.atRiskThreshold` | derivation | optional (30 percent); not required, not validated, never read by any rule | display layer only | 10.7 |
@@ -275,8 +297,9 @@ These are the default values of `params.json`. Each keeps its source link from `
 | `ghost.rentThreshold` | 50 percent of income, no range | `verified` | no | HUD severely burdened |
 | `ghost.atRiskThreshold` | 30 percent of income, no range, optional | `verified` | no, ignored by the engine | HUD burdened |
 | `ghost.commuteThreshold` | 45 / 60 / 60 minutes one way | `secondary`, `estimated` | yes | TVBS survey report (notes 2f) |
+| `migration.commuteCostPerMinute` | 0 / fare-table regression slope / higher estimate, TWD per minute per month; values and sources from the data-pipeline spec (Requirements 20 to 27); `high` is the strongest effect | set by the data pipeline | yes (`high-is-strongest`) | data-pipeline spec |
 
-The elasticity range is listed with `low` = −0.5 and `high` = −0.2 so that `low ≤ value ≤ high` (Requirement 14.4). The `low` Scenario is therefore the strongest ridership response. In the same way `low` is the strongest effect for `socialHousing.rentRatio` (0.5, the lowest rent paid by a Housed_Household) and the strongest subsidy benefit for `rentSubsidy.passThrough` (0.16, the smallest landlord share). `ghost.sensitivityRent` is not ranged in the default table, so it is the same in all three Scenarios.
+The elasticity range is listed with `low` = −0.5 and `high` = −0.2 so that `low ≤ value ≤ high` (Requirement 14.4). The `low` Scenario is therefore the strongest ridership response. In the same way `low` is the strongest effect for `socialHousing.rentRatio` (0.5, the lowest rent paid by a Housed_Household) and the strongest subsidy benefit for `rentSubsidy.passThrough` (0.16, the smallest landlord share). `migration.commuteCostPerMinute` is the one parameter whose strongest effect is at `range.high`; the `low` Scenario takes its `range.high` and the `high` Scenario takes its `range.low` of 0. `ghost.sensitivityRent` is not ranged in the default table, so it is the same in all three Scenarios. `ghost.sensitivityRent` is not ranged in the default table, so it is the same in all three Scenarios.
 
 The national rent subsidy figures are reference parameters of role `reference`. No rule, limit or ceiling reads them (Requirement 6.13).
 
@@ -506,7 +529,7 @@ Inputs for quarter `t`: Baseline populations `P_d` (the start-of-quarter populat
 4. **Allocation**: `in_oj = apportion(movers_o, w_o·)` over the other 40 districts in ascending code order, giving whole non-negative numbers that sum to `movers_o`.
 5. **Result**: `in_d = Σ_o in_od`, `net_d = in_d − out_d`, `displaced_d = out_d` (9.7), and `exits = Σ exit_d`.
 
-All origins use the same start-of-quarter snapshot, and per-origin results are summed in ascending code order, so processing order cannot change the counts (9.6). `Σ out = Σ in + Σ exits` holds by construction (9.4). The population Cause is `net_d`, moved in minus moved out, with links to the threshold, share, weight and exit-share parameters (9.8).
+All origins use the same start-of-quarter snapshot, and per-origin results are summed in ascending code order, so processing order cannot change the counts (9.6). `Σ out = Σ in + Σ exits` holds by construction (9.4). The population Cause is `net_d`, moved in minus moved out, with links to the threshold, share, weight, commute cost per minute and exit-share parameters (9.8).
 
 Helping-direction note (Property 29): in the central Scenario, moving one tool in the helping direction never raises a district's rent burden above its Derived_Baseline value. Social housing with more units gives a direct term `X_d × (ρ × M_d − R_d) × k_d ÷ Hr_d ≤ 0` (with `ρ ≤ 1` and `M_d = R_d` because the central `rentPerUnit` is 0), rent subsidy gives a net change `≤ 0` (`passThrough ≤ 1`), and the commuter pass changes no burden. So `B − B0 ≤ 0` is never above the non-negative migration threshold, the Migration_Rule moves nobody, and `D = 0` in these runs. Migration can only add displaced residents in the harmful direction or in the `low` and `high` Scenarios.
 
@@ -880,9 +903,9 @@ Reflection on redundancy: the zero-delta criteria (2.3, 2.4, 3.2–3.6, 8.9, 13.
 
 ### Property 23: Scenario tables vary only ranged effect parameters
 
-*For any* valid Parameter_Table, `scenarioTable(p, 'low')` and `scenarioTable(p, 'high')` differ from `p` only in `effect` parameters that have a `range`, which take `low` and `high`. In this spec these are exactly six: `socialHousing.rentPerUnit`, `socialHousing.rentRatio`, `commuterPass.elasticity`, `rentSubsidy.passThrough`, `ghost.commuteThreshold` and `ghost.shareCommuteWithin`. `ghost.sensitivityRent` has no `range` and keeps its `value`. Every Lag, cost (also one with a `range`, such as `socialHousing.unitCost`), schedule, limit, ceiling, Ghost_Size, fixed Ghost definition (`ghost.rentThreshold`, `ghost.atRiskThreshold`), reference and derivation parameter keeps its `value`, and `low ≤ value ≤ high` holds for every ranged parameter of an accepted table.
+*For any* valid Parameter_Table, `scenarioTable(p, 'low')` and `scenarioTable(p, 'high')` differ from `p` only in the Scenario effect parameters that have a `range`. In this spec these are exactly seven. Six are `low-is-strongest` and take `range.low` in `low` and `range.high` in `high`, with exactly the values of the previous convention: `socialHousing.rentPerUnit`, `socialHousing.rentRatio`, `commuterPass.elasticity`, `rentSubsidy.passThrough`, `ghost.commuteThreshold` and `ghost.shareCommuteWithin`. The seventh, `migration.commuteCostPerMinute`, is `high-is-strongest` and takes `range.high` in `low` and `range.low` in `high`. `scenarioTable(p, 'central')` equals `p` in every value. `ghost.sensitivityRent` has no `range` and keeps its `value`. Every Lag, cost (also one with a `range`, such as `socialHousing.unitCost`), schedule, limit, ceiling, Ghost_Size, fixed Ghost definition (`ghost.rentThreshold`, `ghost.atRiskThreshold`), reference and derivation parameter keeps its `value`, and `low ≤ value ≤ high` holds for every ranged parameter of an accepted table.
 
-**Validates: Requirements 7.1, 19.2, 19.5, 4.12**
+**Validates: Requirements 7.1, 19.2, 19.5, 19.10, 19.11, 4.12**
 
 ### Property 24: The Result_Range contains the central result
 
