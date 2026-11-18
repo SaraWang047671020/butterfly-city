@@ -141,3 +141,21 @@ describe('validateParamsFile, one defect each', () => {
     expect(errs.some((e) => e.rule === 'source-type')).toBe(true);
   });
 });
+
+describe('validateParamsFile without engineIdSet and sourceTypes (web app loader)', () => {
+  const { engineIdSet: _e, sourceTypes: _s, ...bare } = ctx;
+
+  it('gives zero errors for a valid file', () => {
+    expect(validateParamsFile(real, bare)).toEqual([]);
+  });
+
+  it('skips the id-set, source-type and type-count checks', () => {
+    const f = clone();
+    delete f.parameters['ghost.size'];
+    f.parameters['zzz.extra'] = real.parameters['ghost.size'];
+    f.parameters = Object.fromEntries(Object.entries(f.parameters).sort(([a], [b]) => (a < b ? -1 : 1)));
+    const found = rules(f, bare);
+    expect(found).not.toContain('id-set');
+    expect(found).not.toContain('source-type');
+  });
+});

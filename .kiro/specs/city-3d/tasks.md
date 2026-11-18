@@ -1,0 +1,62 @@
+# Implementation Plan
+
+Implemented by Claude Code, not Kiro (user decision 2026-11-18, to save Kiro credits). Phase order is fixed by the user: 1 → 2 → 3 → 4. Phase 4 is dropped first if time runs out before 2026-12-02.
+
+## Phase 1: City_View in the game
+
+- [x] 1. Approval and packages
+  - [x] 1.1 Pin `three` 0.170.0 and `@types/three` 0.170.0 (installed 2026-11-18)
+  - [x] 1.2 Record the package approval in `KIRO-LOG.md` (Requirement 1.3; recorded by Kiro in the 2026-11-18 Design_Proposal row)
+  - [x] 1.3 Build the City_Design_Proposal (`docs/design-proposal/city-3d-proposal.html`, presented 2026-11-18) (screenshots from the Prototype, overlay layout at 4 widths, colours, Ghost_Figure, district states, reduced motion) and present it (Requirement 1.1)
+  - [x] 1.4 Record the approval (Requirement 1.2; approved in full 2026-11-18)
+
+- [x] 2. Spec alignment
+  - [x] 2.1 Mark game-ui Requirements 3, 4 and 16 and the Map_View tasks as replaced by this spec
+  - [x] 2.2 Update `tech.md` and `structure.md` for three.js and `src/ui/city/`
+
+- [x] 3. Controller additions (`src/game/`)
+  - [x] 3.1 `ghosts` and `priceIndex` in `MapDistrictView` (Requirement 2.2)
+  - [x] 3.2 `cityStatic()` (Requirement 2.1)
+  - [x] 3.3 Tests of Requirement 2.4
+
+- [x] 4. Pure modules (`src/ui/city/`, no three import)
+  - [x] 4.1 `projection.ts`, `geometry.ts`
+  - [x] 4.2 `placement.ts`, `street-grid.ts`, `routing.ts`
+  - [x] 4.3 `focus-order.ts`, `colours.ts`
+  - [x] 4.4 Unit and property tests of Requirement 13.1 to 13.3
+  - [x] 4.5 Boundary test for `three` imports (Requirement 13.4)
+
+- [ ] 5. Rendering modules
+  - [ ] 5.1 `tokens.ts` and the `--city-*` tokens in the Token_File (after game-ui task 13)
+  - [ ] 5.2 `scene.ts`, `districts.ts`, `buildings.ts`
+  - [ ] 5.3 `traffic.ts`, `ghosts.ts`
+  - [ ] 5.4 `camera.ts`, `picking.ts`, keyboard focus and live region (Requirement 5)
+  - [ ] 5.5 `index.ts`: `mountCityView`, subscriptions, reduced motion, pause control, Quality_Level, fallback, lifecycle (Requirements 10, 12)
+
+- [ ] 6. Overlay layout and wiring (after game-ui tasks 16 and 17)
+  - [ ] 6.1 City and UI layers; panel containers at ≥ 1024 px; bottom sheets below (Requirement 9)
+  - [ ] 6.2 Illustration_Note and "About this view" (Requirement 11)
+  - [ ] 6.3 Manual checks of Requirement 13.5, recorded in `KIRO-LOG.md`
+
+## Phase 2: Landmarks
+
+- [ ] 7. Landmark_Table and models
+  - [ ] 7.1 `data/config/landmarks.json` with coordinates and sources (Requirement 7.1)
+  - [ ] 7.2 Test of Requirement 7.3
+  - [ ] 7.3 Models: Taipei 101, Grand Hotel, Chiang Kai-shek Memorial Hall, Presidential Office Building, Taipei Main Station, Miramar Ferris wheel, Longshan Temple, Tamsui Lover's Bridge (order of priority; stop when time is up)
+  - [ ] 7.4 Building removal around Landmarks, labels (Requirements 7.2, 7.4)
+
+## Phase 3: Walk_Mode and Metro_Travel
+
+- [ ] 8. Walk_Mode
+  - [ ] 8.1 `collision.ts` and tests
+  - [ ] 8.2 `walk.ts`: Avatar, follow camera, keys, joystick, mode switch, Escape (Requirements 8.1 to 8.4)
+- [ ] 9. Metro_Travel
+  - [ ] 9.1 Station_File in the data pipeline, with tests (Requirement 8.5)
+  - [ ] 9.2 Data_Loader and Game_Controller support for the Station_File
+  - [ ] 9.3 `metro.ts`: stations, lines, station dialog, transition (Requirements 8.6, 8.7)
+
+## Phase 4: Citizen encounters and street detail
+
+- [ ] 10. Citizen_Encounters (depends on the story-layer narrative module)
+- [ ] 11. Street detail near the Avatar: arcades, signs, street lights, finer windows

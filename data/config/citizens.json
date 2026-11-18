@@ -3,9 +3,21 @@
   "notes": [
     "Draft content for the story-layer spec. Personas are illustrative households, not real people.",
     "A persona's numbers are never typed here. Each quarter they are computed from simulation output for the persona's districts: rent = district median rent per m2 x dwellingSize; income = the incomePercentile point of the district household income distribution used by the ghost rule; commute = commute matrix minutes from homeDistrict to workDistrict.",
-    "Template states follow the ghost thresholds in params.json (ghost.rentThreshold, ghost.commuteThreshold). Placeholders in braces are filled by the narrative code; numbers are formatted by the UI.",
+    "Template states use four lines. rentGhostThreshold = ghost.rentThreshold.value and commuteGhostThreshold = ghost.commuteThreshold.value (central Scenario); commuteRiskThreshold = ghost.commuteThreshold.range.low; rentRiskThreshold comes from the thresholds block below, because the 30% line is a display line only and is not an engine parameter. Placeholders in braces are filled by the narrative code; numbers are formatted by the UI.",
     "Text follows neutrality.md: what the numbers are, no verdicts, no causes. Causes are shown only in the Why? view."
   ],
+  "thresholds": {
+    "rentRisk": {
+      "value": 30,
+      "unit": "percent of income",
+      "status": "verified",
+      "source": {
+        "citation": "U.S. Department of Housing and Urban Development (HUD), definition of a cost-burdened household (rent above 30 percent of income)",
+        "url": "https://www.huduser.gov/portal/node/10587"
+      },
+      "note": "Display line for citizen stories only. The engine and the ghost count do not use it. Source row: data/research/RESEARCH-NOTES.md, rent burden table."
+    }
+  },
   "personas": [
     {
       "id": "ting-zhonghe",

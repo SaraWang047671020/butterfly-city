@@ -226,7 +226,7 @@
         {
           "id": "backtest",
           "title": "Check against a real policy change",
-          "text": "The commuter pass part of the model was compared with the real change in MRT use after TPASS started in 2023, with tolerances fixed before the result was computed. Result: {backtestResult}. The other tools could not be checked this way."
+          "text": "The commuter pass part of the model was compared with the real change in Taipei Metro entries after TPASS started in July 2023, with tolerances fixed before the result was computed. Result: {backtestResult} Only Taipei Metro stations with data in every month of 2019 and 2023 are compared; New Taipei Metro lines have no station data. The first half of 2023 was still a recovery period after COVID-19, so part of the change may come from the recovery and not from the pass. The other tools could not be checked this way."
         },
         {
           "id": "low-use-housing",
@@ -235,5 +235,23 @@
         }
       ]
     }
-  ]
+  ],
+  "templates": {
+    "backtestResult": {
+      "notes": "Filled from the computed values in docs/BACKTEST.md (main result). ratio is simulated central divided by observed. Pick one sentence per check.",
+      "direction": {
+        "met": "The modelled change went in the same direction as the real change.",
+        "notMet": "The modelled change went in the opposite direction to the real change."
+      },
+      "ratio": {
+        "met": "The modelled change was {ratio} times the real change, inside the range of {toleranceLow} to {toleranceHigh} set in advance.",
+        "notMet": "The modelled change was {ratio} times the real change, outside the range of {toleranceLow} to {toleranceHigh} set in advance."
+      },
+      "range": {
+        "met": "The real change lies within the range of model results.",
+        "notMet": "The real change lies outside the range of model results."
+      },
+      "join": "{direction} {ratio} {range}"
+    }
+  }
 }

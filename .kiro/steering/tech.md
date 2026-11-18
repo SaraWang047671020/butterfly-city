@@ -9,10 +9,11 @@ inclusion: always
 - **Language**: TypeScript, `strict` mode.
 - **Build**: Vite.
 - **UI**: no UI framework. Plain DOM APIs and SVG.
+- **3D city**: three.js (`three` 0.170.0, approved 2026-11-18), used only in `src/ui/city/` (city-3d spec). It replaces the SVG map.
 - **Map projection**: `d3-geo` (import only what is needed).
 - **Testing**: Vitest; property-based tests with fast-check.
 - **Runtime / package manager**: Node 26 LTS, npm. Scripts in `scripts/` are TypeScript run directly by Node (type stripping), so they use only erasable syntax (no `enum`, `namespace`, or parameter properties).
-- **Hosting**: GitHub Pages, fully static. No backend, no login. Vite `base` is `/butterflycity/`.
+- **Hosting**: GitHub Pages, fully static. No backend, no login. Vite `base` is `/butterfly-city/`.
 
 ## Dependency policy
 

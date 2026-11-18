@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>City 3D Proposal</title>
+<style>
+  :root { --bg: #0A1020; --panel: #111A2E; --line: #2C3A5C; --text: #EAF0FB; --muted: #98A6C4; --accent: #55C1FF; --focus: #FFD23F; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 system-ui, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 30px; margin: 0 0 4px; } h2 { font-size: 22px; margin: 40px 0 8px; border-top: 1px solid var(--line); padding-top: 24px; }
+  p, li { color: #C9D3E8; } .muted { color: var(--muted); font-size: 14px; }
+  figure { margin: 16px 0; } figcaption { color: var(--muted); font-size: 14px; margin-top: 6px; }
+  img { max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; display: block; }
+  .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+  .row figure { flex: 0 1 auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; } td, th { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+  .approve { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; }
+  code { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+<h1>City_Design_Proposal: 3D city</h1>
+<p class="muted">city-3d spec, Requirement 1.1. Prepared 2026-11-18 by Claude Code. Screenshots are from the Prototype (<code>prototype/city3d.html</code>, <code>prototype/layout-mock.html</code>) with the real <code>districts.json</code> and <code>history.json</code>. Panel values in the layout mocks are sample values; the city colours in the mocks show the rent per m² from <code>history.json</code>, because the rent burden needs the engine.</p>
+
+<h2 id="approve">0. Choices to approve</h2>
+<div class="approve">
+<ol>
+  <li><b>Look of the city</b> (section 1): night city, fog, moon light, lit windows; buildings and ground tinted by the Indicator_Class colour; streets, cars, scooters and pedestrians moving; forest in mountain districts.</li>
+  <li><b>Overlay layout</b> (section 2): the city fills the screen. At 1024 px and wider, panels float over it (policies left, district right, turn bar top, legend bottom left, view tools bottom right, timeline as a drawer that is open at 1920). Below 1024 px, the turn bar sits at the bottom, a tab row opens one bottom sheet at a time, and a half-open sheet leaves at least 40 % of the height for the city.</li>
+  <li><b>Class colours</b> (section 3): the 7-class sequential ramp of the approved palette (<code>--color-seq-0</code> to <code>--color-seq-6</code>) on ground and buildings, the diverging ramp for population change, and grey with hatching for "no value".</li>
+  <li><b>District states</b> (section 4): four states distinguished by outline width and dash.</li>
+  <li><b>Ghost figures</b> (section 5): one floating ghost per simulated ghost, up to 12 per district; the exact number is always text in the District_Panel.</li>
+  <li><b>Reduced motion</b> (section 6) and the <b>Illustration_Note</b> (section 7).</li>
+</ol>
+</div>
+
+<h2>1. Look of the city</h2>
+<figure><img src="city-3d/overview.png" alt="Night view of the Taipei basin with tinted buildings, streets and labels"><figcaption>Overview_Mode. Building heights follow the sale price per m² relative to 2015Q1; the number of buildings follows population.</figcaption></figure>
+<div class="row">
+<figure style="max-width:540px"><img src="city-3d/close-selected.png" alt="Close view of Da'an with the district panel"><figcaption>After selecting Da'an: the camera flies to the district and the District_Panel shows its values.</figcaption></figure>
+<figure style="max-width:540px"><img src="city-3d/street.png" alt="Street with taxis, scooters with helmeted riders and pedestrians"><figcaption>Street level: cars with head and tail lights, scooters with riders, walking pedestrians. All illustrative, game scale.</figcaption></figure>
+</div>
+
+<h2>2. Overlay layout at 360, 768, 1280 and 1920 px</h2>
+<figure><img src="city-3d/layout-1920.png" alt="Layout at 1920 by 1080"><figcaption>1920 × 1080: timeline drawer open, wider panels.</figcaption></figure>
+<figure><img src="city-3d/layout-1280.png" alt="Layout at 1280 by 800"><figcaption>1280 × 800: policies left, district right, legend and Illustration_Note bottom left, view tools bottom right. Each panel has "Hide".</figcaption></figure>
+<div class="row">
+<figure style="max-width:420px"><img src="city-3d/layout-768.png" alt="Layout at 768 by 1024"><figcaption>768 × 1024: turn bar at the bottom, tab row, District sheet half open.</figcaption></figure>
+<figure style="max-width:260px"><img src="city-3d/layout-360.png" alt="Layout at 360 by 740"><figcaption>360 × 740: "+1 year" short label, 44 px targets, Disclosure_Text always at the top.</figcaption></figure>
+</div>
+
+<h2>3. Class colours</h2>
+<p>The ground of each district and its buildings take the colour of its Indicator_Class (buildings mix 25 % neutral so windows stay readable). Colours come from the Token_File; the City_View holds no colour literal. The meaning is also text: legend, District_Panel and the spoken district name. Class bounds are those of the game-ui Design_Proposal section 5, decided separately.</p>
+
+<h2>4. District states</h2>
+<table>
+<tr><th>State</th><th>Ground</th><th>Outline</th></tr>
+<tr><td>Unselected</td><td>class colour</td><td>thin, solid, 35 % opacity</td></tr>
+<tr><td>Focused (keyboard <code>[</code> <code>]</code>)</td><td>brighter</td><td>focus yellow, dashed, 2 px on screen</td></tr>
+<tr><td>Selected</td><td>brightest</td><td>white, solid, thick</td></tr>
+<tr><td>Focused and selected</td><td>brightest</td><td>white thick + yellow dashed</td></tr>
+</table>
+<p class="muted">The width and dash differ, so the four states read in greyscale. Every district is also in the District_List.</p>
+
+<h2>5. Ghost figures</h2>
+<p>Pale ghost sprites float slowly above a district, one per simulated ghost (1 ghost = Ghost_Size residents), at most 12. No flashing, no full-screen effect. Visible at the top left of the 1920 mock (placeholder count in the Prototype).</p>
+
+<h2>6. Reduced motion</h2>
+<table>
+<tr><th>Motion</th><th>With <code>prefers-reduced-motion: reduce</code></th></tr>
+<tr><td>Opening camera flight</td><td>skipped; the city starts in its end view</td></tr>
+<tr><td>Camera flight to a district</td><td>immediate cut</td></tr>
+<tr><td>Traffic, pedestrians</td><td>stand still</td></tr>
+<tr><td>Ghost floating</td><td>stand still</td></tr>
+<tr><td>Building height change per quarter</td><td>set at once</td></tr>
+</table>
+<p>A "Pause city motion" control does the same for anyone, regardless of the system setting.</p>
+
+<h2>7. Illustration_Note</h2>
+<p>"Buildings, streets, vehicles and people are illustrative. Their number follows population and their height follows the sale price per m². Landmarks are simplified models." Shown under the legend at every width (behind the Legend tab below 1024 px).</p>
+</main>
+</body>
+</html>

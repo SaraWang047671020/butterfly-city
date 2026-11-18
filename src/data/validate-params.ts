@@ -170,14 +170,17 @@ export function validateParamsFile(x: unknown, ctx: ValidationContext): Validati
   }
 
   // Id set (Requirement 20.4 on the validator side)
+  // Skipped when `engineIdSet` or `sourceTypes` is absent (the web app loader does not have them).
   const engineIds = ctx.engineIdSet ?? [];
   const sourceTypes = ctx.sourceTypes ?? {};
-  const expected = new Set(engineIds);
-  for (const id of engineIds) {
-    if (!has(params, id)) add(keyAt(id), 'id-set', `id "${id}" is required by the engine and missing`);
-  }
-  for (const id of ids) {
-    if (!expected.has(id)) add(keyAt(id), 'id-set', `id "${id}" is not read by the engine`);
+  if (ctx.engineIdSet !== undefined) {
+    const expected = new Set(engineIds);
+    for (const id of engineIds) {
+      if (!has(params, id)) add(keyAt(id), 'id-set', `id "${id}" is required by the engine and missing`);
+    }
+    for (const id of ids) {
+      if (!expected.has(id)) add(keyAt(id), 'id-set', `id "${id}" is not read by the engine`);
+    }
   }
 
   // Entry shape and the engine's per-id checks
@@ -237,7 +240,7 @@ export function validateParamsFile(x: unknown, ctx: ValidationContext): Validati
 
   // Parameter_Source_Type counts (Requirement 27.11) and the gap link (Requirement 23.8)
   const counts: Record<1 | 2 | 3, number> = { 1: 0, 2: 0, 3: 0 };
-  for (const id of ids) {
+  for (const id of ctx.sourceTypes === undefined ? [] : ids) {
     const t = sourceTypes[id];
     if (t !== 1 && t !== 2 && t !== 3) {
       add(keyAt(id), 'source-type', `id "${id}" has no Parameter_Source_Type of 1, 2 or 3`);
@@ -248,7 +251,7 @@ export function validateParamsFile(x: unknown, ctx: ValidationContext): Validati
     const gap = isRecord(entry) && entry.status === 'gap';
     if (t === 3 && !gap) add(keyAt(id), 'source-type', `type 3 id "${id}" must have status gap`);
   }
-  for (const t of [1, 2, 3] as const) {
+  for (const t of ctx.sourceTypes === undefined ? [] : ([1, 2, 3] as const)) {
     if (counts[t] !== EXPECTED_SOURCE_TYPE_COUNTS[t]) {
       add('$.parameters', 'source-type', `Parameter_Source_Type ${t}: ${counts[t]} ids, expected ${EXPECTED_SOURCE_TYPE_COUNTS[t]}`);
     }

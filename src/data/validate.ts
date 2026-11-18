@@ -7,7 +7,7 @@ import type { IndicatorKind } from '../types/data-files.ts';
 
 /** Structurally the same as `ValidationIssue` in scripts/pipeline/errors.ts. */
 export interface ValidationError {
-  readonly file: 'districts.json' | 'history.json' | 'policy-track.json' | 'commute-matrix.json' | 'params.json';
+  readonly file: 'districts.json' | 'history.json' | 'policy-track.json' | 'commute-matrix.json' | 'params.json' | 'events.json';
   readonly path: string; // JSON path, e.g. $.indicators[2].series["65000200"][17].value
   readonly rule: string;
   readonly message: string;

@@ -1,0 +1,15 @@
+# Extra banned terms for event card titles and descriptions (event-library Requirement 4.3, neutrality.md).
+# One term per line. Blank lines and lines starting with # are ignored. UTF-8, LF.
+# Latin-script terms match case-insensitively on whole words. CJK terms match as substrings.
+# This list only names terms to keep out of the text. It makes no statement about anyone.
+# Kept separate from banned-terms.txt so that the SOURCES.md check does not start rejecting these words.
+
+soaring
+crash
+crackdown
+relief
+plunge
+surge
+slump
+boom
+bubble

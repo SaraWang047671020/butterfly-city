@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Butterfly City 3D prototype</title>
+<style>
+  :root { --ink: #e8ecff; --dim: #8f97c2; --panel: rgba(12, 16, 36, 0.82); --edge: rgba(150, 170, 255, 0.25); --ember: #ff9a4d; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #05070f; color: var(--ink); font: 14px/1.45 system-ui, sans-serif; overflow: hidden; }
+  #stage { position: fixed; inset: 0; }
+  .label { color: var(--ink); font-size: 11px; letter-spacing: 0.04em; text-shadow: 0 0 6px #000, 0 0 2px #000; pointer-events: none; white-space: nowrap; }
+  .panel { position: fixed; background: var(--panel); border: 1px solid var(--edge); border-radius: 10px; padding: 12px 14px; backdrop-filter: blur(6px); }
+  #hud { top: 16px; left: 16px; max-width: 320px; }
+  #hud h1 { margin: 0 0 2px; font-size: 18px; letter-spacing: 0.08em; }
+  #hud p { margin: 0; color: var(--dim); font-size: 12px; }
+  #info { top: 16px; right: 16px; width: 280px; display: none; }
+  #info h2 { margin: 0 0 6px; font-size: 16px; }
+  #info dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; font-size: 13px; }
+  #info dt { color: var(--dim); }
+  #info dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+  #bar { left: 16px; right: 16px; bottom: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  #bar input[type=range] { flex: 1 1 200px; accent-color: var(--ember); }
+  #quarter { font-size: 20px; font-weight: 600; min-width: 80px; font-variant-numeric: tabular-nums; }
+  button, select { background: #1a2148; color: var(--ink); border: 1px solid var(--edge); border-radius: 6px; padding: 6px 10px; font: inherit; cursor: pointer; }
+  #legend { display: flex; gap: 2px; align-items: center; font-size: 11px; color: var(--dim); }
+  #legend span.sw { width: 22px; height: 10px; border-radius: 2px; display: inline-block; }
+  #intro { position: fixed; inset: 0; display: grid; place-items: center; background: #05070f; transition: opacity 1.6s; pointer-events: none; }
+  #intro div { text-align: center; }
+  #intro h1 { font-size: clamp(28px, 6vw, 56px); letter-spacing: 0.2em; margin: 0; font-weight: 300; }
+  #intro p { color: var(--dim); }
+  .note { font-size: 11px; color: var(--dim); }
+  @media (max-width: 640px) { #info { top: auto; bottom: 120px; left: 16px; right: 16px; width: auto; } #hud { max-width: none; right: 16px; } }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="hud" class="panel">
+  <h1>BUTTERFLY CITY</h1>
+  <p>Taipei and New Taipei, 41 districts. Drag to orbit, scroll to zoom, click a district.</p>
+  <p class="note">Prototype. Buildings are illustrative: their number follows population, their height follows the sale price per m². Ghosts float over districts with a high low-use housing rate.</p>
+</div>
+<div id="info" class="panel"><h2 id="info-name"></h2><dl id="info-list"></dl></div>
+<div id="bar" class="panel">
+  <button id="play" type="button">Play</button>
+  <span id="quarter">2015Q1</span>
+  <input id="slider" type="range" min="0" max="43" value="0" aria-label="Quarter">
+  <select id="indicator" aria-label="Map indicator">
+    <option value="rent">Rent (TWD per m² per month)</option>
+    <option value="salePrice">Sale price (TWD per m²)</option>
+    <option value="lowUseHousingRate">Low-use housing rate (%)</option>
+    <option value="popChange">Population change since 2015Q1 (%)</option>
+  </select>
+  <div id="legend"></div>
+</div>
+<div id="intro"><div><h1>BUTTERFLY CITY</h1><p>One policy. Forty-one districts. Eleven years.</p></div></div>
+<script type="module" src="./city3d.ts"></script>
+</body>
+</html>

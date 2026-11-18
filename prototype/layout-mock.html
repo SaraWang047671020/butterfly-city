@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Butterfly City overlay layout mock</title>
+<style>
+  /* Tokens from the approved parts of docs/design-proposal/game-ui-proposal.html (palette, typography). */
+  :root {
+    --color-bg-page: #0A1020; --color-bg-panel: #111A2E; --color-bg-raised: #1A2540; --color-line: #7183A8; --color-line-subtle: #2C3A5C;
+    --color-text-primary: #EAF0FB; --color-text-secondary: #B4C0D9; --color-text-muted: #98A6C4; --color-accent: #55C1FF; --color-accent-ink: #06121F;
+    --color-focus: #FFD23F; --color-ok: #62E0A0; --color-warn: #FFB454;
+    --seq-0: #3A70BA; --seq-1: #2A98B0; --seq-2: #4DBB8C; --seq-3: #B5D866; --seq-4: #F1D35A; --seq-5: #F0953F; --seq-6: #D9468F;
+    --panel: rgba(17, 26, 46, 0.88); --font-sans: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--color-bg-page); color: var(--color-text-primary); font: 14px/1.4 var(--font-sans); }
+  iframe.city { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; }
+  .ui { position: fixed; inset: 0; pointer-events: none; }
+  .ui > * { pointer-events: auto; }
+  .panel { background: var(--panel); border: 1px solid var(--color-line-subtle); border-radius: 12px; backdrop-filter: blur(8px); box-shadow: 0 6px 18px rgba(0,0,0,.5); }
+  h2 { font-size: 16px; margin: 0; } h3 { font-size: 14px; margin: 0; }
+  .muted { color: var(--color-text-muted); } .small { font-size: 12px; }
+  button, .btn { font: inherit; color: var(--color-text-primary); background: var(--color-bg-raised); border: 1px solid var(--color-line); border-radius: 8px; padding: 6px 12px; min-height: 32px; }
+  .primary { background: var(--color-accent); color: var(--color-accent-ink); border-color: var(--color-accent); font-weight: 600; }
+  .head { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--color-line-subtle); }
+  .collapse { min-height: 24px; padding: 0 8px; }
+  .body { padding: 10px 12px; overflow: auto; }
+
+  /* header */
+  .brand { position: absolute; top: 12px; left: 12px; padding: 8px 12px; max-width: 360px; }
+  .brand b { letter-spacing: .12em; }
+  /* turn bar */
+  .turn { position: absolute; top: 12px; left: 384px; display: flex; gap: 10px; align-items: center; padding: 8px 10px; white-space: nowrap; }
+  .turn .q { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  /* side panels */
+  .policy { position: absolute; top: 96px; left: 12px; width: 340px; bottom: 214px; display: flex; flex-direction: column; }
+  .district { position: absolute; top: 76px; right: 12px; width: 340px; max-height: calc(100% - 230px); display: flex; flex-direction: column; }
+  .legend { position: absolute; left: 12px; bottom: 12px; width: 460px; padding: 10px 12px; }
+  .tools { position: absolute; right: 12px; bottom: 12px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; max-width: 520px; padding: 8px; }
+  .timeline { position: absolute; right: 364px; bottom: 64px; width: 380px; display: none; }
+  .tabs, .sheet { display: none; }
+
+  /* rows */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  td { padding: 5px 0; border-bottom: 1px solid var(--color-line-subtle); vertical-align: top; }
+  td.v { text-align: right; font-variant-numeric: tabular-nums; }
+  .range { color: var(--color-text-secondary); font-size: 12px; }
+  .why { color: var(--color-accent); font-size: 12px; text-decoration: underline; }
+  .tool { border: 1px solid var(--color-line-subtle); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; }
+  .tool input { width: 90px; font: inherit; background: var(--color-bg-page); color: var(--color-text-primary); border: 1px solid var(--color-line); border-radius: 6px; padding: 4px 6px; }
+  .soon { opacity: .65; }
+  .budget { height: 8px; border-radius: 999px; background: var(--color-bg-raised); overflow: hidden; margin: 6px 0 2px; }
+  .budget i { display: block; height: 100%; width: 62%; background: var(--color-ok); }
+  .radios { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 8px; }
+  .radios label { display: flex; gap: 4px; align-items: center; }
+  .swatches { display: flex; gap: 2px; margin: 6px 0 2px; }
+  .swatches span { flex: 1; height: 12px; border-radius: 2px; }
+  .ticks { display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-muted); }
+  .note { font-size: 11px; color: var(--color-text-muted); margin-top: 6px; }
+
+  /* 1920: timeline drawer open */
+  @media (min-width: 1600px) { .turn { left: 50%; transform: translateX(-50%); } .timeline { display: block; } .policy, .district { width: 380px; } .timeline { right: 404px; } }
+
+  /* below 1024: Turn_Bar bottom, tabs, one sheet at a time */
+  @media (max-width: 1023px) {
+    .policy, .district, .legend, .tools, .timeline { display: none; }
+    .brand { right: 12px; max-width: none; font-size: 12px; padding: 6px 10px; }
+    .turn { top: auto; bottom: 0; left: 0; right: 0; transform: none; border-radius: 12px 12px 0 0; justify-content: space-between; padding: 8px 12px; }
+    .turn button { min-height: 44px; }
+    .tabs { display: flex; position: absolute; left: 0; right: 0; bottom: 60px; gap: 4px; padding: 6px 8px; background: var(--panel); border-top: 1px solid var(--color-line-subtle); }
+    .tabs button { flex: 1; min-height: 44px; }
+    .tabs button[aria-selected=true] { border-color: var(--color-accent); color: var(--color-accent); }
+    .sheet { display: flex; flex-direction: column; position: absolute; left: 0; right: 0; bottom: 116px; height: 40vh; border-radius: 12px 12px 0 0; }
+    .sheet .grip { width: 40px; height: 4px; border-radius: 4px; background: var(--color-line); margin: 6px auto 0; }
+  }
+  @media (max-width: 480px) { .turn .ff { display: none; } .turn .ffs { display: inline-block !important; } }
+</style>
+</head>
+<body>
+<iframe class="city" title="3D city of the 41 districts" src="./city3d.html?bare&q=17&select=65000010"></iframe>
+<div class="ui">
+  <div class="brand panel"><b>BUTTERFLY CITY</b><div class="small muted">Initial data and events come from real open data. Policy outcomes are simulated, not predicted.</div></div>
+
+  <div class="turn panel" role="group" aria-label="Turn">
+    <div><div class="small muted">Displayed · Turn 18 of 44</div><div class="q">2019Q2</div></div>
+    <button class="primary">Next quarter</button>
+    <button class="ff">Fast-forward one year</button><button class="ffs" style="display:none">+1 year</button>
+    <button class="collapse" aria-label="Save menu">Save ▾</button>
+  </div>
+
+  <section class="policy panel" aria-label="Policy panel">
+    <div class="head"><h2>Policies · 2019Q3</h2><button class="collapse" aria-expanded="true">Hide</button></div>
+    <div class="body">
+      <div class="small muted">Budget 2019 · Taipei City</div>
+      <div class="budget"><i></i></div><div class="small">TWD 6.2 bn of 10.0 bn committed</div>
+      <h3 style="margin:12px 0 6px">Housing</h3>
+      <div class="tool"><b>Social housing</b> <span class="small muted">· lag 16 quarters</span><div class="small" style="margin:6px 0">Units started · Banqiao</div><input value="320"> <button class="primary">Apply</button> <button>Set to real</button><div class="small muted" style="margin-top:4px">Real 0 · limit 0–1,200 units per quarter</div></div>
+      <div class="tool"><b>Rent subsidy</b><div class="small" style="margin:6px 0">Households · New Taipei</div><input value="48,000"> <button class="primary">Apply</button></div>
+      <div class="tool soon"><b>Sublease programme</b> <span class="small">· Coming soon</span></div>
+      <h3 style="margin:12px 0 6px">Transport</h3>
+      <div class="tool"><b>Commuter pass</b><div class="small" style="margin:6px 0">TWD per 30-day pass · Taipei City</div><input value="0"> <button class="primary">Apply</button></div>
+      <div class="tool soon"><b>Holding tax</b> <span class="small">· Coming soon</span></div>
+    </div>
+  </section>
+
+  <section class="district panel" aria-label="District panel">
+    <div class="head"><h2>Banqiao, New Taipei</h2><button class="collapse" aria-expanded="true">Hide</button></div>
+    <div class="body">
+      <div class="small muted" style="margin-bottom:6px">2019Q2 · sample values for the mock</div>
+      <table>
+        <tr><td>Rent burden<div class="range">possible range 22.8–26.0 % · <span class="why">Why?</span></div></td><td class="v">24.1 %<div class="range">Real 23.4 · +0.7 pp</div></td></tr>
+        <tr><td>Price to income ◆<div class="range">House prices are not changed by policies</div></td><td class="v">14.2 years</td></tr>
+        <tr><td>Commute time<div class="range">possible range 41.0–43.5 min</div></td><td class="v">42.3 min</td></tr>
+        <tr><td>Population change</td><td class="v">−0.8 %</td></tr>
+        <tr><td>Rent</td><td class="v">TWD 452 per m²</td></tr>
+        <tr><td>Population</td><td class="v">551,480</td></tr>
+        <tr><td>Social housing stock</td><td class="v">2,318 units</td></tr>
+        <tr><td>Ghosts<div class="range">1 ghost = 1,000 residents</div></td><td class="v">3</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="legend panel" aria-label="Legend">
+    <div class="radios" role="radiogroup" aria-label="Indicator">
+      <label><input type="radio" name="i" checked> Rent burden</label><label><input type="radio" name="i"> Price to income</label><label><input type="radio" name="i"> Commute time</label><label><input type="radio" name="i"> Population change</label><label><input type="radio" name="i"> Low-use housing</label>
+    </div>
+    <div class="small"><b>Rent burden</b>, percent of household income · 2019Q2</div>
+    <div class="swatches"><span style="background:var(--seq-0)"></span><span style="background:var(--seq-1)"></span><span style="background:var(--seq-2)"></span><span style="background:var(--seq-3)"></span><span style="background:var(--seq-4)"></span><span style="background:var(--seq-5)"></span><span style="background:var(--seq-6)"></span></div>
+    <div class="ticks"><span>&lt;10</span><span>15</span><span>20</span><span>25</span><span>30</span><span>35+</span></div>
+    <div class="note">Buildings, streets, vehicles and people are illustrative. Their number follows population and their height follows the sale price per m². Landmarks are simplified models.</div>
+  </section>
+
+  <div class="tools panel" role="toolbar" aria-label="View">
+    <button>Timeline</button><button>Walk the streets</button><button>Pause city motion</button><button>Quality: High</button>
+  </div>
+
+  <section class="timeline panel" aria-label="Timeline">
+    <div class="head"><h2>Timeline</h2><button class="collapse">Hide</button></div>
+    <div class="body small">
+      <div><b>2019Q3</b> · Social housing, Banqiao: 0 → 320 units started</div>
+      <div style="margin-top:6px"><b>2019Q1</b> · ★ Event: Central bank holds the discount rate</div>
+      <div style="margin-top:6px"><b>2018Q4</b> · Rent subsidy, New Taipei: 32,000 → 48,000 households</div>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="Panels">
+    <button role="tab" aria-selected="true">District</button><button role="tab">Policies</button><button role="tab">Legend</button><button role="tab">More</button>
+  </nav>
+  <section class="sheet panel" aria-label="District panel">
+    <div class="grip"></div>
+    <div class="head"><h2>Banqiao, New Taipei</h2><button class="collapse" aria-label="Close">✕</button></div>
+    <div class="body">
+      <table>
+        <tr><td>Rent burden<div class="range">possible range 22.8–26.0 % · <span class="why">Why?</span></div></td><td class="v">24.1 %</td></tr>
+        <tr><td>Commute time</td><td class="v">42.3 min</td></tr>
+        <tr><td>Population change</td><td class="v">−0.8 %</td></tr>
+        <tr><td>Ghosts</td><td class="v">3</td></tr>
+      </table>
+    </div>
+  </section>
+</div>
+</body>
+</html>

@@ -6,18 +6,30 @@
     "node": ">=26"
   },
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "demo": "node scripts/build-demo.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest --run",
     "test:fast": "vitest --run --exclude \"tests/**/properties/**\"",
     "backtest": "node scripts/backtest.ts",
     "data": "node scripts/build-data.ts",
     "data:download": "node scripts/download.ts",
-    "data:check": "node scripts/check.ts"
+    "data:check": "node scripts/check.ts",
+    "events": "node scripts/build-events.ts"
   },
   "devDependencies": {
+    "@types/d3-geo": "3.1.1",
     "@types/node": "26.6.6",
+    "@types/three": "0.170.0",
     "fast-check": "4.10.2",
     "typescript": "7.0.2",
+    "vite": "8.3.8",
     "vitest": "5.1.0"
+  },
+  "dependencies": {
+    "d3-geo": "3.1.2",
+    "three": "0.170.0"
   }
 }

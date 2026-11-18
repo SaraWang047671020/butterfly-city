@@ -1,0 +1,611 @@
+{
+  "schemaVersion": 1,
+  "events": [
+    {
+      "id": "rate-cut-2015-09-25",
+      "date": "2015-09-25",
+      "datePrecision": "day",
+      "firstQuarter": "2015Q3",
+      "lastQuarter": "2015Q3",
+      "type": "interest-rate",
+      "title": "Central Bank lowers the discount rate to 1.75%",
+      "description": "On 25 September 2015 the Central Bank of the Republic of China (Taiwan) lowered its discount rate by 0.125 percentage points, from 1.875% to 1.75%.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with the Central Bank discount-rate file cbc-webF1-discount-rate.csv (data.gov.tw dataset 6022): same date, rate 1.75%.",
+      "sources": [
+        { "label": "Central Bank discount rate series (data.gov.tw dataset 6022)", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://data.gov.tw/dataset/6022" }
+      ]
+    },
+    {
+      "id": "rate-cut-2015-12-18",
+      "date": "2015-12-18",
+      "datePrecision": "day",
+      "firstQuarter": "2015Q4",
+      "lastQuarter": "2015Q4",
+      "type": "interest-rate",
+      "title": "Central Bank lowers the discount rate to 1.625%",
+      "description": "On 18 December 2015 the Central Bank of the Republic of China (Taiwan) lowered its discount rate by 0.125 percentage points, from 1.75% to 1.625%.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with the Central Bank discount-rate file cbc-webF1-discount-rate.csv (data.gov.tw dataset 6022): same date, rate 1.625%.",
+      "sources": [
+        { "label": "Central Bank discount rate series (data.gov.tw dataset 6022)", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://data.gov.tw/dataset/6022" }
+      ]
+    },
+    {
+      "id": "house-land-tax-1-0",
+      "date": "2016-01-01",
+      "datePrecision": "day",
+      "firstQuarter": "2016Q1",
+      "lastQuarter": "2016Q1",
+      "type": "tax",
+      "title": "House and Land Consolidated Income Tax takes effect",
+      "description": "On 1 January 2016 the House and Land Consolidated Income Tax took effect. Gains from selling houses and land acquired from 2016 onward are taxed on the actual gain, at rates set by the holding period. The tax is administered by the Ministry of Finance.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with Ministry of Finance history archive: House and Land Consolidated Income Tax (https://museum.mof.gov.tw/singlehtml/2646203fe1924614b3df4c43bbde02a2?cntId=b7e0a498b02e498c93abd809f6c5a981) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "Ministry of Finance history archive: House and Land Consolidated Income Tax", "publisher": "Ministry of Finance", "url": "https://museum.mof.gov.tw/singlehtml/2646203fe1924614b3df4c43bbde02a2?cntId=b7e0a498b02e498c93abd809f6c5a981" }
+      ]
+    },
+    {
+      "id": "rate-cut-2016-03-25",
+      "date": "2016-03-25",
+      "datePrecision": "day",
+      "firstQuarter": "2016Q1",
+      "lastQuarter": "2016Q1",
+      "type": "interest-rate",
+      "title": "Central Bank lowers the discount rate to 1.5%",
+      "description": "On 25 March 2016 the Central Bank of the Republic of China (Taiwan) lowered its discount rate by 0.125 percentage points, from 1.625% to 1.5%.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with the Central Bank discount-rate file cbc-webF1-discount-rate.csv (data.gov.tw dataset 6022): same date, rate 1.5%.",
+      "sources": [
+        { "label": "Central Bank discount rate series (data.gov.tw dataset 6022)", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://data.gov.tw/dataset/6022" }
+      ]
+    },
+    {
+      "id": "rate-cut-2016-07-01",
+      "date": "2016-07-01",
+      "datePrecision": "day",
+      "firstQuarter": "2016Q3",
+      "lastQuarter": "2016Q3",
+      "type": "interest-rate",
+      "title": "Central Bank lowers the discount rate to 1.375%",
+      "description": "On 1 July 2016 the Central Bank of the Republic of China (Taiwan) lowered its discount rate by 0.125 percentage points, from 1.5% to 1.375%.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with the Central Bank discount-rate file cbc-webF1-discount-rate.csv (data.gov.tw dataset 6022): same date, rate 1.375%.",
+      "sources": [
+        { "label": "Central Bank discount rate series (data.gov.tw dataset 6022)", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://data.gov.tw/dataset/6022" }
+      ]
+    },
+    {
+      "id": "airport-mrt-opens",
+      "date": "2017-03-02",
+      "datePrecision": "day",
+      "firstQuarter": "2017Q1",
+      "lastQuarter": "2017Q1",
+      "type": "transit",
+      "title": "Taoyuan Airport MRT opens",
+      "description": "On 2 March 2017 the Taoyuan Airport MRT opened for passenger service. Its stations in New Taipei are in Sanchong, Xinzhuang, Taishan and Linkou. It is operated by Taoyuan Metro Corporation.",
+      "role": "baseline",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with Taoyuan Metro press release: trial operation from 2 February, service from 2 March 2017 (https://www.tymetro.com.tw/tymetro-new/tw/_pages/news/show-343-31.html) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "Taoyuan Metro press release: trial operation from 2 February, service from 2 March 2017", "publisher": "Taoyuan Metro Corporation", "url": "https://www.tymetro.com.tw/tymetro-new/tw/_pages/news/show-343-31.html" }
+      ]
+    },
+    {
+      "id": "sublease-pilot-2017",
+      "date": "2017-04-18",
+      "datePrecision": "day",
+      "firstQuarter": "2017Q2",
+      "lastQuarter": "2017Q2",
+      "type": "housing-program",
+      "title": "Executive Yuan approves the social housing sublease and management pilot",
+      "description": "On 18 April 2017 the Executive Yuan approved a pilot of the social housing sublease and management program in the six special municipalities, with a target of 10,000 homes over three years. All six city governments had started the program by January 2018.",
+      "role": "baseline",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with Ministry of the Interior report to the Executive Yuan, 21 June 2018 (PDF) (https://www.ey.gov.tw/File/163B867C023309D1?A=C) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "Ministry of the Interior report to the Executive Yuan, 21 June 2018 (PDF)", "publisher": "Ministry of the Interior", "url": "https://www.ey.gov.tw/File/163B867C023309D1?A=C" },
+        { "label": "National Land Management Agency: sublease and management program (PDF)", "publisher": "National Land Management Agency, Ministry of the Interior", "url": "https://www.nlma.gov.tw/uploads/files/ff7affc3e0db7ba1b01b8dc7bca9e5d9.pdf" }
+      ]
+    },
+    {
+      "id": "commuter-pass-2018",
+      "date": "2018-04-16",
+      "datePrecision": "day",
+      "firstQuarter": "2018Q2",
+      "lastQuarter": "2018Q2",
+      "type": "transit",
+      "title": "Taipei and New Taipei start a NT$1,280 30-day pass",
+      "description": "On 16 April 2018 the Taipei and New Taipei city governments started a NT$1,280 30-day pass covering the MRT and city buses, with the first 30 minutes of each YouBike ride free.",
+      "role": "baseline",
+      "major": false,
+      "verified": true,
+      "verificationNote": "The research notes mark this row verified with the linked sources.",
+      "sources": [
+        { "label": "New Taipei Transportation Department: 30-day pass Q&A (PDF)", "publisher": "New Taipei City Government", "url": "https://www.traffic.ntpc.gov.tw/userfiles/1130901/files/1070315-%E5%AE%9A%E6%9C%9F%E7%A5%A8QA(%E4%BF%AE).pdf" },
+        { "label": "TVBS: 30-day pass starts", "publisher": "TVBS", "url": "https://news.tvbs.com.tw/life/1010600" }
+      ]
+    },
+    {
+      "id": "danhai-lrt-opens",
+      "date": "2018-12-24",
+      "datePrecision": "day",
+      "firstQuarter": "2018Q4",
+      "lastQuarter": "2018Q4",
+      "type": "transit",
+      "title": "Danhai LRT first section opens",
+      "description": "On 24 December 2018 the first section of the Danhai Light Rail opened in Tamsui District, New Taipei. It is operated by New Taipei Metro Corporation.",
+      "role": "baseline",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with New Taipei Metro: Danhai LRT ceremony on 23 December, service from 24 December 2018 (https://ntmetro.com.tw/news/?id=794&mode=data&parent_id=10436&type_id=10449) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "New Taipei Metro: Danhai LRT ceremony on 23 December, service from 24 December 2018", "publisher": "New Taipei Metro Corporation", "url": "https://ntmetro.com.tw/news/?id=794&mode=data&parent_id=10436&type_id=10449" },
+        { "label": "New Taipei Department of Rapid Transit Systems: Danhai LRT Green Mountain Line", "publisher": "New Taipei City Government", "url": "https://www.dorts.ntpc.gov.tw/about/route/kq4VmGpM2BoY" }
+      ]
+    },
+    {
+      "id": "covid-first-cases",
+      "date": "2020-01-21",
+      "datePrecision": "day",
+      "firstQuarter": "2020Q1",
+      "lastQuarter": "2020Q1",
+      "type": "public-health",
+      "title": "First COVID-19 case confirmed in Taiwan",
+      "description": "On 21 January 2020 Taiwan Centers for Disease Control confirmed the first case in Taiwan of the new coronavirus disease, later named COVID-19, in a traveller arriving from Wuhan.",
+      "role": "narrative",
+      "major": true,
+      "verified": true,
+      "verificationNote": "Compared with Taiwan CDC press release, 21 January 2020 (https://www.cdc.gov.tw/Bulletin/Detail/6oHuoqzW9e_onW0AaMEemg?typeid=9) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "Taiwan CDC press release, 21 January 2020", "publisher": "Taiwan Centers for Disease Control", "url": "https://www.cdc.gov.tw/Bulletin/Detail/6oHuoqzW9e_onW0AaMEemg?typeid=9" }
+      ]
+    },
+    {
+      "id": "circular-line-opens",
+      "date": "2020-01-31",
+      "datePrecision": "day",
+      "firstQuarter": "2020Q1",
+      "lastQuarter": "2020Q1",
+      "type": "transit",
+      "title": "MRT Circular Line first section opens",
+      "description": "On 31 January 2020 the first section of the MRT Circular Line opened, from Dapinglin in Xindian through Zhonghe and Banqiao to New Taipei Industrial Park in Xinzhuang.",
+      "role": "baseline",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with New Taipei Department of Rapid Transit Systems: Circular Line (https://www.dorts.ntpc.gov.tw/about/route/zj6Dd5ajdA1o) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "New Taipei Department of Rapid Transit Systems: Circular Line", "publisher": "New Taipei City Government", "url": "https://www.dorts.ntpc.gov.tw/about/route/zj6Dd5ajdA1o" }
+      ]
+    },
+    {
+      "id": "rate-cut-2020-03-20",
+      "date": "2020-03-20",
+      "datePrecision": "day",
+      "firstQuarter": "2020Q1",
+      "lastQuarter": "2020Q1",
+      "type": "interest-rate",
+      "title": "Central Bank lowers the discount rate to 1.25%",
+      "description": "On 20 March 2020, during the COVID-19 outbreak, the Central Bank of the Republic of China (Taiwan) lowered its discount rate by 0.125 percentage points, from 1.375% to 1.25%.",
+      "role": "narrative",
+      "major": true,
+      "verified": true,
+      "verificationNote": "Compared with the Central Bank discount-rate file cbc-webF1-discount-rate.csv (data.gov.tw dataset 6022): same date, rate 1.25%.",
+      "sources": [
+        { "label": "Central Bank discount rate series (data.gov.tw dataset 6022)", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://data.gov.tw/dataset/6022" }
+      ]
+    },
+    {
+      "id": "credit-control-wave-1",
+      "date": "2020-12-07",
+      "datePrecision": "day",
+      "firstQuarter": "2020Q4",
+      "lastQuarter": "2020Q4",
+      "type": "credit-control",
+      "title": "Central Bank adds selective credit controls (wave 1)",
+      "description": "On 7 December 2020 the Central Bank of the Republic of China (Taiwan) set loan-to-value limits of 60% for first and 50% for further home loans to corporate buyers, 60% for third and further homes, and 65% for land loans, effective 8 December.",
+      "role": "narrative",
+      "major": true,
+      "verified": true,
+      "verificationNote": "Compared with Central Bank press release, 7 December 2020 (https://www.cbc.gov.tw/tw/cp-302-124848-b6248-1.html) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "Central Bank press release, 7 December 2020", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://www.cbc.gov.tw/tw/cp-302-124848-b6248-1.html" }
+      ]
+    },
+    {
+      "id": "credit-control-wave-2",
+      "date": "2021-03-18",
+      "datePrecision": "day",
+      "firstQuarter": "2021Q1",
+      "lastQuarter": "2021Q1",
+      "type": "credit-control",
+      "title": "Central Bank revises selective credit controls (wave 2)",
+      "description": "On 18 March 2021 the Central Bank of the Republic of China (Taiwan) lowered loan-to-value limits to 40% for corporate buyers, 55% for third homes, 50% for fourth and further homes, and 55% for high-value homes, effective 19 March.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with Central Bank board meeting press release, 18 March 2021 (https://www.cbc.gov.tw/tw/cp-302-132477-e11d9-1.html) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "Central Bank board meeting press release, 18 March 2021", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://www.cbc.gov.tw/tw/cp-302-132477-e11d9-1.html" }
+      ]
+    },
+    {
+      "id": "covid-level-3-alert",
+      "date": "2021-05-15",
+      "datePrecision": "day",
+      "firstQuarter": "2021Q2",
+      "lastQuarter": "2021Q3",
+      "type": "public-health",
+      "title": "COVID-19 Level 3 alert in Taipei and New Taipei",
+      "description": "On 15 May 2021 the Central Epidemic Command Center raised the COVID-19 alert to Level 3 in Taipei and New Taipei. The alert was extended nationwide on 19 May and lowered to Level 2 on 27 July 2021.",
+      "role": "narrative",
+      "major": true,
+      "verified": true,
+      "verificationNote": "Compared with Taiwan CDC press release, 15 May 2021: Level 3 alert in Taipei and New Taipei (https://www.cdc.gov.tw/Bulletin/Detail/E7bi2j8UYj1Rmz73OPE7Yg?typeid=9) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "Taiwan CDC press release, 15 May 2021: Level 3 alert in Taipei and New Taipei", "publisher": "Taiwan Centers for Disease Control", "url": "https://www.cdc.gov.tw/Bulletin/Detail/E7bi2j8UYj1Rmz73OPE7Yg?typeid=9" },
+        { "label": "Taiwan CDC press release, 19 May 2021: nationwide Level 3 alert", "publisher": "Taiwan Centers for Disease Control", "url": "https://www.cdc.gov.tw/Bulletin/Detail/abDtRS-xzztQeAchjX9fqw?typeid=9" },
+        { "label": "Taiwan CDC press release: alert lowered to Level 2 from 27 July 2021", "publisher": "Taiwan Centers for Disease Control", "url": "https://www.cdc.gov.tw/Bulletin/Detail/e0v8zImE3rGJ0072A86NHA?typeid=9" }
+      ]
+    },
+    {
+      "id": "house-land-tax-2-0",
+      "date": "2021-07-01",
+      "datePrecision": "day",
+      "firstQuarter": "2021Q3",
+      "lastQuarter": "2021Q3",
+      "type": "tax",
+      "title": "House and Land Consolidated Income Tax 2.0 takes effect",
+      "description": "On 1 July 2021 amendments to the House and Land Consolidated Income Tax took effect. They extended the holding periods that qualify for lower tax rates on gains from selling houses and land. The tax is administered by the Ministry of Finance.",
+      "role": "narrative",
+      "major": true,
+      "verified": true,
+      "verificationNote": "Compared with Ministry of Finance: main changes of House and Land Consolidated Income Tax 2.0 (https://www.mof.gov.tw/singlehtml/979b54e408fb499eae3c1d9efe978868?cntId=e8e486a87e6a4489adfb8bdbcb6f33cd) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "Ministry of Finance: main changes of House and Land Consolidated Income Tax 2.0", "publisher": "Ministry of Finance", "url": "https://www.mof.gov.tw/singlehtml/979b54e408fb499eae3c1d9efe978868?cntId=e8e486a87e6a4489adfb8bdbcb6f33cd" }
+      ]
+    },
+    {
+      "id": "credit-control-wave-3",
+      "date": "2021-09-23",
+      "datePrecision": "day",
+      "firstQuarter": "2021Q3",
+      "lastQuarter": "2021Q3",
+      "type": "credit-control",
+      "title": "Central Bank revises selective credit controls (wave 3)",
+      "description": "On 23 September 2021 the Central Bank of the Republic of China (Taiwan) removed the grace period on second-home loans in the six special municipalities and Hsinchu, and lowered the land loan limit to 60%, effective 24 September.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with Central Bank board meeting press release, 23 September 2021 (https://www.cbc.gov.tw/tw/cp-357-141562-49221-1.html) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "Central Bank board meeting press release, 23 September 2021", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://www.cbc.gov.tw/tw/cp-357-141562-49221-1.html" }
+      ]
+    },
+    {
+      "id": "credit-control-wave-4",
+      "date": "2021-12-16",
+      "datePrecision": "day",
+      "firstQuarter": "2021Q4",
+      "lastQuarter": "2021Q4",
+      "type": "credit-control",
+      "title": "Central Bank revises selective credit controls (wave 4)",
+      "description": "On 16 December 2021 the Central Bank of the Republic of China (Taiwan) lowered loan-to-value limits to 40% for high-value and third and further homes, and to 50% for land loans, whose borrowers must commit to starting construction within a set period. Effective 17 December.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with Central Bank board meeting press release, 16 December 2021 (https://www.cbc.gov.tw/tw/cp-302-145044-c2737-1.html) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "Central Bank board meeting press release, 16 December 2021", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://www.cbc.gov.tw/tw/cp-302-145044-c2737-1.html" }
+      ]
+    },
+    {
+      "id": "rate-hike-2022-03-18",
+      "date": "2022-03-18",
+      "datePrecision": "day",
+      "firstQuarter": "2022Q1",
+      "lastQuarter": "2022Q1",
+      "type": "interest-rate",
+      "title": "Central Bank raises the discount rate to 1.375%",
+      "description": "On 18 March 2022 the Central Bank of the Republic of China (Taiwan) raised its discount rate by 0.125 percentage points, from 1.25% to 1.375%. It was the first increase since 2011.",
+      "role": "narrative",
+      "major": true,
+      "verified": true,
+      "verificationNote": "Compared with the Central Bank discount-rate file cbc-webF1-discount-rate.csv (data.gov.tw dataset 6022): same date, rate 1.375%.",
+      "sources": [
+        { "label": "Central Bank discount rate series (data.gov.tw dataset 6022)", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://data.gov.tw/dataset/6022" }
+      ]
+    },
+    {
+      "id": "rate-hike-2022-06-17",
+      "date": "2022-06-17",
+      "datePrecision": "day",
+      "firstQuarter": "2022Q2",
+      "lastQuarter": "2022Q2",
+      "type": "interest-rate",
+      "title": "Central Bank raises the discount rate to 1.5%",
+      "description": "On 17 June 2022 the Central Bank of the Republic of China (Taiwan) raised its discount rate by 0.125 percentage points, from 1.375% to 1.5%.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with the Central Bank discount-rate file cbc-webF1-discount-rate.csv (data.gov.tw dataset 6022): same date, rate 1.5%.",
+      "sources": [
+        { "label": "Central Bank discount rate series (data.gov.tw dataset 6022)", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://data.gov.tw/dataset/6022" }
+      ]
+    },
+    {
+      "id": "rent-subsidy-expansion-2022",
+      "date": "2022-07-01",
+      "datePrecision": "day",
+      "firstQuarter": "2022Q3",
+      "lastQuarter": "2022Q3",
+      "type": "housing-program",
+      "title": "Expanded central rent subsidy opens for applications",
+      "description": "On 1 July 2022 applications opened for the Ministry of the Interior's NT$30 billion rent subsidy program, which aimed to reach 500,000 households, up from about 120,000. Amounts were higher for ages 20-35, newlyweds and families with children. First payments were made in October 2022.",
+      "role": "baseline",
+      "major": false,
+      "verified": true,
+      "verificationNote": "The research notes mark this row verified with the linked sources.",
+      "sources": [
+        { "label": "TechNews: expanded rent subsidy program", "publisher": "TechNews", "url": "https://finance.technews.tw/2022/06/30/expanded-rental-subsidy-program/" },
+        { "label": "Global Views: rent subsidy program", "publisher": "Global Views Monthly", "url": "https://city.gvm.com.tw/article/88542" }
+      ]
+    },
+    {
+      "id": "rate-hike-2022-09-23",
+      "date": "2022-09-23",
+      "datePrecision": "day",
+      "firstQuarter": "2022Q3",
+      "lastQuarter": "2022Q3",
+      "type": "interest-rate",
+      "title": "Central Bank raises the discount rate to 1.625%",
+      "description": "On 23 September 2022 the Central Bank of the Republic of China (Taiwan) raised its discount rate by 0.125 percentage points, from 1.5% to 1.625%.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with the Central Bank discount-rate file cbc-webF1-discount-rate.csv (data.gov.tw dataset 6022): same date, rate 1.625%.",
+      "sources": [
+        { "label": "Central Bank discount rate series (data.gov.tw dataset 6022)", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://data.gov.tw/dataset/6022" }
+      ]
+    },
+    {
+      "id": "rate-hike-2022-12-16",
+      "date": "2022-12-16",
+      "datePrecision": "day",
+      "firstQuarter": "2022Q4",
+      "lastQuarter": "2022Q4",
+      "type": "interest-rate",
+      "title": "Central Bank raises the discount rate to 1.75%",
+      "description": "On 16 December 2022 the Central Bank of the Republic of China (Taiwan) raised its discount rate by 0.125 percentage points, from 1.625% to 1.75%.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with the Central Bank discount-rate file cbc-webF1-discount-rate.csv (data.gov.tw dataset 6022): same date, rate 1.75%.",
+      "sources": [
+        { "label": "Central Bank discount rate series (data.gov.tw dataset 6022)", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://data.gov.tw/dataset/6022" }
+      ]
+    },
+    {
+      "id": "ankeng-lrt-opens",
+      "date": "2023-02-10",
+      "datePrecision": "day",
+      "firstQuarter": "2023Q1",
+      "lastQuarter": "2023Q1",
+      "type": "transit",
+      "title": "Ankeng LRT opens",
+      "description": "On 10 February 2023 the Ankeng Light Rail opened in Xindian District, New Taipei. It is operated by New Taipei Metro Corporation.",
+      "role": "baseline",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with New Taipei Metro: Ankeng LRT opens on 10 February 2023 (https://www.ntmetro.com.tw/basic/?mode=detail&node=578) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "New Taipei Metro: Ankeng LRT opens on 10 February 2023", "publisher": "New Taipei Metro Corporation", "url": "https://www.ntmetro.com.tw/basic/?mode=detail&node=578" }
+      ]
+    },
+    {
+      "id": "rate-hike-2023-03-24",
+      "date": "2023-03-24",
+      "datePrecision": "day",
+      "firstQuarter": "2023Q1",
+      "lastQuarter": "2023Q1",
+      "type": "interest-rate",
+      "title": "Central Bank raises the discount rate to 1.875%",
+      "description": "On 24 March 2023 the Central Bank of the Republic of China (Taiwan) raised its discount rate by 0.125 percentage points, from 1.75% to 1.875%.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with the Central Bank discount-rate file cbc-webF1-discount-rate.csv (data.gov.tw dataset 6022): same date, rate 1.875%.",
+      "sources": [
+        { "label": "Central Bank discount rate series (data.gov.tw dataset 6022)", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://data.gov.tw/dataset/6022" }
+      ]
+    },
+    {
+      "id": "credit-control-wave-5",
+      "date": "2023-06-15",
+      "datePrecision": "day",
+      "firstQuarter": "2023Q2",
+      "lastQuarter": "2023Q2",
+      "type": "credit-control",
+      "title": "Central Bank revises selective credit controls (wave 5)",
+      "description": "On 15 June 2023 the Central Bank of the Republic of China (Taiwan) set a maximum loan-to-value ratio of 70% for second-home loans in the six special municipalities and Hsinchu, effective the next day.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "The research notes mark this row verified with the linked sources.",
+      "sources": [
+        { "label": "TechNews: fifth wave of housing credit controls", "publisher": "TechNews", "url": "https://finance.technews.tw/2023/06/16/the-fifth-wave-of-housing-market-regulation/" }
+      ]
+    },
+    {
+      "id": "land-rights-act-amendment-2023",
+      "date": "2023-07-01",
+      "datePrecision": "day",
+      "firstQuarter": "2023Q3",
+      "lastQuarter": "2023Q3",
+      "type": "housing-law",
+      "title": "Equalization of Land Rights Act amendments take effect",
+      "description": "On 1 July 2023 amendments to the Equalization of Land Rights Act took effect. They limit the resale of pre-sale housing contracts, require a permit for private legal persons buying housing, and set fines of up to NT$50 million.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "The research notes mark this row verified with the linked sources.",
+      "sources": [
+        { "label": "Liberty Times: Equalization of Land Rights Act amendments", "publisher": "Liberty Times", "url": "https://ec.ltn.com.tw/article/breakingnews/4331743" },
+        { "label": "Business Weekly: Equalization of Land Rights Act amendments", "publisher": "Business Weekly", "url": "https://www.businessweekly.com.tw/business/blog/3011349" }
+      ]
+    },
+    {
+      "id": "tpass-2023",
+      "date": "2023-07-01",
+      "datePrecision": "day",
+      "firstQuarter": "2023Q3",
+      "lastQuarter": "2023Q3",
+      "type": "transit",
+      "title": "TPASS regional pass starts in Keelung, Taipei, New Taipei and Taoyuan",
+      "description": "On 1 July 2023 the TPASS regional pass for Keelung, Taipei, New Taipei and Taoyuan became usable at NT$1,200 for 30 days. Sales began on 15 June. The program is supported by the Ministry of Transportation and Communications.",
+      "role": "baseline",
+      "major": true,
+      "verified": true,
+      "verificationNote": "The research notes mark this row verified with the linked sources.",
+      "sources": [
+        { "label": "CNA: TPASS sales begin", "publisher": "Central News Agency", "url": "https://www.cna.com.tw/news/ahel/202306150164.aspx" }
+      ]
+    },
+    {
+      "id": "new-youth-housing-loan",
+      "date": "2023-08-01",
+      "datePrecision": "day",
+      "firstQuarter": "2023Q3",
+      "lastQuarter": "2023Q3",
+      "type": "housing-program",
+      "title": "New Youth Housing Loan program starts",
+      "description": "On 1 August 2023 the New Youth Housing Loan program started: loans of up to NT$10 million over up to 40 years, a grace period of up to 5 years, and an interest rate of 1.775% after the government subsidy.",
+      "role": "narrative",
+      "major": true,
+      "verified": true,
+      "verificationNote": "The research notes mark this row verified with the linked sources.",
+      "sources": [
+        { "label": "Global Views: New Youth Housing Loan", "publisher": "Global Views Monthly", "url": "https://www.gvm.com.tw/article/104998" },
+        { "label": "cnyes: New Youth Housing Loan", "publisher": "Anue cnyes", "url": "https://m.cnyes.com/news/id/5659125" }
+      ]
+    },
+    {
+      "id": "rate-hike-2024-03-22",
+      "date": "2024-03-22",
+      "datePrecision": "day",
+      "firstQuarter": "2024Q1",
+      "lastQuarter": "2024Q1",
+      "type": "interest-rate",
+      "title": "Central Bank raises the discount rate to 2%",
+      "description": "On 22 March 2024 the Central Bank of the Republic of China (Taiwan) raised its discount rate by 0.125 percentage points, from 1.875% to 2%.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with the Central Bank discount-rate file cbc-webF1-discount-rate.csv (data.gov.tw dataset 6022): same date, rate 2%.",
+      "sources": [
+        { "label": "Central Bank discount rate series (data.gov.tw dataset 6022)", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://data.gov.tw/dataset/6022" }
+      ]
+    },
+    {
+      "id": "hualien-earthquake-2024",
+      "date": "2024-04-03",
+      "datePrecision": "day",
+      "firstQuarter": "2024Q2",
+      "lastQuarter": "2024Q2",
+      "type": "disaster",
+      "title": "Magnitude 7.1 earthquake in Hualien County",
+      "description": "At 07:58 on 3 April 2024 a magnitude 7.1 earthquake occurred in Shoufeng Township, Hualien County, as reported by the Central Weather Administration. The maximum intensity recorded in Taipei and New Taipei was 5-.",
+      "role": "narrative",
+      "major": true,
+      "verified": true,
+      "verificationNote": "Compared with Central Weather Administration earthquake report No. 019, 3 April 2024 (https://scweb.cwa.gov.tw/zh-tw/earthquake/details/2024040307580971019) on 2026-11-17: date matches.",
+      "sources": [
+        { "label": "Central Weather Administration earthquake report No. 019, 3 April 2024", "publisher": "Central Weather Administration", "url": "https://scweb.cwa.gov.tw/zh-tw/earthquake/details/2024040307580971019" }
+      ]
+    },
+    {
+      "id": "credit-control-wave-6",
+      "date": "2024-06-13",
+      "datePrecision": "day",
+      "firstQuarter": "2024Q2",
+      "lastQuarter": "2024Q2",
+      "type": "credit-control",
+      "title": "Central Bank revises selective credit controls (wave 6)",
+      "description": "On 13 June 2024 the Central Bank of the Republic of China (Taiwan) lowered the maximum loan-to-value ratio for second-home loans in the designated areas to 60%.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "The research notes mark this row verified with the linked sources.",
+      "sources": [
+        { "label": "TechNews: housing market after the sixth wave", "publisher": "TechNews", "url": "https://finance.technews.tw/2024/07/26/the-housing-market-shows-no-signs-of-cooling-down/" }
+      ]
+    },
+    {
+      "id": "holding-tax-2-0",
+      "date": "2024-07-01",
+      "datePrecision": "day",
+      "firstQuarter": "2024Q3",
+      "lastQuarter": "2024Q3",
+      "type": "housing-law",
+      "title": "House Tax Act amendments (holding tax 2.0) take effect",
+      "description": "On 1 July 2024 House Tax Act amendments took effect. The rate range for non-owner-occupied homes rose from 1.5-3.6% to 2-4.8%, and holdings are counted nationwide instead of per city. The first bills under the new rules were issued in May 2025.",
+      "role": "baseline",
+      "major": false,
+      "verified": true,
+      "verificationNote": "The research notes mark this row verified with the linked sources.",
+      "sources": [
+        { "label": "cnyes: holding tax 2.0", "publisher": "Anue cnyes", "url": "https://news.cnyes.com/news/id/5414648" },
+        { "label": "CTEE: holding tax 2.0", "publisher": "Commercial Times", "url": "https://ctee.com.tw/news/policy/924197.html" }
+      ]
+    },
+    {
+      "id": "bank-mortgage-limits-2024",
+      "date": "2024-08",
+      "datePrecision": "month",
+      "firstQuarter": "2024Q3",
+      "lastQuarter": "2024Q3",
+      "type": "housing-program",
+      "title": "Central Bank asks banks to manage total real-estate lending",
+      "description": "In August 2024 the Central Bank of the Republic of China (Taiwan) asked banks to set their own targets for total real-estate lending, and several banks limited new mortgage lending. Real-estate loans were 37.61% of total bank lending at the end of June 2024.",
+      "role": "narrative",
+      "major": false,
+      "verified": true,
+      "verificationNote": "Compared with Central Bank report on selective credit controls (PDF) (https://www.cbc.gov.tw/dl-223320-cbe9df80e89d4cf49b52d17e1cec140b.html) on 2026-11-17: date matches. The day is not known.",
+      "sources": [
+        { "label": "Central Bank report on selective credit controls (PDF)", "publisher": "Central Bank of the Republic of China (Taiwan)", "url": "https://www.cbc.gov.tw/dl-223320-cbe9df80e89d4cf49b52d17e1cec140b.html" },
+        { "label": "UDN Money: bank real-estate lending", "publisher": "United Daily News", "url": "https://money.udn.com/money/story/5613/9761283" }
+      ]
+    },
+    {
+      "id": "credit-control-wave-7",
+      "date": "2024-09-19",
+      "datePrecision": "day",
+      "firstQuarter": "2024Q3",
+      "lastQuarter": "2024Q3",
+      "type": "credit-control",
+      "title": "Central Bank revises selective credit controls (wave 7)",
+      "description": "On 19 September 2024 the Central Bank of the Republic of China (Taiwan) set a 50% loan-to-value limit for second homes nationwide, removed the grace period on first loans for existing owners, and set 30% for corporate, high-value and third homes. Effective 20 September.",
+      "role": "narrative",
+      "major": true,
+      "verified": true,
+      "verificationNote": "The research notes mark this row verified with the linked sources.",
+      "sources": [
+        { "label": "CNA: seventh wave of credit controls", "publisher": "Central News Agency", "url": "https://cna.com.tw/news/afe/202410090292.aspx" },
+        { "label": "CTEE: Central Bank board meeting of 19 September 2024", "publisher": "Commercial Times", "url": "https://www.ctee.com.tw/news/20240919701806-430301" }
+      ]
+    }
+  ]
+}

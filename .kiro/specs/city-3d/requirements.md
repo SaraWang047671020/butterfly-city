@@ -1,0 +1,229 @@
+# Requirements Document
+
+## Introduction
+
+This spec replaces the 2D SVG map of the game-ui spec with a 3D city: the **City_View**. The 41 districts of Taipei City and New Taipei City are drawn at night as a city the player can orbit, zoom and click, and later walk through. The City_View shows the same Map_Indicator, Selected_District and Displayed_Quarter as the game-ui spec, and takes every value from the Game_Controller.
+
+The user asked for this change on 2026-11-18 after seeing the game-ui Design_Proposal: the 2D map did not give the sense of being inside the city. A prototype (`prototype/city3d.html`, `prototype/city3d.ts`) was built the same day with the real `districts.json` and `history.json`, and the user approved its direction.
+
+The work is done in four phases, in this order (user decision 2026-11-18):
+
+1. **City_View in the game**: the 3D city replaces the Map_View, driven by the Game_Controller.
+2. **Landmarks**: simplified models of well-known real buildings at their real positions.
+3. **Walk_Mode and Metro_Travel**: a walking avatar with collision, and travel between metro stations.
+4. **Citizen encounters and street detail**: citizens of the story-layer spec on the street, and finer street detail near the avatar.
+
+Phase 4 is dropped first if time runs out before 2026-12-02.
+
+This spec is implemented by Claude Code, not by Kiro, to save Kiro credits (recorded in `KIRO-LOG.md`, section "Work not done by Kiro").
+
+### What is real and what is illustrative
+
+The City_View mixes real data with illustrative shapes. The screen says which is which (Requirement 11):
+
+| Shown | Real or illustrative |
+|---|---|
+| District outlines, district names, centroids | Real (`districts.json`) |
+| Colours of districts and buildings | Real or simulated values of the Map_Indicator, through Indicator_Classes |
+| Number of buildings per district | Illustrative; proportional to the 2015Q1 population of the district |
+| Building heights over time | Illustrative; scaled by the district sale price per m² of the Displayed_Quarter relative to 2015Q1 |
+| Streets, vehicles, pedestrians, trees, windows | Illustrative; game scale, not real size |
+| Ghosts | Simulated Ghost counts of the Engine |
+| Landmark positions | Real coordinates from a cited source |
+| Landmark shapes | Simplified models, not survey data |
+| Metro stations and lines (phase 3) | Real stations and line order from the data pipeline |
+
+### Out of scope
+
+- Real building footprints or heights for the whole city (OpenStreetMap or government 3D building data). Recorded as a possible later addition for central districts only.
+- Downloaded 3D models. Every model is built in code from primitive shapes.
+- Sound.
+- Changes to Engine formulas or to the values of the Data_Files.
+- Future mode and Live mode.
+
+## Glossary
+
+- **City_View**: the 3D view of the 41 districts in `src/ui/city/`, rendered with three.js into one `<canvas>`. It replaces the game-ui Map_View.
+- **City_Static_View**: the data the Game_Controller gives the City_View once per game: for each district the code, city, romanized name, polygon rings in longitude and latitude, centroid, area in km² and 2015Q1 population (Requirement 2.1).
+- **Overview_Mode**: the City_View with an orbiting camera above the city. The default mode.
+- **Walk_Mode**: the City_View with a third-person camera that follows the Avatar (phase 3).
+- **Avatar**: the figure the player moves in Walk_Mode.
+- **District_Ground**: the flat extruded shape of one district on which its buildings stand.
+- **City_Building**: one illustrative building of the City_View.
+- **Street_Grid**: the illustrative street network of the urban districts (Requirement 4.4).
+- **Urban_District**: a district whose 2015Q1 population density is above 2,500 persons per km².
+- **Traffic**: the illustrative cars, scooters and pedestrians that move on the Street_Grid.
+- **Ghost_Figure**: one 3D ghost shown above a district for the simulated Ghost count (Requirement 6).
+- **Landmark**: one simplified model of a real building listed in the Landmark_Table (phase 2).
+- **Landmark_Table**: `data/config/landmarks.json`, the committed list of Landmarks with id, English name, district code, coordinates and coordinate source.
+- **Station_File**: `public/data/stations.json`, metro and light-rail stations with coordinates, district, lines and order on each line, produced by the data pipeline (phase 3).
+- **Metro_Travel**: moving the Avatar from one station to another through a station dialog (phase 3).
+- **Citizen_Encounter**: a pedestrian in Walk_Mode that represents one citizen of the story-layer spec and shows the citizen's current text when the player talks to it (phase 4).
+- **Illustration_Note**: the sentence "Buildings, streets, vehicles and people are illustrative. Their number follows population and their height follows the sale price per m². Landmarks are simplified models."
+- **WebGL_Fallback**: what the Game_Screen shows when the browser cannot create a WebGL context (Requirement 12.3).
+- **Quality_Level**: `high` or `low`: the amount of Traffic, trees and shadows (Requirement 12.2).
+- **Prototype**: `prototype/city3d.html` and `prototype/city3d.ts`. It is not production code and is not imported by `src/`.
+- Terms of the game-ui spec (Game_Controller, Game_Screen, Map_Indicator, Indicator_Class, Selected_District, Displayed_Quarter, District_List, District_Panel, Turn_Bar, Policy_Panel, Design_Proposal, Token_File, UI_Strings_Module, Test_Suite, Developer) and of the simulation-engine spec (Engine, Ghost, Ghost_Size, Sim_State) are used as defined there.
+
+## Requirements
+
+### Requirement 1: Approval and packages
+
+**User Story:** As the product owner, I want to approve the 3D look and the new package before production code depends on them.
+
+#### Acceptance Criteria
+
+1. THE Developer SHALL present a City_Design_Proposal (an HTML artifact) with screenshots of the City_View in Overview_Mode at 1280 and 360 CSS pixels, the overlay layout of Requirement 9 at 360, 768, 1280 and 1920 CSS pixels, the colours of Requirement 3, the Ghost_Figure, the selected and focused district states, and the reduced-motion behaviour of Requirement 10, before any file in `src/ui/city/` is created.
+2. WHEN the user approves the City_Design_Proposal, THE Developer SHALL record in `KIRO-LOG.md` the date, the artifact file name and the user's statement, in the format of game-ui Requirement 1.5.
+3. THE Developer SHALL pin `three` 0.170.0 as a runtime dependency and `@types/three` 0.170.0 as a development dependency, which the user approved on 2026-11-18, and SHALL record the approval in `KIRO-LOG.md` with the date, the package names and the versions.
+4. THE modules that import `three` SHALL be only the modules in `src/ui/city/`.
+5. THE City_View SHALL import from `three/examples/jsm/` only the modules named in the design.
+
+### Requirement 2: City data from the Game_Controller
+
+**User Story:** As the developer, I want the City_View to get its data the same way the other UI parts do, so that the module boundaries of game-ui Requirement 18 still hold.
+
+#### Acceptance Criteria
+
+1. THE Game_Controller SHALL provide the City_Static_View, built from `districts.json` and the 2015Q1 `population` records of `history.json`.
+2. THE Game_Controller SHALL add to each district of the Map view model the Ghost count of the central Scenario of the Displayed_Quarter (`null` before any quarter is computed) and the Price_Index: the `salePrice` of the district in the Displayed_Quarter ÷ its `salePrice` in 2015Q1, or `null` IF either record is missing or the 2015Q1 value is 0.
+3. THE City_View SHALL import nothing from `src/data/`, `src/save/` or `src/simulation/` other than `import type`, and SHALL obtain every value through the Game_Controller view and the City_Static_View.
+4. THE Test_Suite SHALL check that the Ghost count of criterion 2 equals the central `runRange` output for one district per city and two quarters, and that the Price_Index equals the quotient of the two `history.json` records.
+
+### Requirement 3: District colours
+
+**User Story:** As a player, I want the city coloured by the indicator I choose, so that I can see where people carry the heaviest burden while I look around.
+
+#### Acceptance Criteria
+
+1. THE City_View SHALL colour the District_Ground and the City_Buildings of each district by the Indicator_Class of the central value of the selected Map_Indicator in the Displayed_Quarter (game-ui Requirements 3.8 and 3.9), using the class colours of the Token_File.
+2. IF a district has no value for the selected Map_Indicator, THEN THE City_View SHALL draw its District_Ground in the "no value" colour of the Token_File with a hatched texture, SHALL draw its City_Buildings without the class tint, and SHALL give "no value" in the district announcement of Requirement 5.4.
+3. WHEN the Map_Indicator or the Displayed_Quarter changes, THE City_View SHALL show the new colours within 300 ms.
+4. THE City_View SHALL take every colour and motion duration from CSS custom properties of the Token_File, read at start and WHEN the colour scheme changes, and SHALL contain no colour literal checked by game-ui Requirement 1.9.
+5. THE legend, the Map_Indicator switch and the indicator text of game-ui Requirements 3.3, 3.10 and 3.18 SHALL stay DOM elements outside the canvas.
+6. THE meaning of each colour SHALL also be available as text: in the legend, in the District_Panel and in the district announcement of Requirement 5.4.
+
+### Requirement 4: The illustrative city
+
+**User Story:** As a player, I want the districts to look like a living city at night, so that the game feels like a place and not a chart.
+
+#### Acceptance Criteria
+
+1. THE City_View SHALL draw each district as a District_Ground extruded from its polygon rings, with its outline as a line, and its romanized name as a label at its centroid.
+2. THE City_View SHALL place in each district a number of City_Buildings equal to its 2015Q1 population ÷ 1,400, rounded, at positions inside its polygon chosen by a seeded random generator so that the same City_Static_View always gives the same buildings.
+3. THE City_View SHALL scale the height of the City_Buildings of a district by its Price_Index, limited to the range 0.6 to 1.8, and SHALL use a height scale of 1 WHERE the Price_Index is `null`.
+4. THE City_View SHALL draw a Street_Grid in every Urban_District and SHALL place no City_Building and no tree on a street of the Street_Grid.
+5. THE City_View SHALL draw Traffic on the Street_Grid: cars and scooters that drive on the right-hand side of the street and turn at crossings, and pedestrians on both sides of the street.
+6. THE City_View SHALL draw trees in districts that are not Urban_Districts, so that the mountain districts read as forest.
+7. THE City_View SHALL draw a night sky, a moon light, fog and lit windows.
+8. WHEN the Displayed_Quarter changes, THE City_View SHALL move the City_Building heights to their new values over the "slow" motion duration of the Token_File.
+
+### Requirement 5: Camera, selection and keyboard
+
+**User Story:** As a player using a mouse, a touch screen or a keyboard, I want to move around the city and pick a district.
+
+#### Acceptance Criteria
+
+1. THE City_View SHALL let the player orbit, pan and zoom in Overview_Mode with a pointer, with touch gestures and with the keyboard (arrow keys orbit, `+` and `-` zoom), and SHALL keep the camera above the ground and within the city bounds.
+2. WHEN the player clicks or taps a district without dragging, THE City_View SHALL call the Game_Controller action `selectDistrict` with its District_Code and SHALL move the camera to the district over the "slow" motion duration.
+3. WHEN the Selected_District changes in any other way (District_List, loaded Save), THE City_View SHALL highlight the district and move the camera to it in the same way.
+4. WHILE the canvas has keyboard focus, THE City_View SHALL move a focus highlight through the districts in District_Code order with `]` and `[`, SHALL select the highlighted district with Enter or Space, and SHALL announce each highlighted district in a polite live region with the accessible name of game-ui Requirements 4.2 and 4.3.
+5. THE City_View SHALL draw four district states (unselected, focused, selected, focused and selected) that differ in outline width or pattern, so that each state is distinguishable in greyscale.
+6. THE canvas SHALL have an accessible name that says the view is a 3D city of the 41 districts and that every district is also in the District_List.
+7. THE District_List of game-ui Requirement 4.6 SHALL remain on the Game_Screen as the complete non-visual way to select a district.
+8. THE City_View SHALL keep the Selected_District, the Map_Indicator and the camera position WHEN the viewport is resized or rotated.
+
+### Requirement 6: Ghosts in the city
+
+**User Story:** As a player, I want to see the ghosts of people pushed out of a district, so that the cost of a policy is visible in the place where it happens.
+
+#### Acceptance Criteria
+
+1. THE City_View SHALL show above each district a number of Ghost_Figures equal to its Ghost count of Requirement 2.2, up to 12 per district.
+2. THE exact Ghost count SHALL be shown as text in the District_Panel (game-ui Requirement 6.7); THE City_View SHALL not be the only place where a Ghost count is shown.
+3. WHILE no quarter is computed, THE City_View SHALL show no Ghost_Figure.
+4. THE Ghost_Figures SHALL float slowly and SHALL not flash (game-ui Requirement 17.11).
+5. THE Ghost_Figures SHALL receive no pointer events.
+
+### Requirement 7: Landmarks (phase 2)
+
+**User Story:** As a player who knows Taipei, I want to recognise real places, so that I believe this is my city.
+
+#### Acceptance Criteria
+
+1. THE Landmark_Table SHALL list each Landmark with an id, an English name, its District_Code, its longitude and latitude, the citation and URL of the coordinate source, and the date the coordinates were read.
+2. THE City_View SHALL draw each Landmark at its coordinates as a model built in code from primitive shapes, and SHALL remove every City_Building whose footprint overlaps the Landmark footprint.
+3. THE Test_Suite SHALL check that each Landmark lies inside the polygon of its District_Code and that each coordinate source has an `https` URL.
+4. THE City_View SHALL show the English name of a Landmark as a label WHEN the camera is closer than the label distance of the design.
+5. THE Landmark names SHALL be used only to identify the buildings; THE App SHALL use no logo of any building or company.
+
+### Requirement 8: Walk_Mode and Metro_Travel (phase 3)
+
+**User Story:** As a player, I want to walk the streets and ride the metro, so that I feel what a long commute means.
+
+#### Acceptance Criteria
+
+1. THE Game_Screen SHALL offer a control that switches between Overview_Mode and Walk_Mode, and Escape SHALL return from Walk_Mode to Overview_Mode.
+2. WHEN Walk_Mode starts, THE City_View SHALL place the Avatar on a street of the Selected_District, or of Zhongzheng District WHERE no district is selected.
+3. WHILE in Walk_Mode, THE City_View SHALL move the Avatar with W, A, S, D or the arrow keys, and with an on-screen joystick on touch screens, and SHALL stop the Avatar at City_Buildings and Landmarks.
+4. WHILE in Walk_Mode, THE District_Panel SHALL show the district where the Avatar stands, and THE Turn_Bar and the Policy_Panel SHALL stay usable.
+5. THE Station_File SHALL be produced by the data pipeline from the station sources it already uses, with each station's id, English name, coordinates, District_Code, lines and order on each line.
+6. WHEN the Avatar stands at a station, THE City_View SHALL offer a station dialog that lists the other stations by line, and WHEN the player picks one, SHALL move the Avatar to that station after a transition of the "slow" motion duration.
+7. THE City_View SHALL draw the metro lines between consecutive stations.
+8. THE game SHALL be fully playable without Walk_Mode.
+
+### Requirement 9: Overlay layout
+
+**User Story:** As a player on a phone or a projector, I want the city to fill the screen with the controls on top.
+
+#### Acceptance Criteria
+
+1. THE City_View SHALL fill the viewport behind the other parts of the Game_Screen.
+2. AT viewport widths of 1024 CSS pixels and above, THE Turn_Bar, the District_Panel, the Policy_Panel, the legend and the Timeline_View SHALL be panels over the City_View that the player can collapse and expand.
+3. BELOW 1024 CSS pixels, THE Turn_Bar SHALL stay at the bottom of the viewport and the other panels SHALL open one at a time as a sheet from the bottom, leaving at least 40 percent of the viewport height for the City_View when a sheet is half open.
+4. THE overlay layout SHALL meet game-ui Requirements 16.1, 16.3, 16.4, 16.6, 16.8 and 16.9.
+5. THE pointer events on a panel SHALL not reach the City_View.
+
+### Requirement 10: Motion
+
+**User Story:** As a player who is sensitive to motion, I want the city to keep still.
+
+#### Acceptance Criteria
+
+1. WHILE `prefers-reduced-motion: reduce` applies, THE City_View SHALL skip the opening camera flight, SHALL move the camera to a new target without a flight, SHALL show Traffic and Ghost_Figures standing still, and SHALL set building heights without a transition.
+2. WHEN the `prefers-reduced-motion` setting changes while the App runs, THE City_View SHALL apply the new setting without a page reload.
+3. THE Game_Screen SHALL offer a control "Pause city motion" that stops Traffic and Ghost_Figure motion regardless of the system setting.
+
+### Requirement 11: Honesty of the picture
+
+**User Story:** As a teacher, I want students to know which parts of the city are data and which are decoration.
+
+#### Acceptance Criteria
+
+1. THE Game_Screen SHALL show the Illustration_Note next to the legend at every viewport width, either visible or behind one "About this view" control.
+2. THE City_View SHALL derive no shape, count or position from a value that is not in the Data_Files, the Landmark_Table or the Station_File, except the illustrative parts listed in the Introduction.
+3. THE City_View SHALL show no text that states or implies a value; every value is shown by the DOM panels.
+
+### Requirement 12: Performance and fallback
+
+**User Story:** As a student on a school laptop or a phone, I want the city to run smoothly or step aside.
+
+#### Acceptance Criteria
+
+1. THE City_View SHALL use instanced meshes for City_Buildings, trees and Traffic, SHALL cap the device pixel ratio at 2, and SHALL render at least 30 frames per second in Overview_Mode at 1280 × 800 on the Developer's laptop at Quality_Level `high` (manual check).
+2. THE Game_Screen SHALL offer a Quality_Level control; at `low` THE City_View SHALL draw at most one quarter of the Traffic and trees of `high`, no shadows, and a device pixel ratio of at most 1. THE App SHALL start at `low` WHERE the viewport is narrower than 768 CSS pixels.
+3. IF the browser cannot create a WebGL context, THEN THE Game_Screen SHALL show the text "This browser cannot show the 3D city. Use the district list to select a district." in place of the City_View, and SHALL keep every other part of the game working.
+4. THE City_View SHALL stop rendering WHILE the page is hidden.
+5. THE City_View SHALL release its GPU resources WHEN the Game_Screen is left.
+
+### Requirement 13: Tests
+
+**User Story:** As the developer, I want the parts of the City_View that can be tested in Node to be tested.
+
+#### Acceptance Criteria
+
+1. THE City_View SHALL keep the projection, point-in-polygon, building placement, Street_Grid, Traffic routing, Avatar collision, Indicator_Class colour mapping and district focus order in pure functions with no `three` import, tested in Node.
+2. THE Test_Suite SHALL include a property test that building placement is deterministic for a given City_Static_View and that every City_Building lies inside its district and off the Street_Grid.
+3. THE Test_Suite SHALL include a property test that a vehicle routed on the Street_Grid stays on streets of the Street_Grid for any number of steps.
+4. THE Test_Suite SHALL include a test that every module importing `three` is in `src/ui/city/` (extending the boundary test of game-ui Requirement 18.2).
+5. THE Developer SHALL check the City_View by hand at 360, 768, 1280 and 1920 CSS pixels, with reduced motion on and off, with the keyboard only, and with WebGL disabled, and SHALL record the result in `KIRO-LOG.md`.

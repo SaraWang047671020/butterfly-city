@@ -43,7 +43,8 @@ butterflycity/
 │   ├── narrative/             # fixed text templates for citizen updates
 │   ├── save/                  # localStorage, save code export/import, validation
 │   ├── ui/
-│   │   ├── map/               # SVG map (d3-geo)
+│   │   ├── city/              # 3D city view (three.js), replaces the SVG map (city-3d spec)
+│   │   ├── map/               # indicator switch, legend and indicator text (DOM)
 │   │   ├── panels/            # policy controls, district detail, citizen, events
 │   │   ├── explain/           # "Why?" breakdown views
 │   │   ├── ending/            # your city vs. real city comparison
@@ -67,6 +68,7 @@ butterflycity/
 - `src/ui/` renders state and dispatches user actions. It holds no simulation logic.
 - `src/narrative/` turns simulation output into text using fixed templates only.
 - `scripts/` runs in Node only and is never imported by `src/`.
+- `three` is imported only in `src/ui/city/`. `prototype/` is a throwaway prototype and is never imported by `src/`.
 
 ## Conventions
 
