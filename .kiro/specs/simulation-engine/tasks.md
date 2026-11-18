@@ -409,6 +409,7 @@ Every property test uses fast-check 4.10.2 with `fc.assert(fc.property(...), { n
     - If `public/data/history.json` is absent, stop and ask the user for the observed value instead of inventing one
     - `cases.ts` reads and validates the file; a case whose comparison year is 2022 (or inside 2020 to 2022), or that lacks tolerances, confounders or the calculation spec, becomes "not computed"; the news figures are never used in a check
     - _Requirements: 20.1, 20.2, 20.4, 20.6, 20.10_
+    - Note: observed source changed by data-pipeline task 29.
 
   - [x] 15.2 Implement `scripts/backtest/adapt.ts`
     - Convert `history.json`, `policy-track.json`, `params.json` and the commute matrix into `EngineBaseline`, `PolicyTimeline`, `ParameterTable` and `CommuteMatrix`; write `commuterPassPrice` into `commuterPass.price.<city>.<quarter>` parameters; a missing file is reported as `missing input: <file>`

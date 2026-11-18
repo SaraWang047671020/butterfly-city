@@ -1582,6 +1582,20 @@ Sections 3 and 4 gain the low-use indicators and the new sources. A new section 
 10. **Download before build (satisfied).** The `low-use` files were downloaded and reviewed in task 22.8 (Requirement 26 criterion 1); the builder, registry entries and validator rules can be implemented.
 11. **Credentials.** The `timetables` download reads TDX credentials from `TDX_CLIENT_ID` and `TDX_CLIENT_SECRET` only; the credentials scan covers `data/raw/timetables/` (Requirement 25 criteria 5 and 6).
 
+### Backtest observed data (Requirements 11.15, 27.19 to 27.23)
+
+The TPASS backtest reads the Backtest_Station_Data, not `history.json`. The module is `scripts/backtest/mrt-monthly.ts`:
+
+- `readMonthlyEntries(months)` reads `data/raw/mrt/od-station-month/YYYY-MM.json` for each requested month, validates the shape (`month`, `source`, `entries`, `exits`, `rows`; numeric, non-negative counts) and stops on a missing month. When any of the 24 files is missing it lists every missing path with its `node scripts/download.ts mrt --od=YYYY-MM` command, before any computation and without touching `docs/BACKTEST.md` (27.20).
+- `quarterlyByDistrict(monthly, stationDistrict, alias)` maps each station key through the alias table (for example `BL板橋`, `Y板橋`) and the station-to-district table of Requirement 11.1, then sums entries (not exits) per district and quarter. A station name with no alias entry stops with the station and the month (27.21).
+- Station filter: the main result keeps only stations with entries in all 24 months; the all-stations result and the excluded stations' share of 2023 total entries are returned as well (27.23 b).
+- District scope: the district list for the main result is the districts that have a Taipei Metro station (27.23 a).
+- The module is imported only by `scripts/backtest/`. It is not imported by `src/` or by the data build, so the static test of 27.18 holds. `history.json` is unchanged.
+- DATA-CHECK note: the OD files are downloaded only for the 24 backtest months (about 300 MB and about 200 s per month).
+- Derived file (Requirements 27.24 to 27.28, decided 2026-11-18): `npm run backtest` writes `data/derived/backtest-mrt-quarterly.json` (committed). It holds per-district per-quarter entry sums for the main result and all stations, the observed effect for both, the 24 months with source URL and station count, the station names of the main result, and the excluded stations with a reason each. A reader checks the schema (types, 24 months, non-negative sums) and fails with a clear message.
+- Modes of `npm run backtest`: (1) derived file absent and 24 raw files present: compute from raw and write the file. (2) both present: recompute from raw, compare with the file; any difference stops the command with a list of differences and no overwrite. (3) raw absent, derived present: use the derived file. (4) neither present: stop with the 24 download commands. To regenerate on purpose, the user deletes the file and reruns.
+- The staleness test (simulation-engine 20.8) reads only the derived file, never `data/raw/`, and compares the regenerated `docs/BACKTEST.md` byte for byte. The report or `SOURCES.md` states how the file is produced and recomputed.
+
 ### Sources document (`sources-doc.ts`)
 
 `renderSourcesDoc(state)` returns a string built from the registries and the build notes. It contains no date, path or environment value. Sections, in fixed order:

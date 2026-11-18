@@ -12,61 +12,81 @@ The simulation is not a prediction. Errors are reported as numbers, whether they
 
 ## Case tpass-2023: 2023 TPASS commuter pass
 
-Label: validation
+### Invalid result (first run, kept unchanged)
 
-No Parameter value or range was chosen or changed after seeing the outcome of this case.
-
-### Change and quarters
-
-- Policy tool: commuterPass
-- Changed field: commuterPassPrice in Taipei, New Taipei
-- First quarter of the change: 2023Q3
-- Value before: 1280.00
-- Value after: 1200.00
-- Compared indicator: mrtEntries
-- Compared areas: Taipei, New Taipei
-- Evaluation quarters: 2023Q3, 2023Q4
-
-### Simulated effect
-
-| Minimum | Central | Maximum |
-| ---: | ---: | ---: |
-| 4590931.59 | 6886397.38 | 11477328.97 |
-
-### Observed effect
+The first run is kept as it was printed. It is marked invalid because its quarterly MRT entries were apportioned from annual data with fixed 2015-2016 seasonal shares, so a mid-year policy change cannot be detected.
 
 - Observed effect: -797951.00
-- Source: history.json, indicator mrtEntries
-- Cities: Taipei, New Taipei (41 districts)
-- Comparison year: 2019
-- Change year: 2023
-- Method: Total MRT entries of all districts of Taipei and New Taipei. Observed effect = (2023 Q3+Q4 minus 2019 Q3+Q4) minus (2023 Q1+Q2 minus 2019 Q1+Q2). The year 2019 is the pre-COVID-19 comparison year; 2022 is not used. Computed from history.json values by the backtest script; no value is entered by hand.
-
-| Period | Quarters | Sum |
-| --- | --- | ---: |
-| Post-change year 2023 | Q3, Q4 | 367274527.00 |
-| Post-comparison year 2019 | Q3, Q4 | 401119301.00 |
-| Pre-change year 2023 | Q1, Q2 | 354804329.00 |
-| Pre-comparison year 2019 | Q1, Q2 | 387851152.00 |
-
-Known confounders:
-- Incomplete recovery of ridership after COVID-19
-- Ankeng LRT opening on 2023-02-10
-
-### Errors and checks
-
-- Absolute error (simulated central minus observed): +7684348.38
-- Relative error: +963.0 percent
+- Simulated effect: minimum 4590931.59, central 6886397.38, maximum 11477328.97
 - Magnitude ratio (simulated central divided by observed): -8.630
+- Tolerance interval for the ratio: 0.500 to 2.000
+- Direction: not met
+- Magnitude ratio inside the tolerance interval: not met
+- Range: not met
+
+### Comparison method (decided 2026-11-18, before the monthly result was computed)
+
+- Data: monthly Taipei Metro station entries. Entries only; exits are not used.
+- District scope: observed and simulated sums cover only districts with a Taipei Metro station. The simulated sum over all 41 districts is shown as a reference.
+- Station scope: the main result uses stations with entries in all 24 months of 2019 and 2023. The result with all stations is also shown, together with the share of 2023 entries that belongs to the excluded stations.
+- The simulated side is by district and includes the Circular Line. The observed side counts Taipei Metro stations only.
+- Tolerances are unchanged from the first run.
+
+### Confounders
+
+- 2023H1 was still in post-COVID-19 recovery. Part of the H2 minus H1 difference may come from the recovery and not from the pass. This biases the result toward the pass appearing effective.
+- The Ankeng LRT opened on 2023-02-10.
+
+### Scope
+
+Taipei Metro only. The New Taipei Metro lines (Danhai LRT, Ankeng LRT, Sanying Line) are not included because no station-level data exists.
+
+### Derived data file
+
+The sums behind the new result are stored in `data/derived/backtest-mrt-quarterly.json`, which is committed. It holds the per-district per-quarter entry sums for the main result and for all stations, the observed effects, the 24 months with their source URLs and station counts, the stations of the main result, and the excluded stations with the reason for each. The staleness test reads this file and never `data/raw/`.
+
+Recomputing from raw data: with the 24 monthly files in `data/raw/mrt/od-station-month/` (see `data/DOWNLOAD.md`), `npm run backtest` recomputes the file content and compares it with the committed file. If any value differs, the command lists each difference, exits with a non-zero code and overwrites nothing. If the file does not exist, the command creates it from the raw files. To regenerate it on purpose, delete the file and run `npm run backtest` again. If neither the file nor the raw files exist, the command stops and prints the download commands.
+
+### New result (monthly station entries)
+
+- Compared indicator: mrtEntries; evaluation quarters: 2023Q3, 2023Q4
+- Districts with a Taipei Metro station: 21
+
+#### Effects
+
+| Series | Minimum | Central | Maximum |
+| --- | ---: | ---: | ---: |
+| Simulated, districts with a station (main) | 4590931.59 | 6886397.38 | 11477328.97 |
+| Simulated, all 41 districts (reference) | 4590931.59 | 6886397.38 | 11477328.97 |
+
+- Observed effect, main (108 stations with entries in all 24 months): 7795688.00
+- Observed effect, all stations (reference): 4523199.00
+- Stations left out of the main result: 11
+- Share of 2023 entries from the excluded stations: 1.38 percent
+
+| Period (main) | Quarters | Sum | All stations |
+| --- | --- | ---: | ---: |
+| Post-change year 2023 | Q3, Q4 | 363301279.00 | 366554423.00 |
+| Post-comparison year 2019 | Q3, Q4 | 403919085.00 | 403919085.00 |
+| Pre-change year 2023 | Q1, Q2 | 336636874.00 | 343162507.00 |
+| Pre-comparison year 2019 | Q1, Q2 | 385050368.00 | 385050368.00 |
+
+#### Errors and checks (main result)
+
+- Absolute error (simulated central minus observed): -909290.62
+- Relative error: -11.7 percent
+- Magnitude ratio (simulated central divided by observed): 0.883
 - Tolerance interval for the ratio: 0.500 to 2.000
 
 | Check | Result |
 | --- | --- |
-| Direction (central simulated effect has the same sign as the observed effect) | not met |
-| Magnitude ratio inside the tolerance interval | not met |
-| Range (observed effect lies between simulated minimum and maximum) | not met |
+| Direction (central simulated effect has the same sign as the observed effect) | met |
+| Magnitude ratio inside the tolerance interval | met |
+| Range (observed effect lies between simulated minimum and maximum) | met |
 
-### Secondary context, not used in any check
+This result validates MRT entries only, not migration. No parameter was changed in response to it.
+
+#### Secondary context, not used in any check
 
 These news-report figures are quoted for context only. They are not the observed effect above and no check uses them.
 

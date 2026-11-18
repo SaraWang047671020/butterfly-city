@@ -7,6 +7,7 @@
  */
 import { createHash } from 'node:crypto';
 import { ENGINE_VERSION } from '../../src/simulation/constants.ts';
+import type { BacktestCase } from './cases.ts';
 import type { CaseResult, ComputedCase, NotComputedCase } from './compute.ts';
 
 export interface ReportInput {
@@ -136,6 +137,148 @@ function notComputedSection(r: NotComputedCase): string[] {
   return [`## Case ${text(r.id)}`, '', 'Result: not computed', '', `Reason: ${text(r.reason)}`, ''];
 }
 
+/**
+ * The first TPASS result, kept as a fixed record. It was copied from the committed docs/BACKTEST.md before the
+ * monthly data existed and is never recomputed (Requirements 27.22, 27.23).
+ */
+export const TPASS_CASE_ID = 'tpass-2023';
+
+export const TPASS_FIRST_RESULT = {
+  observedEffect: -797951,
+  simulatedMin: 4590931.59,
+  simulatedCentral: 6886397.38,
+  simulatedMax: 11477328.97,
+  ratio: -8.63,
+  ratioLow: 0.5,
+  ratioHigh: 2,
+  directionMet: false,
+  ratioMet: false,
+  rangeMet: false,
+} as const;
+
+function tpassHeadSections(): string[] {
+  const f = TPASS_FIRST_RESULT;
+  const lines: string[] = [];
+  lines.push(`## Case ${TPASS_CASE_ID}: 2023 TPASS commuter pass`, '');
+  lines.push('### Invalid result (first run, kept unchanged)', '');
+  lines.push(
+    'The first run is kept as it was printed. It is marked invalid because its quarterly MRT entries were apportioned from annual data with fixed 2015-2016 seasonal shares, so a mid-year policy change cannot be detected.',
+  );
+  lines.push('');
+  lines.push(`- Observed effect: ${num(f.observedEffect)}`);
+  lines.push(`- Simulated effect: minimum ${num(f.simulatedMin)}, central ${num(f.simulatedCentral)}, maximum ${num(f.simulatedMax)}`);
+  lines.push(`- Magnitude ratio (simulated central divided by observed): ${num(f.ratio, 3)}`);
+  lines.push(`- Tolerance interval for the ratio: ${num(f.ratioLow, 3)} to ${num(f.ratioHigh, 3)}`);
+  lines.push(`- Direction: ${met(f.directionMet)}`);
+  lines.push(`- Magnitude ratio inside the tolerance interval: ${met(f.ratioMet)}`);
+  lines.push(`- Range: ${met(f.rangeMet)}`);
+  lines.push('');
+
+  lines.push('### Comparison method (decided 2026-11-18, before the monthly result was computed)', '');
+  lines.push('- Data: monthly Taipei Metro station entries. Entries only; exits are not used.');
+  lines.push(
+    '- District scope: observed and simulated sums cover only districts with a Taipei Metro station. The simulated sum over all 41 districts is shown as a reference.',
+  );
+  lines.push(
+    '- Station scope: the main result uses stations with entries in all 24 months of 2019 and 2023. The result with all stations is also shown, together with the share of 2023 entries that belongs to the excluded stations.',
+  );
+  lines.push(
+    '- The simulated side is by district and includes the Circular Line. The observed side counts Taipei Metro stations only.',
+  );
+  lines.push('- Tolerances are unchanged from the first run.');
+  lines.push('');
+
+  lines.push('### Confounders', '');
+  lines.push(
+    '- 2023H1 was still in post-COVID-19 recovery. Part of the H2 minus H1 difference may come from the recovery and not from the pass. This biases the result toward the pass appearing effective.',
+  );
+  lines.push('- The Ankeng LRT opened on 2023-02-10.');
+  lines.push('');
+
+  lines.push('### Scope', '');
+  lines.push(
+    'Taipei Metro only. The New Taipei Metro lines (Danhai LRT, Ankeng LRT, Sanying Line) are not included because no station-level data exists.',
+  );
+  lines.push('');
+  lines.push('### Derived data file', '');
+  lines.push(
+    'The sums behind the new result are stored in `data/derived/backtest-mrt-quarterly.json`, which is committed. It holds the per-district per-quarter entry sums for the main result and for all stations, the observed effects, the 24 months with their source URLs and station counts, the stations of the main result, and the excluded stations with the reason for each. The staleness test reads this file and never `data/raw/`.',
+  );
+  lines.push('');
+  lines.push(
+    'Recomputing from raw data: with the 24 monthly files in `data/raw/mrt/od-station-month/` (see `data/DOWNLOAD.md`), `npm run backtest` recomputes the file content and compares it with the committed file. If any value differs, the command lists each difference, exits with a non-zero code and overwrites nothing. If the file does not exist, the command creates it from the raw files. To regenerate it on purpose, delete the file and run `npm run backtest` again. If neither the file nor the raw files exist, the command stops and prints the download commands.',
+  );
+  lines.push('');
+  return lines;
+}
+
+function secondaryLines(c: BacktestCase['observed']): string[] {
+  if (c.secondaryContext.length === 0) return [];
+  const lines: string[] = ['#### Secondary context, not used in any check', ''];
+  lines.push('These news-report figures are quoted for context only. They are not the observed effect above and no check uses them.', '');
+  for (const f of c.secondaryContext) {
+    const note = f.note === '' ? '' : ` ${text(f.note)}`;
+    lines.push(`- ${text(f.label)}: ${signed(f.percent, 1)} percent. Source: [${text(f.source)}](${f.url}).${note}`);
+  }
+  lines.push('');
+  return lines;
+}
+
+function tpassNewResult(r: CaseResult): string[] {
+  const lines: string[] = ['### New result (monthly station entries)', ''];
+  if (r.status === 'not-computed') {
+    lines.push(`Result: not computed: ${text(r.reason)}`, '');
+    return lines;
+  }
+  const c = r.case;
+  const o = c.observed;
+  const ob = r.observed;
+  lines.push(`- Compared indicator: ${text(c.indicator)}; evaluation quarters: ${text([...c.evaluationQuarters].sort().join(', '))}`);
+  lines.push(`- Districts with a Taipei Metro station: ${ob.districtCount}`);
+  lines.push('');
+  lines.push('#### Effects', '');
+  lines.push('| Series | Minimum | Central | Maximum |');
+  lines.push('| --- | ---: | ---: | ---: |');
+  lines.push(`| Simulated, districts with a station (main) | ${num(r.simulated.min)} | ${num(r.simulated.central)} | ${num(r.simulated.max)} |`);
+  lines.push(
+    `| Simulated, all 41 districts (reference) | ${num(r.simulatedAllDistricts.min)} | ${num(r.simulatedAllDistricts.central)} | ${num(r.simulatedAllDistricts.max)} |`,
+  );
+  lines.push('');
+  lines.push(`- Observed effect, main (${ob.includedStationCount} stations with entries in all 24 months): ${num(ob.effect)}`);
+  lines.push(`- Observed effect, all stations (reference): ${num(ob.allStations.effect)}`);
+  lines.push(`- Stations left out of the main result: ${ob.excludedStations.length}`);
+  lines.push(
+    `- Share of 2023 entries from the excluded stations: ${ob.excludedShare2023 === null ? 'not defined' : `${num(ob.excludedShare2023 * 100, 2)} percent`}`,
+  );
+  lines.push('');
+  lines.push('| Period (main) | Quarters | Sum | All stations |');
+  lines.push('| --- | --- | ---: | ---: |');
+  lines.push(`| Post-change year ${o.changeYear} | ${o.postQuarters.join(', ')} | ${num(ob.postChangeYear)} | ${num(ob.allStations.postChangeYear)} |`);
+  lines.push(`| Post-comparison year ${o.comparisonYear} | ${o.postQuarters.join(', ')} | ${num(ob.postComparisonYear)} | ${num(ob.allStations.postComparisonYear)} |`);
+  lines.push(`| Pre-change year ${o.changeYear} | ${o.preQuarters.join(', ')} | ${num(ob.preChangeYear)} | ${num(ob.allStations.preChangeYear)} |`);
+  lines.push(`| Pre-comparison year ${o.comparisonYear} | ${o.preQuarters.join(', ')} | ${num(ob.preComparisonYear)} | ${num(ob.allStations.preComparisonYear)} |`);
+  lines.push('');
+  lines.push('#### Errors and checks (main result)', '');
+  lines.push(`- Absolute error (simulated central minus observed): ${signed(r.absoluteError)}`);
+  lines.push(`- Relative error: ${percent(r.relativeError)}`);
+  lines.push(`- Magnitude ratio (simulated central divided by observed): ${r.checks.ratio === null ? 'not defined (observed effect is 0)' : num(r.checks.ratio, 3)}`);
+  lines.push(`- Tolerance interval for the ratio: ${num(c.tolerances.ratioLow, 3)} to ${num(c.tolerances.ratioHigh, 3)}`);
+  lines.push('');
+  lines.push('| Check | Result |');
+  lines.push('| --- | --- |');
+  lines.push(`| Direction (central simulated effect has the same sign as the observed effect) | ${met(r.checks.direction)} |`);
+  lines.push(`| Magnitude ratio inside the tolerance interval | ${met(r.checks.ratioWithinTolerance)} |`);
+  lines.push(`| Range (observed effect lies between simulated minimum and maximum) | ${met(r.checks.range)} |`);
+  lines.push('');
+  lines.push('This result validates MRT entries only, not migration. No parameter was changed in response to it.', '');
+  lines.push(...secondaryLines(o));
+  return lines;
+}
+
+function tpassSection(r: CaseResult): string[] {
+  return [...tpassHeadSections(), ...tpassNewResult(r)];
+}
+
 /** Renders the whole report. Always ends with a single LF. */
 export function renderReport(input: ReportInput): string {
   const version = input.engineVersion ?? ENGINE_VERSION;
@@ -151,7 +294,9 @@ export function renderReport(input: ReportInput): string {
   );
   lines.push('');
   for (const r of input.results) {
-    lines.push(...(r.status === 'computed' ? computedSection(r) : notComputedSection(r)));
+    const id = r.status === 'computed' ? r.case.id : r.id;
+    if (id === TPASS_CASE_ID) lines.push(...tpassSection(r));
+    else lines.push(...(r.status === 'computed' ? computedSection(r) : notComputedSection(r)));
   }
   while (lines.length > 0 && lines[lines.length - 1] === '') lines.pop();
   return `${lines.join('\n')}\n`;

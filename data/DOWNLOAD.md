@@ -36,6 +36,40 @@ node scripts/find-datasets.ts "租金" "新北市"  # search the data.gov.tw cat
 
 Downloads are resumable: existing files are skipped unless `--force` is given.
 
+### Backtest station data (24 months)
+
+The backtest uses monthly Taipei Metro station entries and exits for 2019-01 to 2019-12 and 2023-01 to 2023-12
+(data.gov.tw 128506). Run these 24 commands. Each downloads about 300 MB and takes about 200 s. The raw CSV is streamed
+and not stored; each command writes `data/raw/mrt/od-station-month/YYYY-MM.json`. These files are used only in the
+backtest and cover the Taipei Metro only (New Taipei Metro lines are not included).
+
+```bash
+node scripts/download.ts mrt --od=2019-01
+node scripts/download.ts mrt --od=2019-02
+node scripts/download.ts mrt --od=2019-03
+node scripts/download.ts mrt --od=2019-04
+node scripts/download.ts mrt --od=2019-05
+node scripts/download.ts mrt --od=2019-06
+node scripts/download.ts mrt --od=2019-07
+node scripts/download.ts mrt --od=2019-08
+node scripts/download.ts mrt --od=2019-09
+node scripts/download.ts mrt --od=2019-10
+node scripts/download.ts mrt --od=2019-11
+node scripts/download.ts mrt --od=2019-12
+node scripts/download.ts mrt --od=2023-01
+node scripts/download.ts mrt --od=2023-02
+node scripts/download.ts mrt --od=2023-03
+node scripts/download.ts mrt --od=2023-04
+node scripts/download.ts mrt --od=2023-05
+node scripts/download.ts mrt --od=2023-06
+node scripts/download.ts mrt --od=2023-07
+node scripts/download.ts mrt --od=2023-08
+node scripts/download.ts mrt --od=2023-09
+node scripts/download.ts mrt --od=2023-10
+node scripts/download.ts mrt --od=2023-11
+node scripts/download.ts mrt --od=2023-12
+```
+
 The same commands are available as npm scripts: `npm run data:download -- <source>`, `npm run data:check -- <source>`,
 District boundaries are built into `public/data/districts.json` by `npm run data`. Type checking and unit tests for the scripts need `npm install` once:
 `npm run typecheck` and `npm test`.

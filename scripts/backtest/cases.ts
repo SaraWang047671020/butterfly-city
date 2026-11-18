@@ -20,7 +20,7 @@ export interface SecondaryFigure {
 }
 
 export interface ObservedSpec {
-  readonly source: 'history.json';
+  readonly source: 'mrt-od-monthly';
   readonly indicator: string;
   readonly cities: readonly string[];
   readonly comparisonYear: number;
@@ -128,7 +128,7 @@ export function validateCase(raw: unknown): CaseEntry {
 
   const obs = raw.observed;
   if (!isObj(obs)) return fail('missing observed calculation spec');
-  if (obs.source !== 'history.json') return fail("observed.source must be 'history.json'");
+  if (obs.source !== 'mrt-od-monthly') return fail("observed.source must be 'mrt-od-monthly'");
   const confounders = strList(obs.confounders, true);
   if (confounders === undefined) return fail('missing confounders');
   const postQuarters = partList(obs.postQuarters);
@@ -202,7 +202,7 @@ export function validateCase(raw: unknown): CaseEntry {
       areas,
       evaluationQuarters,
       observed: {
-        source: 'history.json',
+        source: 'mrt-od-monthly',
         indicator: obs.indicator,
         cities: obsCities,
         comparisonYear: obs.comparisonYear,

@@ -589,6 +589,40 @@ The order follows the design: shared helpers first, then the district file and e
     - Run `npx vitest --run` and `npm run typecheck` and report both exit codes
     - _Requirements: 18.7, 27.15, 27.9_
 
+- [x] 29. Backtest with monthly Taipei Metro station data (needs task 28; user downloads the files)
+  - [x] 29.1 Update `data/DOWNLOAD.md` and `data/DATA-CHECK.md`
+    - List the 24 commands `node scripts/download.ts mrt --od=YYYY-MM` for 2019-01 to 2019-12 and 2023-01 to 2023-12 (about 300 MB and about 200 s each); add a DATA-CHECK note that OD files are downloaded only for these 24 months
+    - _Requirements: 11.15, 27.7_
+  - [x] 29.2 Implement `scripts/backtest/mrt-monthly.ts`
+    - `readMonthlyEntries(months)` validates the file shape and stops on a missing month; `quarterlyByDistrict(monthly, stationDistrict, alias)` sums entries only; not imported by `src/` or the data build
+    - _Requirements: 11.15, 27.18, 27.19, 27.21_
+  - [x] 29.3 Stop on missing files
+    - Before computing, list each missing file of the 24 with its download command, exit non-zero and leave `docs/BACKTEST.md` untouched
+    - _Requirements: 27.20_
+  - [x] 29.4 Change `scripts/backtest/compute.ts` and `cases.ts`
+    - `computeObserved` and `sumQuarters` read `mrt-monthly.ts`; `ObservedSpec.source` becomes `'mrt-od-monthly'` and `validateCase` accepts it; `districtCount` is the number of districts with Taipei Metro stations
+    - District scope: simulated and observed sums cover only districts with a Taipei Metro station, and the 41-district simulated sum is returned as a reference. Station scope: the main result uses stations with entries in all 24 months; the all-stations result and the excluded stations' share of 2023 total entries are returned too. A station without an alias entry stops with the station and month
+    - _Requirements: 11.15, 27.19, 27.21, 27.23_
+  - [x] 29.5 Write the parser test for the monthly file
+    - Use a real Chinese station name from an actual file to confirm UTF-8; test a missing field and a missing month
+    - _Requirements: 27.15, 27.19_
+  - [x] 29.6 Write the compute test on a fixture
+    - Fixture of 2 districts, 12 months × 2 years; a station missing in one month is excluded from the main result and kept in the all-stations result; an unknown station stops the computation; the observed effect and quarterly sums equal literal values
+    - _Requirements: 27.15, 27.19, 27.21, 27.23_
+  - [x] 29.7 Update `scripts/backtest/report.ts` and `docs/BACKTEST.md` rendering
+    - Keep the first result (−797,951) and mark it invalid: its quarterly entries were apportioned from annual data with fixed 2015–2016 seasonal shares, so a mid-year change cannot be detected. Print the comparison method with the note that it was decided on 2026-11-18 before the monthly result was computed, and the post-COVID recovery confounder, before the new result. State Taipei Metro only. Print the new result as computed
+    - _Requirements: 27.22, 27.23, simulation-engine 20.5_
+  - [x] 29.8 Run `npm run backtest` and report
+    - Run only after the user has downloaded the 24 files; if any is missing, stop and list them (task 29.3). Report the result as printed. Do not change any parameter, constant or matrix cell
+    - _Requirements: 27.19, 27.20, 27.23, simulation-engine 20.5_
+  - [x] 29.9 Add the committed derived file `data/derived/backtest-mrt-quarterly.json` (decided 2026-11-18)
+    - Derived file writer and reader with a schema check (sums, observed effects, 24 months with source URL and station count, main-result station names, excluded stations with reasons)
+    - Raw-vs-derived comparison when the 24 raw files exist: stop with a list of differences, never overwrite; create the file when absent; stop with the download commands when neither exists
+    - Switch the staleness test (simulation-engine 20.8) to read only the derived file and compare the regenerated `docs/BACKTEST.md` byte for byte
+    - Report and `SOURCES.md` text on how the file is produced and recomputed
+    - Tests with a fixture: derived file round trip, a differing value stops, missing both stops
+    - Then rerun `npm run backtest` and the full tests
+    - _Requirements: 27.24, 27.25, 27.26, 27.27, 27.28, simulation-engine 20.8_
 ## Task Dependency Graph
 
 ```json
@@ -668,7 +702,12 @@ The order follows the design: shared helpers first, then the district file and e
     { "id": 71, "tasks": ["27.6", "27.7"] },
     { "id": 72, "tasks": ["28.1"] },
     { "id": 73, "tasks": ["28.2"] },
-    { "id": 74, "tasks": ["28.3", "28.4"] }
+    { "id": 74, "tasks": ["28.3", "28.4"] },
+    { "id": 75, "tasks": ["29.1", "29.2"] },
+    { "id": 76, "tasks": ["29.3", "29.5"] },
+    { "id": 77, "tasks": ["29.4"] },
+    { "id": 78, "tasks": ["29.6", "29.7"] },
+    { "id": 79, "tasks": ["29.8"] }
   ]
 }
 ```

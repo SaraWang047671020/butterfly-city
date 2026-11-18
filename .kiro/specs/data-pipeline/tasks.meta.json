@@ -2708,6 +2708,171 @@
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794965637372
       }
+    ],
+    "29.1 Update `data/DOWNLOAD.md` and `data/DATA-CHECK.md`": [
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794966962191
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794966972602
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967112927
+      }
+    ],
+    "29.2 Implement `scripts/backtest/mrt-monthly.ts`": [
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794966962225
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794966972633
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967113737
+      }
+    ],
+    "29.3 Stop on missing files": [
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794966962257
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967145304
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967236998
+      }
+    ],
+    "29.4 Change `scripts/backtest/compute.ts` and `cases.ts`": [
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794966962288
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967267563
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967506308
+      }
+    ],
+    "29.5 Write the parser test for the monthly file": [
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794966962318
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967146064
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967237056
+      }
+    ],
+    "29.6 Write the compute test on a fixture": [
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794966962389
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967540354
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967711764
+      },
+      {
+        "executionId": "a5f3c478-d368-4607-b559-611e5c704212",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794969056076
+      },
+      {
+        "executionId": "a5f3c478-d368-4607-b559-611e5c704212",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794969110935
+      }
+    ],
+    "29.7 Update `scripts/backtest/report.ts` and `docs/BACKTEST.md` rendering": [
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794966962420
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967540164
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967711988
+      }
+    ],
+    "29.8 Run `npm run backtest` and report": [
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794966962449
+      },
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967712226
+      }
+    ],
+    "29. Backtest with monthly Taipei Metro station data (needs task 28; user downloads the files)": [
+      {
+        "executionId": "cd43c9b5-d2d8-4671-b70c-5162fc66fd81",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794967712252
+      }
+    ],
+    "29.9 Add the committed derived file `data/derived/backtest-mrt-quarterly.json` (decided 2026-11-18)": [
+      {
+        "executionId": "43684a28-86c5-418d-b17b-9327a66cda7f",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794968292022
+      },
+      {
+        "executionId": "43684a28-86c5-418d-b17b-9327a66cda7f",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794968298185
+      },
+      {
+        "executionId": "43684a28-86c5-418d-b17b-9327a66cda7f",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794968689262
+      }
     ]
   }
 }

@@ -9,8 +9,12 @@ import path from 'node:path';
 import { PUBLIC_DATA, ROOT } from './lib/paths.ts';
 import { adaptInputs, PARAMS_FILE } from './backtest/adapt.ts';
 import { readCases } from './backtest/cases.ts';
-import { computeCase, type CaseResult } from './backtest/compute.ts';
+import { computeCase, type CaseResult, type MrtDerivedInput } from './backtest/compute.ts';
 import { renderReport, sha256Hex } from './backtest/report.ts';
+import { BACKTEST_MONTHS, listMissingMonthFiles, loadStationDistrict, readMonthlyEntries } from './backtest/mrt-monthly.ts';
+import { buildDerived, DERIVED_FILE, mrtInputFromDerived, readDerivedFile, resolveDerived, writeDerivedFile } from './backtest/derived.ts';
+import { PipelineError } from './pipeline/errors.ts';
+import { FsRawReader } from './pipeline/raw-reader.ts';
 
 const REPORT_FILE = path.join(ROOT, 'docs', 'BACKTEST.md');
 
@@ -26,12 +30,59 @@ function main(): number {
   const entries = readCases();
   const adapted = entries.some((e) => e.status === 'ok') ? adaptInputs() : null;
 
+  // Requirements 27.20, 27.26, 27.27: the TPASS case reads the Backtest_Derived_File. With the 24 raw files
+  // present the file is created or checked against them; without them the committed file is used. Every stop
+  // happens before docs/BACKTEST.md is touched.
+  const needsMonthly = entries.some((e) => e.status === 'ok' && e.case.observed.source === 'mrt-od-monthly');
+  let mrt: MrtDerivedInput | undefined;
+  if (needsMonthly && adapted !== null && adapted.ok) {
+    const baseline = adapted.inputs.baseline;
+    const cases = entries.flatMap((e) => (e.status === 'ok' && e.case.observed.source === 'mrt-od-monthly' ? [e.case] : []));
+    try {
+      const reader = new FsRawReader();
+      const missing = listMissingMonthFiles(reader);
+      const decision = resolveDerived(
+        missing.length === 0,
+        readDerivedFile(),
+        () => buildDerived(readMonthlyEntries(BACKTEST_MONTHS, reader), loadStationDistrict(reader), cases, baseline),
+      );
+      if (decision.kind === 'missing') {
+        console.error(
+          `backtest stopped: ${path.relative(ROOT, DERIVED_FILE)} does not exist and ${missing.length} of ${BACKTEST_MONTHS.length} monthly Taipei Metro station files are missing. docs/BACKTEST.md was not changed.`,
+        );
+        for (const m of missing) console.error(`  missing ${m.path}\n    run: ${m.command}`);
+        return 1;
+      }
+      if (decision.kind === 'differs') {
+        console.error(
+          `backtest stopped: ${path.relative(ROOT, DERIVED_FILE)} differs from the value recomputed from data/raw (${decision.differences.length} differences). Nothing was overwritten. To regenerate on purpose, delete the file and run \`npm run backtest\` again.`,
+        );
+        for (const d of decision.differences) console.error(`  ${d.path}: committed ${d.committed}, recomputed ${d.recomputed}`);
+        return 1;
+      }
+      if (decision.kind === 'create') {
+        writeDerivedFile(decision.derived);
+        console.log(`created ${path.relative(ROOT, DERIVED_FILE)} from data/raw`);
+      } else if (decision.kind === 'verified') {
+        console.log(`${path.relative(ROOT, DERIVED_FILE)} matches the value recomputed from data/raw`);
+      } else {
+        console.log(`using ${path.relative(ROOT, DERIVED_FILE)} (monthly raw files not present)`);
+      }
+      mrt = mrtInputFromDerived(decision.derived);
+    } catch (e) {
+      if (!(e instanceof PipelineError)) throw e;
+      console.error(`backtest stopped: ${e.message}. docs/BACKTEST.md was not changed.`);
+      for (const d of e.details) console.error(`  ${d}`);
+      return 1;
+    }
+  }
+
   const results: CaseResult[] = entries.map((entry): CaseResult => {
     if (entry.status === 'not-computed') return { status: 'not-computed', id: entry.id, reason: entry.reason };
     if (adapted === null || !adapted.ok) {
       return { status: 'not-computed', id: entry.case.id, reason: adapted === null ? 'no inputs' : adapted.reason };
     }
-    return computeCase(entry.case, adapted.inputs);
+    return computeCase(entry.case, adapted.inputs, mrt);
   });
 
   mkdirSync(path.dirname(REPORT_FILE), { recursive: true });

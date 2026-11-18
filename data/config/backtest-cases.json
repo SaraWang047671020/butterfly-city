@@ -16,14 +16,14 @@
       "areas": ["Taipei", "New Taipei"],
       "evaluationQuarters": ["2023Q3", "2023Q4"],
       "observed": {
-        "source": "history.json",
+        "source": "mrt-od-monthly",
         "indicator": "mrtEntries",
         "cities": ["Taipei", "New Taipei"],
         "comparisonYear": 2019,
         "changeYear": 2023,
         "postQuarters": ["Q3", "Q4"],
         "preQuarters": ["Q1", "Q2"],
-        "method": "Total MRT entries of all districts of Taipei and New Taipei. Observed effect = (2023 Q3+Q4 minus 2019 Q3+Q4) minus (2023 Q1+Q2 minus 2019 Q1+Q2). The year 2019 is the pre-COVID-19 comparison year; 2022 is not used. Computed from history.json values by the backtest script; no value is entered by hand.",
+        "method": "Quarterly sums of monthly Taipei Metro station entries (entries only) of the districts that have a Taipei Metro station, from stations with entries in all 24 months. Observed effect = (2023 Q3+Q4 minus 2019 Q3+Q4) minus (2023 Q1+Q2 minus 2019 Q1+Q2). The year 2019 is the pre-COVID-19 comparison year; 2022 is not used. Computed from the monthly station files by the backtest script; no value is entered by hand.",
         "confounders": [
           "Incomplete recovery of ridership after COVID-19",
           "Ankeng LRT opening on 2023-02-10"

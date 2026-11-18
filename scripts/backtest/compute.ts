@@ -1,7 +1,8 @@
 /**
  * Computes one Backtest_Case (Requirements 20.2, 20.3, 20.4, 20.10; design conflict C1).
  *
- * 1. The observed effect is computed from history.json mrtEntries (through the adapter's baseline) before
+ * 1. The observed effect is computed from the monthly Taipei Metro station entries (mrt-monthly.ts), summed
+ *    over the districts with a Taipei Metro station, before
  *    the engine is called. Nothing is entered by hand, and the secondaryContext news figures are never read.
  * 2. A counterfactual Real_Policy_Track holds the changed field at its value before the change. It is passed
  *    as the real track; the actual real track, with the price difference as a subsidy, is passed as the
@@ -25,16 +26,53 @@ import type {
 } from '../../src/types/simulation.ts';
 import { withPassPrice, type BacktestInputs } from './adapt.ts';
 import type { BacktestCase } from './cases.ts';
+import { DataError } from '../pipeline/errors.ts';
+import { quarterlyByDistrict, type MonthlyEntries, type QuarterlyResult } from './mrt-monthly.ts';
 
-export interface ObservedEffect {
-  /** Sum of the compared indicator over the compared districts, per period. */
+export interface PeriodSums {
   readonly postChangeYear: number;
   readonly postComparisonYear: number;
   readonly preChangeYear: number;
   readonly preComparisonYear: number;
   /** (postChangeYear - postComparisonYear) - (preChangeYear - preComparisonYear). */
   readonly effect: number;
+}
+
+export interface ObservedEffect extends PeriodSums {
+  /** Number of districts with a Taipei Metro station (the district scope of the observed and simulated sums). */
   readonly districtCount: number;
+  /** Codes of those districts, sorted. */
+  readonly districtCodes: readonly string[];
+  /** Same sums over the same districts, with every station of the monthly files (reference). */
+  readonly allStations: PeriodSums;
+  /** Stations of the main result: entries greater than 0 in all 24 months. */
+  readonly includedStationCount: number;
+  /** Stations left out of the main result. */
+  readonly excludedStations: readonly string[];
+  /** Entries of the excluded stations divided by all entries over the 2023 months; null when undefined. */
+  readonly excludedShare2023: number | null;
+}
+
+/** The monthly Taipei Metro station entries and the station-to-district map (Requirements 27.19, 27.21). */
+export interface MrtObservedInput {
+  readonly monthly: readonly MonthlyEntries[];
+  /** Station name of the station table -> district code (Requirement 11.1). */
+  readonly stationDistrict: ReadonlyMap<string, string>;
+}
+
+/** The same input read from the committed derived file instead of the monthly files (Requirement 27.25). */
+export interface MrtDerivedInput {
+  readonly quarterly: QuarterlyResult;
+  /** Codes of the districts that have a Taipei Metro station. */
+  readonly stationDistrictCodes: readonly string[];
+}
+
+function resolveInput(mrt: MrtObservedInput | MrtDerivedInput): {
+  readonly stationDistrict: ReadonlyMap<string, string>;
+  readonly q: QuarterlyResult;
+} {
+  if ('quarterly' in mrt) return { stationDistrict: new Map(mrt.stationDistrictCodes.map((c) => [c, c])), q: mrt.quarterly };
+  return { stationDistrict: mrt.stationDistrict, q: quarterlyByDistrict(mrt.monthly, mrt.stationDistrict) };
 }
 
 export interface BacktestChecks {
@@ -52,6 +90,8 @@ export interface ComputedCase {
   readonly case: BacktestCase;
   readonly observed: ObservedEffect;
   readonly simulated: ResultRange;
+  /** Reference: the same simulated sum over all 41 districts of the case areas. */
+  readonly simulatedAllDistricts: ResultRange;
   /** simulated central minus observed. */
   readonly absoluteError: number;
   /** absoluteError divided by the absolute observed effect; null when the observed effect is 0. */
@@ -84,56 +124,88 @@ function districtsOf(baseline: EngineBaseline, cities: readonly string[]): reado
 }
 
 type Sum = { readonly ok: true; readonly value: number } | { readonly ok: false; readonly reason: string };
+type QuarterSums = ReadonlyMap<string, ReadonlyMap<string, number>>;
 
 function sumQuarters(
-  baseline: EngineBaseline,
-  indicator: string,
+  quarterly: QuarterSums,
+  knownQuarters: ReadonlySet<string>,
   codes: readonly DistrictCode[],
   year: number,
   parts: readonly string[],
 ): Sum {
-  const series = Object.hasOwn(baseline.indicators, indicator) ? baseline.indicators[indicator] : undefined;
-  if (series === undefined) return { ok: false, reason: `history.json has no indicator ${indicator}` };
   let total = 0;
   for (const part of parts) {
     const quarter = `${year}${part}`;
-    const index = baseline.quarters.indexOf(quarter as QuarterKey);
-    for (const code of codes) {
-      const value = index < 0 ? undefined : series[code]?.[index];
-      if (typeof value !== 'number' || !Number.isFinite(value)) {
-        return { ok: false, reason: `observed value missing for district ${code} in ${quarter}` };
-      }
-      total += value;
-    }
+    if (!knownQuarters.has(quarter)) return { ok: false, reason: `observed value missing: no monthly station data for ${quarter}` };
+    // A district whose stations all have no entries in the quarter sums to 0.
+    for (const code of codes) total += quarterly.get(code)?.get(quarter) ?? 0;
   }
   return { ok: true, value: total };
 }
 
-/** The observed effect of a case, from the baseline's mrtEntries (Requirement 20.2). */
-export function computeObserved(
-  c: BacktestCase,
-  baseline: EngineBaseline,
-): { readonly ok: true; readonly value: ObservedEffect } | { readonly ok: false; readonly reason: string } {
-  const o = c.observed;
-  const codes = districtsOf(baseline, o.cities);
-  if (codes.length === 0) return { ok: false, reason: `no districts found for ${o.cities.join(', ')}` };
+function periodSums(
+  quarterly: QuarterSums,
+  known: ReadonlySet<string>,
+  codes: readonly DistrictCode[],
+  o: BacktestCase['observed'],
+): { readonly ok: true; readonly value: PeriodSums } | { readonly ok: false; readonly reason: string } {
   const sums: Sum[] = [
-    sumQuarters(baseline, o.indicator, codes, o.changeYear, o.postQuarters),
-    sumQuarters(baseline, o.indicator, codes, o.comparisonYear, o.postQuarters),
-    sumQuarters(baseline, o.indicator, codes, o.changeYear, o.preQuarters),
-    sumQuarters(baseline, o.indicator, codes, o.comparisonYear, o.preQuarters),
+    sumQuarters(quarterly, known, codes, o.changeYear, o.postQuarters),
+    sumQuarters(quarterly, known, codes, o.comparisonYear, o.postQuarters),
+    sumQuarters(quarterly, known, codes, o.changeYear, o.preQuarters),
+    sumQuarters(quarterly, known, codes, o.comparisonYear, o.preQuarters),
   ];
   for (const s of sums) if (!s.ok) return s;
   const [a, b, d, e] = sums.map((s) => (s.ok ? s.value : 0)) as [number, number, number, number];
   return {
     ok: true,
+    value: { postChangeYear: a, postComparisonYear: b, preChangeYear: d, preComparisonYear: e, effect: a - b - (d - e) },
+  };
+}
+
+/**
+ * The districts with a Taipei Metro station: the districts of the station-to-district map that belong to the
+ * given cities and to the baseline. Sorted (Requirement 27.19).
+ */
+export function stationDistrictCodes(
+  baseline: EngineBaseline,
+  cities: readonly string[],
+  stationDistrict: ReadonlyMap<string, string>,
+): readonly DistrictCode[] {
+  const wanted = new Set(districtsOf(baseline, cities));
+  return [...new Set(stationDistrict.values())].filter((code) => wanted.has(code)).sort();
+}
+
+/**
+ * The observed effect of a case from the monthly Taipei Metro station entries (Requirements 20.2, 27.19, 27.21,
+ * 27.23). Main result: stations with entries in all months. Reference: all stations. A station key without an
+ * alias entry throws a DataError naming the station and the month; `computeCase` turns it into "not computed".
+ */
+export function computeObserved(
+  c: BacktestCase,
+  baseline: EngineBaseline,
+  mrt: MrtObservedInput | MrtDerivedInput,
+): { readonly ok: true; readonly value: ObservedEffect } | { readonly ok: false; readonly reason: string } {
+  const o = c.observed;
+  const { stationDistrict, q } = resolveInput(mrt);
+  const codes = stationDistrictCodes(baseline, o.cities, stationDistrict);
+  if (codes.length === 0) return { ok: false, reason: `no districts with a Taipei Metro station found for ${o.cities.join(', ')}` };
+  const known = new Set<string>();
+  for (const byQ of q.all.values()) for (const quarter of byQ.keys()) known.add(quarter);
+  const main = periodSums(q.main, known, codes, o);
+  if (!main.ok) return main;
+  const all = periodSums(q.all, known, codes, o);
+  if (!all.ok) return all;
+  return {
+    ok: true,
     value: {
-      postChangeYear: a,
-      postComparisonYear: b,
-      preChangeYear: d,
-      preComparisonYear: e,
-      effect: a - b - (d - e),
+      ...main.value,
       districtCount: codes.length,
+      districtCodes: codes,
+      allStations: all.value,
+      includedStationCount: q.filter.included.length,
+      excludedStations: q.filter.excluded,
+      excludedShare2023: q.filter.excludedShare2023,
     },
   };
 }
@@ -205,14 +277,21 @@ function simulatedSum(states: readonly SimState[], c: BacktestCase, codes: reado
 }
 
 /** Computes one case. Never throws for a well-typed input; failures become "not computed". */
-export function computeCase(c: BacktestCase, inputs: BacktestInputs): CaseResult {
+export function computeCase(c: BacktestCase, inputs: BacktestInputs, mrt?: MrtObservedInput | MrtDerivedInput): CaseResult {
   if (c.tool !== SUPPORTED_TOOL || c.change.field !== 'commuterPassPrice') {
     return notComputed(c.id, `unsupported change: tool ${c.tool}, field ${c.change.field}`);
   }
+  if (mrt === undefined) return notComputed(c.id, 'missing input: monthly Taipei Metro station files');
   const { baseline } = inputs;
 
   // The observed effect is fixed before the engine runs (Requirement 20.2).
-  const observed = computeObserved(c, baseline);
+  let observed: ReturnType<typeof computeObserved>;
+  try {
+    observed = computeObserved(c, baseline, mrt);
+  } catch (e) {
+    if (e instanceof DataError) return notComputed(c.id, `${e.message}${e.details.length > 0 ? ` (${e.details.join('; ')})` : ''}`);
+    throw e;
+  }
   if (!observed.ok) return notComputed(c.id, observed.reason);
 
   const tracks = buildTracks(c, inputs.track);
@@ -244,11 +323,17 @@ export function computeCase(c: BacktestCase, inputs: BacktestInputs): CaseResult
   );
   if (!result.ok) return notComputed(c.id, describeError(result.error, result.scenario, result.quarter));
 
-  const codes = districtsOf(baseline, c.areas);
-  const central = simulatedSum(result.central, c, codes);
-  const low = simulatedSum(result.low, c, codes);
-  const high = simulatedSum(result.high, c, codes);
-  const simulated: ResultRange = { min: Math.min(low, central, high), central, max: Math.max(low, central, high) };
+  const codes = observed.value.districtCodes;
+  const allCodes = districtsOf(baseline, c.areas);
+  const rangeOf = (list: readonly DistrictCode[]): ResultRange => {
+    const lo = simulatedSum(result.low, c, list);
+    const ce = simulatedSum(result.central, c, list);
+    const hi = simulatedSum(result.high, c, list);
+    return { min: Math.min(lo, ce, hi), central: ce, max: Math.max(lo, ce, hi) };
+  };
+  const simulated = rangeOf(codes);
+  const central = simulated.central;
+  const simulatedAllDistricts = rangeOf(allCodes);
 
   const effect = observed.value.effect;
   const ratio = effect === 0 ? null : central / effect;
@@ -258,6 +343,7 @@ export function computeCase(c: BacktestCase, inputs: BacktestInputs): CaseResult
     case: c,
     observed: observed.value,
     simulated,
+    simulatedAllDistricts,
     absoluteError,
     relativeError: effect === 0 ? null : absoluteError / Math.abs(effect),
     checks: {

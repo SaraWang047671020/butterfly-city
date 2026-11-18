@@ -133,6 +133,46 @@ function checkSharesSum(row: MrtRowEntry, shares: readonly number[]): void {
   }
 }
 
+/** District of one station row: the district containing the station point (Requirement 11.1). */
+function districtOfRow(
+  row: MrtRowEntry,
+  points: ReadonlyMap<string, StationPoint>,
+  shapes: readonly DistrictShape[],
+  districtCodes: ReadonlySet<string>,
+): string {
+  const point = points.get(row.station);
+  if (point === undefined) {
+    throw new DataError('mrt-station-point', row.station, [`row: ${row.name}`, 'no TDX station point with this name']);
+  }
+  const position: Position = [point.lon, point.lat];
+  const code = districtAt(position, shapes);
+  if (code === undefined || !districtCodes.has(code)) {
+    throw new DataError('mrt-station-district', row.station, [
+      `row: ${row.name}`,
+      `point: [${point.lon}, ${point.lat}]`,
+      'the station point is inside none of the districts',
+    ]);
+  }
+  return code;
+}
+
+/**
+ * Station name -> district code for every row of the station table, with the same point-in-polygon rule as
+ * `buildMrtEntries` (Requirement 11.1). Used by the TPASS backtest (Requirement 27.19).
+ */
+export function stationDistrictMap(
+  stationPoints: readonly StationPoint[],
+  shapes: readonly DistrictShape[],
+  districts: readonly CodeRef[],
+  rows: readonly MrtRowEntry[] = MRT_ROWS,
+): Map<string, string> {
+  const points = new Map(stationPoints.map((p) => [p.name, p] as const));
+  const codes = new Set(districts.map((d) => d.code));
+  const out = new Map<string, string>();
+  for (const row of rows) out.set(row.station, districtOfRow(row, points, shapes, codes));
+  return out;
+}
+
 export function buildMrtEntries(input: MrtInput): MrtResult {
   const rows = input.rows ?? MRT_ROWS;
   const borderStations = input.borderStations ?? BORDER_STATIONS;
@@ -165,19 +205,7 @@ export function buildMrtEntries(input: MrtInput): MrtResult {
     const byYear = annual.get(row.name);
     if (byYear === undefined) continue; // the row never appears in the annual series: never active
 
-    const point = points.get(row.station);
-    if (point === undefined) {
-      throw new DataError('mrt-station-point', row.station, [`row: ${row.name}`, 'no TDX station point with this name']);
-    }
-    const position: Position = [point.lon, point.lat];
-    const code = districtAt(position, input.shapes);
-    if (code === undefined || !districtCodes.has(code)) {
-      throw new DataError('mrt-station-district', row.station, [
-        `row: ${row.name}`,
-        `point: [${point.lon}, ${point.lat}]`,
-        'the station point is inside none of the districts',
-      ]);
-    }
+    const code = districtOfRow(row, points, input.shapes, districtCodes);
 
     let shares = ownShares(row, sums);
     if (shares === undefined) {
