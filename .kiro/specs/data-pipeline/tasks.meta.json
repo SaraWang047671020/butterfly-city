@@ -2552,6 +2552,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889185232
+      },
+      {
+        "executionId": "edb3da19-f7f7-4804-9f62-48f1c093d980",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794965144072
+      },
+      {
+        "executionId": "edb3da19-f7f7-4804-9f62-48f1c093d980",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794965352265
       }
     ],
     "28.2 Run the backtest and update `docs/BACKTEST.md`": [
@@ -2559,6 +2569,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889185262
+      },
+      {
+        "executionId": "edb3da19-f7f7-4804-9f62-48f1c093d980",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794965379961
+      },
+      {
+        "executionId": "edb3da19-f7f7-4804-9f62-48f1c093d980",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794965483161
       }
     ],
     "28.3 Report the gap parameters and the commute survey gap": [
@@ -2566,6 +2586,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889185299
+      },
+      {
+        "executionId": "edb3da19-f7f7-4804-9f62-48f1c093d980",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794965380593
+      },
+      {
+        "executionId": "edb3da19-f7f7-4804-9f62-48f1c093d980",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794965483231
       }
     ],
     "28.4 Run the final checks": [
@@ -2573,6 +2603,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889185333
+      },
+      {
+        "executionId": "edb3da19-f7f7-4804-9f62-48f1c093d980",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794965510652
+      },
+      {
+        "executionId": "edb3da19-f7f7-4804-9f62-48f1c093d980",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794965637339
       }
     ],
     "23. Commute inputs: constants, timetables, rail network and fare slope": [
@@ -2653,6 +2693,20 @@
         "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794965055189
+      }
+    ],
+    "24. Commute matrix file": [
+      {
+        "executionId": "edb3da19-f7f7-4804-9f62-48f1c093d980",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794965352321
+      }
+    ],
+    "28. Full rebuild, backtest and report (needs tasks 16 to 27)": [
+      {
+        "executionId": "edb3da19-f7f7-4804-9f62-48f1c093d980",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794965637372
       }
     ]
   }

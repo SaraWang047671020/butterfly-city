@@ -415,7 +415,7 @@ The order follows the design: shared helpers first, then the district file and e
     - In `tests/scripts/pipeline/properties-fares.test.ts`
     - **Validates: Requirements 29.5**
 
-- [ ] 24. Commute matrix file
+- [x] 24. Commute matrix file
   - [x] 24.1 Implement `scripts/pipeline/params/job-share.ts`
     - `jobShares(employees)` by `apportion(1_000_000, employees) / 1_000_000` over the 41 districts in code order; this task needs it for the survey check, and task 25 adds the Parameter_Entries. Unit `share of the 41-district total`
     - _Requirements: 22.10, 28.5_
@@ -573,19 +573,19 @@ The order follows the design: shared helpers first, then the district file and e
     - In `tests/scripts/pipeline/properties-low-use.test.ts`
     - **Validates: Requirements 26.3, 26.4, 26.5, 26.6, 26.7, 26.12, 26.13**
 
-- [ ] 28. Full rebuild, backtest and report (needs tasks 16 to 27)
-  - [~] 28.1 Rebuild every output and confirm
+- [x] 28. Full rebuild, backtest and report (needs tasks 16 to 27)
+  - [x] 28.1 Rebuild every output and confirm
     - Before the build confirm that tasks 16 to 21 (`medianTotalPrice`) and 22 to 27 are done and that every raw input exists (including `data/raw/fares/`, `data/raw/timetables/` and the low-use files). If a file is missing, stop without touching the outputs and report each path with its `node scripts/download.ts <download-id>` command; if the TDX variables are unset, say so
     - Run `npm run data` twice, confirm exit code 0 both times, that all six outputs pass the schema validation, that the outputs of the two runs are byte-identical, that `history.json` holds the 15 indicators of Requirement 4.11 (13 district, 2 city) in order, and that the indicators that existed before deep-equal the committed version. Confirm that no output and no printed text contains a credential value (the scan of task 22.4 passes)
     - _Requirements: 4.11, 16.5, 17.1, 24.10, 25.6, 27.10, 27.7_
-  - [~] 28.2 Run the backtest and update `docs/BACKTEST.md`
+  - [x] 28.2 Run the backtest and update `docs/BACKTEST.md`
     - Run `npm run backtest` and confirm it reads `params.json` and `commute-matrix.json` without the message `missing input` and without a stage 0 parameter validation error; confirm `docs/BACKTEST.md` is updated
     - Report the TPASS backtest result as printed: the direction of the effect, the ratio to the real change, and each range check with pass or fail; state that it validates MRT entries only and does not validate migration. Do not change any parameter, constant or matrix cell in response to the result
     - _Requirements: 20.10, 27.13, 29.6_
-  - [~] 28.3 Report the gap parameters and the commute survey gap
+  - [x] 28.3 Report the gap parameters and the commute survey gap
     - With a throwaway command that is not added to the repository, list every `gap` entry of `params.json` (19) and `commute-params.json` (3) with its value and assumption, and the modelled New Taipei to Taipei mean commute time against the survey figure of about 57 minutes with the signed difference, as reported, without comment that treats it as an error
     - _Requirements: 23.7, 24.8, 25.3, 25.8_
-  - [~] 28.4 Run the final checks
+  - [x] 28.4 Run the final checks
     - Run `npx vitest --run` and `npm run typecheck` and report both exit codes
     - _Requirements: 18.7, 27.15, 27.9_
 
