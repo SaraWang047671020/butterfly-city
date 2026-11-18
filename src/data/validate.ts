@@ -16,7 +16,7 @@ export interface ValidationError {
 export interface ValidationContext {
   readonly districtCodes: readonly string[]; // exactly the 41 codes
   readonly quarters: readonly string[]; // exactly 2015Q1..2025Q4
-  readonly indicatorIds: readonly string[]; // ids in history.json, for the unique-id check of policy series
+  readonly indicatorIds: readonly string[]; // exactly these indicator ids, in this order, are expected in history.json; also used for the unique-id check of policy series
   readonly policySeriesIds: readonly string[]; // exactly these policy series ids are expected
   readonly engineIdSet?: readonly string[]; // params.json: exactly these ids (the pipeline passes it)
   readonly sourceTypes?: Readonly<Record<string, 1 | 2 | 3>>; // params.json: Parameter_Source_Type per id
@@ -633,7 +633,25 @@ export function validateHistoryFile(x: unknown, ctx: ValidationContext): Validat
     checkQuarters(c, x, ctx);
     const sourceIds = checkSources(c, x);
     const methods = checkMethods(c, x, sourceIds);
-    checkSeriesList(c, x, 'indicators', ctx, sourceIds, methods);
+    const { ids } = checkSeriesList(c, x, 'indicators', ctx, sourceIds, methods);
+
+    // indicator-set: exactly ctx.indicatorIds, in the same order
+    const got = new Set(ids);
+    const want = new Set(ctx.indicatorIds);
+    for (const id of ctx.indicatorIds) {
+      if (!got.has(id)) c.add('$.indicators', 'indicator-set', `missing indicator "${id}"`);
+    }
+    ids.forEach((id, i) => {
+      if (!want.has(id)) {
+        c.add(sub(at('$.indicators', i), 'id'), 'indicator-set', `unexpected indicator "${id}"`);
+      } else if (ctx.indicatorIds[i] !== id) {
+        c.add(
+          sub(at('$.indicators', i), 'id'),
+          'indicator-set',
+          `indicator "${id}" is at the wrong position; expected "${ctx.indicatorIds[i] ?? 'none'}" here`,
+        );
+      }
+    });
   } catch (e) {
     c.add('$', 'type', `validator could not read the file: ${e instanceof Error ? e.message : String(e)}`);
   }

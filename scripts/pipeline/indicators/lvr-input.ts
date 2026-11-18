@@ -47,6 +47,16 @@ export function loadLvr(ctx: BuildContext, kind: LvrKind): LvrLoad {
   return { records, duplicates, qualifying, exclusions };
 }
 
+/**
+ * Sales that count toward a median total price (Requirements 10.2, 19.2): qualifying sales (the sale price
+ * filter of Requirement 8.2-8.6 already applied) whose 總價元 is greater than 0 and that have a district and a
+ * quarter. The only implementation of this condition; the median total price and price-to-income builders
+ * both call it (Requirement 19.6).
+ */
+export function totalPriceSales(qualifying: readonly LvrRecord[]): LvrRecord[] {
+  return qualifying.filter((r) => r.totalPrice > 0 && r.districtCode !== undefined && r.quarter !== undefined);
+}
+
 /** Note lines `<kind> records excluded, <reason>: <n>` in fixed reason order (Requirement 8.5). */
 export function exclusionNotes(kind: LvrKind, exclusions: Readonly<ExclusionCounts>): string[] {
   return formatExclusions(exclusions).map((line) => `${kind} records excluded, ${line}`);

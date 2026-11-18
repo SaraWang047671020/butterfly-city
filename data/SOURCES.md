@@ -20,6 +20,7 @@ Initial data and events come from real open data. Policy outcomes are simulated,
   - history.json relativeMedianIncome: 4 decimals
   - history.json householdIncome: 0 decimals
   - history.json salePrice: 0 decimals
+  - history.json medianTotalPrice: 0 decimals
   - history.json rent: 1 decimals
   - history.json mrtEntries: 0 decimals
   - history.json socialHousingCompletions: 0 decimals
@@ -74,6 +75,7 @@ Initial data and events come from real open data. Policy outcomes are simulated,
 | householdIncome | TWD per household per year | 0 | `income/fia-103066` | Fiscal Information Agency, MOF | 綜稅綜合所得總額全國各縣市鄉鎮村里統計分析表 (Comprehensive income tax statistics by county, township and village) | https://data.gov.tw/dataset/103066 | 2014–2023 | OGDL v1.0 |
 | householdIncome | TWD per household per year | 0 | `income/dgbas-9415` | DGBAS | 家庭收支調查 平均每戶可支配所得 (by county) (Household Income and Expenditure Survey, average disposable income per household by county) | https://data.gov.tw/dataset/9415 | 2015–2025 | OGDL v1.0 |
 | salePrice | TWD per m² | 0 | `lvr/moi-25119` | MOI Department of Land Administration | 實價登錄 sales (Real-price registration, sales) | https://data.gov.tw/dataset/25119 | 2015–2026 | OGDL v1.0 |
+| medianTotalPrice | TWD per transaction | 0 | `lvr/moi-25119` | MOI Department of Land Administration | 實價登錄 sales (Real-price registration, sales) | https://data.gov.tw/dataset/25119 | 2015–2026 | OGDL v1.0 |
 | rent | TWD per m² per month | 1 | `lvr/moi-25118` | MOI Department of Land Administration | 實價登錄 rentals (Real-price registration, rentals) | https://data.gov.tw/dataset/25118 | 2015–2026 | OGDL v1.0 |
 | rent | TWD per m² per month | 1 | `macro/taipei-dbas-131822` | Taipei City DBAS | 臺北市消費者物價基本分類指數 (Taipei consumer price index, basic classification) | https://data.gov.tw/dataset/131822 | 2015–2025 | OGDL v1.0 |
 | rent | TWD per m² per month | 1 | `macro/dgbas-6019` | DGBAS | 消費者物價基本分類指數 (Consumer price index, basic classification) | https://data.gov.tw/dataset/6019 | 2015–2025 | OGDL v1.0 |
@@ -465,6 +467,20 @@ Initial data and events come from real open data. Policy outcomes are simulated,
 - Quarters: 2015Q1–2023Q4 (and all of cityDisposableIncome)
 - Sets `estimated: true`: yes
 
+### median-total-price-pooled-window
+
+- Title: Median total price from a pooled window for thin cells
+- Kind: estimation
+- Inputs: `lvr/moi-25119`
+- Steps:
+  1. Count the residential building sales of the district and quarter that pass the sale price filter and have a total price (總價元) greater than 0. The house-price-to-income ratio uses the same sales for its numerator.
+  2. When fewer than 10 such sales exist, widen the window to neighbouring quarters by the same rule as the sale price pooled window, counting only these sales.
+  3. Take the median total price of the pooled sales.
+  4. Dividing this value by the district household income indicator gives a district price-to-income figure; the pipeline publishes the numerator only.
+- Applies to: `medianTotalPrice`
+- Quarters: thin cells only
+- Sets `estimated: true`: yes
+
 ### migration-2015-seasonal-split
 
 - Title: 2015 migration split into quarters
@@ -805,7 +821,7 @@ Item numbers refer to data/DATA-CHECK.md.
 | Item | Gap | Affected fields | Quarters or districts | Method_Id |
 | --- | --- | --- | --- | --- |
 | 1 | District income for 2024 and 2025 is not yet published. | `relativeMedianIncome`, `householdIncome` | 2024Q1–2025Q4, all 41 districts | `income-relative-extrapolation`, `income-district-combination` |
-| 2a | Seven rural New Taipei districts have fewer than 10 qualifying sales in many quarters. | `salePrice` | Shiding, Pinglin, Shimen, Pingxi, Shuangxi, Gongliao and Wulai, in quarters with fewer than 10 sales | `sale-price-pooled-window` |
+| 2a | Seven rural New Taipei districts have fewer than 10 qualifying sales in many quarters. | `salePrice`, `medianTotalPrice` | Shiding, Pinglin, Shimen, Pingxi, Shuangxi, Gongliao and Wulai, in quarters with fewer than 10 sales | `sale-price-pooled-window`, `median-total-price-pooled-window` |
 | 2b | Seven rural New Taipei districts have too few rental records for a district rent. | `rent` | Shiding, Pinglin, Shimen, Pingxi, Shuangxi, Gongliao and Wulai, 2015Q1–2025Q4 | `rent-reference-stats`, `rent-reference-sale-ratio` |
 | 3b | Monthly migration files for January to November 2015 do not exist; only annual totals are published. | `moveIn`, `moveOut` | 2015Q1–2015Q4, all 41 districts | `migration-2015-seasonal-split` |
 | 4 | No station-level ridership was found for the Danhai LRT, the Ankeng LRT and the Sanying Line. | `mrtEntries` | Districts with stations on these lines, 2015Q1–2025Q4; only Active_Stations are counted | `mrt-seasonal-split` |
@@ -818,6 +834,20 @@ Item numbers refer to data/DATA-CHECK.md.
 ### Thin sale price cells
 
 A district and quarter with fewer than 10 qualifying sales uses the median of a window of quarters. Window radius r pools the quarter and the r quarters on each side of it. Radius 0 is the own median.
+
+| District | Quarters with own median | Quarters by pooled window radius |
+| --- | --- | --- |
+| Shiding (65000190) | 0 | radius 3: 8 quarters; radius 4: 10 quarters; radius 5: 9 quarters; radius 6: 3 quarters; radius 7: 1 quarter; radius 8: 4 quarters; radius 9: 2 quarters; radius 10: 1 quarter; radius 11: 1 quarter; radius 12: 1 quarter; radius 13: 1 quarter; radius 14: 1 quarter; radius 15: 1 quarter; radius 16: 1 quarter |
+| Pinglin (65000200) | 0 | radius 7: 1 quarter; radius 8: 2 quarters; radius 9: 2 quarters; radius 10: 4 quarters; radius 11: 4 quarters; radius 12: 2 quarters; radius 13: 2 quarters; radius 14: 2 quarters; radius 15: 2 quarters; radius 16: 2 quarters; radius 17: 2 quarters; radius 18: 2 quarters; radius 19: 2 quarters; radius 20: 2 quarters; radius 21: 1 quarter; radius 22: 1 quarter; radius 23: 1 quarter; radius 24: 1 quarter; radius 25: 1 quarter; radius 26: 1 quarter; radius 27: 1 quarter; radius 28: 1 quarter; radius 29: 1 quarter; radius 30: 1 quarter; radius 31: 1 quarter; radius 32: 1 quarter; radius 33: 1 quarter |
+| Shimen (65000220) | 0 | radius 1: 11 quarters; radius 2: 12 quarters; radius 3: 17 quarters; radius 4: 4 quarters |
+| Pingxi (65000240) | 0 | radius 22: 2 quarters; radius 23: 2 quarters; radius 24: 2 quarters; radius 25: 2 quarters; radius 26: 2 quarters; radius 27: 2 quarters; radius 28: 2 quarters; radius 29: 2 quarters; radius 30: 2 quarters; radius 31: 2 quarters; radius 32: 2 quarters; radius 33: 2 quarters; radius 34: 2 quarters; radius 35: 2 quarters; radius 36: 2 quarters; radius 37: 2 quarters; radius 38: 2 quarters; radius 39: 2 quarters; radius 40: 2 quarters; radius 41: 2 quarters; radius 42: 2 quarters; radius 43: 2 quarters |
+| Shuangxi (65000250) | 0 | radius 1: 8 quarters; radius 2: 18 quarters; radius 3: 13 quarters; radius 4: 3 quarters; radius 5: 2 quarters |
+| Gongliao (65000260) | 0 | radius 1: 27 quarters; radius 2: 14 quarters; radius 3: 2 quarters; radius 4: 1 quarter |
+| Wulai (65000290) | 0 | radius 10: 2 quarters; radius 11: 4 quarters; radius 12: 4 quarters; radius 13: 7 quarters; radius 14: 5 quarters; radius 15: 5 quarters; radius 16: 5 quarters; radius 17: 2 quarters; radius 18: 2 quarters; radius 19: 2 quarters; radius 20: 2 quarters; radius 21: 2 quarters; radius 22: 1 quarter; radius 23: 1 quarter |
+
+### Thin median total price cells
+
+A district and quarter with fewer than 10 qualifying sales uses the median of a window of quarters. Window radius r pools the quarter and the r quarters on each side of it. Radius 0 is the own median. The window counts only sales with a total price greater than 0.
 
 | District | Quarters with own median | Quarters by pooled window radius |
 | --- | --- | --- |

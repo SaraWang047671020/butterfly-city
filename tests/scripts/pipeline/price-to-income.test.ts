@@ -4,11 +4,13 @@ import { quartersBetween, type Quarter } from '../../../scripts/lib/time.ts';
 import { DataError, ParseError } from '../../../scripts/pipeline/errors.ts';
 import {
   buildPriceToIncome,
+  cityTotalPrices,
   comparePriceToIncome,
   parseMoiPriceToIncome,
   PRICE_TO_INCOME_METHOD,
   skippedNote,
 } from '../../../scripts/pipeline/indicators/price-to-income.ts';
+import { totalPriceSales } from '../../../scripts/pipeline/indicators/lvr-input.ts';
 import type { CitySeries } from '../../../scripts/pipeline/indicators/series.ts';
 import type { LvrRecord } from '../../../scripts/pipeline/parsers/lvr.ts';
 
@@ -96,6 +98,56 @@ describe('buildPriceToIncome', () => {
     }
     expect(error).toBeInstanceOf(DataError);
     expect((error as DataError).subject).toBe('Taipei 2018Q2');
+  });
+});
+
+describe('totalPriceSales', () => {
+  it('drops total price 0, negative and NaN, and records without district or quarter; keeps input order', () => {
+    const noDistrict: LvrRecord = { ...sale('A', '2020Q1', 5), districtCode: undefined };
+    const noQuarter: LvrRecord = { ...sale('A', '2020Q1', 5), quarter: undefined };
+    const keep1 = sale('B', '2020Q2', 30);
+    const keep2 = sale('A', '2020Q1', 10);
+    const out = totalPriceSales([
+      keep1,
+      sale('A', '2020Q1', 0),
+      sale('A', '2020Q1', -4),
+      sale('A', '2020Q1', Number.NaN),
+      noDistrict,
+      noQuarter,
+      keep2,
+    ]);
+    expect(out).toEqual([keep1, keep2]);
+  });
+});
+
+describe('cityTotalPrices', () => {
+  it('groups total prices by city and quarter in input order and skips unknown districts and zero prices', () => {
+    const out = cityTotalPrices(
+      [
+        sale('A', '2020Q1', 3),
+        sale('B', '2020Q1', 7),
+        sale('A', '2020Q2', 4),
+        sale('A', '2020Q1', 1),
+        sale('A', '2020Q1', 0),
+        sale('Z', '2020Q1', 9),
+      ],
+      districts,
+      quarters,
+    );
+    expect([...out.keys()].sort()).toEqual(['New Taipei|2020Q1', 'Taipei|2020Q1', 'Taipei|2020Q2']);
+    expect(out.get('Taipei|2020Q1')).toEqual([3, 1]);
+    expect(out.get('New Taipei|2020Q1')).toEqual([7]);
+    expect(out.get('Taipei|2020Q2')).toEqual([4]);
+  });
+});
+
+describe('buildPriceToIncome with a zero total price record', () => {
+  it('leaves the literal expected series unchanged', () => {
+    const sales = [...baseSales(20_000_000), sale('A', '2020Q1', 0), sale('B', '2020Q1', 0)];
+    const r = buildPriceToIncome(sales, income(4_000_000, 5_000_000), districts, quarters);
+    expect(r.Taipei.every((rec) => rec.value === 5)).toBe(true);
+    expect(r['New Taipei'].every((rec) => rec.value === 4)).toBe(true);
+    expect(r.Taipei[quarters.indexOf('2020Q1')]).toEqual({ value: 5, estimated: true, method: PRICE_TO_INCOME_METHOD });
   });
 });
 

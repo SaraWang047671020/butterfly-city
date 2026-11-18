@@ -92,9 +92,9 @@ export const KNOWN_GAPS: readonly DataGap[] = [
   {
     item: '2a',
     gap: 'Seven rural New Taipei districts have fewer than 10 qualifying sales in many quarters.',
-    fields: ['salePrice'],
+    fields: ['salePrice', 'medianTotalPrice'],
     scope: 'Shiding, Pinglin, Shimen, Pingxi, Shuangxi, Gongliao and Wulai, in quarters with fewer than 10 sales',
-    methods: ['sale-price-pooled-window'],
+    methods: ['sale-price-pooled-window', 'median-total-price-pooled-window'],
   },
   {
     item: '2b',
@@ -217,6 +217,7 @@ export interface SourcesDocInput {
   readonly mrtComparableNotes?: readonly string[] | undefined;
   /** District code -> window radius -> number of quarters (0 = own median). */
   readonly salePriceWindowCounts?: ReadonlyMap<string, ReadonlyMap<number, number>> | undefined;
+  readonly medianTotalPriceWindowCounts?: ReadonlyMap<string, ReadonlyMap<number, number>> | undefined;
   readonly holdingTaxRates: readonly HoldingTaxRateRow[];
   readonly commuterPassProducts: readonly CommuterPassProductRow[];
   readonly subleasePhases: readonly SubleasePhaseRow[];
@@ -653,7 +654,22 @@ function section9(input: SourcesDocInput): string[] {
     'A district and quarter with fewer than 10 qualifying sales uses the median of a window of quarters. Window radius r pools the quarter and the r quarters on each side of it. Radius 0 is the own median.',
     '',
   ];
-  const counts = input.salePriceWindowCounts;
+  out.push(...windowCountRows(input, input.salePriceWindowCounts));
+  out.push(
+    '',
+    '### Thin median total price cells',
+    '',
+    'A district and quarter with fewer than 10 qualifying sales uses the median of a window of quarters. Window radius r pools the quarter and the r quarters on each side of it. Radius 0 is the own median. The window counts only sales with a total price greater than 0.',
+    '',
+  );
+  out.push(...windowCountRows(input, input.medianTotalPriceWindowCounts));
+  return out;
+}
+
+function windowCountRows(
+  input: SourcesDocInput,
+  counts: ReadonlyMap<string, ReadonlyMap<number, number>> | undefined,
+): string[] {
   const rows: string[][] = [];
   if (counts !== undefined) {
     for (const key of [...counts.keys()].sort(codePointCompare)) {
@@ -667,9 +683,8 @@ function section9(input: SourcesDocInput): string[] {
       ]);
     }
   }
-  if (rows.length === 0) out.push('No district used a pooled window in this build.');
-  else out.push(...table(['District', 'Quarters with own median', 'Quarters by pooled window radius'], rows));
-  return out;
+  if (rows.length === 0) return ['No district used a pooled window in this build.'];
+  return table(['District', 'Quarters with own median', 'Quarters by pooled window radius'], rows);
 }
 
 /** Section 10 (task 24.5): the commute matrix, generated from the build state. */
@@ -1162,6 +1177,7 @@ export function sourcesDocStep(readCommitted: CommittedReader = fsCommittedReade
         mrtBorderNotes: state.mrtBorderNotes,
         mrtComparableNotes: state.mrtComparableNotes,
         salePriceWindowCounts: state.salePriceWindowCounts,
+        medianTotalPriceWindowCounts: state.medianTotalPriceWindowCounts,
         holdingTaxRates: parseHoldingTaxRates(readCommitted(HOLDING_TAX_TABLE), HOLDING_TAX_TABLE),
         commuterPassProducts: parseCommuterPassProducts(readCommitted(COMMUTER_PASS_TABLE), COMMUTER_PASS_TABLE),
         subleasePhases: parseSubleasePhases(readCommitted(SUBLEASE_TABLE), SUBLEASE_TABLE),

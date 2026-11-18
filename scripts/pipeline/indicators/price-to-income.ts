@@ -24,7 +24,7 @@ import { median, roundTo } from '../numeric.ts';
 import type { LvrRecord } from '../parsers/lvr.ts';
 import type { Step } from '../run.ts';
 import { readIncomeFiles, buildIncomeUnrounded } from './income.ts';
-import { loadLvr } from './lvr-input.ts';
+import { loadLvr, totalPriceSales } from './lvr-input.ts';
 import type { CitySeries } from './series.ts';
 
 export const PRICE_TO_INCOME_METHOD = 'price-to-income-computed';
@@ -41,8 +41,32 @@ export interface CityCode {
 }
 
 /**
+ * "<city>|<quarter>" -> list of 總價元 of that city and quarter, in input order. Keeps only the sales selected
+ * by `totalPriceSales` whose district belongs to a known city.
+ */
+export function cityTotalPrices(
+  sales: readonly LvrRecord[],
+  districts: readonly CityCode[],
+  quarters: readonly Quarter[],
+): Map<string, number[]> {
+  void quarters; // accepted for symmetry with the district grouping; sales outside the quarters are never read back
+  const cityOf = new Map<string, City>(districts.map((d) => [d.code, d.city]));
+  const prices = new Map<string, number[]>();
+  for (const r of totalPriceSales(sales)) {
+    const city = cityOf.get(r.districtCode as string);
+    if (city === undefined) continue;
+    const key = `${city}|${r.quarter}`;
+    const list = prices.get(key);
+    if (list === undefined) prices.set(key, [r.totalPrice]);
+    else list.push(r.totalPrice);
+  }
+  return prices;
+}
+
+/**
  * Builds the two city series. `sales` are sales that passed the sale filter; this function additionally keeps
- * only those with totalPrice > 0. `income` is the unrounded quarterly city disposable income.
+ * only those selected by `totalPriceSales` (totalPrice > 0). `income` is the unrounded quarterly city
+ * disposable income.
  */
 export function buildPriceToIncome(
   sales: readonly LvrRecord[],
@@ -50,17 +74,7 @@ export function buildPriceToIncome(
   districts: readonly CityCode[],
   quarters: readonly Quarter[],
 ): CitySeries {
-  const cityOf = new Map<string, City>(districts.map((d) => [d.code, d.city]));
-  const prices = new Map<string, number[]>();
-  for (const r of sales) {
-    if (!(r.totalPrice > 0) || r.districtCode === undefined || r.quarter === undefined) continue;
-    const city = cityOf.get(r.districtCode);
-    if (city === undefined) continue;
-    const key = `${city}|${r.quarter}`;
-    const list = prices.get(key);
-    if (list === undefined) prices.set(key, [r.totalPrice]);
-    else list.push(r.totalPrice);
-  }
+  const prices = cityTotalPrices(sales, districts, quarters);
 
   const out: CitySeries = { Taipei: [], 'New Taipei': [] };
   for (const city of CITIES) {

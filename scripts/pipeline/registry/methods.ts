@@ -115,6 +115,21 @@ const SERIES_METHODS: readonly MethodEntry[] = [
     setsEstimated: true,
   },
   {
+    id: 'median-total-price-pooled-window',
+    kind: 'estimation',
+    title: 'Median total price from a pooled window for thin cells',
+    inputs: ['lvr/moi-25119'],
+    steps: [
+      'Count the residential building sales of the district and quarter that pass the sale price filter and have a total price (總價元) greater than 0. The house-price-to-income ratio uses the same sales for its numerator.',
+      'When fewer than 10 such sales exist, widen the window to neighbouring quarters by the same rule as the sale price pooled window, counting only these sales.',
+      'Take the median total price of the pooled sales.',
+      'Dividing this value by the district household income indicator gives a district price-to-income figure; the pipeline publishes the numerator only.',
+    ],
+    appliesTo: ['medianTotalPrice'],
+    quarters: 'thin cells only',
+    setsEstimated: true,
+  },
+  {
     id: 'rent-relative-cpi',
     kind: 'estimation',
     title: 'Rent per m² carried by the city rent price index',

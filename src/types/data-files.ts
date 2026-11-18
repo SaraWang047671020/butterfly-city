@@ -54,8 +54,7 @@ export interface CityIndicator extends IndicatorBase {
 export type Indicator = DistrictIndicator | CityIndicator;
 
 /**
- * Indicator ids of history.json in file order (Requirement 4.11). `medianTotalPrice` (after `salePrice`)
- * is added by task 17.2, which makes it 15 ids: 13 district indicators, then 2 city indicators.
+ * Indicator ids of history.json in file order (Requirement 4.11): 15 ids, 13 district indicators, then 2 city indicators.
  */
 export const HISTORY_INDICATOR_IDS = [
   'population',
@@ -64,6 +63,7 @@ export const HISTORY_INDICATOR_IDS = [
   'relativeMedianIncome',
   'householdIncome',
   'salePrice',
+  'medianTotalPrice',
   'rent',
   'mrtEntries',
   'socialHousingCompletions',

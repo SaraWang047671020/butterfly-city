@@ -1,7 +1,7 @@
 /**
- * Assembles the HistoryFile (public/data/history.json content) from the fourteen indicator series.
+ * Assembles the HistoryFile (public/data/history.json content) from the fifteen indicator series.
  *
- * `buildHistoryFile` is pure. It applies the fixed indicator order of INDICATOR_SPECS (12 district indicators,
+ * `buildHistoryFile` is pure. It applies the fixed indicator order of INDICATOR_SPECS (13 district indicators,
  * then 2 city indicators), rounds every value once to the indicator's decimals, checks the record counts
  * (41 districts x 44 quarters, 2 cities x 44 quarters) and embeds the sources and methods the file references,
  * in registry order (Requirement 4, Decision D19).

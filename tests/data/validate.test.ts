@@ -5,6 +5,7 @@ import {
   validatePolicyTrackFile,
 } from '../../src/data/validate.ts';
 import type { ValidationError } from '../../src/data/validate.ts';
+import { HISTORY_INDICATOR_IDS } from '../../src/types/data-files.ts';
 import {
   DISTRICT_CODES,
   validContext,
@@ -149,8 +150,67 @@ describe('validateHistoryFile', () => {
     f.indicators[2].description = 'x'.repeat(201);
     f.indicators[2].decimals = 7;
     expect(brief(validateHistoryFile(f, ctx)).sort()).toEqual(
-      ['unique-id $.indicators[1].id', 'description $.indicators[1].description', 'description $.indicators[2].description', 'decimals $.indicators[2].decimals'].sort(),
+      [
+        'unique-id $.indicators[1].id',
+        'indicator-set $.indicators',
+        'indicator-set $.indicators[1].id',
+        'description $.indicators[1].description',
+        'description $.indicators[2].description',
+        'decimals $.indicators[2].decimals',
+      ].sort(),
     );
+  });
+
+  describe('indicator-set and medianTotalPrice', () => {
+    const IDS = [...HISTORY_INDICATOR_IDS];
+    const MTP = IDS.indexOf('medianTotalPrice');
+    const ctx15 = { ...ctx, indicatorIds: IDS };
+    const full = (): ReturnType<typeof validHistoryFile> => {
+      const base = validHistoryFile();
+      const [pop, rent, ratio] = base.indicators;
+      base.indicators = IDS.map((id, i) => {
+        const t = i >= 13 ? ratio : id === 'medianTotalPrice' ? rent : pop;
+        const series: Record<string, unknown[]> = {};
+        for (const [k, recs] of Object.entries(t.series as Record<string, { value: number }[]>)) {
+          series[k] = recs.map((r) => ({ value: id === 'medianTotalPrice' ? 10000000 : r.value, estimated: false }));
+        }
+        return { ...t, id, decimals: id === 'medianTotalPrice' ? 0 : t.decimals, series };
+      });
+      return base;
+    };
+
+    it('uses index 6 for medianTotalPrice and accepts the full valid file', () => {
+      expect(MTP).toBe(6);
+      expect(validateHistoryFile(full(), ctx15)).toEqual([]);
+    });
+
+    it('reports a missing indicator at $.indicators', () => {
+      const f = full();
+      f.indicators.splice(MTP, 1);
+      const b = brief(validateHistoryFile(f, ctx15));
+      expect(b).toContain('indicator-set $.indicators');
+    });
+
+    it('reports an added indicator at its own id path', () => {
+      const f = full();
+      f.indicators.push({ ...f.indicators[0], id: 'extraIndicator' });
+      expect(brief(validateHistoryFile(f, ctx15))).toContain('indicator-set $.indicators[15].id');
+    });
+
+    it('reports two swapped indicators at both positions', () => {
+      const f = full();
+      [f.indicators[0], f.indicators[1]] = [f.indicators[1], f.indicators[0]];
+      const b = brief(validateHistoryFile(f, ctx15));
+      expect(b).toContain('indicator-set $.indicators[0].id');
+      expect(b).toContain('indicator-set $.indicators[1].id');
+    });
+
+    it.each([0, -1])('rejects a medianTotalPrice value of %i with rule range', (v) => {
+      const f = full();
+      const code = DISTRICT_CODES[2] as string;
+      f.indicators[MTP].series[code][5] = { value: v, estimated: false };
+      expect(brief(validateHistoryFile(f, ctx15))).toEqual([`range $.indicators[6].series["${code}"][5].value`]);
+    });
   });
 
   it('never throws on garbage', () => {

@@ -29,6 +29,7 @@ import type { DistrictShape } from './geo.ts';
 import { historyFileStep } from './history-file.ts';
 import { incomeStep } from './indicators/income.ts';
 import type { LvrLoad } from './indicators/lvr-input.ts';
+import { medianTotalPriceStep } from './indicators/median-total-price.ts';
 import { migrationStep } from './indicators/migration.ts';
 import { mrtStep } from './indicators/mrt.ts';
 import { populationStep } from './indicators/population.ts';
@@ -76,6 +77,9 @@ export interface BuildState {
   salePrice?: DistrictSeries;
   /** Per district code: number of quarters by window radius (0 = own median). For SOURCES.md. */
   salePriceWindowCounts?: ReadonlyMap<string, ReadonlyMap<number, number>>;
+  /** Set by the median total price step (task 17.4). */
+  medianTotalPrice?: DistrictSeries;
+  medianTotalPriceWindowCounts?: ReadonlyMap<string, ReadonlyMap<number, number>>;
   /** Set by the price-to-income step (task 7.2). */
   priceToIncomeRatio?: CitySeries;
   /** Per district code: the 44 sale price values before rounding (set by the sale price step). */
@@ -201,6 +205,7 @@ export function createDefaultSteps(options: DefaultStepsOptions = {}): readonly 
     migrationStep(),
     incomeStep(),
     salePriceStep(),
+    medianTotalPriceStep(),
     priceToIncomeStep(),
     rentStep(),
     mrtStep(),

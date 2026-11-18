@@ -36,7 +36,11 @@ const lowUse = (over: Partial<LowUseContext> = {}): LowUseContext => ({
 });
 
 const run = (file: Json, ctx: LowUseContext | null = lowUse()) =>
-  validateHistoryFile(file, { ...validContext(), ...(ctx === null ? {} : { lowUse: ctx }) });
+  validateHistoryFile(file, {
+    ...validContext(),
+    indicatorIds: file.indicators.map((i: Json) => i.id),
+    ...(ctx === null ? {} : { lowUse: ctx }),
+  });
 const series = (file: Json): Json => file.indicators[3].series;
 const first = DISTRICT_CODES[0] as string;
 

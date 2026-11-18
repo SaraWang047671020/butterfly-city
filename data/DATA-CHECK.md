@@ -86,7 +86,7 @@ All 41 districts have sales records in most years. The 34 other districts have a
 | Gongliao | 2 | 26 | 180 |
 | Wulai | 31 | 44 | 18 |
 
-For these districts, a quarterly median price is not meaningful. Pool years, or borrow the trend from a neighboring district, and document the method.
+For these districts, a quarterly median price is not meaningful. Pool years, or borrow the trend from a neighboring district, and document the method. The pipeline pools thin cells for two indicators with the same window rule: the sale price per square metre (`salePrice`, `sale-price-pooled-window`) and the median total price (`medianTotalPrice`, `median-total-price-pooled-window`). The counts above are for the unit-price filter; the median total price also requires `總價元` > 0.
 
 ### 2b. Rentals: New Taipei rural districts (residential use, by transaction year)
 
@@ -240,7 +240,7 @@ All from Taipei Rapid Transit Corporation via data.taipei. License OGDL v1.
 - **Page**: https://pip.moi.gov.tw/Publicize/Info/E1050 (房價負擔能力統計). Not on data.gov.tw.
 - **Format**: one **PDF** release per quarter, URL pattern `https://pip.moi.gov.tw/Upload/CustomFile/Doc/{name}.pdf` (file names vary; all links are in `data/raw/_meta/pip-E1050.html`). No CSV or XLSX was found. The platform's 統計資訊整合查詢 tool (Info/E3010) has no category for this indicator.
 - **Contents**: house-price-to-income ratio and mortgage-burden ratio (房貸負擔率) for the nation and every city and county. Example from the 2026 Q1 release: Taipei ratio 14.72, burden 64.41%; New Taipei ratio 12.63, burden 55.30%.
-- **Spatial level**: city. **No district-level values.**
+- **Spatial level**: city. **No district-level values.** The pipeline publishes the city ratio only. It also publishes the district median total price (`medianTotalPrice`) with the same sale filter as the ratio's numerator; dividing it by the district household income gives a district figure that the MOI does not publish.
 - **Coverage**: 38 PDFs downloaded, 2016 Q3 – 2026 Q1. 2018 Q3 and Q4 are a single combined release. **2015 Q1 – 2016 Q2 are not linked** on the page, and guessed file names return an HTML error page. ⚠️ Follow-up options: ask the agency, or derive the ratio for those 6 quarters from real-price registration and income data with a documented method.
 - **Access note**: the site rejects requests without a browser User-Agent (it returns "Request Rejected").
 - **Methodology**: the release text states the mortgage-burden ratio is based on a median-income household buying a median-priced home. The PDFs were not parsed, so method changes across years have not been checked yet.

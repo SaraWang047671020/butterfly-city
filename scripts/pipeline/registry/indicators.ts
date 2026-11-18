@@ -27,7 +27,7 @@ const MIGRATION_SOURCES = [
 
 const HOLDING_TAX_RATE_SOURCES = ['policy/house-tax-act', 'policy/taipei-ordinance', 'policy/ntpc-ordinance'] as const;
 
-/** Fixed order: the 12 district indicators first, then the 2 city indicators. */
+/** Fixed order: the 13 district indicators first, then the 2 city indicators. */
 export const INDICATOR_SPECS: readonly IndicatorSpec[] = [
   {
     id: 'population',
@@ -81,6 +81,16 @@ export const INDICATOR_SPECS: readonly IndicatorSpec[] = [
     kind: 'positive',
     decimals: 0,
     description: 'Median unit price of registered residential sales in the district.',
+    sources: ['lvr/moi-25119'],
+  },
+  {
+    id: 'medianTotalPrice',
+    level: 'district',
+    unit: 'TWD per transaction',
+    kind: 'positive',
+    decimals: 0,
+    description:
+      'Median total price of registered residential sales in the district. Divided by household income, it gives a district price-to-income figure.',
     sources: ['lvr/moi-25119'],
   },
   {

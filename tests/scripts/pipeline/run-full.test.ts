@@ -15,7 +15,7 @@ import { DISTRICT_CODES, validContext, validDistrictsFile, validHistoryFile, val
 import { FakeWriteFs } from './helpers-write.ts';
 
 const NAMES = [
-  'preflight', 'census-check', 'districts', 'population', 'migration', 'income', 'sale-price', 'price-to-income', 'rent',
+  'preflight', 'census-check', 'districts', 'population', 'migration', 'income', 'sale-price', 'median-total-price', 'price-to-income', 'rent',
   'mrt', 'social-housing', 'policy-track', 'low-use', 'history-file', 'policy-file', 'network', 'fare-slope', 'commute-matrix', 'params-part1', 'params', 'validate', 'sources-doc', 'banned-terms', 'write',
 ];
 

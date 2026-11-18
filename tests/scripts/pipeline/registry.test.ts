@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { HISTORY_INDICATOR_IDS } from "../../../src/types/data-files.ts";
 import { INDICATOR_SPECS, POLICY_SERIES_SPECS } from "../../../scripts/pipeline/registry/indicators.ts";
 import { METHOD_REGISTRY, methodById, referencedMethods } from "../../../scripts/pipeline/registry/methods.ts";
 import {
@@ -57,7 +58,7 @@ describe("redactUrl", () => {
 });
 
 describe("indicator lists", () => {
-  it("lists 12 district then 2 city indicators in the fixed order", () => {
+  it("lists 13 district then 2 city indicators in the fixed order", () => {
     expect(INDICATOR_SPECS.map((i) => i.id)).toEqual([
       "population",
       "moveIn",
@@ -65,6 +66,7 @@ describe("indicator lists", () => {
       "relativeMedianIncome",
       "householdIncome",
       "salePrice",
+      "medianTotalPrice",
       "rent",
       "mrtEntries",
       "socialHousingCompletions",
@@ -74,8 +76,8 @@ describe("indicator lists", () => {
       "cityDisposableIncome",
       "priceToIncomeRatio",
     ]);
-    expect(INDICATOR_SPECS.filter((i) => i.level === "district")).toHaveLength(12);
-    expect(INDICATOR_SPECS.slice(12).every((i) => i.level === "city")).toBe(true);
+    expect(INDICATOR_SPECS.filter((i) => i.level === "district")).toHaveLength(13);
+    expect(INDICATOR_SPECS.slice(13).every((i) => i.level === "city")).toBe(true);
   });
 
   it("lists 10 policy series in the fixed order, only the first at district level", () => {
@@ -138,5 +140,37 @@ describe("method registry", () => {
     expect(methodById("district-area").id).toBe("district-area");
     expect(() => methodById("nope")).toThrow();
     expect(() => referencedMethods(["nope"])).toThrow();
+  });
+});
+
+describe("history indicator registry", () => {
+  const REQ_4_11 = [
+    "population", "moveIn", "moveOut", "relativeMedianIncome", "householdIncome", "salePrice", "medianTotalPrice",
+    "rent", "mrtEntries", "socialHousingCompletions", "socialHousingStock", "lowUseHousingCount", "lowUseHousingRate",
+    "cityDisposableIncome", "priceToIncomeRatio",
+  ];
+
+  it("lists the Requirement 4.11 ids in order, matching HISTORY_INDICATOR_IDS element by element", () => {
+    const ids = INDICATOR_SPECS.map((s) => s.id);
+    expect(ids).toEqual(REQ_4_11);
+    expect(ids).toHaveLength(HISTORY_INDICATOR_IDS.length);
+    HISTORY_INDICATOR_IDS.forEach((id, i) => expect(ids[i]).toBe(id));
+  });
+
+  it("declares the medianTotalPrice spec", () => {
+    const spec = INDICATOR_SPECS.find((s) => s.id === "medianTotalPrice");
+    expect(spec).toBeDefined();
+    expect(spec?.unit).toBe("TWD per transaction");
+    expect(spec?.kind).toBe("positive");
+    expect(spec?.decimals).toBe(0);
+    expect(spec?.sources).toEqual(["lvr/moi-25119"]);
+    expect(spec?.description.length).toBeGreaterThanOrEqual(1);
+    expect(spec?.description.length).toBeLessThanOrEqual(200);
+  });
+
+  it("places the median-total-price-pooled-window method after sale-price-pooled-window and names 總價元", () => {
+    const ids = METHOD_REGISTRY.map((m) => m.id);
+    expect(ids.indexOf("median-total-price-pooled-window")).toBe(ids.indexOf("sale-price-pooled-window") + 1);
+    expect(methodById("median-total-price-pooled-window").steps.join(" ")).toContain("總價元");
   });
 });

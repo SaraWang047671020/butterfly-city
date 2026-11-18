@@ -40,7 +40,7 @@ describe('buildHistoryFile', () => {
 
   it('lists the indicators in the fixed order, district first', () => {
     expect(file.indicators.map((i) => i.id)).toEqual(INDICATOR_SPECS.map((s) => s.id));
-    expect(file.indicators.map((i) => i.level)).toEqual([...Array(12).fill('district'), 'city', 'city']);
+    expect(file.indicators.map((i) => i.level)).toEqual([...Array(13).fill('district'), 'city', 'city']);
     expect(file.schemaVersion).toBe(1);
     expect(file.quarters).toEqual(quarters);
   });
@@ -113,8 +113,8 @@ describe('historyFileStep', () => {
     const state = createState();
     Object.assign(state, fixture(40));
     historyFileStep().run(ctx, state);
-    expect(state.historyFile?.indicators.length).toBe(14);
-    expect(state.summaries.length).toBe(14);
+    expect(state.historyFile?.indicators.length).toBe(15);
+    expect(state.summaries.length).toBe(15);
     expect(state.summaries[0]).toEqual({ id: 'population', values: 41 * 44, estimated: 41 * 4 });
   });
 

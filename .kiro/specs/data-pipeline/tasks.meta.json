@@ -83,6 +83,18 @@
     "27.7 Write property test for the low-use builder": {
       "status": "passed",
       "lastRunTimestamp": 1794906927227
+    },
+    "17.6 Write property test for the shared total-price filter": {
+      "status": "passed",
+      "lastRunTimestamp": 1794963126369
+    },
+    "17.7 Write property test for median total price values": {
+      "status": "passed",
+      "lastRunTimestamp": 1794963135166
+    },
+    "17.8 Write property test for the shared window rule": {
+      "status": "passed",
+      "lastRunTimestamp": 1794963240806
     }
   },
   "executionHistory": {
@@ -1205,6 +1217,16 @@
         "executionId": "10c0b157-00b8-4085-b4de-5d4f946cd809",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794889370978
+      },
+      {
+        "executionId": "e8020fcc-b52b-4c32-aceb-b361d9bf4107",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794907182050
+      },
+      {
+        "executionId": "e8020fcc-b52b-4c32-aceb-b361d9bf4107",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794907233489
       }
     ],
     "16.2 Create `scripts/pipeline/indicators/pooled-window.ts` and switch the sale price builder to it": [
@@ -1227,6 +1249,16 @@
         "executionId": "10c0b157-00b8-4085-b4de-5d4f946cd809",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794889371012
+      },
+      {
+        "executionId": "e8020fcc-b52b-4c32-aceb-b361d9bf4107",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794907182429
+      },
+      {
+        "executionId": "e8020fcc-b52b-4c32-aceb-b361d9bf4107",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794907234317
       }
     ],
     "16.3 Check that `salePrice` and `priceToIncomeRatio` are unchanged after the refactor": [
@@ -1234,6 +1266,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889182898
+      },
+      {
+        "executionId": "e8020fcc-b52b-4c32-aceb-b361d9bf4107",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794907255925
+      },
+      {
+        "executionId": "e8020fcc-b52b-4c32-aceb-b361d9bf4107",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794907385948
       }
     ],
     "17.1 Add `HISTORY_INDICATOR_IDS` and `HistoryIndicatorId` to `src/types/data-files.ts`": [
@@ -1253,6 +1295,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183015
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794962668364
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794962778714
       }
     ],
     "17.3 Implement `scripts/pipeline/indicators/median-total-price.ts`": [
@@ -1260,6 +1312,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183054
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794962802210
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794962849437
       }
     ],
     "17.4 Add `medianTotalPriceStep` and wire it into `run.ts`": [
@@ -1267,6 +1329,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183093
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794962872133
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963032095
       }
     ],
     "17.5 Write the Requirement 19.10 example tests in `tests/scripts/pipeline/median-total-price.test.ts`": [
@@ -1274,6 +1346,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183151
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963054692
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963157965
       }
     ],
     "17.6 Write property test for the shared total-price filter": [
@@ -1281,6 +1363,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183185
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963055928
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963159174
       }
     ],
     "17.7 Write property test for median total price values": [
@@ -1288,6 +1380,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183245
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963056578
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963159814
       }
     ],
     "17.8 Write property test for the shared window rule": [
@@ -1295,6 +1397,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183278
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963182489
+      },
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963251697
       }
     ],
     "18.1 Add the `indicator-set` rule to `validateHistoryFile` in `src/data/validate.ts`": [
@@ -1302,6 +1414,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183313
+      },
+      {
+        "executionId": "64260235-33e9-4ad1-9bae-8e0f3861a1f7",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963638510
+      },
+      {
+        "executionId": "64260235-33e9-4ad1-9bae-8e0f3861a1f7",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963793191
       }
     ],
     "18.2 Write validator and registry example tests": [
@@ -1309,6 +1431,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183341
+      },
+      {
+        "executionId": "64260235-33e9-4ad1-9bae-8e0f3861a1f7",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963819446
+      },
+      {
+        "executionId": "64260235-33e9-4ad1-9bae-8e0f3861a1f7",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963919813
       }
     ],
     "19. Checkpoint - Ensure all tests pass": [
@@ -1316,6 +1448,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183372
+      },
+      {
+        "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794964093114
+      },
+      {
+        "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794964197557
       }
     ],
     "20.1 Update `scripts/pipeline/sources-doc.ts` and pass the window counts from `run.ts`": [
@@ -1323,6 +1465,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183410
+      },
+      {
+        "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794964311253
+      },
+      {
+        "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794964585658
       }
     ],
     "20.2 Write rendering tests in `tests/scripts/pipeline/sources-doc.test.ts`": [
@@ -1330,6 +1482,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183444
+      },
+      {
+        "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794964616072
+      },
+      {
+        "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794964703932
       }
     ],
     "20.3 Edit `data/DATA-CHECK.md` items 2a and 7": [
@@ -1337,6 +1499,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183473
+      },
+      {
+        "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794964312170
+      },
+      {
+        "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794964586711
       }
     ],
     "21.1 Rebuild `public/data/` and confirm the outputs": [
@@ -1344,6 +1516,16 @@
         "executionId": "177fa0b9-72e9-4b76-83a6-577e4764ab54",
         "chatSessionId": "sess_1ed58035-5dc9-4a34-a7ce-48c26d63d10f",
         "timestamp": 1794889183504
+      },
+      {
+        "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794964732439
+      },
+      {
+        "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794965055155
       }
     ],
     "23.0 Remove the four unsupported TDX requests and test the request builders": [
@@ -2436,6 +2618,41 @@
         "executionId": "fd44c0dd-d61b-40a2-9169-619dd71c1307",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794906984435
+      }
+    ],
+    "16. Shared total-price filter and pooled-window helper (Decision D28)": [
+      {
+        "executionId": "e8020fcc-b52b-4c32-aceb-b361d9bf4107",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794907385967
+      }
+    ],
+    "17. Median total price indicator and indicator ids": [
+      {
+        "executionId": "ef458b0e-9fa9-4d49-b59f-c5731a4f7fb0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963251715
+      }
+    ],
+    "18. Indicator-set validator rule (Decision D29)": [
+      {
+        "executionId": "64260235-33e9-4ad1-9bae-8e0f3861a1f7",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794963919831
+      }
+    ],
+    "20. SOURCES.md rendering and DATA-CHECK.md": [
+      {
+        "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794964703989
+      }
+    ],
+    "21. Rebuild history.json and run the final checks": [
+      {
+        "executionId": "8ec1013a-634b-42b4-9e23-d9591f2ed9b0",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794965055189
       }
     ]
   }

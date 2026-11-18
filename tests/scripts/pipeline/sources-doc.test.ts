@@ -15,7 +15,7 @@ import {
   HOLDING_TAX_TABLE,
   SUBLEASE_TABLE,
 } from '../../../scripts/pipeline/policy/step.ts';
-import { POLICY_SERIES_SPECS } from '../../../scripts/pipeline/registry/indicators.ts';
+import { INDICATOR_SPECS, POLICY_SERIES_SPECS } from '../../../scripts/pipeline/registry/indicators.ts';
 import { METHOD_REGISTRY } from '../../../scripts/pipeline/registry/methods.ts';
 import { SOURCE_REGISTRY } from '../../../scripts/pipeline/registry/sources.ts';
 import { createState } from '../../../scripts/pipeline/run.ts';
@@ -314,5 +314,70 @@ describe('sourcesDocStep', () => {
   it('stops with a named error when an output file is missing', () => {
     const ctx = createContext({ reader: new MemoryRawReader(), logger: memoryLogger() });
     expect(() => sourcesDocStep().run(ctx, createState())).toThrow(DataError);
+  });
+});
+
+describe('median total price documentation from the real registries (Requirements 15.3, 15.4, 19.7, 19.8)', () => {
+  const spec = INDICATOR_SPECS.find((s) => s.id === 'medianTotalPrice') as (typeof INDICATOR_SPECS)[number];
+  const districts: Json = validDistrictsFile();
+  districts.sources = [...SOURCE_REGISTRY];
+  districts.methods = [...METHOD_REGISTRY];
+  const base = smallInput();
+  const history: Json = base.historyFile;
+  history.indicators.push({
+    id: spec.id,
+    level: spec.level,
+    unit: spec.unit,
+    kind: spec.kind,
+    decimals: spec.decimals,
+    description: spec.description,
+    sources: [...spec.sources],
+    series: {},
+  });
+  const input: SourcesDocInput = {
+    ...base,
+    districtsFile: districts,
+    historyFile: history,
+    medianTotalPriceWindowCounts: new Map([
+      ['65000130', new Map([[0, 20], [3, 4], [5, 2]])],
+      ['65000010', new Map([[0, 44]])],
+    ]),
+  };
+  const text = renderSourcesDoc(input);
+
+  it('has a medianTotalPrice row in section 3 with the lvr/moi-25119 entry', () => {
+    const row = lines(text).find((l) => l.startsWith('| medianTotalPrice | TWD per transaction | 0 | `lvr/moi-25119` |'));
+    expect(row).toBeDefined();
+    expect(text.indexOf(row as string)).toBeGreaterThan(text.indexOf('## 3.'));
+    expect(text.indexOf(row as string)).toBeLessThan(text.indexOf('## 4.'));
+  });
+
+  it('has a median-total-price-pooled-window entry in section 5 naming 總價元, the window rule and the income indicator', () => {
+    const start = text.indexOf('### median-total-price-pooled-window\n');
+    expect(start).toBeGreaterThan(text.indexOf('## 5.'));
+    const end = text.indexOf('\n### ', start + 1);
+    const entry = text.slice(start, end);
+    expect(entry).toContain('總價元');
+    expect(entry).toContain('same rule as the sale price pooled window');
+    expect(entry).toContain('household income indicator');
+    expect(entry).toContain('- Applies to: `medianTotalPrice`');
+  });
+
+  it('has a 2a row in section 9 listing both indicators and both pooled-window methods', () => {
+    const row = lines(text.slice(text.indexOf('## 9.'))).find((l) => l.startsWith('| 2a | ')) as string;
+    expect(row).toBeDefined();
+    for (const id of ['salePrice', 'medianTotalPrice', 'sale-price-pooled-window', 'median-total-price-pooled-window']) {
+      expect(row).toContain(`\`${id}\``);
+    }
+  });
+
+  it('renders the "Thin median total price cells" table after the sale price table', () => {
+    const section = text.slice(text.indexOf('## 9.'));
+    const at = section.indexOf('### Thin median total price cells');
+    expect(at).toBeGreaterThan(section.indexOf('### Thin sale price cells'));
+    const block = section.slice(at);
+    expect(block).toContain('counts only sales with a total price greater than 0');
+    expect(block).toContain('| District13 (65000130) | 20 | radius 3: 4 quarters; radius 5: 2 quarters |');
+    expect(block).not.toContain('District1 (65000010) | 44');
   });
 });
