@@ -1,0 +1,407 @@
+/*
+ * Panels block: policy, construction progress and district panels.
+ * Tokens only. Each block is its own floating surface; no page layout and no position,
+ * so the outer container can place it over the full-screen 3D city.
+ */
+
+.ui-policy-panel,
+.ui-construction,
+.ui-district-panel {
+  box-sizing: border-box;
+  max-width: min(100%, 28rem);
+  max-height: 80vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: var(--space-4);
+  color: var(--color-text-primary);
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  overflow-wrap: anywhere;
+}
+
+.ui-policy-panel p,
+.ui-policy-panel ul,
+.ui-policy-panel h3,
+.ui-policy-panel h4,
+.ui-construction p,
+.ui-construction ul,
+.ui-construction h3,
+.ui-district-panel p,
+.ui-district-panel ul,
+.ui-district-panel h3,
+.ui-district-panel h4 {
+  margin: 0;
+}
+
+.ui-policy-panel ul,
+.ui-construction ul,
+.ui-district-panel ul {
+  padding: 0;
+  list-style: none;
+}
+
+/* Shared: panel headings */
+.ui-policy-heading,
+.ui-construction-heading,
+.ui-district-title,
+.ui-district-list-heading {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+.ui-policy-domain-heading,
+.ui-policy-tool-name,
+.ui-policy-field-title,
+.ui-policy-budget-title,
+.ui-district-group-heading {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Shared: buttons */
+.ui-button {
+  min-height: var(--target-comfortable);
+  padding: var(--space-2) var(--space-4);
+  font: inherit;
+  color: var(--color-text-primary);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--motion-fast);
+}
+
+.ui-button:disabled {
+  color: var(--color-text-muted);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+.ui-button[aria-expanded='true'] {
+  border-color: var(--color-accent);
+  border-width: 2px;
+}
+
+.ui-apply {
+  color: var(--color-accent-ink);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ui-why,
+.ui-about-range {
+  min-height: var(--target-comfortable);
+  min-width: var(--target-comfortable);
+}
+
+/* Policy panel */
+.ui-policy-panel,
+.ui-policy-domains,
+.ui-policy-domain,
+.ui-policy-tools,
+.ui-policy-tool,
+.ui-policy-tool-body,
+.ui-policy-fields,
+.ui-policy-field,
+.ui-policy-effects,
+.ui-policy-real-list,
+.ui-policy-budget {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ui-policy-domains,
+.ui-policy-tools {
+  gap: var(--space-4);
+}
+
+.ui-policy-city-year,
+.ui-policy-note,
+.ui-policy-lag,
+.ui-policy-unit,
+.ui-policy-unit-cost,
+.ui-policy-real,
+.ui-policy-budget-note,
+.ui-policy-player {
+  color: var(--color-text-secondary);
+}
+
+.ui-policy-real-value,
+.ui-policy-budget-committed,
+.ui-policy-budget-remaining {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.ui-policy-budget {
+  padding: var(--space-3);
+  background: var(--color-bg-raised);
+  border-radius: var(--radius-sm);
+}
+
+.ui-policy-badge {
+  align-self: flex-start;
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-text-secondary);
+  border: 1px dashed var(--color-line);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+}
+
+.ui-policy-benefits,
+.ui-policy-costs {
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--color-line);
+}
+
+.ui-policy-benefits {
+  border-left-color: var(--color-ok);
+}
+
+.ui-policy-costs {
+  border-left-color: var(--color-warn);
+}
+
+.ui-policy-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ui-policy-input-label {
+  font-weight: var(--font-weight-semibold);
+}
+
+.ui-policy-input {
+  box-sizing: border-box;
+  min-height: var(--target-comfortable);
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-md);
+  color: var(--color-text-primary);
+  background: var(--color-bg-page);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+}
+
+.ui-policy-input[aria-invalid='true'] {
+  border-color: var(--color-risk-line);
+  border-width: 2px;
+}
+
+.ui-policy-limit-lower,
+.ui-policy-limit-upper,
+.ui-policy-ceiling {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.ui-policy-message {
+  color: var(--color-risk-text);
+}
+
+.ui-policy-message:empty {
+  display: none;
+}
+
+.ui-policy-carried {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-risk-text);
+  background: var(--color-risk-bg);
+  border: 1px solid var(--color-risk-line);
+  border-radius: var(--radius-sm);
+}
+
+.ui-policy-carried[hidden],
+.ui-policy-badge[hidden],
+.ui-policy-message[hidden] {
+  display: none;
+}
+
+/* Construction progress */
+.ui-construction,
+.ui-construction-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ui-construction-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-raised);
+  border-radius: var(--radius-sm);
+}
+
+.ui-construction-district {
+  font-weight: var(--font-weight-semibold);
+}
+
+.ui-construction-bar {
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--space-2);
+  background: var(--color-nodata-fill);
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.ui-construction-bar::-webkit-progress-bar {
+  background: var(--color-nodata-fill);
+}
+
+.ui-construction-bar::-webkit-progress-value {
+  background: var(--color-accent);
+}
+
+.ui-construction-bar::-moz-progress-bar {
+  background: var(--color-accent);
+}
+
+.ui-construction-progress-text,
+.ui-construction-units,
+.ui-construction-quarters,
+.ui-construction-after,
+.ui-construction-empty {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+/* District panel */
+.ui-district-panel,
+.ui-district-body,
+.ui-district-list,
+.ui-district-list-groups,
+.ui-district-group,
+.ui-district-items,
+.ui-district-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ui-district-city,
+.ui-district-mode,
+.ui-district-prompt,
+.ui-district-ghost-size {
+  color: var(--color-text-secondary);
+}
+
+.ui-district-button {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--target-comfortable);
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  text-align: start;
+  color: var(--color-text-primary);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--motion-fast);
+}
+
+.ui-district-button[aria-pressed='true'],
+.ui-district-button[aria-current='true'] {
+  border-color: var(--color-accent);
+  border-width: 2px;
+}
+
+.ui-district-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-raised);
+  border-radius: var(--radius-sm);
+}
+
+.ui-row-label {
+  flex: 1 1 100%;
+  font-weight: var(--font-weight-semibold);
+}
+
+.ui-row-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+}
+
+.ui-row-comparison,
+.ui-row-methods,
+.ui-row-source,
+.ui-row-note {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.ui-row-difference {
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+}
+
+/* Estimate marker: text label with a dashed outline, so it never relies on color */
+.ui-estimate-marker {
+  padding: 0 var(--space-2);
+  color: var(--color-warn);
+  border: 1px dashed var(--color-warn);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+}
+
+.ui-estimate-marker:empty,
+.ui-estimate-marker[hidden] {
+  display: none;
+}
+
+/* About-range text */
+.ui-about-text {
+  flex: 1 1 100%;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-page);
+  border-left: 3px solid var(--color-line);
+  font-size: var(--font-size-xs);
+}
+
+.ui-about-text[hidden] {
+  display: none;
+}
+
+/* Focus ring for panel controls */
+.ui-button:focus-visible,
+.ui-policy-input:focus-visible,
+.ui-district-button:focus-visible,
+.ui-policy-field:focus-visible,
+.ui-policy-panel:focus-visible,
+.ui-district-panel:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-button,
+  .ui-district-button {
+    transition: none;
+  }
+}

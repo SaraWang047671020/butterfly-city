@@ -44,6 +44,7 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-18, to save Kiro cre
   - [x] 7.1 `src/ui/city/landmarks/table.ts` with coordinates and sources (Requirement 7.1); coordinates read from the English Wikipedia coordinates line of each page on 2026-11-18
   - [x] 7.2 Test of Requirement 7.3 (`tests/ui/city/landmarks.test.ts`, also the clearing of buildings, trees and streets)
   - [x] 7.3 Models: Taipei 101, Grand Hotel, National Theater and Concert Hall, Presidential Office Building, Taipei Main Station, Dazhi Ferris wheel (turning), Longshan Temple, Tamsui Fisherman's Wharf bridge, Banqiao Station. Changes from the first list (neutrality.md): the Liberty Square pair is shown as the National Theater and Concert Hall, not under a memorial name that carries a politician's name; the Ferris wheel is named by its area, not by the operating company; Banqiao Station added so that New Taipei has two Landmarks.
+  - [x] 7.5 Every district has at least one Landmark (user decision 2026-11-18): 35 more Landmarks built from 24 archetypes in `landmarks/archetypes.ts` (temples, old streets, courtyard houses, museums, arena, stadium, exhibition hall, stations, parks, zoo, bridges, dam, lighthouses with a turning beam, waterfalls, Yehliu rocks). Coordinates from English Wikipedia, or Chinese Wikipedia where the English page has none (8 districts); each checked to lie in its district (test). 44 Landmarks in total.
   - [x] 7.4 Building, tree and street removal around Landmarks, labels within 150 units (Requirements 7.2, 7.4)
 
 ## Phase 3: Walk_Mode and Metro_Travel
@@ -51,10 +52,10 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-18, to save Kiro cre
 - [x] 8. Walk_Mode (checked by hand 2026-11-18: walking down a Da'an street, collision, follow camera)
   - [x] 8.1 `collision.ts` and tests (`tests/ui/city/collision.test.ts`, property: a move that starts free never ends blocked)
   - [x] 8.2 `walk.ts`: Avatar, follow camera (pulled in front of buildings), W A S D and arrows, Shift to run, touch joystick, mode switch, Escape (Requirements 8.1 to 8.4). The DOM toggle button is placed in task 6.1; `mountCityView` exposes `setMode` and `onModeChange`.
-- [ ] 9. Metro_Travel
-  - [ ] 9.1 Station_File in the data pipeline, with tests (Requirement 8.5)
-  - [ ] 9.2 Data_Loader and Game_Controller support for the Station_File
-  - [ ] 9.3 `metro.ts`: stations, lines, station dialog, transition (Requirements 8.6, 8.7)
+- [x] 9. Metro_Travel (checked by hand 2026-11-18: Fuzhong → Taipei 101/World Trade Center in 2022Q1)
+  - [x] 9.1 Station_File: `scripts/metro/build.ts`, `npm run stations` → `src/ui/city/metro/station-data.ts` (118 stations, 129 segments, 6 lines), tests in `tests/ui/city/metro.test.ts` (Requirement 8.5)
+  - [x] 9.2 Not needed: the Station_File is a generated module bundled with the City_View; the open network follows `MapViewModel.quarter`
+  - [x] 9.3 `metro/network.ts` (pure), `metro/render.ts`: lines in official colours, station markers and labels, prompt with E key or button, station dialog (Kiro's dialog manager), fade transition; Walk_Mode starts at the district's station (Requirements 8.2, 8.6, 8.7)
 
 ## Phase 4: Citizen encounters and street detail
 

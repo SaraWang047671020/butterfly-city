@@ -1,0 +1,147 @@
+/*
+ * App shell layout. PROVISIONAL: the page layout is not approved yet and is deferred to the 3D redesign.
+ * Only the shell is defined here: a full-viewport city layer behind, and an overlay layer with floating blocks.
+ * Tokens only (no colour or duration literals). Component styles live in their own files.
+ */
+
+.ui-app {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+}
+
+/* The City_View is mounted into this element by the caller. */
+.ui-city-layer {
+  position: fixed;
+  inset: 0;
+}
+
+/* Floating layer. It lets pointer events through to the city except on the blocks themselves. */
+.ui-overlay {
+  position: relative;
+  min-height: 100vh;
+  pointer-events: none;
+}
+
+.ui-overlay > [hidden],
+.ui-app [hidden] {
+  display: none !important;
+}
+
+.ui-game {
+  display: grid;
+  grid-template-columns: minmax(0, 22rem) minmax(0, 1fr) minmax(0, 28rem);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  height: 100vh;
+  padding: var(--space-3);
+  box-sizing: border-box;
+}
+
+.ui-block--turn-bar {
+  grid-column: 1 / -1;
+}
+
+.ui-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.ui-column--left {
+  grid-column: 1;
+}
+
+.ui-column--right {
+  grid-column: 3;
+}
+
+.ui-block,
+.ui-screen {
+  pointer-events: auto;
+  padding: var(--space-3);
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+/* Loading, load error and start menu: one centred card. */
+.ui-screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(32rem, calc(100vw - var(--space-5)));
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+}
+
+.ui-screen__title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-xl);
+}
+
+.ui-screen__disclosure {
+  color: var(--color-text-secondary);
+}
+
+.ui-screen__error-heading,
+.ui-screen__problem {
+  color: var(--color-risk-text);
+}
+
+.ui-screen__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.ui-button {
+  min-height: var(--target-comfortable);
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-text-primary);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  cursor: pointer;
+}
+
+.ui-button:focus-visible,
+.ui-screen__title:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Screen-reader-only text (live regions, hidden headings). */
+.ui-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 70rem) {
+  .ui-game {
+    display: block;
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .ui-column {
+    overflow: visible;
+    margin-top: var(--space-3);
+  }
+}

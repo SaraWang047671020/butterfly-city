@@ -2,6 +2,7 @@
 // Each model stands on y = 0 with its front toward +z; sizes are game scale, like the rest of the City_View.
 import * as THREE from 'three';
 import type { CityTokens } from '../tokens.ts';
+import { buildArchetype } from './archetypes.ts';
 import type { LandmarkModelId } from './table.ts';
 
 export interface LandmarkModel {
@@ -247,5 +248,7 @@ export function buildLandmark(id: LandmarkModelId, tokens: CityTokens): Landmark
       return loversBridge(k);
     case 'banqiaoStation':
       return banqiaoStation(k);
+    default:
+      return buildArchetype(id, tokens);
   }
 }

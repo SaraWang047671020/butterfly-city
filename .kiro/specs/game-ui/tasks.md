@@ -405,37 +405,37 @@ All code is TypeScript in `strict` mode. Modules imported by the Demo_Script (`s
     - Also ask the user to confirm the open items that touch UI text: the 500-entry Timeline cap message (G8) and the limit "reason" display (design "Open items" 1 and 2)
     - _Requirements: 1.4, 1.5, 1.6, 1.7_
 
-- [ ] 13. Token_File and the style test (Phase C, after task 12)
+- [x] 13. Token_File and the style test (Phase C, after task 12)
   - [x] 13.1 Create `src/styles/tokens.css`
     - Every colour, spacing, font, radius, shadow and motion duration of the approved Design_Proposal as CSS custom properties
     - Ends with `@media (prefers-reduced-motion: reduce)` setting every `--motion-*` token to `0ms` (design decision G11)
     - _Requirements: 1.8, 17.9, 17.10_
 
-  - [~] 13.2 Write the static style test `tests/static/style.test.ts`
+  - [x] 13.2 Write the static style test `tests/static/style.test.ts`
     - Scan every `.css` in `src/styles/` except `tokens.css` and every `.ts` under `src/ui/` for hex colours of 3, 4, 6 or 8 digits, `rgb(`, `rgba(`, `hsl(`, `hsla(` and time values in `ms` or `s` outside comments; fail with file name and line number of each match
     - _Requirements: 1.9, 19.7_
 
-- [ ] 14. UI_Strings_Module
+- [x] 14. UI_Strings_Module
   - [x] 14.1 Create `src/ui/strings.ts`
     - Every Game_Screen string in English: Turn_Bar, map, legend, District_Panel labels, Policy_Panel labels and messages (9.2 to 9.4, 9.7, 9.8, 9.11, 8.6, 8.8, 8.9, 8.11, Open Question 11 budget note), construction labels, Timeline_View texts, dialogs, the Disclosure_Text, "About this range" text, Range_Source_View texts, start menu, storage and import messages, the Demo_Save description sentence, Engine_Error messages built from `code` and `details`, the policy effect texts of 8.12 with equal numbers of benefit and cost statements per Active_Tool, and a display name for every id of `SCENARIO_EFFECT_IDS`
     - Components in tasks 15 to 17 read strings from this module and do not add strings; a missing string is added here in a separate change
     - Apply the `neutrality.md` review check and record in `KIRO-LOG.md` the date, the string keys reviewed and the result (15.7)
     - _Requirements: 15.1, 15.2, 15.3, 15.5, 15.6, 15.7, 5.4, 8.12, 20.4, 20.6, 20.7_
 
-  - [~] 14.2 Write the string tests `tests/ui/strings.test.ts`
+  - [x] 14.2 Write the string tests `tests/ui/strings.test.ts`
     - Banned-term test: every string with its key checked by `checkBannedTerms` of `scripts/pipeline/banned-terms.ts` with `banned-terms.txt` and `banned-terms-exempt.txt`; fail with key and term (15.4)
     - No string contains "Strong response", "Weak response" or "Central" (19.13)
     - Equal numbers of benefit and cost statements per Active_Tool (8.12); a display name for every id of `SCENARIO_EFFECT_IDS`
     - _Requirements: 15.4, 19.7, 19.13, 8.12_
 
-- [ ] 15. Pure UI functions (tested in Node)
+- [x] 15. Pure UI functions (tested in Node)
   - [x] 15.1 Implement `src/ui/format/number.ts`, `range.ts` and `difference.ts`
     - `formatNumber` with `Intl.NumberFormat('en-US')`, fixed decimals, U+2212 minus, never "−0"
     - `formatRange` returning `range` ("<central> <unit> (possible range <min>–<max> <unit>)") or `same` ("<value> <unit>, same in all scenarios") when the three formatted strings are equal
     - `formatDifference` with "+" or "−" and unit, "0 <unit>" for a zero formatted difference; percent rows in percentage points
     - _Requirements: 5.2, 5.7, 5.8, 6.4, 6.10_
 
-  - [~] 15.2 Write formatter unit tests `tests/ui/format.test.ts`
+  - [x] 15.2 Write formatter unit tests `tests/ui/format.test.ts`
     - Three different values, three values equal after formatting, values that differ only before formatting; difference signs and zero
     - _Requirements: 19.13, 5.2, 5.7, 5.8, 6.4_
 
@@ -453,7 +453,7 @@ All code is TypeScript in `strict` mode. Modules imported by the Demo_Script (`s
     - `lowUseHousingRate`: "<name>, <city>: low-use housing rate no data" for a `null` value (never 0) and the `dataPeriod` in the name of a non-null value
     - _Requirements: 3.11, 3.15, 4.2, 4.3_
 
-  - [~] 15.6 Write accessible-name unit tests `tests/ui/accessible-name.test.ts`
+  - [x] 15.6 Write accessible-name unit tests `tests/ui/accessible-name.test.ts`
     - An estimated value, a "same in all scenarios" value and "no value"
     - _Requirements: 19.8, 4.2, 4.3_
 
@@ -466,7 +466,7 @@ All code is TypeScript in `strict` mode. Modules imported by the Demo_Script (`s
     - Entry for `lowUseHousingRate` (percent of dwellings, 2 decimals); a `null` value gets no class and uses the "no value" pattern
     - _Requirements: 3.8, 3.9, 3.10_
 
-  - [~] 15.9 Write Indicator_Class unit tests `tests/ui/indicator-classes.test.ts`
+  - [x] 15.9 Write Indicator_Class unit tests `tests/ui/indicator-classes.test.ts`
     - A value exactly on each bound belongs to the class above; values below the first and above the last bound
     - _Requirements: 19.8, 3.9_
 
@@ -474,7 +474,7 @@ All code is TypeScript in `strict` mode. Modules imported by the Demo_Script (`s
     - **Property 18: Indicator_Class contiguity**
     - **Validates: Requirements 3.8, 3.9**
 
-- [ ] 16. UI components (`src/ui/`)
+- [x] 16. UI components (`src/ui/`)
   - [x] 16.1 Implement the component base and accessibility helpers
     - `Component<V>` and `ComponentFactory<V>` (create once, `update(view)` in place by key, design decision G12)
     - `src/ui/a11y/`: dialog manager (one `<dialog>` with `showModal()`, `aria-labelledby`, focus to the first focusable element, Tab wrap, Escape via `cancel`, focus return to the opener or the Next_Quarter_Action), live region with polite and assertive elements writing only on a new announcement id
@@ -484,13 +484,13 @@ All code is TypeScript in `strict` mode. Modules imported by the Demo_Script (`s
     - Disclosure_Text as DOM text in the header; Planning_Quarter, Displayed_Quarter or "No quarter computed yet", turn number, "Simulation complete: 2015Q1 to 2025Q4"; "Next quarter" and "Fast-forward one year" buttons (Enter and Space), disabled with a text busy state; "Demo game" label; storage warning; version notice; save controls (export, import)
     - _Requirements: 7.3, 7.4, 7.7, 7.10, 7.12, 12.9, 13.8, 14.9, 15.1, 15.2, 16.4_
 
-  - [~] 16.3 Implement the map controls in `src/ui/map/` (**changed 2026-11-18**)
+  - [x] 16.3 Implement the map controls in `src/ui/map/` (**changed 2026-11-18**)
     - **The SVG map is replaced by the City_View of the city-3d spec** (`.kiro/specs/city-3d/`), implemented by Claude Code in `src/ui/city/`: district shapes, outline states, labels, estimate markers, ghosts, resize handling and district keyboard focus (city-3d Requirements 3 to 6). Kiro does not build the SVG map and does not use `d3-geo` in `src/ui/`.
     - **Still done here, as DOM outside the canvas:** the indicator switch (5 radio inputs including Low_Use_Housing_Rate; "No data" text for a `null` value; `dataPeriod` label of a value), the legend with bounds, unit and the "no value" swatch, the indicator text with the quarter or "Real data, 2015Q1", and the Price_To_Income label of 3.7. Build them as one self-contained block that a parent can place anywhere (city-3d Requirement 9).
     - `districtAccessibleName` (task 15) stays: the City_View uses it for its live-region announcement (city-3d Requirement 5.4).
     - _Requirements: 3.3, 3.4, 3.7, 3.10, 3.11, 3.12, 3.18_
 
-  - [~] 16.4 Implement the District_List and District_Panel in `src/ui/panels/`
+  - [x] 16.4 Implement the District_List and District_Panel in `src/ui/panels/`
     - District_List grouped by city, alphabetical within city, selectable by pointer, Enter and Space
     - District_Panel: prompt "Select a district on the map or in the list.", "Real data, 2015Q1" mode, 9 rows with Range_Display, "Real" or "Derived baseline" comparison, difference, "no value", estimate methods, source names or "source not listed", Ghost count with "1 ghost = <Ghost_Size> residents", "Why?" and "About this range" controls (disclosure with `aria-expanded`, Escape hides and refocuses)
     - _Requirements: 4.6, 4.7, 5.2, 5.4, 5.5, 5.6, 5.7, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10, 6.11, 3.7, 3.13_
@@ -502,7 +502,7 @@ All code is TypeScript in `strict` mode. Modules imported by the Demo_Script (`s
     - Inputs are never rewritten while focused; handle `focusRequest` from timeline selection
     - _Requirements: 8.1, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8, 8.9, 8.10, 8.11, 8.12, 8.13, 9.1, 9.2, 9.3, 9.4, 9.7, 9.8, 9.9, 9.11, 10.1, 10.4, 10.5, 10.6, 10.7, 10.8, 11.6, 16.9_
 
-  - [~] 16.6 Implement the Timeline_View in `src/ui/timeline/`
+  - [x] 16.6 Implement the Timeline_View in `src/ui/timeline/`
     - Quarter headings, Event_Cards with date, title, description and source links from their fields, Wikipedia CC BY-SA attribution, Completion_Items, Timeline_Entries with display names and before and after values ("real track (<value>)"), "Major event" label and icon, selectable entries, empty text "No events or policy changes yet."
     - External links with `target="_blank" rel="noopener noreferrer"`
     - _Requirements: 7.9, 11.1, 11.2, 11.3, 11.5, 11.6, 11.10, 15.8, 15.9, 18.13_
@@ -512,20 +512,20 @@ All code is TypeScript in `strict` mode. Modules imported by the Demo_Script (`s
     - The dialog component renders it through the dialog manager
     - _Requirements: 20.1, 20.3, 20.4, 20.5, 20.6, 20.7, 20.8, 5.3_
 
-  - [~] 16.8 Implement the dialogs in `src/ui/dialogs/`
+  - [x] 16.8 Implement the dialogs in `src/ui/dialogs/`
     - Confirmation, import (paste field, error next to the field), export save code and export stored text (read-only field, "Copy" via `navigator.clipboard.writeText`, on rejection select the text and call `reportCopyFailed`), Event_Card dialog for Major_Event stops, demo description with "These adjustments are examples, not recommendations."
     - _Requirements: 7.6, 12.7, 12.8, 12.10, 13.1, 13.6, 13.12, 13.13, 14.10, 14.11, 17.12, 17.14_
 
-  - [~] 16.9 Write Range_Source_View text tests `tests/ui/range-source-text.test.ts`
+  - [x] 16.9 Write Range_Source_View text tests `tests/ui/range-source-text.test.ts`
     - A value with a range lists both sections with equal detail and no Scenario name; a value with equal Result_Range values gives "This value is the same under every parameter assumption in the model."; missing citation or URL gives "No source recorded"
     - _Requirements: 19.14, 20.3, 20.4, 20.5, 20.8_
 
-  - [~] 16.10 Write the component styles in `src/styles/`
+  - [x] 16.10 Write the component styles in `src/styles/`
     - One CSS file per region using only custom properties from `tokens.css`; four outline states, focus indicator, target sizes of 16.6, no horizontal page scroll, layouts per viewport as approved, sticky Turn_Bar, transitions with `--motion-*` tokens only, nothing that flashes
     - _Requirements: 1.8, 4.8, 16.1, 16.2, 16.3, 16.4, 16.6, 16.8, 17.2, 17.3, 17.4, 17.9, 17.11_
 
 - [ ] 17. Wiring
-  - [~] 17.1 Implement the root `src/ui/app.ts`
+  - [x] 17.1 Implement the root `src/ui/app.ts`
     - Mounts the components once; renders `ScreenView` kinds: loading with "<n> of 6 files loaded", load error with one line per failing file and a "Retry" control (pointer and keyboard), start menu ("Continue", "New game", "Load demo" or the 12.5 subset, stored problem with "Export stored text"), Game_Screen regions in reading order
     - No map or panel values and disabled turn controls while a load error shows
     - _Requirements: 2.5, 2.6, 2.7, 2.8, 12.4, 12.5, 12.7, 16.2, 16.3, 17.2_

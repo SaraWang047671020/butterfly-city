@@ -132,6 +132,19 @@ export const UI_STRINGS = {
     },
   },
 
+  mapControls: {
+    switchLabel: 'Map indicator',
+    legendHeading: 'Legend',
+    legendLabel: 'Legend: {indicator}',
+    classBelow: 'Below {bound} {unit}',
+    classBetween: '{low} to {high} {unit}',
+    classAbove: '{bound} {unit} and above',
+    dataPeriods: 'Data period {periods}',
+    textIndicator: 'Indicator: {indicator} ({unit})',
+    textQuarter: 'Displayed quarter: {quarter}',
+    textNoQuarter: 'Displayed quarter: none computed yet',
+  },
+
   policy: {
     heading: 'Policies',
     housing: 'Housing',

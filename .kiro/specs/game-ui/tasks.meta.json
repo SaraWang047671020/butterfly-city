@@ -842,6 +842,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923347
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991119661
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991220986
       }
     ],
     "14.1 Create `src/ui/strings.ts`": [
@@ -866,6 +876,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923428
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991120454
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991221541
       }
     ],
     "15.1 Implement `src/ui/format/number.ts`, `range.ts` and `difference.ts`": [
@@ -890,6 +910,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923475
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991121660
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991222756
       }
     ],
     "15.5 Implement `districtAccessibleName` in `src/ui/a11y/accessible-name.ts`": [
@@ -914,6 +944,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923526
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991266875
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991413679
       }
     ],
     "15.8 Implement `src/ui/map/indicator-classes.ts`": [
@@ -938,6 +978,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923577
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991122893
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991223536
       }
     ],
     "16.1 Implement the component base and accessibility helpers": [
@@ -996,6 +1046,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923682
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991265054
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991411683
       }
     ],
     "16.5 Implement the Policy_Panel and construction rows in `src/ui/panels/`": [
@@ -1020,6 +1080,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923732
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991123458
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991224456
       }
     ],
     "16.7 Implement the Range_Source_View in `src/ui/explain/`": [
@@ -1044,6 +1114,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923778
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991265666
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991412886
       }
     ],
     "16.9 Write Range_Source_View text tests `tests/ui/range-source-text.test.ts`": [
@@ -1051,6 +1131,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923806
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991267644
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991414645
       }
     ],
     "16.10 Write the component styles in `src/styles/`": [
@@ -1058,6 +1148,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923829
+      },
+      {
+        "executionId": "06239c85-923b-4ffa-9173-f3522513a182",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991732057
+      },
+      {
+        "executionId": "06239c85-923b-4ffa-9173-f3522513a182",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991901878
       }
     ],
     "17.1 Implement the root `src/ui/app.ts`": [
@@ -1065,6 +1165,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923852
+      },
+      {
+        "executionId": "06239c85-923b-4ffa-9173-f3522513a182",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991732078
+      },
+      {
+        "executionId": "06239c85-923b-4ffa-9173-f3522513a182",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991901938
       }
     ],
     "17.2 Implement `src/main.ts` and `index.html`": [
@@ -1205,6 +1315,46 @@
         "executionId": "edfffd91-7c57-4c8e-af24-9c0c7ef57a50",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794987892243
+      }
+    ],
+    "13. Token_File and the style test (Phase C, after task 12)": [
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991221002
+      }
+    ],
+    "14. UI_Strings_Module": [
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991221572
+      }
+    ],
+    "16.3 Implement the map controls in `src/ui/map/` (**changed 2026-11-18**)": [
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991265011
+      },
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991410894
+      }
+    ],
+    "15. Pure UI functions (tested in Node)": [
+      {
+        "executionId": "5abb6e96-8f33-41cf-8dec-8202270824ec",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991413695
+      }
+    ],
+    "16. UI components (`src/ui/`)": [
+      {
+        "executionId": "06239c85-923b-4ffa-9173-f3522513a182",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1794991901898
       }
     ]
   }

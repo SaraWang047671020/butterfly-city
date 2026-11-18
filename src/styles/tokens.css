@@ -176,7 +176,18 @@
   --city-landmark-brick: #b0563c;
   --city-landmark-steel: #f2f4f8;
   --city-landmark-light: #ffd27a;
+  --city-landmark-rock: #8a7d6a;
+  --city-landmark-grass: #3f6b3a;
+  --city-landmark-wood: #8a5a34;
+  --city-landmark-water: #9fd6ff;
+  --city-landmark-green-tile: #3f8f6a;
   --city-avatar: #55c1ff;
+  --city-line-BL: #0070bd;
+  --city-line-BR: #c48c31;
+  --city-line-R: #e3002c;
+  --city-line-G: #008659;
+  --city-line-O: #f8b61c;
+  --city-line-Y: #ffdb00;
   --city-motion-intro: 4000ms;
   --city-motion-flight: 1400ms;
   --city-motion-height: 600ms;

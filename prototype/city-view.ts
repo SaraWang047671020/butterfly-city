@@ -55,6 +55,12 @@ const view = mountCityView(document.getElementById('city')!, {
   strings: {
     canvasLabel: '3D city of the 41 districts. Every district is also in the district list.',
     fallback: 'This browser cannot show the 3D city. Use the district list to select a district.',
+    metro: {
+      prompt: '{station} station. Press E or',
+      button: 'Take the metro',
+      title: 'Metro from {station}: choose a station',
+      here: '{station} (you are here)',
+    },
   },
   selectDistrict: (code) => {
     session = { ...session, selectedDistrict: code };

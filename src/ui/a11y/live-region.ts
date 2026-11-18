@@ -1,5 +1,6 @@
 import type { Announcement } from '../../types/view.ts';
 import type { Component } from '../component.ts';
+import '../../styles/a11y.css';
 
 /** Pure: a live region writes only when the announcement id is new (Requirements 17.7, 17.8). */
 export function isNewAnnouncement(lastId: number | null, next: Announcement | null): next is Announcement {

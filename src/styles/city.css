@@ -85,3 +85,77 @@
 .city-view.is-walking .city-label {
   display: none;
 }
+
+.city-station-label {
+  color: var(--color-text-primary);
+  font: var(--font-weight-semibold) var(--font-size-xs) / 1 var(--font-sans);
+  text-shadow: 0 0 6px var(--color-bg-page), 0 0 2px var(--color-bg-page);
+  white-space: nowrap;
+}
+
+/* Metro prompt in Walk_Mode (city-3d 8.6). */
+.city-metro-prompt {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--space-7) * 3);
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-panel);
+  color: var(--color-text-primary);
+  font: var(--font-size-sm) / var(--line-height-normal) var(--font-sans);
+}
+
+.city-metro-prompt[hidden] {
+  display: none;
+}
+
+.city-metro-prompt button,
+.city-metro-list button {
+  min-height: var(--target-comfortable);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-raised);
+  color: var(--color-text-primary);
+  font: inherit;
+}
+
+.city-metro-list {
+  display: grid;
+  gap: var(--space-4);
+  max-height: 60vh;
+  overflow: auto;
+}
+
+.city-metro-list h3 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-md);
+}
+
+.city-metro-list ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Transition between stations: a fade to the page colour over --city-motion-flight. */
+.city-fade {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg-page);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--city-motion-flight);
+}
+
+.city-fade.is-on {
+  opacity: 1;
+}

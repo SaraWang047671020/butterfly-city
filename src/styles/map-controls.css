@@ -1,0 +1,117 @@
+/* Map controls: indicator switch, legend, indicator text, Price_To_Income label. Tokens only; no page layout or position. */
+
+.map-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.map-controls p,
+.map-controls h3,
+.map-controls ul {
+  margin: 0;
+  padding: 0;
+}
+
+.map-switch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-md);
+}
+
+.map-switch__legend {
+  padding: 0 var(--space-1);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.map-switch__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-comfortable);
+  cursor: pointer;
+}
+
+.map-switch__input {
+  flex: none;
+  width: var(--target-min);
+  height: var(--target-min);
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.map-switch__input:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.map-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.map-legend__heading {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.map-legend__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  list-style: none;
+}
+
+.map-legend__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.map-legend__swatch {
+  flex: none;
+  width: var(--space-5);
+  height: var(--space-4);
+  background: var(--swatch-color);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+}
+
+/* "No value" pattern: diagonal marks, so the meaning does not rest on colour alone. */
+.map-legend__swatch--nodata {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--color-nodata-fill) 0 var(--space-1),
+    var(--color-nodata-mark) var(--space-1) calc(var(--space-1) + 1px)
+  );
+}
+
+.map-legend__period,
+.map-text__quarter {
+  color: var(--color-text-secondary);
+}
+
+.map-text__indicator {
+  font-weight: var(--font-weight-semibold);
+}
+
+.map-price-label {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.map-price-label[hidden],
+.map-legend__period[hidden] {
+  display: none;
+}

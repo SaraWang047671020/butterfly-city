@@ -18,6 +18,11 @@ import { buildStreetGrid } from './street-grid.ts';
 import { readTokens } from './tokens.ts';
 import { createTraffic } from './traffic.ts';
 import { createWalker } from './walk.ts';
+import { createDialogManager } from '../a11y/dialog.ts';
+import { openNetwork, stationNear, stationsByLine, type OpenNetwork } from './metro/network.ts';
+import { createMetro } from './metro/render.ts';
+import { METRO_DATA } from './metro/station-data.ts';
+import type { MetroStation } from './metro/types.ts';
 
 export type CityMode = 'overview' | 'walk';
 
@@ -28,6 +33,13 @@ export interface CityStrings {
   readonly canvasLabel: string;
   /** Text shown when WebGL is unavailable (city-3d 12.3). */
   readonly fallback: string;
+  /** Metro texts (city-3d 8.6). {station} is replaced by the station name. */
+  readonly metro: {
+    readonly prompt: string;
+    readonly button: string;
+    readonly title: string;
+    readonly here: string;
+  };
 }
 
 export interface CityViewOptions {
@@ -59,6 +71,8 @@ export interface CityView {
 
 const LOW_SHARE = 0.25;
 const DRAG_PX = 5;
+/** District_Code of Zhongzheng District, where Walk_Mode starts when no district is selected (city-3d 8.2). */
+const ZHONGZHENG = '63000050';
 
 export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
   const doc = host.ownerDocument;
@@ -86,13 +100,18 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
   // --- static city
   const statics = o.statics.districts;
   const clearings = landmarkClearings();
+  // Station entrances are kept free of illustrative buildings; they stay walkable.
+  const stationClear = METRO_DATA.stations.map((st) => {
+    const [x, z] = project([st.lon, st.lat]);
+    return { x, z, r: 2.5 };
+  });
   const inputs: PlacementInput[] = statics.map((d) => ({
     code: d.code,
     polygons: d.polygons.map((poly) => poly.map((ring) => ring.map((p) => project(p)))),
     center: project(d.centroid),
     areaKm2: d.areaKm2,
     population2015: d.population2015,
-    clearings,
+    clearings: [...clearings, ...stationClear],
   }));
   const placements = inputs.map(placeDistrict);
   const districts = createDistricts(s.scene, statics, tokens);
@@ -105,11 +124,73 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
   const allPolygons = inputs.flatMap((p) => p.polygons);
   const collider = createCollider(
     placements.flatMap((p) => p.buildings.map((b) => ({ x: b.x, z: b.z, hw: b.width / 2, hd: b.depth / 2 }))),
-    clearings.map((c) => ({ x: c.x, z: c.z, r: c.r * 0.7 })),
+    clearings.map((c) => ({ x: c.x, z: c.z, r: c.r * 0.85 })),
     allPolygons,
   );
   const walker = createWalker(s.scene, collider, tokens, doc);
   root.appendChild(walker.joystick);
+
+  // --- metro (city-3d 8.6, 8.7)
+  const metro = createMetro(s.scene, METRO_DATA, tokens);
+  let net: OpenNetwork = openNetwork(METRO_DATA, '2015Q1');
+  metro.setOpen(net);
+  let nearStation: MetroStation | null = null;
+  const prompt = doc.createElement('div');
+  prompt.className = 'city-metro-prompt';
+  prompt.hidden = true;
+  const promptText = doc.createElement('span');
+  const promptButton = doc.createElement('button');
+  promptButton.type = 'button';
+  promptButton.textContent = o.strings.metro.button;
+  prompt.append(promptText, promptButton);
+  const fade = doc.createElement('div');
+  fade.className = 'city-fade';
+  root.append(prompt, fade);
+  const dialog = createDialogManager(doc, () => canvas);
+  root.appendChild(dialog.root);
+  const travel = (to: MetroStation) => {
+    const [x, z] = metro.position(to);
+    const seconds = tokens.seconds('--city-motion-flight');
+    const arrive = () => {
+      walker.start(x + 2, z + 2, 0);
+      fade.classList.remove('is-on');
+      canvas.focus();
+    };
+    if (seconds <= 0) arrive();
+    else {
+      fade.classList.add('is-on');
+      doc.defaultView?.setTimeout(arrive, seconds * 1000);
+    }
+  };
+  const openStations = () => {
+    if (nearStation === null) return;
+    const here = nearStation;
+    const body = doc.createElement('div');
+    body.className = 'city-metro-list';
+    for (const group of stationsByLine(METRO_DATA, net)) {
+      const section = doc.createElement('section');
+      const h = doc.createElement('h3');
+      h.textContent = group.name;
+      const ul = doc.createElement('ul');
+      for (const st of group.stations) {
+        const li = doc.createElement('li');
+        const b = doc.createElement('button');
+        b.type = 'button';
+        b.textContent = st.key === here.key ? o.strings.metro.here.replace('{station}', st.name) : st.name;
+        b.disabled = st.key === here.key;
+        b.addEventListener('click', () => {
+          dialog.close();
+          travel(st);
+        });
+        li.appendChild(b);
+        ul.appendChild(li);
+      }
+      section.append(h, ul);
+      body.appendChild(section);
+    }
+    dialog.open({ title: o.strings.metro.title.replace('{station}', here.name), body, opener: promptButton });
+  };
+  promptButton.addEventListener('click', openStations);
   const rand = mulberry32(20151);
   const traffic = createTraffic(s.scene, grid, tokens, rand);
   const ghosts = createGhosts(
@@ -197,14 +278,19 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     root.classList.toggle('is-walking', mode === 'walk');
     if (mode === 'walk') {
       rig.controls.enabled = false;
-      const m = (selected === null ? undefined : districts.byCode.get(selected)) ?? districts.meshes.find((x) => x.code === introCode);
+      const m = (selected === null ? undefined : districts.byCode.get(selected)) ?? districts.byCode.get(ZHONGZHENG);
       const c = m?.center ?? rig.controls.target;
-      walker.start(c.x, c.z, 0);
+      // Start at the open metro station of the district nearest to its centre, as if coming up from the metro.
+      const exit = m === undefined ? null : stationNear({ ...net, stations: net.stations.filter((st) => st.district === m.code) }, metro.position, c.x, c.z, Infinity);
+      const [sx, sz] = exit === null ? [c.x, c.z] : metro.position(exit);
+      walker.start(sx + 2, sz + 2, 0);
       walker.setVisible(true);
       walkDistrict = selected;
       canvas.focus();
     } else {
       walker.setVisible(false);
+      nearStation = null;
+      prompt.hidden = true;
       rig.controls.enabled = true;
       rig.flyTo(walker.position.clone(), 200, tokens.seconds('--city-motion-flight'));
     }
@@ -217,6 +303,12 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     if (mode === 'walk') {
       if (e.key === 'Escape') {
         setMode('overview');
+        e.preventDefault();
+      } else if (e.key === '+' || e.key === '=' || e.key === '-' || e.key === '_') {
+        walker.zoom(e.key === '+' || e.key === '=' ? 1 / 1.2 : 1.2);
+        e.preventDefault();
+      } else if ((e.key === 'e' || e.key === 'E') && nearStation !== null) {
+        openStations();
         e.preventDefault();
       } else if (walker.key(e.key, true)) e.preventDefault();
       return;
@@ -240,6 +332,35 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     }
   };
   canvas.addEventListener('keydown', onKey);
+  // Follow distance in Walk_Mode: mouse wheel and two-finger pinch (city-3d 8.3).
+  const onWheel = (e: WheelEvent) => {
+    if (mode !== 'walk') return;
+    e.preventDefault();
+    walker.zoom(Math.exp(Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY), 200) * 0.0015));
+  };
+  canvas.addEventListener('wheel', onWheel, { passive: false });
+  const touches = new Map<number, { x: number; y: number }>();
+  let pinch: number | null = null;
+  const onTouchDown = (e: PointerEvent) => {
+    if (e.pointerType === 'touch') touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  };
+  const onTouchMove = (e: PointerEvent) => {
+    if (mode !== 'walk' || !touches.has(e.pointerId)) return;
+    touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (touches.size !== 2) return;
+    const [a, b] = [...touches.values()] as [{ x: number; y: number }, { x: number; y: number }];
+    const span = Math.hypot(a.x - b.x, a.y - b.y);
+    if (pinch !== null && span > 0) walker.zoom(pinch / span);
+    pinch = span;
+  };
+  const onTouchUp = (e: PointerEvent) => {
+    touches.delete(e.pointerId);
+    pinch = null;
+  };
+  canvas.addEventListener('pointerdown', onTouchDown);
+  canvas.addEventListener('pointermove', onTouchMove);
+  canvas.addEventListener('pointerup', onTouchUp);
+  canvas.addEventListener('pointercancel', onTouchUp);
   canvas.addEventListener('keyup', onKeyUp);
   const onBlur = () => {
     const before = focused;
@@ -266,6 +387,12 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
         walkDistrict = here;
         o.selectDistrict(here);
       }
+      const st = stationNear(net, metro.position, walker.position.x, walker.position.z, 5);
+      if (st !== nearStation) {
+        nearStation = st;
+        prompt.hidden = st === null;
+        if (st !== null) promptText.textContent = o.strings.metro.prompt.replace('{station}', st.name);
+      }
     } else rig.update(dt);
     const heightDuration = tokens.seconds('--city-motion-height');
     buildings.step(dt, heightDuration > 0 ? 4 / heightDuration : Infinity);
@@ -273,6 +400,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     ghosts.step(time, motion());
     landmarks.step(time, motion());
     landmarks.setLabelVisibility(s.camera);
+    metro.setLabelVisibility(s.camera);
     districts.setLabelVisibility(s.camera.position.distanceTo(rig.controls.target));
     s.renderer.render(s.scene, s.camera);
     s.labels.render(s.scene, s.camera);
@@ -299,6 +427,8 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
         counts[i] = d.ghosts;
       }
       buildings.setHeightTargets(scales);
+      net = openNetwork(METRO_DATA, next.quarter ?? '2015Q1');
+      metro.setOpen(net);
       ghosts.setCounts(counts);
 
       const nextSelected = next.districts.find((d) => d.selected)?.code ?? null;
@@ -330,6 +460,11 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('keydown', onKey);
       canvas.removeEventListener('keyup', onKeyUp);
+      canvas.removeEventListener('wheel', onWheel);
+      canvas.removeEventListener('pointerdown', onTouchDown);
+      canvas.removeEventListener('pointermove', onTouchMove);
+      canvas.removeEventListener('pointerup', onTouchUp);
+      canvas.removeEventListener('pointercancel', onTouchUp);
       walker.dispose();
       canvas.removeEventListener('blur', onBlur);
       rig.dispose();

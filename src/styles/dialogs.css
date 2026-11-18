@@ -1,0 +1,114 @@
+/* Dialogs block. Tokens only; no page layout or position (the browser places the modal dialog in the top layer). */
+.ui-dialog {
+  max-width: 100%;
+  padding: var(--space-4);
+  color: var(--color-text-primary);
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+}
+.ui-dialog-title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+.ui-dialog p,
+.ui-dialog ul {
+  margin: 0;
+}
+.dialog__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.dialog__label {
+  font-weight: var(--font-weight-semibold);
+}
+.dialog__textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  background: var(--color-bg-page);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  overflow-wrap: anywhere;
+}
+.dialog__error {
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-risk-text);
+  background: var(--color-risk-bg);
+  border: 1px solid var(--color-risk-line);
+  border-radius: var(--radius-sm);
+}
+.dialog__status,
+.dialog__note,
+.dialog__attribution,
+.dialog__card-date {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+.dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.dialog__button {
+  min-height: var(--target-comfortable);
+  padding: var(--space-2) var(--space-4);
+  font: inherit;
+  color: var(--color-text-primary);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+}
+.dialog__button--primary {
+  color: var(--color-accent-ink);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.dialog__cards,
+.dialog__sources,
+.dialog__demo-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+.dialog__card {
+  padding: var(--space-3);
+  background: var(--color-bg-raised);
+  border-radius: var(--radius-sm);
+}
+.dialog__card-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+}
+.dialog__link {
+  display: inline-block;
+  min-height: var(--target-min);
+  color: var(--color-accent);
+  overflow-wrap: anywhere;
+}
+.ui-dialog button:focus-visible,
+.ui-dialog textarea:focus-visible,
+.ui-dialog a:focus-visible,
+.ui-dialog:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+.dialog__button {
+  transition: background-color var(--motion-fast);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dialog__button {
+    transition: none;
+  }
+}

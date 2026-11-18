@@ -12,7 +12,7 @@ const ALLOWED_JSM = new Set([
   'three/examples/jsm/renderers/CSS2DRenderer.js',
   'three/examples/jsm/utils/BufferGeometryUtils.js',
 ]);
-const PURE = ['projection.ts', 'geometry.ts', 'random.ts', 'street-grid.ts', 'placement.ts', 'routing.ts', 'focus-order.ts', 'colours.ts', 'collision.ts'];
+const PURE = ['projection.ts', 'geometry.ts', 'random.ts', 'street-grid.ts', 'placement.ts', 'routing.ts', 'focus-order.ts', 'colours.ts', 'collision.ts', 'metro/network.ts', 'metro/types.ts', 'metro/station-data.ts'];
 
 function listTs(dir: string): string[] {
   const out: string[] = [];

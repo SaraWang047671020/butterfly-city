@@ -7,6 +7,7 @@ import { reconcileKeyed, setAttr, setText, type Component } from '../component.t
 import { formatNumber } from '../format/number.ts';
 import { fillTemplate, UI_STRINGS } from '../strings.ts';
 import { createConstructionRows } from './construction-rows.ts';
+import '../../styles/panels.css';
 import {
   carriedProblemText,
   checkMessage,

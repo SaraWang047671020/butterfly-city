@@ -42,6 +42,11 @@ describe('Landmark_Table (city-3d 7.1, 7.3)', () => {
     }
   });
 
+  it('every one of the 41 districts has at least one Landmark (user decision 2026-11-18)', () => {
+    const covered = new Set(LANDMARKS.map((l) => l.district));
+    expect(districts.filter((d) => !covered.has(d.code)).map((d) => d.name)).toEqual([]);
+  });
+
   it('names no politician (neutrality.md)', () => {
     for (const l of LANDMARKS) expect(l.name).not.toMatch(/Chiang|Sun Yat-sen|Memorial/i);
   });

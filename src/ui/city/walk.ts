@@ -9,8 +9,12 @@ export const AVATAR_RADIUS = 0.5;
 const WALK_SPEED = 4; // world units per second (game scale)
 const RUN_SPEED = 10;
 const TURN_SPEED = 2.4; // radians per second
-const CAMERA_BACK = 7;
-const CAMERA_UP = 3.2;
+/** Follow distance limits in world units; the player changes the distance with the wheel, + and − or a pinch. */
+export const CAMERA_MIN = 2.5;
+export const CAMERA_MAX = 60;
+const CAMERA_START = 7;
+/** Above this follow distance the camera looks down from over the roofs. */
+const ROOF_VIEW = 12;
 const AVATAR_SCALE = 1.4;
 
 export interface WalkInput {
@@ -27,6 +31,8 @@ export interface Walker {
   /** Moves the Avatar and the camera; `snap` places the camera without easing (reduced motion). */
   update(dt: number, camera: THREE.PerspectiveCamera, snap: boolean): void;
   key(key: string, down: boolean): boolean;
+  /** Multiplies the follow distance by `factor`, kept within CAMERA_MIN … CAMERA_MAX. */
+  zoom(factor: number): void;
   readonly joystick: HTMLElement;
   dispose(): void;
 }
@@ -63,6 +69,14 @@ export function createWalker(scene: THREE.Scene, collider: Collider, tokens: Cit
     new THREE.MeshBasicMaterial({ color: tokens.color('--city-avatar'), transparent: true, opacity: 0.8 }),
   );
   ring.visible = false;
+  // A light column over the Avatar, shown in the roof view so the Avatar can be found between the buildings.
+  const beacon = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.35, 0.35, 60, 8, 1, true).translate(0, 30, 0),
+    new THREE.MeshBasicMaterial({ color: tokens.color('--city-avatar'), transparent: true, opacity: 0.55, depthWrite: false, depthTest: false }),
+  );
+  beacon.visible = false;
+  beacon.renderOrder = 10;
+  scene.add(beacon);
   scene.add(ring);
 
   const position = new THREE.Vector3(0, GROUND_DEPTH, 0);
@@ -71,6 +85,7 @@ export function createWalker(scene: THREE.Scene, collider: Collider, tokens: Cit
   const stick = { x: 0, y: 0 };
   const tmp = new THREE.Object3D();
   const camTarget = new THREE.Vector3();
+  let distance = CAMERA_START;
 
   // Touch joystick: a DOM pad; shown by CSS on coarse pointers while Walk_Mode is on.
   const joystick = doc.createElement('div');
@@ -122,6 +137,7 @@ export function createWalker(scene: THREE.Scene, collider: Collider, tokens: Cit
     avatar.setMatrixAt(0, tmp.matrix);
     avatar.instanceMatrix.needsUpdate = true;
     ring.position.set(position.x, GROUND_DEPTH + 0.08, position.z);
+    beacon.position.set(position.x, GROUND_DEPTH, position.z);
   };
 
   return {
@@ -130,12 +146,25 @@ export function createWalker(scene: THREE.Scene, collider: Collider, tokens: Cit
     start(x, z, h) {
       const spot = nearestFree(collider, x, z, AVATAR_RADIUS) ?? [x, z];
       position.set(spot[0], GROUND_DEPTH, spot[1]);
-      heading = h;
+      // Face the most open of eight directions, starting from h, so that the camera does not start against a wall.
+      let best = h;
+      let bestFree = -1;
+      for (let k = 0; k < 8; k++) {
+        const a = h + (k * Math.PI) / 4;
+        let free = 0;
+        while (free < 12 && !collider.blocked(spot[0] + Math.cos(a) * (free + 1), spot[1] - Math.sin(a) * (free + 1), AVATAR_RADIUS)) free++;
+        if (free > bestFree) {
+          best = a;
+          bestFree = free;
+        }
+      }
+      heading = best;
       place();
     },
     setVisible(v) {
       avatar.visible = v;
       ring.visible = v;
+      if (!v) beacon.visible = false;
       if (!v) {
         keys.clear();
         release();
@@ -154,18 +183,27 @@ export function createWalker(scene: THREE.Scene, collider: Collider, tokens: Cit
         time.value += dt * (inp.run ? 1.6 : 1);
       }
       place();
-      // Pull the camera in front of any building between it and the Avatar.
-      let back = CAMERA_BACK;
-      for (let d = 1; d <= CAMERA_BACK; d += 0.5) {
-        if (collider.blocked(position.x - fx * d, position.z - fz * d, 0.3)) {
-          back = Math.max(1.2, d - 0.6);
-          break;
+      // Street view (short distance): the camera stays in front of a building between it and the Avatar.
+      // Roof view (long distance): the camera rises over the roofs and looks down, so buildings do not block it.
+      const roof = distance > ROOF_VIEW;
+      beacon.visible = avatar.visible && roof;
+      let back = distance;
+      if (!roof) {
+        for (let d = 1; d <= distance; d += 0.5) {
+          if (collider.blocked(position.x - fx * d, position.z - fz * d, 0.3)) {
+            back = Math.max(1.2, d - 0.6);
+            break;
+          }
         }
       }
-      camTarget.set(position.x - fx * back, position.y + CAMERA_UP * (back / CAMERA_BACK) + 1, position.z - fz * back);
+      const up = roof ? 6 + distance * 1.1 : 1 + back * 0.45;
+      camTarget.set(position.x - fx * back, position.y + up, position.z - fz * back);
       if (snap) camera.position.copy(camTarget);
       else camera.position.lerp(camTarget, Math.min(1, dt * 5));
       camera.lookAt(position.x + fx * 3, position.y + 1.4, position.z + fz * 3);
+    },
+    zoom(factor) {
+      distance = Math.min(CAMERA_MAX, Math.max(CAMERA_MIN, distance * factor));
     },
     key(key, down) {
       const k = key.toLowerCase();

@@ -52,7 +52,7 @@ export function createGhosts(scene: THREE.Scene, centers: readonly THREE.Vector3
   const perDistrict: Ghost[][] = centers.map((c) =>
     Array.from({ length: MAX_GHOSTS_PER_DISTRICT }, () => {
       const sprite = new THREE.Sprite(material);
-      sprite.scale.set(8, 10, 1);
+      sprite.scale.set(5.5, 7, 1);
       sprite.raycast = () => {}; // receives no pointer events (city-3d 6.5)
       const base = c.clone().add(new THREE.Vector3((rand() - 0.5) * 40, 70 + rand() * 40, (rand() - 0.5) * 40));
       sprite.position.copy(base);
