@@ -1,0 +1,109 @@
+/* Turn_Bar block. Tokens only. No page layout or position: the outer container places it. */
+
+.turn-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-bg-panel);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.turn-bar p {
+  margin: 0;
+}
+
+.turn-bar__disclosure {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.turn-bar__demo {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+.turn-bar__displayed,
+.turn-bar__planning {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+.turn-bar__turn {
+  color: var(--color-text-muted);
+}
+
+.turn-bar__complete {
+  color: var(--color-ok);
+  font-weight: var(--font-weight-semibold);
+}
+
+.turn-bar__controls,
+.turn-bar__save {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.turn-bar__button {
+  min-height: var(--target-comfortable);
+  min-width: var(--target-comfortable);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background-color var(--motion-fast);
+}
+
+.turn-bar__button:disabled {
+  background: var(--color-bg-raised);
+  color: var(--color-text-muted);
+  border-color: var(--color-line);
+  cursor: not-allowed;
+}
+
+.turn-bar__button:focus-visible,
+.turn-bar__import-input:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.turn-bar__import-input {
+  min-width: 12em;
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-bg-raised);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.turn-bar__busy {
+  color: var(--color-text-secondary);
+}
+
+.turn-bar__warning {
+  padding: var(--space-2);
+  color: var(--color-warn);
+  border: 1px solid var(--color-warn);
+  border-radius: var(--radius-sm);
+}
+
+.turn-bar__engine-error {
+  padding: var(--space-2);
+  color: var(--color-risk-text);
+  background: var(--color-risk-bg);
+  border: 1px solid var(--color-risk-line);
+  border-radius: var(--radius-sm);
+}

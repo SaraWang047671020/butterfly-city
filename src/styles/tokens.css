@@ -1,0 +1,191 @@
+/*
+ * Design tokens for Butterfly City.
+ * Source: approved parts of docs/design-proposal/game-ui-proposal.html
+ * (palette and contrast, typography, reduced motion, focus ring and keyboard states).
+ * Custom properties only. No page-layout rules, so components can float over a 3D view.
+ *
+ * Deferred to the 3D redesign (not defined yet):
+ *  - Layout tokens tied to the column layout and the Turn_Bar placement
+ *  - Map casing/selection colors and the legend (class ramps are defined below)
+ *  - Ghost visuals
+ *  - Risk-escalation states (risk cycle timing, escalation overlays)
+ */
+
+:root {
+  /* Surfaces */
+  --color-bg-page: #0a1020;
+  --color-bg-panel: #111a2e;
+  --color-bg-raised: #1a2540;
+
+  /* Lines */
+  --color-line: #7183a8;
+  --color-line-subtle: #2c3a5c;
+
+  /* Text */
+  --color-text-primary: #eaf0fb;
+  --color-text-secondary: #b4c0d9;
+  --color-text-muted: #98a6c4;
+
+  /* Accent and focus */
+  --color-accent: #55c1ff;
+  --color-accent-ink: #06121f;
+  --color-focus: #ffd23f;
+
+  /* Status (always paired with text or an icon, never color alone) */
+  --color-ok: #62e0a0;
+  --color-warn: #ffb454;
+  --color-risk-text: #ffa3aa;
+  --color-risk-bg: #3b0f1a;
+  --color-risk-line: #ff7b86;
+
+  /* Indicator_Class ramps (Design_Proposal section 5, provisional approval 2026-11-18) */
+  --color-seq-0: #3a70ba;
+  --color-seq-1: #2a98b0;
+  --color-seq-2: #4dbb8c;
+  --color-seq-3: #b5d866;
+  --color-seq-4: #f1d35a;
+  --color-seq-5: #f0953f;
+  --color-seq-6: #d9468f;
+  --color-div-0: #7b4fa3;
+  --color-div-1: #9a7bc4;
+  --color-div-2: #c7b5e0;
+  --color-div-3: #d9dde5;
+  --color-div-4: #9ed8c8;
+  --color-div-5: #4fb5a0;
+  --color-div-6: #1b8575;
+  --color-nodata-fill: #2a3350;
+  --color-nodata-mark: #a4b0cc;
+
+  /* Typography */
+  --font-sans: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+  --font-size-map-label: 11px;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.4;
+  --line-height-relaxed: 1.55;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.5);
+
+  /* Target sizes */
+  --target-min: 24px;
+  --target-comfortable: 44px;
+
+  /* Focus ring */
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+  --focus-ring: var(--focus-ring-width) solid var(--color-focus);
+
+  /* Motion */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 400ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-base: 0ms;
+    --motion-slow: 0ms;
+  }
+}
+
+/*
+ * City_View (city-3d spec, approved 2026-11-18 with docs/design-proposal/city-3d-proposal.html).
+ * Read at runtime by src/ui/city/tokens.ts; the City_View holds no colour literal (city-3d 3.4).
+ * Class colours on the ground and buildings are the --color-seq-*, --color-div-* and --color-nodata-* tokens above.
+ */
+:root {
+  --city-sky: #070a18;
+  --city-fog: #0a0e22;
+  --city-water: #0b1430;
+  --city-stars: #cfd6ff;
+  --city-moon: #f3f0d8;
+  --city-moon-light: #aab8ff;
+  --city-ambient-sky: #8090d0;
+  --city-ambient-ground: #101020;
+  --city-outline: #9fb4ff;
+  --city-outline-selected: #ffffff;
+  --city-building-neutral: #9aa0b8;
+  --city-window-warm: #ffb359;
+  --city-window-cool: #bfd9ff;
+  --city-tree: #2f5a44;
+  --city-tree-glow: #0c1a12;
+  --city-road: #14161f;
+  --city-ghost: #dcebff;
+  --city-ghost-eye: #0a0e28;
+  --city-tyre: #111114;
+  --city-glass: #1c2433;
+  --city-headlight: #fff1c4;
+  --city-taillight: #ff3030;
+  --city-handlebar: #333333;
+  --city-rider: #2a2f3d;
+  --city-rider-legs: #22252e;
+  --city-skin: #d9b08c;
+  --city-pants: #2a2d38;
+  --city-hair: #1a1410;
+  --city-car-0: #f2f2f2;
+  --city-car-1: #bfc4cc;
+  --city-car-2: #ffd23f;
+  --city-car-3: #b83a3a;
+  --city-car-4: #3a64b8;
+  --city-car-5: #2b2b30;
+  --city-scooter-0: #f2f2f2;
+  --city-scooter-1: #9fb7d6;
+  --city-scooter-2: #e05a5a;
+  --city-scooter-3: #5ac08a;
+  --city-scooter-4: #f0c050;
+  --city-scooter-5: #333333;
+  --city-shirt-0: #e9e4dc;
+  --city-shirt-1: #8ab0d8;
+  --city-shirt-2: #d88aa0;
+  --city-shirt-3: #9cc48a;
+  --city-shirt-4: #e0b060;
+  --city-shirt-5: #6a6f8a;
+  --city-landmark-glass: #3f6f78;
+  --city-landmark-glass-light: #8fe3d8;
+  --city-landmark-red: #a8322c;
+  --city-landmark-roof-gold: #e0a43a;
+  --city-landmark-roof-dark: #3a3f4a;
+  --city-landmark-stone: #e8e0d0;
+  --city-landmark-brick: #b0563c;
+  --city-landmark-steel: #f2f4f8;
+  --city-landmark-light: #ffd27a;
+  --city-avatar: #55c1ff;
+  --city-motion-intro: 4000ms;
+  --city-motion-flight: 1400ms;
+  --city-motion-height: 600ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --city-motion-intro: 0ms;
+    --city-motion-flight: 0ms;
+    --city-motion-height: 0ms;
+  }
+}

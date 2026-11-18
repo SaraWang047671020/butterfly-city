@@ -26,12 +26,12 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-18, to save Kiro cre
   - [x] 4.4 Unit and property tests of Requirement 13.1 to 13.3
   - [x] 4.5 Boundary test for `three` imports (Requirement 13.4)
 
-- [ ] 5. Rendering modules
-  - [ ] 5.1 `tokens.ts` and the `--city-*` tokens in the Token_File (after game-ui task 13)
-  - [ ] 5.2 `scene.ts`, `districts.ts`, `buildings.ts`
-  - [ ] 5.3 `traffic.ts`, `ghosts.ts`
-  - [ ] 5.4 `camera.ts`, `picking.ts`, keyboard focus and live region (Requirement 5)
-  - [ ] 5.5 `index.ts`: `mountCityView`, subscriptions, reduced motion, pause control, Quality_Level, fallback, lifecycle (Requirements 10, 12)
+- [x] 5. Rendering modules (checked by hand on 2026-11-18 with `prototype/city-view.html`, real data, Engine run to 2019Q2)
+  - [x] 5.1 `tokens.ts` and the `--city-*` tokens in the Token_File (after game-ui task 13)
+  - [x] 5.2 `scene.ts`, `districts.ts`, `buildings.ts`
+  - [x] 5.3 `traffic.ts`, `ghosts.ts`
+  - [x] 5.4 `camera.ts`, `picking.ts`, keyboard focus and live region (Requirement 5)
+  - [x] 5.5 `index.ts`: `mountCityView`, subscriptions, reduced motion, pause control, Quality_Level, fallback, lifecycle (Requirements 10, 12). The DOM buttons for pause and quality are placed in task 6.1; `mountCityView` exposes `setPaused` and `setQuality`.
 
 - [ ] 6. Overlay layout and wiring (after game-ui tasks 16 and 17)
   - [ ] 6.1 City and UI layers; panel containers at ≥ 1024 px; bottom sheets below (Requirement 9)
@@ -40,17 +40,17 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-18, to save Kiro cre
 
 ## Phase 2: Landmarks
 
-- [ ] 7. Landmark_Table and models
-  - [ ] 7.1 `data/config/landmarks.json` with coordinates and sources (Requirement 7.1)
-  - [ ] 7.2 Test of Requirement 7.3
-  - [ ] 7.3 Models: Taipei 101, Grand Hotel, Chiang Kai-shek Memorial Hall, Presidential Office Building, Taipei Main Station, Miramar Ferris wheel, Longshan Temple, Tamsui Lover's Bridge (order of priority; stop when time is up)
-  - [ ] 7.4 Building removal around Landmarks, labels (Requirements 7.2, 7.4)
+- [x] 7. Landmark_Table and models (checked by hand 2026-11-18 with `prototype/city-view.html`)
+  - [x] 7.1 `src/ui/city/landmarks/table.ts` with coordinates and sources (Requirement 7.1); coordinates read from the English Wikipedia coordinates line of each page on 2026-11-18
+  - [x] 7.2 Test of Requirement 7.3 (`tests/ui/city/landmarks.test.ts`, also the clearing of buildings, trees and streets)
+  - [x] 7.3 Models: Taipei 101, Grand Hotel, National Theater and Concert Hall, Presidential Office Building, Taipei Main Station, Dazhi Ferris wheel (turning), Longshan Temple, Tamsui Fisherman's Wharf bridge, Banqiao Station. Changes from the first list (neutrality.md): the Liberty Square pair is shown as the National Theater and Concert Hall, not under a memorial name that carries a politician's name; the Ferris wheel is named by its area, not by the operating company; Banqiao Station added so that New Taipei has two Landmarks.
+  - [x] 7.4 Building, tree and street removal around Landmarks, labels within 150 units (Requirements 7.2, 7.4)
 
 ## Phase 3: Walk_Mode and Metro_Travel
 
-- [ ] 8. Walk_Mode
-  - [ ] 8.1 `collision.ts` and tests
-  - [ ] 8.2 `walk.ts`: Avatar, follow camera, keys, joystick, mode switch, Escape (Requirements 8.1 to 8.4)
+- [x] 8. Walk_Mode (checked by hand 2026-11-18: walking down a Da'an street, collision, follow camera)
+  - [x] 8.1 `collision.ts` and tests (`tests/ui/city/collision.test.ts`, property: a move that starts free never ends blocked)
+  - [x] 8.2 `walk.ts`: Avatar, follow camera (pulled in front of buildings), W A S D and arrows, Shift to run, touch joystick, mode switch, Escape (Requirements 8.1 to 8.4). The DOM toggle button is placed in task 6.1; `mountCityView` exposes `setMode` and `onModeChange`.
 - [ ] 9. Metro_Travel
   - [ ] 9.1 Station_File in the data pipeline, with tests (Requirement 8.5)
   - [ ] 9.2 Data_Loader and Game_Controller support for the Station_File

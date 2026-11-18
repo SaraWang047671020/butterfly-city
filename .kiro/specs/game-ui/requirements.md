@@ -4,7 +4,7 @@
 
 This spec defines the Butterfly City game screen for Historical mode (2015Q1 to 2025Q4). The screen has three parts:
 
-1. **Map**: an SVG map of the 41 districts of Taipei City and New Taipei City, drawn from `districts.json` with `d3-geo`. The player can switch the indicator shown on the map, select a district to see its data for the displayed quarter, and the map keeps an empty layer for ghosts.
+1. **Map** (**replaced 2026-11-18 by the 3D City_View of the city-3d spec**; the text below describes the original plan): an SVG map of the 41 districts of Taipei City and New Taipei City, drawn from `districts.json` with `d3-geo`. The player can switch the indicator shown on the map, select a district to see its data for the displayed quarter, and the map keeps an empty layer for ghosts.
 2. **Turns and saves**: one turn per quarter, a "Next quarter" button and a "Fast-forward one year" button that stops at major events, a save in `localStorage`, export and import of a save code, the policy timeline, and a demo save that has been played into 2021.
 3. **Policy panel**: the 5 policy tools. Each tool shows its cost, lag, lower and upper limit and sources. The budget is recomputed while the player edits, and an adjustment that breaks the budget or a limit cannot be applied. Social housing under construction shows its progress.
 
@@ -33,7 +33,7 @@ Read on 2026-11-17:
 
 ## Glossary
 
-- **App**: the static web application built with Vite and served from the base path `/butterflycity/`.
+- **App**: the static web application built with Vite and served from the base path `/butterfly-city/`.
 - **Game_Screen**: the screen that shows the Map_View, the Turn_Bar and the Policy_Panel together.
 - **Map_View**: the SVG map of the 41 districts in `src/ui/map/`.
 - **District_Panel**: the part of the Game_Screen that shows the data of the Selected_District.
@@ -80,12 +80,13 @@ Read on 2026-11-17:
 - **Range_Display**: the text form of a simulated value: "<central> <unit> (possible range <minimum>–<maximum> <unit>)", or the single value with "same in all scenarios" (Requirement 5.2 and 5.7).
 - **Parameter_Assumption**: one Parameter of `SCENARIO_EFFECT_IDS` in the table that `scenarioTable` returns for one Scenario: its name, value, unit, citation and URL.
 - **Range_Source_View**: the view opened by the "Why?" control of a simulated value that lists the Parameter_Assumptions behind the minimum and the maximum (Requirement 20).
-- **Map_Indicator**: one of the indicators the Map_View can show: Rent_Burden, Price_To_Income, Commute_Time and Population_Change.
+- **Map_Indicator**: one of the indicators the Map_View can show: Rent_Burden, Price_To_Income, Commute_Time, Population_Change and Low_Use_Housing_Rate.
 - **Rent_Burden**: the Engine Output_Indicator `rentBurden`, in percent of household income.
 - **Median_Total_Price**: the district indicator `medianTotalPrice` of `history.json`, in TWD per transaction (see "Current state").
 - **Price_To_Income**: the district house price-to-income ratio in years of income (definition in Requirement 3.5).
 - **Commute_Time**: the Engine Output_Indicator `meanCommuteTime`, in minutes.
 - **Population_Change**: the change of the Engine Output_Indicator `population` of a district since 2015Q1, in percent.
+- **Low_Use_Housing_Rate**: the district indicator `lowUseHousingRate` of `history.json`, in percent of dwellings (data-pipeline Requirement 26). It is real data and is not simulated. A record can be `null` and carries a `dataPeriod` (for example `2023H2`) when it has a value.
 - **Indicator_Class**: one value interval of a Map_Indicator with one fill, used by the Map_View and its legend (Requirement 3.9).
 - **Selected_District**: the district whose data the District_Panel shows.
 - **Ghost_Layer**: an SVG group in the Map_View reserved for ghost visuals.
@@ -144,7 +145,7 @@ Read on 2026-11-17:
 
 #### Acceptance Criteria
 
-1. WHEN the App starts, THE Data_Loader SHALL fetch exactly the 6 Data_Files from the `data/` folder under the base path `/butterflycity/`.
+1. WHEN the App starts, THE Data_Loader SHALL fetch exactly the 6 Data_Files from the `data/` folder under the base path `/butterfly-city/`.
 2. WHEN a Data_File has been fetched, THE Data_Loader SHALL validate it with the validators of `src/data/` (for example `validateDistrictsFile`, `validateHistoryFile`, `validatePolicyTrackFile`) or, for `events.json`, the event-library schema.
 3. WHEN all 6 Data_Files pass validation, THE Data_Loader SHALL check that `districts.json`, `history.json` and the commute-time matrix file contain the same set of 41 District_Codes.
 4. WHEN all 6 Data_Files pass validation and the check of criterion 3, THE Data_Loader SHALL convert the Data_Files into the Engine input types.
@@ -158,11 +159,13 @@ Read on 2026-11-17:
 
 **User Story:** As a player, I want a map of the 41 districts coloured by an indicator I choose, so that I can see where people carry the heaviest burden.
 
+> **Change 2026-11-18 (user decision):** the SVG Map_View is replaced by the 3D City_View of the city-3d spec (`.kiro/specs/city-3d/`). Criteria 1, 2, 13 (marker), 15, 16, 17 and 19 are replaced by city-3d Requirements 3 to 6. Criteria 5, 6 and 14 (Game_Controller) still apply. Criteria 3, 4, 7, 10, 11, 12 and 18 still apply to the DOM controls next to the City_View. Criterion 8 and 9 apply to the City_View colours. Where a remaining criterion says Map_View, read City_View for the 3D parts.
+
 #### Acceptance Criteria
 
 1. THE Map_View SHALL draw one SVG shape per district of `districts.json` (41 shapes) with a `d3-geo` projection fitted so that all 41 shapes lie inside the Map_View at every viewport width from 360 to 1920 CSS pixels.
 2. WHEN the size of the Map_View changes, THE Map_View SHALL redraw the shapes within 500 ms after the last size change and SHALL keep the Map_Indicator, the Selected_District and the Displayed_Quarter.
-3. THE Map_View SHALL offer a control that switches the Map_Indicator between Rent_Burden, Price_To_Income, Commute_Time and Population_Change, and SHALL show Rent_Burden at the start of a new game and the Map_Indicator of the Save when a Save is loaded.
+3. THE Map_View SHALL offer a control that switches the Map_Indicator between Rent_Burden, Price_To_Income, Commute_Time, Population_Change and Low_Use_Housing_Rate, and SHALL show Rent_Burden at the start of a new game and the Map_Indicator of the Save when a Save is loaded.
 4. WHEN the player selects a different Map_Indicator, THE Map_View SHALL update the shape fills, the legend and the indicator text of criterion 18 within 300 ms.
 5. THE Game_Controller SHALL compute the Price_To_Income of a district and quarter in `src/game/` as the Median_Total_Price of that district and quarter ÷ the `householdIncome` of that district and quarter from `history.json`, rounded to 2 decimals, which is the city-level method of the data-pipeline spec applied to one district.
 6. IF the Median_Total_Price of a district and quarter is missing, or its `householdIncome` is missing or zero, THEN THE Game_Controller SHALL give the Price_To_Income of that district and quarter as "no value".
@@ -170,7 +173,7 @@ Read on 2026-11-17:
 8. THE Map_View SHALL fill each district by the Indicator_Class of the central value of the selected Map_Indicator in the Displayed_Quarter.
 9. THE Map_View SHALL use for each Map_Indicator between 4 and 7 contiguous Indicator_Classes, with the lowest class open below and the highest class open above, whose numeric bounds stay the same for all 44 quarters and do not depend on the Player_Policy_Timeline.
 10. THE Map_View SHALL show a legend that lists every Indicator_Class of the selected Map_Indicator with its numeric bounds and unit, and a sample of the "no value" pattern.
-11. IF a district has no value for the selected Map_Indicator in the Displayed_Quarter, THEN THE Map_View SHALL draw the district with the "no value" pattern and SHALL state "no value" in the district's accessible name.
+11. IF a district has no value for the selected Map_Indicator in the Displayed_Quarter, THEN THE Map_View SHALL draw the district with the "no value" pattern and SHALL state "no value" in the district's accessible name. FOR Low_Use_Housing_Rate, a record that is `null` is a district with no value: THE Map_View SHALL draw it grey with the "no value" pattern, SHALL show the text "No data" (also in the District_Panel row and the accessible name) and SHALL never show it as 0 (data-pipeline Requirement 26.11); a value that is not `null` SHALL be labelled with the `dataPeriod` of its record.
 12. WHILE no quarter has been computed, THE Map_View SHALL show the 2015Q1 values of `history.json` and the Derived_Baseline values supplied by the Game_Controller, and SHALL label the map "Real data, 2015Q1".
 13. WHERE a displayed value comes from a record with `estimated: true`, THE Map_View SHALL mark the district with a non-colour estimate marker, SHALL state "estimated" in the district's accessible name, and THE District_Panel SHALL show the estimate method.
 14. THE Game_Controller SHALL mark every Price_To_Income value that is not "no value" as estimated, because every district `householdIncome` record is `estimated: true`, and SHALL pass the estimate methods of its `householdIncome` and Median_Total_Price records to the UI.
@@ -183,6 +186,8 @@ Read on 2026-11-17:
 ### Requirement 4: District selection and accessibility of the map
 
 **User Story:** As a keyboard or screen-reader user, I want to reach and select every district, so that the map does not depend on a mouse or on colour.
+
+> **Change 2026-11-18:** criteria 1, 4, 5, 8 and 9 are replaced by city-3d Requirement 5. Criteria 2 and 3 (accessible name text) are used by the City_View announcement. Criteria 6 and 7 (District_List, prompt) still apply.
 
 #### Acceptance Criteria
 
@@ -421,6 +426,8 @@ Read on 2026-11-17:
 
 ### Requirement 16: Responsive layout
 
+> **Change 2026-11-18:** the layout is the overlay layout of city-3d Requirement 9. Criteria 2 and 5 are replaced by city-3d Requirement 9 (the City_View fills the viewport and districts can be reached by camera and by the District_List). Criterion 7 is replaced by city-3d Requirement 5.7. The other criteria still apply.
+
 **User Story:** As a student on a phone or a teacher on a projector, I want the screen to work at my width, so that I can use every feature.
 
 #### Acceptance Criteria
@@ -470,7 +477,7 @@ Read on 2026-11-17:
 5. THE Test_Suite SHALL check that the values the Game_Controller passes to the UI equal the `runRange` output for at least one district per city and at least two quarters.
 6. THE modules in `src/simulation/` SHALL import nothing from `src/ui/`, `src/game/`, `src/save/` or `src/data/`.
 7. THE modules in `src/` SHALL import nothing from `scripts/`.
-8. THE App SHALL use no UI framework, SHALL build its DOM with plain DOM APIs and SVG, and SHALL have no runtime dependency other than `d3-geo` and packages the user has approved.
+8. THE App SHALL use no UI framework, SHALL build its DOM with plain DOM APIs and SVG, and SHALL have no runtime dependency other than `d3-geo` and packages the user has approved. (Approved 2026-11-18: `three` 0.170.0, used only in `src/ui/city/`, city-3d Requirement 1.3.)
 9. THE Developer SHALL add exactly the packages `vite`, `d3-geo` and `@types/d3-geo`, which the user approved on 2026-11-16, SHALL pin each to an exact version, SHALL commit `package-lock.json`, and SHALL record the approval in `KIRO-LOG.md` with the date 2026-11-16, the three package names and their pinned versions.
 10. THE Developer SHALL add no DOM test package (for example `jsdom` or `happy-dom`); THE Test_Suite SHALL test UI logic through pure functions in Node, and THE Developer SHALL check the DOM by hand under Requirement 19.11.
 11. WHEN a package other than those of criterion 9 is needed, THE Developer SHALL explain to the user why the package is needed and what the alternative is, and SHALL add the package only after the user's explicit approval.

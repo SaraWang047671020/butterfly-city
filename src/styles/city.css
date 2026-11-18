@@ -1,0 +1,87 @@
+/* City_View layout (city-3d Requirement 9). Colours come from tokens.css. */
+.city-view {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--city-sky);
+}
+
+.city-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+.city-canvas.is-pointing {
+  cursor: pointer;
+}
+
+.city-canvas:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: calc(-1 * var(--focus-ring-width));
+}
+
+.city-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.city-label {
+  color: var(--color-text-primary);
+  font: var(--font-weight-regular) var(--font-size-map-label) / 1 var(--font-sans);
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 6px var(--color-bg-page), 0 0 2px var(--color-bg-page);
+  white-space: nowrap;
+}
+
+.city-fallback {
+  position: absolute;
+  inset: auto var(--space-4) 50% var(--space-4);
+  margin: 0;
+  color: var(--color-text-primary);
+  font: var(--font-size-md) / var(--line-height-normal) var(--font-sans);
+  text-align: center;
+}
+
+.city-landmark-label {
+  color: var(--city-landmark-light);
+  font: var(--font-weight-semibold) var(--font-size-xs) / 1 var(--font-sans);
+  text-shadow: 0 0 6px var(--color-bg-page), 0 0 2px var(--color-bg-page);
+  white-space: nowrap;
+}
+
+/* Touch joystick of Walk_Mode (city-3d 8.3): only on coarse pointers while walking. */
+.city-joystick {
+  display: none;
+  position: absolute;
+  left: var(--space-5);
+  bottom: calc(var(--space-7) * 3);
+  width: 120px;
+  height: 120px;
+  border: 2px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-panel);
+  opacity: 0.85;
+  touch-action: none;
+}
+
+.city-joystick-knob {
+  position: absolute;
+  inset: 35px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  pointer-events: none;
+}
+
+@media (pointer: coarse) {
+  .city-view.is-walking .city-joystick {
+    display: block;
+  }
+}
+
+.city-view.is-walking .city-label {
+  display: none;
+}

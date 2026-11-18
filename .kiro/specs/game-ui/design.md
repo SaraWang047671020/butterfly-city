@@ -27,7 +27,7 @@ The design describes structure, state flow, interfaces and view-model types only
 
 - **Demo_Save values are TODO.** The Demo_Base_List and the Demo_Enlarged_List, the Demo_Ghost_Threshold (default 1 Ghost) and the Demo_Rent_Burden_Threshold (default 0.1 percentage points) are set when the real `params.json` exists (Requirement 14, Open Question 15). The fixture-based draft in `requirements.md` is a reference only. The Demo_Script, its checks and its tests are designed here; the generated Demo_Save module is produced only by a successful run on the real files.
 - **`medianTotalPrice`** is a data-pipeline deliverable (data-pipeline Requirement 19, tasks 16 to 21, not yet executed). Until it exists, the Data_Loader reports `history.json` as lacking `medianTotalPrice` (Requirement 2.5) and the App shows the load error. Phase A code and tests use a fixture `history.json` that includes the field.
-- **File formats of `params.json` and `commute-matrix.json`** are not fixed by any built spec. This design fixes the shapes the Data_Loader accepts (Data Models, "Data_File shapes"). The producing task must emit them; `scripts/backtest/adapt.ts` already accepts both.
+- **File format of `params.json`** is not fixed by any built spec. This design fixes the shape the Data_Loader accepts (Data Models, "Data_File shapes"). The producing task must emit it; `scripts/backtest/adapt.ts` already accepts it. The shape of `commute-matrix.json` is fixed by data-pipeline Requirement 24.1 (exactly `codes` and `minutes`) and validated by the existing `validateCommuteMatrix` in `src/data/validate.ts`.
 
 ### Key design decisions
 
@@ -40,7 +40,7 @@ The design describes structure, state flow, interfaces and view-model types only
 | G5 | The controller's limit verdict uses `checkLimit` plus the running-total rule of engine Decision D6 (upper limit on the running city-year total, lower limit only in Q4). A property test checks that it agrees with the Engine's own `limit-exceeded` result. | Gives the 9.2 message before any Engine run, and keeps one rule. |
 | G6 | The Save_Code is `BC1.` + base64url (no padding) of the UTF-8 bytes of a canonical JSON text (object keys sorted at every level, no whitespace). No compression. | Deterministic (13.2) in every browser and in Node, needs no dependency, and uses only the allowed characters (13.1). `CompressionStream` output is implementation-dependent and asynchronous. |
 | G7 | `localStorage` holds the Save_Code string itself under the key `butterflycity.save.v1`. | One codec and one validator for stored saves and imports (12.7, 13.5). "Export stored text" shows the stored string as is. |
-| G8 | At most `MAX_TIMELINE_ENTRIES` = 500 Timeline_Entries per game (provisional). A further Policy_Adjustment is rejected with a message. A test builds a worst-case Save and checks that its code stays at or below 200,000 characters. | Requirement 13.1 bounds the code length; the timeline is otherwise unbounded. **This adds one rejection rule and one UI string that the requirements do not list; it needs user confirmation** (see "Open items"). |
+| G8 | At most `MAX_TIMELINE_ENTRIES` = 500 Timeline_Entries per game (decided 2026-11-18). A further Policy_Adjustment is rejected with a message. A test builds a worst-case Save and checks that its code stays at or below 200,000 characters. | Requirement 13.1 bounds the code length; the timeline is otherwise unbounded. **This adds one rejection rule and one UI string that the requirements do not list; the user confirmed it on 2026-11-18** (see "Open items", item 1). |
 | G9 | Display-only conversions live in `src/game/` (Price_To_Income, Population_Change; Requirement 18.4). Formatting, accessible names and Indicator_Class lookup live in `src/ui/` as pure functions. | Requirements 18.1 and 18.4. They are created only after the design approval (Requirement 1.6). |
 | G10 | The Demo_Save is committed as a generated TypeScript module `src/save/demo-save.generated.ts` that exports the Save_Code and the Demo_Summary as string constants. | Bundled with the build, so the App makes no extra request (Requirements 2.1, 18.12). The test compares the file text with the Demo_Script output (14.7). |
 | G11 | The UI never animates in JavaScript. Every transition uses CSS custom properties from the Token_File, and the Token_File sets every motion duration to `0ms` inside `@media (prefers-reduced-motion: reduce)`. | Requirements 17.9 and 17.10 follow from the media query, including a live setting change without reload. |
@@ -60,7 +60,6 @@ src/
     validate.ts                   # existing validators (unchanged except the file union, see below)
     validate-events.ts            # event-library spec (validateEventsFile)
     validate-params.ts            # validateParamsFile(x): ValidationError[]   (new)
-    validate-commute.ts           # validateCommuteMatrixFile(x, codes): ValidationError[]   (new)
     expected.ts                   # EXPECTED_POLICY_SERIES_IDS, REQUIRED_HISTORY_INDICATORS, DATA_FILE_NAMES, TRACK_FIELDS
     convert.ts                    # pure: data files -> Engine inputs + display data (LoadedData)
     loader.ts                     # loadDataFiles(fetchPort, baseUrl, onProgress): Promise<LoadResult>
@@ -114,7 +113,7 @@ tests/
 
 `src/data/validate.ts` changes in one place: `ValidationError.file` gains `'params.json'` and `'commute-matrix.json'` (the event-library spec adds `'events.json'`).
 
-`package.json` gains `vite`, `d3-geo` (runtime) and `@types/d3-geo` (dev), pinned exactly (Requirement 18.9), and the scripts `"dev": "vite"`, `"build": "vite build"`, `"preview": "vite preview"` and `"demo": "node scripts/build-demo.ts"`. `vite.config.ts` sets `base: '/butterflycity/'`. `tsconfig.json` adds `"types": ["vite/client"]` for `import.meta.env` in `main.ts` only.
+`package.json` gains `vite`, `d3-geo` (runtime) and `@types/d3-geo` (dev), pinned exactly (Requirement 18.9), and the scripts `"dev": "vite"`, `"build": "vite build"`, `"preview": "vite preview"` and `"demo": "node scripts/build-demo.ts"`. `vite.config.ts` sets `base: '/butterfly-city/'`. `tsconfig.json` adds `"types": ["vite/client"]` for `import.meta.env` in `main.ts` only.
 
 ### Dependency rules
 
@@ -232,7 +231,7 @@ export type LoadResult =
 
 export function loadDataFiles(
   fetch: FetchPort,
-  baseUrl: string,                         // '/butterflycity/' from import.meta.env.BASE_URL in main.ts
+  baseUrl: string,                         // '/butterfly-city/' from import.meta.env.BASE_URL in main.ts
   onProgress: (loaded: number) => void,    // 0..6, "n of 6 files loaded" (Requirement 2.8)
   timer: TimerPort,
   timeoutMs?: number,                      // default 15_000 (Requirement 2.5)
@@ -254,7 +253,7 @@ Behaviour:
 Structural validators in the style of `validate.ts` (pure, never throw, return `ValidationError[]`):
 
 - `validateParamsFile(x)`: `{ schemaVersion: 1, parameters: Record<string, ScalarParameter | ScheduleParameter> }`. Checks `kind`, the field types of each entry, finite numbers, non-empty `unit`, `source.citation` and `source.url` strings, `range` shape, `status` in the 4 values. Semantic checks (required ids, value bounds, limits) stay with the Engine's stage 0; an Engine `parameters-invalid` error from the first `runRange` is shown as an Engine_Error (Requirement 7.8).
-- `validateCommuteMatrixFile(x, codes)`: `{ schemaVersion: 1, codes: string[41], minutes: number[41][41] }`, codes ascending, non-negative finite minutes, zero diagonal.
+- `commute-matrix.json` has exactly the keys `codes` and `minutes` (data-pipeline Requirement 24.1) and no `schemaVersion`. The Data_Loader validates it with the existing `validateCommuteMatrix` in `src/data/validate.ts`; this spec adds no second validator (updated 2026-11-18).
 
 #### `convert.ts`
 
@@ -454,7 +453,7 @@ export function toolStatus(registry: RuleRegistry, id: PolicyToolId): 'active' |
 export function unitCostParameterId(rule: ToolRule): string | null;   // the spec with role 'cost'
 ```
 
-Order of the Policy_Panel comes from `POLICY_TOOL_IDS` filtered by domain, which gives exactly the order of Requirement 8.1. `toolStatus` checks `registry.tools.some(r => r.id === id)`; nothing in `src/ui/` lists coming-soon ids (8.2). Coming_Soon_Tool real values are the `policy-track.json` series whose `tool` equals the id, so `sublease` shows `subleaseUnitsMatched` and `holdingTax` shows its three series (8.3).
+Order of the Policy_Panel comes from `POLICY_TOOL_IDS` filtered by domain, which gives exactly the order of Requirement 8.1. The unit shown for each Tool_Field is read from the `unit` of the matching policy series in `policy-track.json` (for example `commuterPass.subsidy` shows "TWD per 30-day pass"). There is no hand-written unit table and no default unit; a series without a `unit` is a data error. `toolStatus` checks `registry.tools.some(r => r.id === id)`; nothing in `src/ui/` lists coming-soon ids (8.2). Coming_Soon_Tool real values are the `policy-track.json` series whose `tool` equals the id, so `sublease` shows `subleaseUnitsMatched` and `holdingTax` shows its three series (8.3).
 
 #### `views.ts`
 
@@ -560,7 +559,7 @@ export interface SaveCodeError {
 | i | `timeline-order` | no Timeline_Entry quarter after `next` | `timeline[3].quarter` |
 | j | `registry` | every `tool` is a Rule_Registry tool id and every `field` one of its editable `fields`; Count_Field values (diffs, before, after) are integers; no duplicate (tool, field, area) series; `after` is `null` exactly for `kind: 'real-track'` | `policy[1].field` |
 | k | `districts` | `area` is a District_Code of a district field, or `Taipei`/`New Taipei` for a city field | `timeline[5].area` |
-| l | `map-indicator` | one of the 4 Map_Indicator ids | `mapIndicator` |
+| l | `map-indicator` | one of the 5 Map_Indicator ids (`MAP_INDICATOR_IDS`: `rentBurden`, `priceToIncome`, `commuteTime`, `populationChange`, `lowUseHousingRate`) | `mapIndicator` |
 | m | `selected-district` | a District_Code or `null` | `selectedDistrict` |
 | n | `demo-flag` | boolean | `demo` |
 | o | `seed` | integer | `seed` |
@@ -617,7 +616,7 @@ export type ComponentFactory<V> = (doc: Document, actions: UiActions) => Compone
 | Component | View model (`src/types/view.ts`) | Requirements |
 |---|---|---|
 | `TurnBar` | `TurnBarView`: planning, displayed, turn number, complete flag, busy, demo label, storage warning, version notice, Disclosure_Text host, save controls state | 7.3, 7.4, 7.7, 7.10, 7.12, 12.9, 13.8, 14.9, 15.1 |
-| `MapView` | `MapViewModel`: indicator id, label mode ("Real data, 2015Q1" or quarter), one `MapDistrictView` per district (code, name, city, central value or null, range, estimated, class index), legend | 3, 4 |
+| `MapView` | `MapViewModel`: indicator id, label mode ("Real data, 2015Q1" or quarter), one `MapDistrictView` per district (code, name, city, central value or null, range, estimated, `dataPeriod` or null, class index), legend | 3, 4 |
 | `DistrictList` | `DistrictListView`: 2 city groups, names sorted, selected code | 4.6 |
 | `DistrictPanel` | `DistrictPanelView`: prompt or 9 `PanelRowView`s | 6 |
 | `PolicyPanel` | `PolicyPanelView`: 2 domains, 5 `ToolView`s, budget, construction rows, carried problem | 8, 9, 10 |
@@ -666,7 +665,7 @@ export function classIndexOf(value: number, bounds: readonly number[]): number; 
 
 `formatNumber` uses `Intl.NumberFormat('en-US', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: true })` and replaces the leading `-` with U+2212; a value that formats to zero (for example `-0.04` at 1 decimal) gives the unsigned zero.
 
-Decimals (Requirement 6.10): `history.json` decimals for rent (1), population (0), MRT entries (0), social housing stock (0); one decimal for Rent_Burden, Commute_Time and Population_Change; 0 for the Ghost count; 2 for Price_To_Income (3.5). The table lives in `src/game/core/views.ts` as `DISPLAY_DECIMALS` and is copied into each row view, so the UI does not need its own copy.
+Decimals (Requirement 6.10): `history.json` decimals for rent (1), population (0), MRT entries (0), social housing stock (0); one decimal for Rent_Burden, Commute_Time and Population_Change; 0 for the Ghost count; 2 for Price_To_Income (3.5) and for Low_Use_Housing_Rate (data-pipeline Requirement 26.2). The table lives in `src/game/core/views.ts` as `DISPLAY_DECIMALS` and is copied into each row view, so the UI does not need its own copy.
 
 `INDICATOR_CLASSES` holds, per Map_Indicator, between 3 and 6 ascending inner bounds (4 to 7 classes), the unit and the decimals for the legend. Class `i` covers `[bounds[i−1], bounds[i])`, class 0 is open below and the last class is open above, so a value on a bound belongs to the higher class (3.9). The bounds are constants: they do not depend on the quarter or the Player_Policy_Timeline. Provisional bounds, to be fixed with the Design_Proposal legend mock after a look at the real 2015Q1–2025Q4 values:
 
@@ -676,6 +675,9 @@ Decimals (Requirement 6.10): `history.json` decimals for rent (1), population (0
 | Price_To_Income | years of income | 8, 10, 12, 14, 16 |
 | Commute_Time | minutes | 30, 40, 50, 60 |
 | Population_Change | percent since 2015Q1 | −10, −5, −2, 0, 2, 5 |
+| Low_Use_Housing_Rate | percent of dwellings | 2, 3, 4, 5, 6 (provisional; fixed with the Design_Proposal after a look at the real values) |
+
+Low_Use_Housing_Rate is the `lowUseHousingRate` indicator of `history.json` (data-pipeline Requirement 26). It is real data only: the Engine does not simulate it, so its `MapDistrictView` has no range and the value is the same for all Scenarios. A record that is `null` (a quarter that no Low_Use_Period covers, or a district without data) gives the value `null` in the view, is drawn grey with the "no value" pattern and the text "No data", and is never shown as 0 (data-pipeline Requirement 26.11). A non-null value is labelled with the `dataPeriod` of its record (for example `2023H2`). `MapDistrictView` carries `dataPeriod: string | null` for this purpose.
 
 #### Dialogs, focus and live regions
 
@@ -1272,7 +1274,7 @@ Requirements 3.1, 3.2, 16 and 17 are checked by hand at 360, 768, 1280 and 1920 
 
 ## Open items
 
-1. **Timeline cap (G8).** A limit of 500 Timeline_Entries per game, with a rejection message, keeps every Save_Code within 200,000 characters. The requirements have no such rule. Needs user confirmation, or an alternative (for example a compact entry encoding with a higher cap).
+1. **Timeline cap (G8). Resolved, decided 2026-11-18.** A limit of 500 Timeline_Entries per game, with a rejection message, keeps every Save_Code within 200,000 characters.
 2. **Limit "reason given in its source" (9.2).** The Parameter_Table has no reason field. The design shows the Parameter's `assumption` text, then its estimate method, then its citation. Confirm, or add a `reason` field to limit Parameters in the `params.json` task.
 3. **File shapes of `params.json` and `commute-matrix.json`.** Fixed in "Data_File shapes" above; the task that produces them must emit these shapes.
 4. **Indicator_Class bounds.** Provisional values above; fixed with the Design_Proposal legend mock.

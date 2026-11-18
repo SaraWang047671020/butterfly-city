@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>City View Harness</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #05070f; color: #e8ecff; font: 13px system-ui, sans-serif; }
+  #city { position: fixed; inset: 0; }
+  #status { position: fixed; left: 12px; bottom: 12px; padding: 6px 10px; background: rgba(12, 16, 36, 0.85); border-radius: 6px; white-space: pre; }
+  #live { position: fixed; left: 12px; top: 12px; padding: 6px 10px; background: rgba(12, 16, 36, 0.85); border-radius: 6px; }
+</style>
+</head>
+<body>
+<div id="city"></div>
+<div id="live" aria-live="polite"></div>
+<div id="status">Loading</div>
+<button id="walk" type="button" style="position:fixed;right:12px;bottom:12px;padding:8px 14px">Walk the streets</button>
+<script type="module" src="./city-view.ts"></script>
+</body>
+</html>

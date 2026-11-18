@@ -55,7 +55,7 @@ The City_View mixes real data with illustrative shapes. The screen says which is
 - **Traffic**: the illustrative cars, scooters and pedestrians that move on the Street_Grid.
 - **Ghost_Figure**: one 3D ghost shown above a district for the simulated Ghost count (Requirement 6).
 - **Landmark**: one simplified model of a real building listed in the Landmark_Table (phase 2).
-- **Landmark_Table**: `data/config/landmarks.json`, the committed list of Landmarks with id, English name, district code, coordinates and coordinate source.
+- **Landmark_Table**: `src/ui/city/landmarks/table.ts`, the committed list of Landmarks with id, English name, district code, coordinates and coordinate source. It is display data bundled with the City_View, not a Data_File (changed 2026-11-18 from `data/config/landmarks.json` so that no extra file is fetched).
 - **Station_File**: `public/data/stations.json`, metro and light-rail stations with coordinates, district, lines and order on each line, produced by the data pipeline (phase 3).
 - **Metro_Travel**: moving the Avatar from one station to another through a station dialog (phase 3).
 - **Citizen_Encounter**: a pedestrian in Walk_Mode that represents one citizen of the story-layer spec and shows the citizen's current text when the player talks to it (phase 4).

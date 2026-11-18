@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "status": "TODO: set with the real params.json (Open Question 15)",
+  "ghostThreshold": 1,
+  "rentBurdenThreshold": 0.1,
+  "base": [
+    { "quarter": "2015Q1", "tool": "rentSubsidy", "field": "amount", "area": "Taipei", "kind": "value", "value": 0 }
+  ],
+  "enlarged": []
+}
