@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Play Loop Proposal</title>
+<style>
+  :root {
+    --bg: #0a1020; --panel: #111a2e; --raised: #1a2540; --line: #7183a8; --line-subtle: #2c3a5c;
+    --text: #eaf0fb; --text2: #b4c0d9; --muted: #98a6c4; --accent: #55c1ff; --accent-ink: #06121f;
+    --focus: #ffd23f; --ok: #62e0a0; --warn: #ffb454; --risk: #ffa3aa;
+    --glass: rgba(17, 26, 46, 0.86);
+    --font: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 var(--font); }
+  main { max-width: 1120px; margin: 0 auto; padding: 32px 16px 80px; }
+  h1 { font-size: 30px; margin: 0 0 4px; }
+  h2 { font-size: 22px; margin: 48px 0 6px; border-top: 1px solid var(--line-subtle); padding-top: 24px; }
+  h3 { font-size: 16px; margin: 20px 0 6px; color: var(--accent); }
+  p, li { color: var(--text2); }
+  .zh { color: var(--text); background: var(--raised); border-left: 3px solid var(--accent); padding: 8px 12px; border-radius: 6px; margin: 8px 0 16px; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  td, th { border-bottom: 1px solid var(--line-subtle); padding: 6px 8px; text-align: left; vertical-align: top; }
+
+  /* ---------- screen frames ---------- */
+  .stage { width: 100%; max-width: 1088px; }
+  .stage .fit { position: relative; width: 100%; aspect-ratio: 1280 / 800; overflow: hidden; border: 1px solid var(--line-subtle); border-radius: 10px; }
+  .screen { position: absolute; left: 0; top: 0; width: 1280px; height: 800px; transform-origin: 0 0; background: #0a1020 center / cover no-repeat; font-size: 14px; color: var(--text); }
+  .screen.overview { background-image: url("play-loop/overview-1280.png"); }
+  .screen.walk { background-image: url("play-loop/walk-1280.png"); }
+  .phone { position: relative; width: 360px; height: 740px; overflow: hidden; border: 1px solid var(--line-subtle); border-radius: 18px; background: #0a1020 center / cover no-repeat; font-size: 14px; flex: 0 0 auto; }
+  .phone.overview { background-image: url("play-loop/overview-1280.png"); background-position: 45% 50%; }
+  .phone.walk { background-image: url("play-loop/walk-1280.png"); background-position: 40% 50%; }
+  .scrim::before { content: ""; position: absolute; inset: 0; background: rgba(5, 9, 20, 0.62); }
+  .cap { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
+
+  /* ---------- game UI ---------- */
+  .glass { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(113, 131, 168, 0.4); }
+  .btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--text); font: 600 14px var(--font); white-space: nowrap; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn.quiet { border-color: var(--line-subtle); color: var(--text2); font-weight: 400; }
+  .btn.sm { min-height: 36px; padding: 0 12px; font-size: 13px; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; background: var(--raised); color: var(--text2); }
+  .tag.ok { color: var(--ok); } .tag.warn { color: var(--warn); }
+  .label { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .num { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+  .turnbar { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 6px 6px 6px 20px; border-radius: 999px; }
+  .turnbar .q { font-size: 20px; font-weight: 700; }
+  .turnbar .step { font-size: 12px; color: var(--muted); line-height: 1.2; }
+  .steps { display: flex; gap: 4px; }
+  .steps i { width: 26px; height: 4px; border-radius: 2px; background: var(--line-subtle); }
+  .steps i.on { background: var(--accent); }
+
+  .cards { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; gap: 12px; }
+  .pcard { width: 220px; padding: 12px 14px; border-radius: 14px; text-align: left; }
+  .pcard .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--raised); color: var(--accent); font-size: 18px; float: left; margin-right: 10px; }
+  .pcard b { display: block; font-size: 15px; }
+  .pcard span { display: block; font-size: 12px; color: var(--text2); }
+  .pcard .bar { clear: both; height: 4px; border-radius: 2px; background: var(--line-subtle); margin-top: 10px; overflow: hidden; }
+  .pcard .bar i { display: block; height: 100%; background: var(--accent); }
+  .pcard.changed { border-color: var(--accent); }
+
+  .tools { position: absolute; right: 16px; bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .tools .btn { justify-content: flex-start; }
+  .note { position: absolute; left: 16px; bottom: 16px; max-width: 250px; padding: 8px 12px; border-radius: 10px; font-size: 11px; color: var(--muted); }
+  .me { position: absolute; left: 16px; top: 14px; display: flex; gap: 10px; align-items: center; padding: 6px 14px 6px 6px; border-radius: 999px; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--raised); display: grid; place-items: center; }
+
+  .dcard { position: absolute; width: 270px; padding: 12px 14px; border-radius: 14px; }
+  .dcard::after { content: ""; position: absolute; left: 30px; bottom: -8px; width: 14px; height: 14px; background: var(--panel); transform: rotate(45deg); border-right: 1px solid rgba(113,131,168,.4); border-bottom: 1px solid rgba(113,131,168,.4); }
+  .dcard h4 { margin: 0; font-size: 17px; }
+  .kv { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line-subtle); font-size: 13px; }
+  .kv:last-of-type { border-bottom: 0; }
+  .diff { color: var(--accent); font-size: 12px; }
+
+  .dialog { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); border-radius: 18px; background: var(--panel); border: 1px solid var(--line-subtle); box-shadow: 0 24px 64px rgba(0,0,0,.5); display: flex; flex-direction: column; max-height: 92%; }
+  .dialog.md { width: 640px; } .dialog.lg { width: 1024px; } .dialog.full { inset: 24px; transform: none; left: 24px; top: 24px; width: auto; height: auto; max-height: none; }
+  .dialog header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 22px 10px; }
+  .dialog header h3 { margin: 0; color: var(--text); font-size: 20px; }
+  .x { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-subtle); background: none; color: var(--text2); font-size: 18px; }
+  .dialog .body { padding: 6px 22px 12px; overflow: hidden; flex: 1; }
+  .dialog footer { display: flex; justify-content: flex-end; gap: 10px; padding: 12px 22px 18px; border-top: 1px solid var(--line-subtle); }
+
+  .stepper { display: flex; gap: 8px; margin: 0 0 14px; }
+  .stepper span { flex: 1; padding: 8px 10px; border-radius: 10px; background: var(--raised); color: var(--muted); font-size: 13px; }
+  .stepper span.on { background: rgba(85,193,255,.15); color: var(--text); outline: 1px solid var(--accent); }
+  .stepper span.done { color: var(--ok); }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .opt { padding: 10px 12px; border-radius: 12px; background: var(--raised); border: 1px solid transparent; font-size: 13px; color: var(--text2); }
+  .opt b { display: block; color: var(--text); font-size: 14px; }
+  .opt.on { border-color: var(--accent); background: rgba(85,193,255,.1); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-subtle); font-size: 13px; color: var(--text2); }
+  .chip.on { border-color: var(--accent); color: var(--text); background: rgba(85,193,255,.12); }
+  .summary { margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: var(--raised); display: flex; gap: 22px; align-items: center; }
+  .big { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .src { font-size: 11px; color: var(--muted); }
+
+  .slider { position: relative; height: 32px; margin: 4px 0; }
+  .slider::before { content: ""; position: absolute; left: 0; right: 0; top: 14px; height: 4px; border-radius: 2px; background: var(--line-subtle); }
+  .slider .fill { position: absolute; top: 14px; height: 4px; border-radius: 2px; background: var(--accent); }
+  .slider .real { position: absolute; top: 6px; width: 2px; height: 20px; background: var(--muted); }
+  .slider .knob { position: absolute; top: 5px; width: 22px; height: 22px; margin-left: -11px; border-radius: 50%; background: var(--text); border: 3px solid var(--accent); }
+  .input { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); font-variant-numeric: tabular-nums; }
+  .preview { padding: 14px 16px; border-radius: 12px; background: rgba(85,193,255,.08); border: 1px solid rgba(85,193,255,.35); }
+  .preview .line { font-size: 17px; font-weight: 600; }
+  .tradeoff { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .tradeoff div { padding: 10px 12px; border-radius: 10px; background: var(--raised); font-size: 12px; color: var(--text2); }
+  .tradeoff b { display: block; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+  .disclosure { margin-top: 10px; padding: 10px 12px; border-radius: 10px; border: 1px dashed var(--line-subtle); color: var(--text2); font-size: 13px; }
+
+  .item { display: flex; gap: 14px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line-subtle); }
+  .item .badge { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; flex: 0 0 auto; font-size: 18px; }
+  .item p { margin: 0; color: var(--text); font-size: 14px; flex: 1; }
+  .item small { display: block; color: var(--muted); font-size: 12px; }
+  .you { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: var(--raised); display: flex; gap: 14px; align-items: center; }
+
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line-subtle); margin: 0 0 12px; }
+  .tabs span { padding: 10px 16px; color: var(--muted); border-bottom: 2px solid transparent; }
+  .tabs span.on { color: var(--text); border-bottom-color: var(--accent); }
+
+  .callout { position: absolute; width: 300px; padding: 14px 16px; border-radius: 14px; background: var(--accent); color: var(--accent-ink); font-size: 14px; box-shadow: 0 12px 32px rgba(0,0,0,.45); }
+  .callout::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 16px; height: 16px; margin-left: -8px; background: var(--accent); transform: rotate(45deg); }
+  .callout .acts { display: flex; justify-content: space-between; margin-top: 10px; font-weight: 600; font-size: 13px; }
+  .ring { position: absolute; border: 3px solid var(--focus); border-radius: 16px; box-shadow: 0 0 0 4000px rgba(5,9,20,.45); }
+
+  .site-label { position: absolute; padding: 3px 10px; border-radius: 999px; background: var(--panel); color: var(--ok); font-size: 12px; font-weight: 600; }
+  .fam { display: flex; gap: 8px; align-items: flex-end; margin: 10px 0; }
+  .fig { width: 30px; border-radius: 15px 15px 6px 6px; }
+  .legal { padding: 10px 12px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line-subtle); font-size: 12px; color: var(--text2); }
+
+  /* phone tweaks */
+  .phone .turnbar { left: 8px; right: 8px; transform: none; top: 8px; padding: 6px 6px 6px 14px; gap: 8px; justify-content: space-between; }
+  .phone .turnbar .q { font-size: 16px; }
+  .phone .cards { left: 8px; right: 8px; transform: none; bottom: 8px; gap: 6px; }
+  .phone .pcard { width: auto; flex: 1; padding: 8px; text-align: center; border-radius: 12px; }
+  .phone .pcard .ic { float: none; margin: 0 auto 4px; }
+  .phone .pcard b { font-size: 12px; } .phone .pcard span { font-size: 10px; }
+  .phone .dialog.full { inset: 0; left: 0; top: 0; border-radius: 0; border: 0; }
+  .phone .dialog header { padding: 14px 16px 6px; } .phone .dialog .body { padding: 4px 16px 10px; }
+  .phone .dialog footer { padding: 10px 16px 14px; }
+</style>
+</head>
+<body>
+<main>
+<h1>Play_Loop_Design_Proposal</h1>
+<p class="muted">play-loop spec, Requirement 1.1 · 2026-11-23 · Claude Code · Backgrounds are screenshots of the deployed City_View with the old panels hidden. Every number on this page is an example to show the layout, not a model result.</p>
+<div class="zh">這份設計稿給你決定「長什麼樣子、放在哪裡」。畫面上的數字都是示意用的範例，不是模型算出來的。每一節下面有中文說明。你可以整份核准，也可以逐節說要改哪裡。</div>
+
+<!-- ============================================================ 1 -->
+<h2>1. Main screen: the city first</h2>
+<div class="zh">主畫面只留四樣東西：上方的回合列（現在第幾季、走到哪一步、下一步按鈕）、左上角的你、下方三張政策卡、右下角的城市工具。其他資訊都收進「City report」。點一個區，旁邊會跳出區域小卡。</div>
+<div class="stage"><div class="fit"><div class="screen overview" data-w="1280">
+  <div class="me glass"><div class="avatar">
+    <svg width="26" height="30" viewBox="0 0 26 30"><circle cx="13" cy="8" r="6" fill="#ffb454"/><rect x="4" y="16" width="18" height="14" rx="7" fill="#55c1ff"/></svg>
+  </div><div><b>Mei</b><div class="src">Nurse · renting in Zhonghe</div></div>
+    <div style="margin-left:10px"><div class="label">Rent</div><div class="num">31.2%</div></div>
+    <div><div class="label">Commute</div><div class="num">38 min</div></div></div>
+
+  <div class="turnbar glass">
+    <div><div class="q">2016 Q3</div><div class="step">Turn 7 of 44</div></div>
+    <div><div class="steps"><i class="on"></i><i></i><i></i></div><div class="step" style="margin-top:4px">Step 1 · Decide</div></div>
+    <button class="btn quiet sm">My life</button>
+    <button class="btn quiet sm">City report</button>
+    <button class="btn primary">Next quarter ▸</button>
+  </div>
+
+  <div class="dcard glass" style="left:430px; top:320px">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div><h4>Zhonghe</h4><div class="src">New Taipei · 2016 Q2</div></div><span class="x" style="display:grid;place-items:center;width:30px;height:30px">×</span></div>
+    <div class="kv"><span>Rent burden</span><span><span class="num">29.8%</span> <span class="diff">−0.4 pt vs real</span></span></div>
+    <div class="kv"><span>Commute time</span><span><span class="num">47 min</span> <span class="diff">same as real</span></span></div>
+    <div class="kv"><span>Your social housing</span><span><span class="tag warn">120 units · ready 2017 Q4</span></span></div>
+    <div style="display:flex;gap:6px;margin-top:8px"><button class="btn sm">Walk here</button><button class="btn quiet sm">Open in report</button></div>
+  </div>
+
+  <div class="cards">
+    <div class="pcard glass changed"><div class="ic">⌂</div><b>Social housing</b><span>+120 units in 1 district</span><div class="bar"><i style="width:62%"></i></div><span style="margin-top:4px">TWD 3.4 bn left in 2016</span></div>
+    <div class="pcard glass"><div class="ic">＄</div><b>Rent subsidy</b><span>Real track</span><div class="bar"><i style="width:62%"></i></div><span style="margin-top:4px">Shares the same budget</span></div>
+    <div class="pcard glass"><div class="ic">⇆</div><b>Commuter pass</b><span>No pass product yet</span><div class="bar"><i style="width:62%"></i></div><span style="margin-top:4px">Available from 2018</span></div>
+  </div>
+
+  <div class="tools"><button class="btn glass sm">🚶 Walk the streets</button><button class="btn glass sm">◐ Colour: change from real</button><button class="btn glass sm">❚❚ Pause motion</button></div>
+  <div class="note glass">Buildings, streets, vehicles and people are illustrative. Initial data and events come from real open data. Policy outcomes are simulated, not predicted.</div>
+</div></div></div>
+<p class="cap">1280 px. Turn_Bar with step indicator and one primary action; Policy_Cards; District_Card at the selected district; the Character in the top-left.</p>
+
+<!-- ============================================================ 2 -->
+<h2>2. Character_Creation</h2>
+<div class="zh">開新局時先建立角色，分四步：名字和外觀、出身、第一份工作、住哪裡。每一步只問一件事。右下角一直顯示「這樣的你，房租占收入幾 %、通勤幾分鐘」，並附上資料出處。左下角有「隨機角色」可以直接開始。</div>
+<div class="stage"><div class="fit"><div class="screen overview scrim" data-w="1280">
+  <div class="dialog full">
+    <header><div><div class="label">New game</div><h3>Who are you in 2015?</h3></div><button class="x">×</button></header>
+    <div class="body">
+      <div class="stepper"><span class="done">✓ 1 · Name and look</span><span class="done">✓ 2 · Where you come from</span><span class="on">3 · Your first job</span><span>4 · Where you live</span></div>
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:20px">
+        <div>
+          <div class="grid4">
+            <div class="opt"><b>Software engineer</b>Builds apps and systems.<div class="src" style="margin-top:6px">TWD 6x,xxx / month</div></div>
+            <div class="opt"><b>Bank clerk</b>Serves customers at a bank.<div class="src" style="margin-top:6px">TWD 6x,xxx / month</div></div>
+            <div class="opt on"><b>Nurse</b>Works shifts on a hospital ward.<div class="src" style="margin-top:6px">TWD 5x,xxx / month</div></div>
+            <div class="opt"><b>Cram school teacher</b>Teaches after-school classes.<div class="src" style="margin-top:6px">TWD 3x,xxx / month</div></div>
+            <div class="opt"><b>Factory technician</b>Runs production machines.<div class="src" style="margin-top:6px">TWD 4x,xxx / month</div></div>
+            <div class="opt"><b>Shop assistant</b>Department store or chain shop.<div class="src" style="margin-top:6px">TWD 4x,xxx / month</div></div>
+            <div class="opt"><b>Restaurant worker</b>Cooks and serves.<div class="src" style="margin-top:6px">TWD 3x,xxx / month</div></div>
+            <div class="opt"><b>Warehouse and delivery</b>Sorts and delivers parcels.<div class="src" style="margin-top:6px">TWD 4x,xxx / month</div></div>
+          </div>
+          <p class="src" style="margin:8px 0 14px">Industry mean of regular monthly earnings, DGBAS earnings survey. Nurse: the health industry mean includes doctors, so it is above a typical nurse's pay.</p>
+          <div class="label" style="margin-bottom:6px">Where do you work?</div>
+          <div class="chips"><span class="chip">Zhongzheng</span><span class="chip">Beitou</span><span class="chip on">Banqiao</span><span class="chip">Linkou</span></div>
+        </div>
+        <div>
+          <div class="opt" style="text-align:center;padding:16px">
+            <svg width="120" height="150" viewBox="0 0 120 150"><circle cx="60" cy="38" r="24" fill="#f1c9a5"/><path d="M36 34 Q60 4 84 34 L84 50 Q60 30 36 50Z" fill="#3a2a22"/><rect x="28" y="70" width="64" height="78" rx="30" fill="#4dbb8c"/></svg>
+            <b>Mei</b><span class="src">she / her · born in New Taipei</span>
+          </div>
+          <div class="summary" style="flex-direction:column;align-items:stretch;gap:8px">
+            <div class="label">You in 2015 Q1</div>
+            <div style="display:flex;gap:18px"><div><div class="big">31.2%</div><div class="src">of income on rent</div></div><div><div class="big">38</div><div class="src">minutes to work</div></div></div>
+            <div class="src">Rent: Zhonghe, TWD xxx per m² (MOI rentals) × 20 m² (assumption). Commute: modelled trip Zhonghe → Banqiao.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer style="justify-content:space-between"><button class="btn quiet">⚄ Random character</button><div style="display:flex;gap:10px"><button class="btn">Back</button><button class="btn primary">Next: where you live</button></div></footer>
+  </div>
+</div></div></div>
+<p class="cap">1280 px, step 3 of 4. On step 4 the primary action becomes "Start my life in 2015".</p>
+<h3>Step 1 and the partner of a later Life_Decision use the same look editor</h3>
+<div class="row">
+  <div class="opt" style="width:340px"><div class="label">Pronouns</div><div class="chips" style="margin:6px 0 10px"><span class="chip on">she / her</span><span class="chip">he / him</span><span class="chip">they / them</span></div>
+  <div class="label">Body · Hair · Colour</div><div class="chips" style="margin-top:6px"><span class="chip on">A</span><span class="chip">B</span><span class="chip">C</span><span class="chip">short</span><span class="chip on">medium</span><span class="chip">long</span><span class="chip">tied</span></div>
+  <p class="src">Your pronouns and look change how you appear and how the game refers to you. They change no number.</p></div>
+</div>
+
+<!-- ============================================================ 3 -->
+<h2>3. Policy_Dialog</h2>
+<div class="zh">點政策卡會打開大視窗。上半部是你最需要的：拉桿、選區、即時試算（多蓋幾戶、花多少錢、哪一季完成、今年還剩多少錢），還有好處和代價各一欄。原本那些單價、上下限、出處都收在最下面「Details and sources」裡，點開才看得到。</div>
+<div class="stage"><div class="fit"><div class="screen overview scrim" data-w="1280">
+  <div class="dialog lg">
+    <header><div><div class="label">Housing · applies from 2016 Q3</div><h3>Social housing construction</h3></div><button class="x">×</button></header>
+    <div class="body">
+      <div style="display:grid;grid-template-columns:300px 1fr;gap:22px">
+        <div>
+          <div class="label" style="margin-bottom:6px">Districts</div>
+          <svg viewBox="0 0 300 200" width="300" height="200" style="background:var(--bg);border-radius:12px;border:1px solid var(--line-subtle)">
+            <path d="M40 40 L120 20 L170 60 L150 110 L90 120 Z" fill="#1a2540" stroke="#7183a8"/>
+            <path d="M150 110 L170 60 L240 70 L260 140 L190 160 Z" fill="#1a2540" stroke="#7183a8"/>
+            <path d="M90 120 L150 110 L190 160 L130 185 L70 165 Z" fill="rgba(85,193,255,.35)" stroke="#55c1ff" stroke-width="2"/>
+            <path d="M40 40 L90 120 L70 165 L20 120 Z" fill="#1a2540" stroke="#7183a8"/>
+            <text x="118" y="150" fill="#eaf0fb" font-size="11">Zhonghe</text>
+          </svg>
+          <div class="chips" style="margin-top:8px"><span class="chip on">Zhonghe +120 ×</span><span class="chip">+ Add district</span></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><b>Zhonghe</b> · units started in 2016</div><span class="input"><span class="num">320</span> units</span></div>
+          <div class="slider"><div class="fill" style="left:0;width:56%"></div><div class="real" style="left:35%"></div><div class="knob" style="left:56%"></div></div>
+          <div style="display:flex;justify-content:space-between" class="src"><span>0 (lower limit)</span><span>real 200 ▏</span><span>400 (upper limit)</span></div>
+          <div class="preview" style="margin-top:12px">
+            <div class="label">Preview</div>
+            <div class="line">+120 units in Zhonghe · ready 2018 Q3</div>
+            <div style="display:flex;gap:24px;margin-top:6px;font-size:13px;color:var(--text2)"><span>Cost <b class="num" style="color:var(--text)">TWD 1.2 bn</b></span><span>Left in 2016 <b class="num" style="color:var(--text)">TWD 3.4 bn</b></span><span>Lag <b class="num" style="color:var(--text)">8 quarters</b></span></div>
+          </div>
+          <div class="tradeoff">
+            <div><b style="color:var(--ok)">Who benefits</b>About 120 renter households in Zhonghe pay a share of market rent once the homes are finished, 8 quarters later.</div>
+            <div><b style="color:var(--warn)">Who bears the cost</b>TWD 1.2 bn of the 2016 budget is no longer available for rent subsidies in either city.</div>
+          </div>
+          <div class="disclosure">▸ Details and sources: unit cost, Lag, limits with citations, real value, construction progress</div>
+        </div>
+      </div>
+    </div>
+    <footer><button class="btn quiet">Set to real value</button><button class="btn">Cancel</button><button class="btn primary">Apply from 2016 Q3</button></footer>
+  </div>
+</div></div></div>
+<p class="cap">1280 px. Slider and input field are one value; a rejected value disables Apply and shows the existing game-ui message under the slider.</p>
+
+<!-- ============================================================ 4 -->
+<h2>4. Quarter_Brief and Go there</h2>
+<div class="zh">按下一季之後，跳出「這一季發生了什麼」。最多三件事，每件都有「Go there」，按了就直接到那裡用走路模式看。下面是「你這一季」：你的房租和通勤，以及跟上一季、跟真實歷史比較。</div>
+<div class="stage"><div class="fit"><div class="screen overview scrim" data-w="1280">
+  <div class="dialog md">
+    <header><div><div class="label">Step 3 · What changed</div><h3>2018 Q3</h3></div><button class="x">×</button></header>
+    <div class="body">
+      <div class="item"><div class="badge" style="background:rgba(98,224,160,.15);color:var(--ok)">⌂</div><p>120 more social homes than in real history are finished in Zhonghe.<small>Your decision of 2016 Q3</small></p><button class="btn sm">Go there</button></div>
+      <div class="item"><div class="badge" style="background:rgba(255,180,84,.15);color:var(--warn)">!</div><p>Major event: TPASS monthly pass starts in both cities.<small>Event card · source linked</small></p><button class="btn sm">Read</button></div>
+      <div class="item"><div class="badge" style="background:rgba(85,193,255,.15);color:var(--accent)">%</div><p>Rent burden in Zhonghe is now 29.1%, 0.6 pt below real history.<small>Change since last quarter: −0.4 pt</small></p><button class="btn sm">Go there</button></div>
+      <div class="you"><div class="avatar"><svg width="26" height="30" viewBox="0 0 26 30"><circle cx="13" cy="8" r="6" fill="#ffb454"/><rect x="4" y="16" width="18" height="14" rx="7" fill="#4dbb8c"/></svg></div>
+        <div style="flex:1"><div class="label">Your quarter</div><div style="font-size:13px">Rent takes <b class="num">30.4%</b> of your income (▼ 0.3 pt since last quarter; 0.6 pt lower than in real history). Your trip to work takes <b class="num">38</b> minutes.</div></div></div>
+    </div>
+    <footer><button class="btn quiet">City report</button><button class="btn primary">Continue</button></footer>
+  </div>
+</div></div></div>
+
+<h3>After Go there: Walk_Mode at the place</h3>
+<div class="stage"><div class="fit"><div class="screen walk" data-w="1280">
+  <div class="turnbar glass"><div><div class="q">2018 Q3</div><div class="step">Walking in Zhonghe</div></div><button class="btn quiet sm">Back to overview</button><button class="btn primary">Continue ▸</button></div>
+  <div class="site-label" style="left:600px;top:260px">120 social homes (yours) · finished 2018 Q3</div>
+  <div class="glass" style="position:absolute;left:50%;bottom:16px;transform:translateX(-50%);padding:10px 16px;border-radius:12px;font-size:13px;color:var(--text2)">WASD or arrows to walk · E to talk or take the metro · scroll to zoom</div>
+</div></div></div>
+<p class="cap">Phase 1 shows the site label and the existing city. The street-level changes (residents, lights, moving vans) come in phase 2.</p>
+
+<!-- ============================================================ 5 -->
+<h2>5. My life: Life_Decisions</h2>
+<div class="zh">每一季都可以打開「My life」做人生決定。左邊是你現在的家人和數字，右邊是可以做的決定。選一個之後，會並排顯示「做」和「不做」的差別再讓你確認。2019 年第 2 季以前，同性伴侶的「Marry」會換成法律說明和出處。</div>
+<div class="stage"><div class="fit"><div class="screen overview scrim" data-w="1280">
+  <div class="dialog lg">
+    <header><div><div class="label">Applies from 2018 Q4</div><h3>My life in 2018 Q4</h3></div><button class="x">×</button></header>
+    <div class="body">
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:22px">
+        <div class="opt" style="padding:16px">
+          <div class="label">Household</div>
+          <div class="fam"><div class="fig" style="height:64px;background:#4dbb8c"></div><div class="fig" style="height:60px;background:#9a7bc4"></div></div>
+          <div style="font-size:13px">Mei (nurse, Banqiao) and Yu (shop assistant, Xinyi), renting 33 m² in Zhonghe</div>
+          <div class="kv" style="margin-top:8px"><span>Rent</span><span class="num">17.9%</span></div>
+          <div class="kv"><span>Commute</span><span class="num">38 min</span></div>
+        </div>
+        <div>
+          <div class="grid4" style="grid-template-columns:repeat(3,1fr)">
+            <div class="opt"><b>Move home</b>Choose a district and whether you rent or live with family.</div>
+            <div class="opt"><b>Change job</b>Choose a new occupation and where you work.</div>
+            <div class="opt on"><b>Marry</b>You and your partner register your marriage.</div>
+            <div class="opt"><b>A child joins</b>Needs space, no income.</div>
+            <div class="opt"><b>A parent moves in</b>Needs space, no earnings in this game.</div>
+            <div class="opt" style="opacity:.6"><b>Partner moves out</b>Income and space leave too.</div>
+          </div>
+          <div class="legal" style="margin-top:12px"><b>Legal fact.</b> Before 24 May 2019, the law of Taiwan did not allow two people of the same sex to register a marriage. From that date, the Act for Implementation of J.Y. Interpretation No. 748 allows it. <span style="color:var(--accent)">Source ↗</span><br><span class="src">Shown in place of the action for a same-sex couple before 2019 Q2. From 2019 Q2 the action is available.</span></div>
+          <div class="summary" style="justify-content:space-between"><div><div class="label">With this decision</div><span class="num">17.9%</span> · <span class="num">38 min</span></div><div><div class="label">Without it</div><span class="num">17.9%</span> · <span class="num">38 min</span></div><div class="src" style="max-width:220px">Marrying changes no number in phase 1. Phase 3 adds the legal rules that depend on it.</div></div>
+        </div>
+      </div>
+    </div>
+    <footer><button class="btn">Cancel</button><button class="btn primary">Confirm</button></footer>
+  </div>
+</div></div></div>
+
+<!-- ============================================================ 6 -->
+<h2>6. City_Report</h2>
+<div class="zh">原本塞在畫面兩邊的面板（區域數據、地圖顏色、時間軸、市民、模型限制），全部收進這個全螢幕報告，用分頁切換，內容不變，只是有足夠的空間好好讀。時間軸會多出你的人生決定，標示「My life」。</div>
+<div class="stage"><div class="fit"><div class="screen overview scrim" data-w="1280">
+  <div class="dialog full">
+    <header><h3>City report · 2018 Q3</h3><button class="x">×</button></header>
+    <div class="body">
+      <div class="tabs"><span>Districts</span><span>Map colours</span><span class="on">Timeline</span><span>People</span><span>Model limits</span></div>
+      <div style="max-width:760px">
+        <div class="label" style="color:var(--accent)">2018 Q3</div>
+        <div class="kv"><span>⚑ <b>Major event</b> · TPASS monthly pass starts</span><span class="src">source ↗</span></div>
+        <div class="kv"><span>⌂ Completed: 120 more social homes than real in Zhonghe</span><span></span></div>
+        <div class="label" style="color:var(--accent);margin-top:14px">2017 Q2</div>
+        <div class="kv"><span>Rent subsidy · households · Taipei: 4,699 → 5,200</span><span class="src">policy</span></div>
+        <div class="kv"><span><span class="tag ok">My life</span> Yu moved in (shop assistant, Xinyi)</span><span></span></div>
+        <div class="label" style="color:var(--accent);margin-top:14px">2016 Q3</div>
+        <div class="kv"><span>Social housing · units started · Zhonghe: 200 → 320</span><span class="src">policy</span></div>
+      </div>
+    </div>
+  </div>
+</div></div></div>
+
+<!-- ============================================================ 7 -->
+<h2>7. First_Play_Guide</h2>
+<div class="zh">第一次玩時，用一個亮色的提示框指著要按的地方，一共五步：政策卡、套用、下一季、Go there、城市報告。提示框只指路，不會幫你按。隨時可以按「Skip guide」跳過，之後也能從城市報告重看。</div>
+<div class="stage"><div class="fit"><div class="screen overview" data-w="1280">
+  <div class="turnbar glass"><div><div class="q">2015 Q1</div><div class="step">Turn 1 of 44</div></div><div><div class="steps"><i class="on"></i><i></i><i></i></div><div class="step" style="margin-top:4px">Step 1 · Decide</div></div><button class="btn quiet sm">My life</button><button class="btn quiet sm">City report</button><button class="btn primary">Next quarter ▸</button></div>
+  <div class="cards">
+    <div class="pcard glass"><div class="ic">⌂</div><b>Social housing</b><span>Real track</span><div class="bar"><i style="width:100%"></i></div><span style="margin-top:4px">TWD 5.5 bn left in 2015</span></div>
+    <div class="pcard glass"><div class="ic">＄</div><b>Rent subsidy</b><span>Real track</span><div class="bar"><i style="width:100%"></i></div></div>
+    <div class="pcard glass"><div class="ic">⇆</div><b>Commuter pass</b><span>No pass product yet</span><div class="bar"><i style="width:100%"></i></div></div>
+  </div>
+  <div class="ring" style="left:298px;top:680px;width:232px;height:108px"></div>
+  <div class="callout" style="left:264px;top:530px"><b>1 of 5</b><br>These cards are your policy tools. Open one to see what it costs and what it changes.<div class="acts"><span>Skip guide</span><span>Open a card to continue</span></div></div>
+</div></div></div>
+
+<!-- ============================================================ 8 -->
+<h2>8. Dialog_Frame: one style for every window</h2>
+<div class="zh">所有視窗都用同一個外框：上方標題和關閉鈕、中間內容、下方一排按鈕（主要按鈕永遠在最右邊）。分三種大小：一般、大、全螢幕。手機上一律全螢幕。開新局、存檔、事件卡、Why? 都會換成這個樣式。</div>
+<div class="stage"><div class="fit"><div class="screen overview scrim" data-w="1280">
+  <div class="dialog md">
+    <header><h3>Start a new game?</h3><button class="x">×</button></header>
+    <div class="body"><p style="margin:0 0 8px">Your current game stays in this browser until the new one replaces it. Export a save code first if you want to keep it.</p><p class="src">The new game starts in 2015 Q1 with every policy on the real track, and asks who you are.</p></div>
+    <footer><button class="btn quiet">Export save code</button><button class="btn">Cancel</button><button class="btn primary">Start new game</button></footer>
+  </div>
+</div></div></div>
+<p class="cap">Sizes: md min(40rem, 100% − gutters), lg min(64rem, …), full. All modal dialogs open with showModal, so they always take clicks.</p>
+
+<!-- ============================================================ 9 -->
+<h2>9. Phone (360 px)</h2>
+<div class="zh">手機上：回合列在最上面，三張政策卡縮小排在最下面，視窗一律全螢幕。區域小卡停在下方，不會蓋住城市中間。</div>
+<div class="row">
+  <div>
+    <div class="phone overview">
+      <div class="turnbar glass"><div><div class="q">2016 Q3</div><div class="step">Step 1 · Decide</div></div><button class="btn quiet sm">☰</button><button class="btn primary sm">Next ▸</button></div>
+      <div class="dcard glass" style="left:8px;right:8px;width:auto;bottom:112px"><div style="display:flex;justify-content:space-between"><h4>Zhonghe</h4><span>×</span></div><div class="kv"><span>Rent burden</span><span class="num">29.8% <span class="diff">−0.4 pt</span></span></div><div style="display:flex;gap:6px;margin-top:6px"><button class="btn sm">Walk here</button><button class="btn quiet sm">Report</button></div></div>
+      <div class="cards"><div class="pcard glass changed"><div class="ic">⌂</div><b>Housing</b><span>+120</span></div><div class="pcard glass"><div class="ic">＄</div><b>Subsidy</b><span>Real</span></div><div class="pcard glass"><div class="ic">⇆</div><b>Pass</b><span>—</span></div></div>
+    </div>
+    <p class="cap">Main screen</p>
+  </div>
+  <div>
+    <div class="phone">
+      <div class="dialog full"><header><div><div class="label">Housing</div><h3 style="font-size:17px">Social housing</h3></div><button class="x">×</button></header>
+        <div class="body"><div class="chips" style="margin-bottom:8px"><span class="chip on">Zhonghe +120 ×</span><span class="chip">+ District</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span>Units 2016</span><span class="input"><span class="num">320</span></span></div>
+          <div class="slider"><div class="fill" style="left:0;width:56%"></div><div class="real" style="left:35%"></div><div class="knob" style="left:56%"></div></div>
+          <div class="preview"><div class="label">Preview</div><div class="line" style="font-size:15px">+120 units · ready 2018 Q3</div><div class="src">TWD 1.2 bn · TWD 3.4 bn left in 2016</div></div>
+          <div class="tradeoff" style="grid-template-columns:1fr"><div><b style="color:var(--ok)">Who benefits</b>About 120 renter households in Zhonghe, from 2018 Q3.</div><div><b style="color:var(--warn)">Who bears the cost</b>TWD 1.2 bn less for rent subsidies in 2016.</div></div>
+          <div class="disclosure">▸ Details and sources</div></div>
+        <footer><button class="btn">Cancel</button><button class="btn primary">Apply</button></footer></div>
+    </div>
+    <p class="cap">Policy_Dialog, full screen</p>
+  </div>
+  <div>
+    <div class="phone">
+      <div class="dialog full"><header><div><div class="label">What changed</div><h3 style="font-size:17px">2018 Q3</h3></div><button class="x">×</button></header>
+        <div class="body">
+          <div class="item"><div class="badge" style="background:rgba(98,224,160,.15);color:var(--ok)">⌂</div><p style="font-size:13px">120 more social homes than real are finished in Zhonghe.</p></div><button class="btn sm" style="margin:-4px 0 8px 52px">Go there</button>
+          <div class="item"><div class="badge" style="background:rgba(85,193,255,.15);color:var(--accent)">%</div><p style="font-size:13px">Rent burden in Zhonghe is 29.1%, 0.6 pt below real.</p></div><button class="btn sm" style="margin:-4px 0 8px 52px">Go there</button>
+          <div class="you" style="flex-direction:column;align-items:flex-start;gap:4px"><div class="label">Your quarter</div><div style="font-size:13px">Rent <b class="num">30.4%</b> of income (▼ 0.3 pt). Trip to work <b class="num">38</b> min.</div></div>
+        </div>
+        <footer><button class="btn primary" style="flex:1;justify-content:center">Continue</button></footer></div>
+    </div>
+    <p class="cap">Quarter_Brief</p>
+  </div>
+</div>
+
+<!-- ============================================================ 10 -->
+<h2>10. What to approve</h2>
+<div class="zh">請逐項回覆「核准」或「要改」。全部核准的話回一句「全部核准」就可以。</div>
+<table>
+  <tr><th>#</th><th>Item</th><th>中文</th></tr>
+  <tr><td>1</td><td>Main screen: Turn_Bar with steps, Character chip, three Policy_Cards, city tools, District_Card</td><td>主畫面配置</td></tr>
+  <tr><td>2</td><td>Character_Creation in four steps with the live numbers and Random character</td><td>建立角色四步驟</td></tr>
+  <tr><td>3</td><td>Policy_Dialog: slider, district picker, Preview, trade-off pair, details disclosure</td><td>政策視窗</td></tr>
+  <tr><td>4</td><td>Quarter_Brief with Go there, and the Walk_Mode arrival</td><td>城市快報和走過去看</td></tr>
+  <tr><td>5</td><td>My life dialog with the with / without comparison and the legal fact</td><td>人生決定視窗</td></tr>
+  <tr><td>6</td><td>City_Report with five tabs</td><td>城市報告</td></tr>
+  <tr><td>7</td><td>First_Play_Guide callout</td><td>新手引導</td></tr>
+  <tr><td>8</td><td>Dialog_Frame sizes and button order</td><td>統一視窗樣式</td></tr>
+  <tr><td>9</td><td>Phone layouts</td><td>手機版</td></tr>
+</table>
+</main>
+<script>
+  // Scale each 1280 × 800 screen to the width of its frame.
+  function fit() {
+    document.querySelectorAll('.fit').forEach((f) => {
+      const s = f.querySelector('.screen');
+      s.style.transform = `scale(${f.clientWidth / 1280})`;
+    });
+  }
+  addEventListener('resize', fit);
+  fit();
+</script>
+</body>
+</html>
