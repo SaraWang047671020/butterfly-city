@@ -41,8 +41,9 @@ function scalar(params: ParameterTable, id: string): { value: number; low: numbe
   return { value: p.value, low: p.range?.low ?? null };
 }
 
+/** Matrix minutes from home to work; null without a workplace or when home and work are the same district (no trip). */
 function commuteMinutes(m: CommuteMatrix, home: string, work: string | null): number | null {
-  if (work === null) return null;
+  if (work === null || work === home) return null;
   const i = m.codes.indexOf(home);
   const j = m.codes.indexOf(work);
   const v = i < 0 || j < 0 ? undefined : m.minutes[i]?.[j];
@@ -118,7 +119,7 @@ export function buildStoryFacts(x: StoryInputs): StoryFacts | null {
     rent:
       centralNow !== null && rentGhost !== null && centralNow > rentGhost.value ? 'ghost' : centralNow !== null && centralNow > rentRisk ? 'atRisk' : 'below',
     commute:
-      p.workCode === null
+      p.workCode === null || p.workCode === p.homeCode
         ? 'none'
         : minutes !== null && commuteGhost !== null && minutes > commuteGhost.value
           ? 'ghost'

@@ -372,6 +372,17 @@ export const UI_STRINGS = {
     },
   },
 
+  // Overlay layout of the Game_Screen (city-3d Requirement 9).
+  layout: {
+    policy: 'Policies',
+    district: 'District',
+    map: 'Map',
+    timeline: 'Timeline',
+    hide: 'Hide',
+    show: 'Show',
+    tabsLabel: 'Panels',
+  },
+
   // Citizen stories (story-layer spec). Story text itself comes from citizens.json.
   story: {
     noValue: 'no value',

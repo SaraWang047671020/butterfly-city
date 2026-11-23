@@ -536,11 +536,11 @@ All code is TypeScript in `strict` mode. Modules imported by the Demo_Script (`s
     - `index.html` with the root element, `lang="en"`, viewport meta and the entry script
     - _Requirements: 2.1, 2.6, 2.9, 12.9, 14.12, 18.8, 18.12_
 
-- [~] 18. Checkpoint - Phase C complete
+- [x] 18. Checkpoint - Phase C complete
   - Run `npx vitest --run`, `npm run typecheck` and `npm run build`; all exit 0 with no skipped, todo or `.only` test. Ensure all tests pass, ask the user if questions arise. Ask the user to run `npm run dev` to look at the screen; the agent does not start it.
 
 - [ ] 19. Real-data integration and the committed Demo_Save (Phase D). **Blocked until the real `params.json`, `commute-matrix.json` and `events.json` exist in `public/data/` and `history.json` has `medianTotalPrice` (data-pipeline tasks 16 to 21).**
-  - [~] 19.1 Set the Demo_Base_List, the Demo_Enlarged_List and both thresholds
+  - [x] 19.1 Set the Demo_Base_List, the Demo_Enlarged_List and both thresholds
     - **TODO (Open Question 15):** write the values into `data/config/demo-adjustments.json` from a recompute with the real `params.json`, changing no Parameter (14.18); the lists satisfy 14.13 to 14.17 and 14.24; set the Demo_Ghost_Threshold (default 1) and the Demo_Rent_Burden_Threshold (default 0.1 percentage points); remove the TODO status
     - Present the lists and thresholds to the user before committing
     - _Requirements: 14.13, 14.14, 14.15, 14.16, 14.17, 14.18, 14.20, 14.21, 14.22, 14.24_

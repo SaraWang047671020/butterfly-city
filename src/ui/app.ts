@@ -1,6 +1,6 @@
 // Root of the UI (game-ui task 17.1). It mounts every component once and updates each from its slice of the view.
 //
-// Layers (see src/styles/app.css, provisional layout):
+// Layers (src/styles/app.css shell; src/styles/layout.css is the approved overlay layout of city-3d Requirement 9):
 //   host
 //   ├─ .ui-city-layer   full-viewport background. EMPTY here: the 3D City_View is mounted into it by the caller.
 //   └─ .ui-overlay      floating blocks above the city layer: screens (loading, load error, start) and the game blocks.
@@ -135,9 +135,51 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   const gameTitle = el(doc, 'h1', 'ui-visually-hidden', gameScreen, A.title);
   gameTitle.tabIndex = -1;
   const headerHost = el(doc, 'header', 'ui-block ui-block--turn-bar', gameScreen);
-  const leftHost = el(doc, 'div', 'ui-column ui-column--left', gameScreen);
-  const rightHost = el(doc, 'div', 'ui-column ui-column--right', gameScreen);
   const block = (parent: Element, name: string): HTMLElement => el(doc, 'div', `ui-block ui-block--${name}`, parent);
+
+  // Floating panels (city-3d Requirement 9). Wide screens: each panel can be hidden and shown from its header.
+  // Narrow screens: a tab row opens one panel at a time as a sheet above the Turn_Bar.
+  const L = UI_STRINGS.layout;
+  const tabs = el(doc, 'nav', 'ui-tabs', gameScreen);
+  tabs.setAttribute('aria-label', L.tabsLabel);
+  const panels: { name: string; tab: HTMLButtonElement; setSheet: (on: boolean) => void }[] = [];
+  const panel = (name: string, title: string, collapsed: boolean): HTMLElement => {
+    const section = el(doc, 'section', `ui-panel ui-panel--${name}`, gameScreen);
+    const head = el(doc, 'div', 'ui-panel__head', section);
+    const heading = el(doc, 'h2', 'ui-panel__title', head, title);
+    heading.id = `ui-panel-title-${name}`;
+    section.setAttribute('aria-labelledby', heading.id);
+    const body = el(doc, 'div', 'ui-panel__body', section);
+    body.id = `ui-panel-body-${name}`;
+    const toggle = button(doc, 'ui-panel__toggle', L.hide, () => setCollapsed(!section.classList.contains('is-collapsed')), head);
+    toggle.setAttribute('aria-controls', body.id);
+    const setCollapsed = (on: boolean): void => {
+      section.classList.toggle('is-collapsed', on);
+      toggle.textContent = on ? L.show : L.hide;
+      toggle.setAttribute('aria-expanded', String(!on));
+    };
+    setCollapsed(collapsed);
+    const tab = button(doc, 'ui-tabs__tab', title, () => {
+      const open = !section.classList.contains('is-sheet');
+      for (const p of panels) p.setSheet(false);
+      if (open) panels.find((p) => p.name === name)?.setSheet(true);
+    }, tabs);
+    tab.setAttribute('aria-controls', section.id = `ui-panel-${name}`);
+    const setSheet = (on: boolean): void => {
+      section.classList.toggle('is-sheet', on);
+      tab.setAttribute('aria-expanded', String(on));
+    };
+    setSheet(false);
+    panels.push({ name, tab, setSheet });
+    return body;
+  };
+  const wide = (doc.defaultView?.innerWidth ?? 0) >= 1600;
+  const districtHost = panel('district', L.district, false);
+  const policyHost = panel('policy', L.policy, false);
+  const mapHost = panel('map', L.map, false);
+  const timelineHost = panel('timeline', L.timeline, !wide);
+  const leftHost = mapHost;
+  const rightHost = districtHost;
 
   // Placeholder: actions are bound in `attach`; components keep a stable reference to this proxy.
   let current: UiActions | null = null;
@@ -167,8 +209,10 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   mountComponent(block(leftHost, 'map-controls'), priceLabel);
   mountComponent(block(leftHost, 'district-list'), districtList);
   mountComponent(block(rightHost, 'district-panel'), districtPanel);
-  mountComponent(block(rightHost, 'policy-panel'), policyPanel);
-  mountComponent(block(rightHost, 'timeline'), timeline);
+  mountComponent(block(policyHost, 'policy-panel'), policyPanel);
+  mountComponent(block(timelineHost, 'timeline'), timeline);
+  // The Illustration_Note sits with the legend (city-3d Requirement 11.1).
+  el(doc, 'p', 'ui-illustration-note', mapHost, UI_STRINGS.city.illustrationNote);
 
   // ---- Dialogs and live regions (available on every screen) ----------------------------------------------------
   const dialogs = createDialogs(doc, actions, {

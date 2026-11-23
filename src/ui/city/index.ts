@@ -510,10 +510,14 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       syncTools();
     });
     pauseBtn.setAttribute('aria-pressed', 'false');
-    const note = doc.createElement('p');
-    note.className = 'city-note';
-    note.textContent = t.illustrationNote;
-    root.append(bar, note);
+    root.append(bar);
+    // The App shows the Illustration_Note next to the legend; the City_View shows it only when given one.
+    if (t.illustrationNote !== '') {
+      const note = doc.createElement('p');
+      note.className = 'city-note';
+      note.textContent = t.illustrationNote;
+      root.append(note);
+    }
     syncTools = () => {
       walkBtn.textContent = mode === 'walk' ? t.overview : t.walk;
       pauseBtn.textContent = paused ? t.resume : t.pause;

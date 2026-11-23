@@ -1,0 +1,249 @@
+/*
+ * Overlay layout of the Game_Screen (city-3d Requirement 9, approved 2026-11-18 with
+ * docs/design-proposal/city-3d-proposal.html). Replaces the provisional grid of app.css for the game screen.
+ * Wide (64rem and up): the city fills the screen; a compact Turn_Bar at the top; floating panels that can be hidden.
+ * Narrow: the Turn_Bar at the bottom, a tab row above it, and one panel at a time as a sheet.
+ * Tokens only.
+ */
+
+.ui-app .ui-game {
+  display: block;
+  position: fixed;
+  inset: 0;
+  height: auto;
+  padding: 0;
+  pointer-events: none;
+}
+
+.ui-app .ui-game > * {
+  pointer-events: auto;
+}
+
+/* ---- Turn_Bar: one compact row ------------------------------------------------------------------------------ */
+.ui-app .ui-block--turn-bar {
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+
+.ui-app .ui-block--turn-bar .turn-bar {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-4);
+  row-gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  box-shadow: var(--shadow-md);
+}
+
+.ui-app .ui-block--turn-bar .turn-bar__disclosure {
+  flex-basis: 100%;
+}
+
+.ui-app .ui-block--turn-bar .turn-bar__displayed,
+.ui-app .ui-block--turn-bar .turn-bar__planning {
+  font-size: var(--font-size-sm);
+}
+
+.ui-app .ui-block--turn-bar .turn-bar__button {
+  padding: var(--space-1) var(--space-3);
+}
+
+/* ---- Panels ---------------------------------------------------------------------------------------------------- */
+.ui-panel {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.ui-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-line-subtle);
+}
+
+.ui-panel__title {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ui-panel__toggle,
+.ui-tabs__tab {
+  min-height: var(--target-min);
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-bg-raised);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.ui-panel__toggle:focus-visible,
+.ui-tabs__tab:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.ui-panel__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+  padding: var(--space-3);
+  overflow-y: auto;
+}
+
+/* Blocks inside a panel do not repeat the card. */
+.ui-panel .ui-block {
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+
+.ui-panel.is-collapsed .ui-panel__body {
+  display: none;
+}
+
+.ui-panel.is-collapsed .ui-panel__head {
+  border-bottom: 0;
+}
+
+.ui-illustration-note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.ui-tabs {
+  display: none;
+}
+
+/* ---- Wide screens --------------------------------------------------------------------------------------------- */
+@media (min-width: 64rem) {
+  .ui-app .ui-block--turn-bar {
+    position: absolute;
+    top: var(--space-3);
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(46rem, calc(100% - 2 * 23rem - 4 * var(--space-3)));
+  }
+
+  .ui-panel {
+    position: absolute;
+    width: 22rem;
+  }
+
+  .ui-panel--policy {
+    top: var(--space-3);
+    left: var(--space-3);
+    max-height: calc(55vh - var(--space-3));
+  }
+
+  .ui-panel--map {
+    left: var(--space-3);
+    bottom: var(--space-3);
+    max-height: calc(45vh - 2 * var(--space-3));
+  }
+
+  .ui-panel--district {
+    top: var(--space-3);
+    right: var(--space-3);
+    width: 24rem;
+    max-height: calc(100vh - 6.5rem);
+  }
+
+  .ui-panel--timeline {
+    right: calc(24rem + 2 * var(--space-3));
+    bottom: calc(var(--target-comfortable) + 2 * var(--space-3));
+    max-height: 40vh;
+  }
+}
+
+/* ---- Narrow screens: Turn_Bar at the bottom, tabs, one sheet --------------------------------------------------- */
+@media (max-width: 63.99rem) {
+  .ui-app .ui-game {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .ui-panel {
+    display: none;
+    order: 1;
+    max-height: 45vh;
+    margin: 0 var(--space-2);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .ui-panel.is-sheet {
+    display: flex;
+  }
+
+  /* On a sheet the panel is always open; the tab closes it. */
+  .ui-panel.is-sheet .ui-panel__body {
+    display: flex;
+  }
+
+  .ui-panel__toggle {
+    display: none;
+  }
+
+  .ui-tabs {
+    display: flex;
+    order: 2;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    background: var(--color-bg-panel);
+    border-top: 1px solid var(--color-line-subtle);
+  }
+
+  .ui-tabs__tab {
+    flex: 1 1 0;
+    min-height: var(--target-comfortable);
+  }
+
+  .ui-tabs__tab[aria-expanded='true'] {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .ui-app .ui-block--turn-bar {
+    order: 3;
+  }
+
+  .ui-app .ui-block--turn-bar .turn-bar {
+    border-radius: 0;
+  }
+
+  /* The city tools move to the top on narrow screens, clear of the bottom dock. */
+  .city-tools {
+    top: var(--space-2);
+    bottom: auto;
+  }
+
+  .city-metro-prompt {
+    top: calc(var(--target-comfortable) + 2 * var(--space-3));
+    bottom: auto;
+  }
+
+  .city-talk-prompt {
+    top: calc(2 * var(--target-comfortable) + 3 * var(--space-3));
+  }
+
+  .city-joystick {
+    bottom: auto;
+    top: 40vh;
+  }
+}

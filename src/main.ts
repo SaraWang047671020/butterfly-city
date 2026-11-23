@@ -15,6 +15,8 @@ import { SaveStore, type StoragePort } from './save/store.ts';
 import { RULE_REGISTRY } from './simulation/registry.ts';
 import { districtAccessibleName } from './ui/a11y/accessible-name.ts';
 import { createApp } from './ui/app.ts';
+// After app.ts so that the approved overlay layout follows the shell styles of app.css.
+import './styles/layout.css';
 import { mountCityView, type CityCitizen, type CityView } from './ui/city/index.ts';
 import { formatNumber } from './ui/format/number.ts';
 import { UI_STRINGS } from './ui/strings.ts';
@@ -138,7 +140,7 @@ async function start(): Promise<void> {
       talk: C.talk,
       tools: {
         label: C.toolsLabel,
-        illustrationNote: C.illustrationNote,
+        illustrationNote: '', // shown in the Map panel of the App, next to the legend
         walk: C.walk,
         overview: C.overview,
         pause: C.pause,

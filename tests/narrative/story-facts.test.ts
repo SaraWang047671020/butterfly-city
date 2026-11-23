@@ -78,7 +78,7 @@ describe('Story_Facts on the real data (real track computed to 2016Q4)', () => {
         expect(facts).not.toBeNull();
         if (facts === null) continue;
         expect(facts.state.comparison).toBe('same');
-        expect(facts.state.commute === 'none').toBe(persona.workCode === null);
+        expect(facts.state.commute === 'none').toBe(persona.workCode === null || persona.workCode === persona.homeCode);
         const burden = Number(facts.values['rentBurden']);
         expect(burden).toBeGreaterThan(1);
         expect(burden).toBeLessThan(200);
