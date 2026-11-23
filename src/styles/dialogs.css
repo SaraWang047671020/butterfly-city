@@ -21,6 +21,7 @@
 .ui-dialog[open] {
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* only the body scrolls */
 }
 .ui-dialog[data-size='lg'] {
   width: min(64rem, calc(100vw - 2 * var(--space-4)));

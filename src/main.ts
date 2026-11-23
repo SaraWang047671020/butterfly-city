@@ -45,7 +45,9 @@ const switchLanguage = (next: Locale): void => {
   }
   location.reload();
 };
-const app = createApp(document, host, { onRetry: () => void start(), onLanguage: switchLanguage });
+// Go_There_Action of the Quarter_Brief: set once the City_View is mounted.
+let goThere: (place: { readonly district: string; readonly kind: 'site' | 'station' | 'centre' }) => void = () => {};
+const app = createApp(document, host, { onRetry: () => void start(), onLanguage: switchLanguage, onGoThere: (place) => goThere(place) });
 let city: CityView | null = null;
 let controller: GameController | null = null;
 
@@ -190,6 +192,7 @@ async function start(): Promise<void> {
     citizens: story.ok ? citizensOf(data, story.value, () => controller) : [],
   });
   const cityView = city;
+  goThere = (place) => cityView.walkTo(place);
   cityView.update(ctl.view().map);
   ctl.subscribe((view) => cityView.update(view.map));
   // The player's social housing in the city: extra units under construction and completed (only differences > 0).

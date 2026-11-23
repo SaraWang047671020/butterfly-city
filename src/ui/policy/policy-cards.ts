@@ -36,6 +36,8 @@ export interface PolicyCardsProps {
   /** Districts by city for the district picker, in display order. */
   readonly districtGroups: readonly { readonly city: string; readonly districts: readonly { readonly code: DistrictCode; readonly name: string }[] }[];
   readonly selected: DistrictCode | null;
+  /** The Quarter_Brief is open; a blocked tool opens after it is closed. */
+  readonly briefOpen?: boolean;
 }
 
 export interface PolicyCards extends Component<PolicyCardsProps> {
@@ -69,6 +71,7 @@ interface FieldParts {
   readonly preview: HTMLElement;
   readonly previewChange: HTMLElement;
   readonly previewBudget: HTMLElement;
+  readonly previewYear: HTMLElement;
   readonly message: HTMLElement;
   readonly setToReal: HTMLButtonElement;
   readonly apply: HTMLButtonElement;
@@ -165,6 +168,7 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
     el(doc, 'p', 'ui-policy-dialog__preview-label', preview, D.preview);
     const previewChange = el(doc, 'p', 'ui-policy-dialog__preview-change', preview);
     const previewBudget = el(doc, 'p', 'ui-policy-dialog__preview-budget', preview);
+    const previewYear = el(doc, 'p', 'ui-policy-dialog__preview-year', preview);
     const message = el(doc, 'p', 'ui-policy-dialog__message', controls);
     message.id = `${id}-message`;
     message.setAttribute('role', 'status');
@@ -185,7 +189,7 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
     input.addEventListener('input', () => actions.editField(key, input.value));
     apply.addEventListener('click', () => actions.applyField(key));
     setToReal.addEventListener('click', () => actions.setToReal(key));
-    return { root: fieldRoot, title, note, controls, slider, lower, real, upper, input, unit, preview, previewChange, previewBudget, message, setToReal, apply, details };
+    return { root: fieldRoot, title, note, controls, slider, lower, real, upper, input, unit, preview, previewChange, previewBudget, previewYear, message, setToReal, apply, details };
   };
 
   const updateField = (parts: FieldParts, f: FieldView, props: PolicyCardsProps): void => {
@@ -233,6 +237,17 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
           ? fillTemplate(D.previewLeft, { year, left })
           : fillTemplate(pv.cost > 0 ? D.previewCostMore : D.previewCostLess, { year, cost: formatAmount(Math.abs(pv.cost)), left }),
       );
+      const y = pv.yearEnd;
+      parts.preview.classList.toggle('is-overrun', y !== null && y.overrun !== null);
+      setText(
+        parts.previewYear,
+        y === null
+          ? ''
+          : y.overrun !== null
+            ? fillTemplate(D.previewOverrun, { year: String(y.year), quarter: quarterLabel(y.overrun.quarter), over: formatAmount(y.overrun.over) })
+            : fillTemplate(D.previewYearEnd, { year: String(y.year), left: formatAmount(y.remaining) }),
+      );
+      parts.previewYear.hidden = y === null;
     }
     const msg = f.draft === null ? null : checkMessage(f.draft.check, name);
     setText(parts.message, msg ?? '');
@@ -347,6 +362,9 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
   };
 
   let lastFocusId: number | null = null;
+  // A Computation_Run stopped on a carried value (game-ui Requirement 9.8): open the tool so the player sees why
+  // Next quarter did nothing and can set the value back (play-loop Requirement 4: every step says what to do next).
+  let lastCarried: string | null = null;
 
   return {
     root,
@@ -386,6 +404,13 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
         b.classList.toggle('is-warning', carriedHere);
       }
       if (dialog.isOpen() && openTool !== null) renderDialog(props);
+
+      const carriedNow = props.policy.carried === null ? null : `${props.policy.carried.key}|${props.policy.carried.quarter}`;
+      if (carriedNow !== null && carriedNow !== lastCarried && props.briefOpen !== true) {
+        const toolId = props.policy.carried?.key.split('|')[0] ?? '';
+        if (tools.some((t) => t.id === toolId) && openTool !== toolId) open(toolId, cardEls.get(toolId) ?? null);
+        lastCarried = carriedNow;
+      } else if (carriedNow === null) lastCarried = null;
 
       // A timeline selection opens the tool and focuses its field (game-ui Requirement 11.6).
       const fr = props.focusRequest;

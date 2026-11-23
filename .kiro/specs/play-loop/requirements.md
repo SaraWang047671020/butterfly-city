@@ -149,6 +149,8 @@ Claude Code implements this spec, not Kiro, to save Kiro credits (recorded in `K
 6. THE Policy_Dialog SHALL show the full detail of game-ui Requirements 8.4 to 8.12 (unit cost, Lag, limits, sources, benefits and costs) behind a "Details and sources" disclosure, with the benefits and costs statements visible without opening it.
 7. THE Apply_Control, the Set_To_Real_Control and every error message of game-ui Requirement 9 SHALL keep their behaviour and text in the Policy_Dialog.
 8. THE Construction_Entries of game-ui Requirement 10 SHALL appear in the social housing Policy_Dialog and in the City_Report.
+9. THE Quick_Preview SHALL also show the calendar year if the edited value is kept to its end: the year-end remaining budget, or the first quarter whose spending exceeds the Annual_Budget or a tool ceiling, with the amount over. This is a warning: Apply keeps the checks of game-ui Requirement 9 (added 2026-11-23, because the Annual_Budget equals the real spending, so a value above the real track carried through the year stops the run in a later quarter).
+10. WHEN a Computation_Run stops on a carried value (game-ui Requirement 9.8), THE Game_Screen SHALL open the Policy_Dialog of that tool with the stop message and the Set_To_Real_Control, after the Quarter_Brief is closed.
 
 ### Requirement 6: Quarter brief
 
@@ -157,8 +159,8 @@ Claude Code implements this spec, not Kiro, to save Kiro credits (recorded in `K
 #### Acceptance Criteria
 
 1. THE Quarter_Brief SHALL show the computed quarter, up to 3 Brief_Items, the Character's quarter, and a "Continue" control.
-2. THE Game_Controller SHALL choose the Brief_Items by a fixed rule: candidates are completions of Construction_Entries, Major_Events and, per district and Map_Indicator, the change since the previous quarter of the difference from real history divided by the outer change bound of the indicator; the 3 candidates with the largest absolute score are shown, completions and Major_Events first.
-3. Each Brief_Item SHALL be filled from a Template of the Character_File's `brief` group with its district, indicator, value, difference from real history and unit, and SHALL pass the checks of Requirement 10.
+2. THE Game_Controller SHALL choose the Brief_Items by a fixed rule: candidates are completions of Construction_Entries, Major_Events and, per district, (a) for each simulated Map_Indicator the change since the previous quarter of the difference from real history divided by the outer change bound of the indicator, and (b) the change since the previous quarter of the number of people above a rent or commute line compared with real history (the Ghost difference in persons) divided by 120 persons; the 3 candidates with the largest score are shown, completions and Major_Events first. ((b) added 2026-11-23: a rent subsidy change often moves rent burden by less than the 0.1 point the brief shows.)
+3. Each Brief_Item SHALL be filled from a Template of the UI_Strings_Module `brief` group (both languages; the English wording is the one approved in the Character_File draft) with its district, indicator, value, difference from real history and unit, and SHALL pass the checks of Requirement 10.
 4. WHERE a Brief_Item has a district, THE Brief_Item SHALL offer a Go_There_Action.
 5. WHEN the player activates a Go_There_Action, THE City_View SHALL enter Walk_Mode with the Avatar at the place of the item (the social housing site, the nearest metro station or the district centre), and THE Quarter_Brief SHALL close.
 6. THE Character's quarter SHALL show the Character_Numbers and their difference from the previous quarter and from real history.

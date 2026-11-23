@@ -2,6 +2,7 @@
 // Pure: no formatting, no Scenario id in any returned value (Requirement 5.3), no simulation formulas.
 // Display-only arithmetic is limited to conversions.ts (Price_To_Income, Population_Change) and rounding for `same`.
 
+import { briefItems, type BriefCandidate } from '../brief.ts';
 import { TRACK_FIELDS } from '../../data/expected.ts';
 import { passPriceId } from '../../data/convert.ts';
 import type { LoadedData } from '../../data/convert.ts';
@@ -19,6 +20,8 @@ import type {
 } from '../../types/data-files.ts';
 import type {
   Announcement,
+  BriefItemView,
+  BriefView,
   CarriedProblemView,
   ConstructionRowView,
   DialogView,
@@ -89,6 +92,8 @@ export interface ControllerUiState {
   readonly dialog: DialogView | null;
   readonly announcement: Announcement | null;
   readonly focusRequest: { readonly id: number; readonly key: FieldKey } | null;
+  /** The Quarter_Brief is open (play-loop Requirement 4). Optional for callers that predate it. */
+  readonly briefOpen?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -861,6 +866,7 @@ export function buildGameView(session: GameSession | null, ui: ControllerUiState
         carried: null,
       },
       timeline: [],
+      brief: null,
       ...common,
     };
   }
@@ -872,6 +878,85 @@ export function buildGameView(session: GameSession | null, ui: ControllerUiState
     districtPanel: districtPanel(c, session.selectedDistrict),
     policyPanel: policyPanel(c, ui),
     timeline: timelineItems(session, c.names),
+    brief: ui.briefOpen === true ? briefOf(data, session) : null,
     ...common,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Quarter_Brief (play-loop Requirement 6)
+// ---------------------------------------------------------------------------
+
+/** Map_Indicators the Engine simulates; their difference from real history can change from quarter to quarter. */
+const BRIEF_INDICATORS = ['rentBurden', 'commuteTime', 'populationChange'] as const;
+
+/** Context of an earlier computed quarter (index into the computed arrays). */
+function ctxAt(data: LoadedData, session: GameSession, k: number): Ctx | null {
+  const state = session.computed?.central[k];
+  const ranges = session.computed?.ranges[k];
+  if (state === undefined || ranges === undefined) return null;
+  return { ...makeCtx(data, session), quarter: state.quarter, qi: quarterIndex(state.quarter), computed: true, ranges: ranges.ranges };
+}
+
+const roundShown = (x: number, decimals: number): number => {
+  const f = 10 ** decimals;
+  return Math.round(x * f) / f + 0;
+};
+
+/** The Brief_Items of the Displayed_Quarter, or null before any quarter is computed. */
+export function briefOf(data: LoadedData, session: GameSession): BriefView | null {
+  const n = session.computed?.central.length ?? 0;
+  const now = ctxAt(data, session, n - 1);
+  if (now === null) return null;
+  const before = ctxAt(data, session, n - 2);
+  const candidates: BriefCandidate[] = [];
+  const quarterItems = timelineItems(session, now.names).find((q) => q.quarter === now.quarter)?.items ?? [];
+  for (const it of quarterItems) {
+    if (it.kind === 'completion' && it.item.difference > 0) {
+      candidates.push({ kind: 'completion', district: it.item.district, districtName: it.item.districtName, units: it.item.difference });
+    }
+  }
+  for (const card of session.cards) {
+    if (card.firstQuarter === now.quarter && card.major) candidates.push({ kind: 'major-event', id: card.id, title: card.title, firstQuarter: card.firstQuarter });
+  }
+  for (const id of BRIEF_INDICATORS) {
+    const spec = specOf(id);
+    const decimals = DISPLAY_DECIMALS[spec.id];
+    for (const d of data.districts) {
+      const cell = cellOf(now, spec, d.code);
+      if (cell.range === null || cell.comparison.value === null) continue;
+      const diff = roundShown(cell.range.central - cell.comparison.value, decimals);
+      let prevDiff = 0;
+      if (before !== null) {
+        const prev = cellOf(before, spec, d.code);
+        prevDiff = prev.range === null || prev.comparison.value === null ? 0 : roundShown(prev.range.central - prev.comparison.value, decimals);
+      }
+      candidates.push({ kind: 'change', district: d.code, districtName: d.name, indicator: id, prevDiff, diff, value: roundShown(cell.range.central, decimals) });
+    }
+  }
+  for (const d of data.districts) {
+    const nowPersons = ghostDiffOf(now, d.code);
+    if (nowPersons === null) continue;
+    const prevPersons = before === null ? 0 : (ghostDiffOf(before, d.code) ?? 0);
+    candidates.push({ kind: 'people', district: d.code, districtName: d.name, prev: Math.round(prevPersons), now: Math.round(nowPersons) });
+  }
+  const items: BriefItemView[] = briefItems(candidates).map((c): BriefItemView => {
+    if (c.kind === 'completion') return { kind: 'completion', district: c.district, districtName: c.districtName, units: c.units };
+    if (c.kind === 'major-event') return { kind: 'major-event', id: c.id, title: c.title };
+    if (c.kind === 'people') return { kind: 'people', district: c.district, districtName: c.districtName, persons: c.now, change: c.now - c.prev };
+    const spec = specOf(c.indicator as PanelRowId);
+    return {
+      kind: 'change',
+      district: c.district,
+      districtName: c.districtName,
+      indicator: c.indicator,
+      value: c.value,
+      diff: c.diff,
+      change: roundShown(c.diff - c.prevDiff, DISPLAY_DECIMALS[spec.id]),
+      unit: unitOf(now, spec),
+      percentPoints: spec.percentRow,
+      decimals: DISPLAY_DECIMALS[spec.id],
+    };
+  });
+  return { quarter: now.quarter, items };
 }

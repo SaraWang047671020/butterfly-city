@@ -58,6 +58,21 @@ describe('quickPreview', () => {
     );
   });
 
+  it('compares with the same quarter without the edit when the controller gives it', () => {
+    const f = field({
+      draft: {
+        text: '201',
+        check: {
+          status: 'ok',
+          budget: { year: 2015, annualBudget: 9e8, committed: 351_013_661, remaining: 0 },
+          budgetBefore: { year: 2015, annualBudget: 9e8, committed: 350_999_564, remaining: 0 },
+        },
+      },
+    });
+    // The panel figures (committed so far, 0 before any quarter) must not be used when budgetBefore exists.
+    expect(quickPreview(f, { year: 2015, annualBudget: 9e8, committed: 0, remaining: 9e8 }, '2015Q1')?.cost).toBe(14_097);
+  });
+
   it('gives no cost when the budget figures are of another year', () => {
     const f = field({ draft: { text: '300', check: { status: 'ok', budget: { year: 2017, annualBudget: 1, committed: 1, remaining: 0 } } } });
     expect(quickPreview(f, { year: 2016, annualBudget: 1, committed: 0, remaining: 1 }, '2016Q4')?.cost).toBeNull();

@@ -53,7 +53,8 @@ export const createTurnBar: ComponentFactory<TurnBarView> = (doc: Document, acti
   const controls = doc.createElement('div');
   controls.className = 'turn-bar__controls';
   const next = makeButton(doc, 'turn-bar__button', T.nextQuarter, () => actions.nextQuarter());
-  const fast = makeButton(doc, 'turn-bar__button', T.fastForward, () => actions.fastForward());
+  // One primary action per step (play-loop Requirement 4.2): Fast-forward is secondary.
+  const fast = makeButton(doc, 'turn-bar__button turn-bar__button--secondary', T.fastForward, () => actions.fastForward());
   const busy = doc.createElement('span');
   busy.className = 'turn-bar__busy';
   busy.setAttribute('role', 'status');

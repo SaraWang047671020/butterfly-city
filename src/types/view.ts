@@ -99,6 +99,18 @@ export type BudgetProblemView = {
   readonly over: number; // > 0
 };
 
+/**
+ * The calendar year of the Planning_Quarter if the edited value is kept for the rest of the year (play-loop task 9).
+ * `overrun` is the first quarter whose spending exceeds the Annual_Budget or a tool ceiling; computing will stop
+ * before it (game-ui Requirement 9.8) unless the value is changed before then. A warning, not a rejection.
+ */
+export interface YearEndView {
+  readonly year: number;
+  readonly committed: number;
+  readonly remaining: number;
+  readonly overrun: { readonly quarter: QuarterKey; readonly over: number } | null;
+}
+
 export type EditCheckView =
   | { readonly status: 'fixed-quarter'; readonly planning: QuarterKey | null }
   | { readonly status: 'invalid-format'; readonly expected: 'integer' | 'number' }
@@ -106,9 +118,9 @@ export type EditCheckView =
   | { readonly status: 'unchanged'; readonly budget: BudgetFiguresView | null }
   | { readonly status: 'limit'; readonly limit: LimitProblem; readonly budget: BudgetFiguresView | null }
   | { readonly status: 'budget'; readonly problem: BudgetProblemView }
-  | { readonly status: 'pending-range'; readonly budget: BudgetFiguresView }
+  | { readonly status: 'pending-range'; readonly budget: BudgetFiguresView; readonly yearEnd?: YearEndView; readonly budgetBefore?: BudgetFiguresView }
   | { readonly status: 'engine'; readonly error: EngineError; readonly budget: BudgetFiguresView }
-  | { readonly status: 'ok'; readonly budget: BudgetFiguresView };
+  | { readonly status: 'ok'; readonly budget: BudgetFiguresView; readonly yearEnd?: YearEndView; readonly budgetBefore?: BudgetFiguresView };
 
 export interface FieldView {
   readonly key: FieldKey;
@@ -353,8 +365,43 @@ export interface Announcement {
   readonly engineError: EngineError | null;
 }
 
+/** One line of the Quarter_Brief (play-loop Requirement 6). Numbers are already rounded to the display decimals. */
+export type BriefItemView =
+  | { readonly kind: 'completion'; readonly district: DistrictCode; readonly districtName: string; readonly units: number }
+  | { readonly kind: 'major-event'; readonly id: string; readonly title: string }
+  | {
+      readonly kind: 'change';
+      readonly district: DistrictCode;
+      readonly districtName: string;
+      readonly indicator: MapIndicatorId;
+      readonly value: number;
+      /** Difference from real history in the brief quarter, and its change since the previous quarter. */
+      readonly diff: number;
+      readonly change: number;
+      readonly unit: string;
+      /** True when the difference is in percentage points (percent indicators). */
+      readonly percentPoints: boolean;
+      readonly decimals: number;
+    }
+  | {
+      /** People above a rent or commute line compared with real history (persons), and the change since last quarter. */
+      readonly kind: 'people';
+      readonly district: DistrictCode;
+      readonly districtName: string;
+      readonly persons: number;
+      readonly change: number;
+    };
+
+/** The Quarter_Brief of the last Computation_Run; null when it is not shown. */
+export interface BriefView {
+  readonly quarter: QuarterKey;
+  readonly items: readonly BriefItemView[];
+}
+
 export interface GameView {
   readonly turnBar: TurnBarView;
+  /** The Quarter_Brief after a Computation_Run until the player closes it (play-loop Requirement 4). */
+  readonly brief: BriefView | null;
   readonly map: MapViewModel;
   readonly districtList: DistrictListView;
   readonly districtPanel: DistrictPanelView;
@@ -384,6 +431,8 @@ export interface UiActions {
   nextQuarter(): void;
   fastForward(): void;
   dismissEventCards(): void;
+  /** Closes the Quarter_Brief (play-loop Requirement 4.4). */
+  dismissBrief(): void;
   selectDistrict(code: DistrictCode): void;
   setMapIndicator(id: MapIndicatorId): void;
   editField(key: FieldKey, text: string): void;

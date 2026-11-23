@@ -1,0 +1,105 @@
+/* Quarter_Brief and the turn steps (play-loop Requirements 4 and 6, approved design 2026-11-23). Tokens only. */
+.ui-brief {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ui-brief__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ui-brief__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-line-subtle);
+}
+
+.ui-brief__icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: var(--target-comfortable);
+  height: var(--target-comfortable);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
+
+.ui-brief__item--completion .ui-brief__icon {
+  color: var(--color-ok);
+  background: color-mix(in srgb, var(--color-ok) 15%, transparent);
+}
+
+.ui-brief__item--major-event .ui-brief__icon {
+  color: var(--color-warn);
+  background: color-mix(in srgb, var(--color-warn) 15%, transparent);
+}
+
+.ui-brief__words {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ui-brief__text {
+  margin: 0;
+}
+
+.ui-brief__detail,
+.ui-brief__rule,
+.ui-brief__none {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.ui-brief__none {
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+}
+
+.ui-brief__go {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 40rem) {
+  .ui-brief__item {
+    flex-wrap: wrap;
+  }
+
+  .ui-brief__go {
+    margin-left: calc(var(--target-comfortable) + var(--space-3));
+  }
+}
+
+/* ---- Turn steps (Requirement 4.2) ---------------------------------------------------------------------------- */
+.ui-turn-steps {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.ui-turn-steps__bars {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.ui-turn-steps__bars span {
+  width: var(--space-5);
+  height: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--color-line-subtle);
+}
+
+.ui-turn-steps__bars span.is-on {
+  background: var(--color-accent);
+}

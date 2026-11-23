@@ -9,6 +9,7 @@ import type { TimelineEntry } from '../../types/save.ts';
 import type { QuarterKey } from '../../types/data-files.ts';
 import type {
   BudgetFiguresView,
+  YearEndView,
   EditCheckView,
   LimitProblem,
   ParameterRefView,
@@ -27,9 +28,9 @@ import type {
   ToolField,
   ToolRule,
 } from '../../types/simulation.ts';
-import { emptyLedger, checkBudget, checkLimit, planBudget } from '../../simulation/budget.ts';
+import { emptyLedger, checkBudget, checkLimit, commitQuarter, planBudget } from '../../simulation/budget.ts';
 import { runRange } from '../../simulation/engine.ts';
-import { quarterYear } from '../../simulation/quarter.ts';
+import { nextQuarter, quarterYear } from '../../simulation/quarter.ts';
 import { followsRealTrack, playerTimeline, playerValue, withRealTrack, withValue } from './policy.ts';
 import type { FieldTarget, PolicyDiffs } from './policy.ts';
 import { fieldUnit } from './tools.ts';
@@ -116,6 +117,42 @@ function figures(c: Extract<BudgetCheck, { ok: true }>): BudgetFiguresView {
 
 function settingOf(timeline: PolicyTimeline, quarter: QuarterKey): PolicySetting | undefined {
   return timeline.find((x) => x.quarter === quarter);
+}
+
+/**
+ * The year of `from` with `timeline` kept to the year's last quarter: each quarter is checked against the budget and
+ * then recorded, as the turn loop would (play-loop task 9). Returns the year-end figures and the first overrun.
+ */
+export function projectYear(
+  timeline: PolicyTimeline,
+  ledger: BudgetLedger,
+  from: QuarterKey,
+  params: ParameterTable,
+  tools: RuleRegistry['tools'],
+  ctx: ReturnType<typeof context>,
+): YearEndView | null {
+  const year = quarterYear(from);
+  let led = ledger;
+  let q: QuarterKey = from;
+  let last: YearEndView | null = null;
+  for (;;) {
+    const setting = settingOf(timeline, q);
+    if (setting === undefined) return last;
+    const b = checkBudget(setting, led, params, tools, ctx);
+    if (!b.ok) {
+      if (b.reason === 'annual-budget' || b.reason === 'tool-ceiling') {
+        return { year, committed: last?.committed ?? 0, remaining: last?.remaining ?? 0, overrun: { quarter: q, over: b.over } };
+      }
+      return last;
+    }
+    last = { year, committed: b.committed, remaining: b.remaining, overrun: null };
+    const c = commitQuarter(led, q, setting, tools, params, { budgetMode: 'record' }, ctx);
+    if (!c.ok || q.endsWith('Q4')) return last;
+    led = c.value;
+    const n = nextQuarter(q);
+    if (quarterYear(n) !== year) return last;
+    q = n;
+  }
 }
 
 /** Candidate diffs of a request from the Planning_Quarter on. */
@@ -245,7 +282,15 @@ export function checkEditSync(session: EditSession, req: EditRequest): EditCheck
     }
     return { status: 'fixed-quarter', planning: p };
   }
-  return { status: 'pending-range', budget: figures(budget) };
+  const yearEnd = projectYear(playerTimeline(session.realTrack, candidate), ledger, p, session.params, tools, ctx);
+  // The same quarter with the current values, so the Quick_Preview shows the cost of the edit alone.
+  const before = budgetOf(session.diffs);
+  return {
+    status: 'pending-range',
+    budget: figures(budget),
+    ...(yearEnd === null ? {} : { yearEnd }),
+    ...(before.ok ? { budgetBefore: figures(before) } : {}),
+  };
 }
 
 /** Phase 2: runRange to the Planning_Quarter on the candidate timeline. Runs phase 1 first. */
@@ -268,7 +313,12 @@ export function checkEditRange(session: EditSession, req: EditRequest): EditChec
     { registry: session.registry },
   );
   if (!result.ok) return { status: 'engine', error: result.error, budget: sync.budget };
-  return { status: 'ok', budget: sync.budget };
+  return {
+    status: 'ok',
+    budget: sync.budget,
+    ...(sync.yearEnd === undefined ? {} : { yearEnd: sync.yearEnd }),
+    ...(sync.budgetBefore === undefined ? {} : { budgetBefore: sync.budgetBefore }),
+  };
 }
 
 /**

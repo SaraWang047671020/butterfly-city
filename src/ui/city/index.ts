@@ -95,6 +95,12 @@ export interface CityViewOptions {
   readonly onModeChange?: (mode: CityMode) => void;
 }
 
+/** Where a Go_There_Action puts the Avatar: next to the player's social housing site, at the metro exit, or the centre. */
+export interface WalkPlace {
+  readonly district: string;
+  readonly kind: 'site' | 'station' | 'centre';
+}
+
 export interface CityView {
   readonly root: HTMLElement;
   /** False when WebGL is unavailable and the fallback text is shown. */
@@ -105,6 +111,8 @@ export interface CityView {
   setMode(mode: CityMode): void;
   /** The player's social housing: completed and under construction, per district. */
   setSites(sites: readonly SiteView[]): void;
+  /** Enters Walk_Mode at a place of a district (play-loop Requirement 6.5, Go_There_Action). */
+  walkTo(place: WalkPlace): void;
   readonly mode: () => CityMode;
   dispose(): void;
 }
@@ -128,7 +136,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     p.className = 'city-fallback';
     p.textContent = o.strings.fallback;
     root.appendChild(p);
-    return { root, webgl: false, update() {}, setPaused() {}, setQuality() {}, setMode() {}, setSites() {}, mode: () => 'overview', dispose: () => root.remove() };
+    return { root, webgl: false, update() {}, setPaused() {}, setQuality() {}, setMode() {}, setSites() {}, walkTo() {}, mode: () => 'overview', dispose: () => root.remove() };
   }
 
   const canvas = s.renderer.domElement;
@@ -595,10 +603,34 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
   }
 
   // --- social housing the player started (visible policy) and the street-level figures of Walk_Mode
-  const sites = createSites(s.scene, tokens, (code) => {
+  const siteSpot = (code: string): readonly [number, number] => {
     const c = districts.byCode.get(code)?.center ?? new THREE.Vector3();
     return nearestFree(collider, c.x + 6, c.z - 6, 4) ?? [c.x + 6, c.z - 6];
-  });
+  };
+  const sites = createSites(s.scene, tokens, siteSpot);
+
+  // Go_There_Action: Walk_Mode at a place of the district, then the district is selected.
+  const walkTo = (place: WalkPlace): void => {
+    const m = districts.byCode.get(place.district);
+    if (m === undefined) return;
+    const c = m.center;
+    let spot: readonly [number, number];
+    if (place.kind === 'site') {
+      const [x, z] = siteSpot(place.district);
+      spot = nearestFree(collider, x - 10, z + 10, 6) ?? [x - 10, z + 10];
+    } else if (place.kind === 'centre') {
+      spot = nearestFree(collider, c.x, c.z, 8) ?? [c.x, c.z];
+    } else {
+      const exit = stationNear({ ...net, stations: net.stations.filter((st) => st.district === m.code) }, metro.position, c.x, c.z, Infinity);
+      const [sx, sz] = exit === null ? [c.x, c.z] : metro.position(exit);
+      spot = [sx + 2, sz + 2];
+    }
+    if (mode !== 'walk') setMode('walk');
+    walker.start(spot[0], spot[1], 0);
+    walkDistrict = place.district;
+    o.selectDistrict(place.district);
+    canvas.focus();
+  };
 
   return {
     root,
@@ -648,6 +680,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       syncTools();
     },
     setMode,
+    walkTo,
     mode: () => mode,
     setQuality(q) {
       quality = q;

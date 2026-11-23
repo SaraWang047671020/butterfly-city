@@ -27,6 +27,7 @@ import { createIndicatorSwitch, createLegend, createIndicatorText, createPriceTo
 import { createDistrictList } from './panels/district-list.ts';
 import { createDistrictPanel } from './panels/district-panel.ts';
 import { createPolicyCards } from './policy/policy-cards.ts';
+import { createQuarterBrief, type GoThere } from './brief/quarter-brief.ts';
 import { createTimelineView } from './timeline/timeline-view.ts';
 import { createTurnBar } from './turn-bar/turn-bar.ts';
 import { createLiveRegion } from './a11y/live-region.ts';
@@ -51,6 +52,8 @@ export interface AppOptions {
   readonly onRetry: () => void;
   /** Called with the other language when the player activates the language control (play-loop Requirement 12.1). */
   readonly onLanguage?: (next: Locale) => void;
+  /** Go_There_Action of the Quarter_Brief (play-loop Requirement 6.5): Walk_Mode at the place. */
+  readonly onGoThere?: (place: GoThere) => void;
 }
 
 export interface App {
@@ -222,6 +225,18 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   const timeline = createTimelineView(doc, actions);
 
   mountComponent(headerHost, turnBar);
+  // Turn steps (play-loop Requirement 4.2): decide, compute, what changed.
+  const steps = el(doc, 'p', 'ui-turn-steps', headerHost);
+  const stepBars = el(doc, 'span', 'ui-turn-steps__bars', steps);
+  stepBars.setAttribute('aria-hidden', 'true');
+  const bars = [0, 1, 2].map(() => el(doc, 'span', '', stepBars));
+  const stepText = el(doc, 'span', 'ui-turn-steps__text', steps);
+  const renderSteps = (g: GameView): void => {
+    const n = g.turnBar.busy ? 2 : g.brief !== null ? 3 : 1;
+    bars.forEach((b, i) => b.classList.toggle('is-on', i < n));
+    const T = UI_STRINGS.turnSteps;
+    setText(stepText, `${fillTemplate(T.label, { n: String(n) })} · ${n === 1 ? T.decide : n === 2 ? T.compute : T.brief}`);
+  };
   mountComponent(block(leftHost, 'map-controls'), indicatorSwitch);
   mountComponent(block(leftHost, 'map-controls'), indicatorText);
   mountComponent(block(leftHost, 'map-controls'), legend);
@@ -240,6 +255,8 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
     getFallbackFocus: () => headerHost.querySelector<HTMLElement>('.turn-bar__button') ?? startButtons.querySelector('button'),
   });
   mountComponent(overlay, dialogs);
+  const quarterBrief = createQuarterBrief(doc, actions, (place) => options.onGoThere?.(place), () => headerHost.querySelector<HTMLElement>('.turn-bar__button'));
+  overlay.appendChild(quarterBrief.root);
   const live = createLiveRegion(doc, announcementText);
   mountComponent(overlay, live);
 
@@ -303,6 +320,7 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
       names = areaNamesOf(g.districtList);
     }
     turnBar.update(g.turnBar);
+    renderSteps(g);
     indicatorSwitch.update(g.map);
     indicatorText.update(g.map);
     legend.update(g.map);
@@ -316,6 +334,7 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
       areaNames: names,
       districtGroups: g.districtList.groups,
       selected: g.districtList.selected,
+      briefOpen: g.brief !== null,
     });
     timeline.update({ quarters: g.timeline, areaNames: names });
   };
@@ -336,6 +355,7 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
     // Dialogs and announcements are valid on the start screen too (demo description, confirmations, stored text).
     const v = screen.kind === 'game' ? screen.game : ctl.view();
     dialogs.update(v.dialog);
+    quarterBrief.update({ brief: screen.kind === 'game' ? v.brief : null, blocked: v.dialog !== null });
     live.update(v.announcement);
   };
 

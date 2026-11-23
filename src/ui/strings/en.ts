@@ -173,7 +173,7 @@ export const EN = {
     invalidNumber: '{field}: enter a number (digits, at most one decimal point, optional leading minus sign).',
     checking: 'Checking…',
     carriedValueStop:
-      '{field} ({area}) holds {value}, which breaks {rule} in {quarter}. Computing stopped before that quarter.',
+      '{field} ({area}) keeps the value {value}, which does not fit {quarter}: {rule} Computing stopped before that quarter.',
     fields: {
       'socialHousing.unitsStarted': 'Social housing units started',
       'rentSubsidy.households': 'Subsidised households',
@@ -359,6 +359,8 @@ export const EN = {
     previewCostMore: 'Budget {year}: TWD {cost} more committed · TWD {left} left',
     previewCostLess: 'Budget {year}: TWD {cost} less committed · TWD {left} left',
     previewLeft: 'Budget {year}: TWD {left} left',
+    previewYearEnd: 'If you keep this value for the rest of {year}: TWD {left} left at the end of the year.',
+    previewOverrun: 'If you keep this value, the {year} budget runs out in {quarter} (TWD {over} over). Computing will stop before that quarter until you change the value.',
     realMark: 'real {value}',
     lowerEnd: 'lower limit {value}',
     upperEnd: 'upper limit {value}',
@@ -367,6 +369,32 @@ export const EN = {
     details: 'Details and sources',
     done: 'Done',
     slider: '{field}, slider',
+  },
+
+  // Three-step quarter and Quarter_Brief (play-loop Requirements 4 and 6). Brief sentences as approved in the
+  // Character_File draft of 2026-11-23.
+  turnSteps: {
+    label: 'Step {n} of 3',
+    decide: 'Decide',
+    compute: 'Computing',
+    brief: 'What changed',
+  },
+  brief: {
+    kicker: 'What changed',
+    completion: '{units} more social homes than in real history are finished in {district}.',
+    majorEvent: 'Major event: {title}',
+    up: '{indicator} in {district} is now {value} {unit}, {diff} {diffUnit} above real history.',
+    down: '{indicator} in {district} is now {value} {unit}, {diff} {diffUnit} below real history.',
+    same: '{indicator} in {district} is back to real history: {value} {unit}.',
+    sinceLast: 'Change since last quarter: {change} {diffUnit}',
+    peopleMore: 'In {district}, about {n} more people than in real history are above a rent or commute line.',
+    peopleFewer: 'In {district}, about {n} fewer people than in real history are above a rent or commute line.',
+    peopleSame: 'In {district}, the number of people above a rent or commute line is back to real history.',
+    peopleSinceLast: 'Change since last quarter: {change} people',
+    none: 'No district changed noticeably from real history this quarter.',
+    goThere: 'Go there',
+    continue: 'Continue',
+    rule: 'Up to 3 changes by a fixed rule: finished homes and major events first, then the largest change of a difference from real history.',
   },
 
   /** City names (play-loop Requirement 12.5). */

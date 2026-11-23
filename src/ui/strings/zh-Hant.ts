@@ -170,7 +170,7 @@ export const ZH: UiStrings = {
     invalidInteger: '{field}：請輸入整數（只能有數字，開頭可以有負號）。',
     invalidNumber: '{field}：請輸入數字（數字、最多一個小數點，開頭可以有負號）。',
     checking: '檢查中…',
-    carriedValueStop: '{field}（{area}）的值 {value} 在 {quarter} 違反 {rule}，計算在那一季之前停止。',
+    carriedValueStop: '{field}（{area}）沿用的值 {value} 在 {quarter} 不符合規定：{rule} 計算在那一季之前停止。',
     fields: {
       'socialHousing.unitsStarted': '社會住宅開工戶數',
       'rentSubsidy.households': '補貼戶數',
@@ -343,6 +343,8 @@ export const ZH: UiStrings = {
     previewCostMore: '{year} 年預算：多承諾 {cost} 元 · 剩餘 {left} 元',
     previewCostLess: '{year} 年預算：少承諾 {cost} 元 · 剩餘 {left} 元',
     previewLeft: '{year} 年預算：剩餘 {left} 元',
+    previewYearEnd: '如果 {year} 年剩下的季度都維持這個值：年底剩餘 {left} 元。',
+    previewOverrun: '如果維持這個值，{year} 年的預算會在 {quarter} 用完（超出 {over} 元）。到那一季前若沒有調整，計算會停下來。',
     realMark: '真實值 {value}',
     lowerEnd: '下限 {value}',
     upperEnd: '上限 {value}',
@@ -351,6 +353,30 @@ export const ZH: UiStrings = {
     details: '詳細資料與出處',
     done: '完成',
     slider: '{field}，拉桿',
+  },
+
+  turnSteps: {
+    label: '第 {n} / 3 步',
+    decide: '下決策',
+    compute: '計算中',
+    brief: '看變化',
+  },
+  brief: {
+    kicker: '這一季的變化',
+    completion: '{district}比真實歷史多 {units} 戶社會住宅完工。',
+    majorEvent: '重大事件：{title}',
+    up: '{district}的{indicator}現在是 {value} {unit}，比真實歷史高 {diff} {diffUnit}。',
+    down: '{district}的{indicator}現在是 {value} {unit}，比真實歷史低 {diff} {diffUnit}。',
+    same: '{district}的{indicator}回到和真實歷史相同：{value} {unit}。',
+    sinceLast: '比上一季變動 {change} {diffUnit}',
+    peopleMore: '{district}房租或通勤超過界線的人，比真實歷史多約 {n} 人。',
+    peopleFewer: '{district}房租或通勤超過界線的人，比真實歷史少約 {n} 人。',
+    peopleSame: '{district}房租或通勤超過界線的人數，回到和真實歷史相同。',
+    peopleSinceLast: '比上一季變動 {change} 人',
+    none: '這一季沒有任何行政區和真實歷史有明顯差距。',
+    goThere: '走過去看',
+    continue: '繼續',
+    rule: '依固定規則最多列出 3 件：先列完工和重大事件，再依「與真實歷史的差距」變化最大的排序。',
   },
 
   cityNames: {

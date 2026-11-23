@@ -2,7 +2,7 @@
 // the view model: the Quick_Preview cost is the difference of two `checkBudget` results the Game_Controller already
 // computed (the committed spending with the edit, minus the committed spending without it).
 import type { QuarterKey } from '../../types/data-files.ts';
-import type { BudgetFiguresView, ConstructionRowView, FieldView, ToolView } from '../../types/view.ts';
+import type { BudgetFiguresView, ConstructionRowView, FieldView, ToolView, YearEndView } from '../../types/view.ts';
 
 /** The quarter `n` quarters after `quarter` ("2016Q3" + 8 = "2018Q3"). */
 export function addQuarters(quarter: QuarterKey, n: number): QuarterKey {
@@ -21,6 +21,8 @@ export interface QuickPreview {
   readonly cost: number | null;
   readonly left: number | null;
   readonly year: number | null;
+  /** The year if the value is kept to its end: year-end remaining budget, or the first quarter that overruns. */
+  readonly yearEnd: YearEndView | null;
 }
 
 /**
@@ -37,13 +39,16 @@ export function quickPreview(field: FieldView, before: BudgetFiguresView | null,
   const current = field.player ?? field.real?.value ?? null;
   if (current === null) return null;
   const after = check.budget;
-  const comparable = before !== null && before.year === after.year;
+  // Prefer the controller's figures of the same quarter without the edit; the panel figures are the fallback.
+  const base = check.budgetBefore ?? before;
+  const comparable = base !== null && base.year === after.year;
   return {
     change: value - current,
     ready: addQuarters(planning, field.lag.value),
-    cost: comparable ? after.committed - before.committed : null,
+    cost: comparable ? after.committed - base.committed : null,
     left: after.remaining,
     year: after.year,
+    yearEnd: check.yearEnd ?? null,
   };
 }
 

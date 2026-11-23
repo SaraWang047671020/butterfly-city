@@ -108,6 +108,8 @@ export class GameController {
   private pending: Pending | null = null;
   private announcement: Announcement | null = null;
   private focusRequest: { readonly id: number; readonly key: FieldKey } | null = null;
+  /** The Quarter_Brief is open: set after a Computation_Run that computed a quarter, cleared by dismissBrief. */
+  private briefOpen = false;
   private counter = 0;
   private generation = 0;
 
@@ -145,6 +147,7 @@ export class GameController {
       dialog: this.dialog,
       announcement: this.announcement,
       focusRequest: this.focusRequest,
+      briefOpen: this.briefOpen,
     };
     return buildGameView(this.session, ui, this.data);
   }
@@ -271,6 +274,7 @@ export class GameController {
       nextQuarter: () => this.turn(false),
       fastForward: () => this.turn(true),
       dismissEventCards: () => this.dismissEventCards(),
+      dismissBrief: () => this.dismissBrief(),
       selectDistrict: (code) => this.selectDistrict(code),
       setMapIndicator: (id) => this.setMapIndicator(id),
       editField: (key, text) => this.editField(key, text),
@@ -392,6 +396,7 @@ export class GameController {
       if (!fast && out.computed.length > 0) this.persist(out.session);
       this.engineError = out.engineError;
       this.carried = out.carried;
+      this.briefOpen = out.computed.length > 0;
       if (out.majorEventIds.length > 0) {
         const cards = out.session.cards.filter((c) => out.majorEventIds.includes(c.id)).map(cardView);
         this.dialog = { kind: 'event-cards', cards };
@@ -422,6 +427,12 @@ export class GameController {
         engineError: out.engineError.error,
       };
     }
+  }
+
+  private dismissBrief(): void {
+    if (!this.briefOpen) return;
+    this.briefOpen = false;
+    this.publish();
   }
 
   private dismissEventCards(): void {

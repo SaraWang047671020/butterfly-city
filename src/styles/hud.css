@@ -360,3 +360,10 @@
 .ui-app .ui-panel .story-panel__name {
   font-size: var(--font-size-md);
 }
+
+/* ---- One primary action (play-loop Requirement 4.2) ------------------------------------------------------------- */
+.ui-app .ui-block--turn-bar .turn-bar__button--secondary {
+  background: none;
+  color: var(--color-text-primary);
+  border-color: var(--color-line);
+}

@@ -330,3 +330,17 @@
     flex-basis: 100%;
   }
 }
+
+.ui-policy-dialog__preview-year {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.ui-policy-dialog__preview.is-overrun {
+  border-color: var(--color-warn);
+}
+
+.ui-policy-dialog__preview.is-overrun .ui-policy-dialog__preview-year {
+  color: var(--color-warn);
+}

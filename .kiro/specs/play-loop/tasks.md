@@ -53,10 +53,11 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
   - [x] 8.2 `src/ui/policy/policy-cards.ts` (cards and dialog) and `preview.ts`: slider bound to the input, district picker (a grouped list; the small map is left for task 10), Quick_Preview, details disclosure. Cards sit top left until task 10 moves them to the bottom centre
   - [x] 8.3 Tests of Requirement 11.4 (`tests/ui/policy-preview.test.ts`; slider and input share one `editField` path, checked by hand in the browser)
 
-- [ ] 9. Three-step quarter and Quarter_Brief (Requirements 4 and 6)
-  - [ ] 9.1 Turn_Bar step text and one primary action
-  - [ ] 9.2 `src/ui/brief/quarter-brief.ts`, after Event_Cards
-  - [ ] 9.3 City_View `walkTo(place)` and Go there
+- [x] 9. Three-step quarter and Quarter_Brief (Requirements 4 and 6)
+  - [x] 9.1 Turn_Bar step text and one primary action (Fast-forward is secondary)
+  - [x] 9.2 `src/ui/brief/quarter-brief.ts`, after Event_Cards; `src/game/brief.ts` rule with the people candidate; `CHANGE_BOUNDS` moved to `src/game/core/change-bounds.ts`
+  - [x] 9.3 City_View `walkTo(place)` and Go there
+  - [x] 9.4 Year-end projection in the Quick_Preview (Requirement 5.9) and the blocked tool opening by itself (Requirement 5.10); Quick_Preview cost against the same quarter without the edit (fix of task 8)
 
 - [ ] 10. City_Report and District_Card (Requirement 7)
   - [ ] 10.1 `src/ui/report/city-report.ts` with five tabs mounting the existing components
