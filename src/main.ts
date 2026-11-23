@@ -12,6 +12,9 @@ import { buildStoryFacts } from './game/story-facts.ts';
 import { storyLines } from './narrative/select.ts';
 import { DEMO_SAVE_CODE, DEMO_SUMMARY_TEXT } from './save/demo-save.generated.ts';
 import { SaveStore, type StoragePort } from './save/store.ts';
+import { readPersonaId, writePersonaId } from './save/story-store.ts';
+import { endingLines } from './narrative/select.ts';
+import { createStoryPanel, type StoryPanelView } from './ui/story/story-panel.ts';
 import { RULE_REGISTRY } from './simulation/registry.ts';
 import { districtAccessibleName } from './ui/a11y/accessible-name.ts';
 import { createApp } from './ui/app.ts';
@@ -160,6 +163,63 @@ async function start(): Promise<void> {
   const cityView = city;
   cityView.update(ctl.view().map);
   ctl.subscribe((view) => cityView.update(view.map));
+
+  // Story_Panel (story-layer Requirement 5): pick one Persona, then read its update each quarter.
+  const port = storagePort();
+  const storyPanel = createStoryPanel(document, {
+    choose: (id) => {
+      personaId = id;
+      writePersonaId(port, id);
+      renderStory();
+    },
+    change: () => {
+      personaId = null;
+      renderStory();
+    },
+  });
+  app.addPanel('story', UI_STRINGS.story.title, false).appendChild(storyPanel.root);
+  let personaId = story.ok ? readPersonaId(port, story.value.citizens.personas.map((p) => p.id)) : null;
+  const renderStory = (): void => storyPanel.update(storyView());
+  const storyView = (): StoryPanelView => {
+    if (!story.ok) return { kind: 'error', error: story.error };
+    const files = story.value;
+    const persona = files.citizens.personas.find((p) => p.id === personaId);
+    if (persona === undefined) {
+      return { kind: 'picker', personas: files.citizens.personas.map((p) => ({ id: p.id, name: p.name, picker: p.picker })) };
+    }
+    const session = ctl.storySession();
+    const ranges = session?.computed?.ranges ?? [];
+    if (session === null || ranges.length === 0) {
+      return { kind: 'story', name: persona.name, intro: persona.intro, lines: [], quarter: null, ending: [] };
+    }
+    const history = (id: 'rent' | 'householdIncome', code: string, qi: number): number | null => {
+      const ind = data.history.indicators.find((i) => i.id === id);
+      return ind === undefined || ind.level !== 'district' ? null : (ind.series[code]?.[qi]?.value ?? null);
+    };
+    const facts = buildStoryFacts({
+      persona,
+      citizens: files.citizens,
+      spread: files.spread,
+      params: session.params,
+      commute: session.commute,
+      history,
+      ranges,
+      displayed: ranges.length - 1,
+      quarters: data.history.quarters,
+      format: (x, d) => formatNumber(x, d),
+    });
+    const text = (l: { text: string } | { error: unknown }) => ('text' in l ? l.text : UI_STRINGS.story.noValue);
+    return {
+      kind: 'story',
+      name: persona.name,
+      intro: persona.intro,
+      quarter: ranges[ranges.length - 1]?.quarter ?? null,
+      lines: facts === null ? [] : storyLines(files.citizens.templates, facts.state, facts.values).map(text),
+      ending: facts?.endingValues == null ? [] : endingLines(files.citizens.templates, facts.endingValues).map(text),
+    };
+  };
+  renderStory();
+  ctl.subscribe(() => renderStory());
   app.attach(ctl);
 }
 

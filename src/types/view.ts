@@ -226,6 +226,12 @@ export interface MapDistrictView {
   readonly selected: boolean;
   /** Ghost count of the central Scenario in the Displayed_Quarter; null before any quarter is computed (city-3d 2.2). */
   readonly ghosts: number | null;
+  /**
+   * People above a ghost line in the central Scenario minus the same in real history, in persons, not floored
+   * (city-3d Requirement 6): the sum of the policy Causes of the Ghost count × Ghost_Size. Positive: more people
+   * pushed out than in real history. Null before any quarter is computed.
+   */
+  readonly ghostDiffPersons: number | null;
   /** salePrice of the displayed quarter ÷ salePrice of 2015Q1; null when either is missing or the 2015Q1 value is 0 (city-3d 2.2). */
   readonly priceIndex: number | null;
 }

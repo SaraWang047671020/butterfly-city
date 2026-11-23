@@ -8,7 +8,7 @@ import { classOf, classToken } from './colours.ts';
 import { createDistricts } from './districts.ts';
 import { stepFocus } from './focus-order.ts';
 import { boundsOf, inAnyPolygon } from './geometry.ts';
-import { createGhosts } from './ghosts.ts';
+import { createGhosts, figuresOf } from './ghosts.ts';
 import { createLandmarks, landmarkClearings } from './landmarks/index.ts';
 import { heightScale, placeDistrict, type PlacementInput } from './placement.ts';
 import { project } from './projection.ts';
@@ -534,6 +534,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       map = next;
       const scales: number[] = new Array(statics.length).fill(1);
       const counts: (number | null)[] = new Array(statics.length).fill(null);
+      const flutter: number[] = new Array(statics.length).fill(0);
       for (const d of next.districts) {
         const i = indexOf.get(d.code);
         if (i === undefined) continue;
@@ -542,12 +543,16 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
         districts.setColour(d.code, colour);
         buildings.setDistrictColour(i, colour);
         scales[i] = heightScale(d.priceIndex);
-        counts[i] = d.ghosts;
+        // Figures show the change from real history, not the total (city-3d Requirement 6, changed 2026-11-23).
+        const f = figuresOf(d.ghostDiffPersons);
+        counts[i] = f.ghosts;
+        flutter[i] = f.butterflies;
       }
       buildings.setHeightTargets(scales);
       net = openNetwork(METRO_DATA, next.quarter ?? '2015Q1');
       metro.setOpen(net);
       ghosts.setCounts(counts);
+      ghosts.setButterflies(flutter);
 
       const nextSelected = next.districts.find((d) => d.selected)?.code ?? null;
       if (nextSelected !== selected) {

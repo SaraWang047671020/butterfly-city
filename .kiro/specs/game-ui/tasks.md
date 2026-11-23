@@ -539,25 +539,25 @@ All code is TypeScript in `strict` mode. Modules imported by the Demo_Script (`s
 - [x] 18. Checkpoint - Phase C complete
   - Run `npx vitest --run`, `npm run typecheck` and `npm run build`; all exit 0 with no skipped, todo or `.only` test. Ensure all tests pass, ask the user if questions arise. Ask the user to run `npm run dev` to look at the screen; the agent does not start it.
 
-- [ ] 19. Real-data integration and the committed Demo_Save (Phase D). **Blocked until the real `params.json`, `commute-matrix.json` and `events.json` exist in `public/data/` and `history.json` has `medianTotalPrice` (data-pipeline tasks 16 to 21).**
+- [x] 19. Real-data integration and the committed Demo_Save (Phase D). **Blocked until the real `params.json`, `commute-matrix.json` and `events.json` exist in `public/data/` and `history.json` has `medianTotalPrice` (data-pipeline tasks 16 to 21).**
   - [x] 19.1 Set the Demo_Base_List, the Demo_Enlarged_List and both thresholds
     - **TODO (Open Question 15):** write the values into `data/config/demo-adjustments.json` from a recompute with the real `params.json`, changing no Parameter (14.18); the lists satisfy 14.13 to 14.17 and 14.24; set the Demo_Ghost_Threshold (default 1) and the Demo_Rent_Burden_Threshold (default 0.1 percentage points); remove the TODO status
     - Present the lists and thresholds to the user before committing
     - _Requirements: 14.13, 14.14, 14.15, 14.16, 14.17, 14.18, 14.20, 14.21, 14.22, 14.24_
 
-  - [~] 19.2 Generate and commit the Demo_Save
+  - [x] 19.2 Generate and commit the Demo_Save
     - Run `npm run demo`; on success commit the generated `src/save/demo-save.generated.ts` (replacing the placeholder of 17.2) and the stdout report summary; on failure report the named step and conditions to the user and stop
     - _Requirements: 14.1, 14.2, 14.5, 14.6, 14.23, 14.25_
 
-  - [~] 19.3 Write the Demo_Save output and recompute tests `tests/scripts/demo/demo-save.real.test.ts`
+  - [x] 19.3 Write the Demo_Save output and recompute tests `tests/scripts/demo/demo-save.real.test.ts`
     - `runDemo` on the real files gives file text equal, character for character, to the committed `src/save/demo-save.generated.ts` (14.7); recomputing the Demo_Save to 2020Q4 and the Demo_Lookahead_State in all three Scenarios returns no Engine_Error (14.8); the Demo_Save passes Requirement 13.5 validation (14.2)
     - _Requirements: 14.7, 14.8, 14.2, 19.7_
 
-  - [~] 19.4 Write the Demo_Save condition tests `tests/scripts/demo/demo-conditions.real.test.ts`
+  - [x] 19.4 Write the Demo_Save condition tests `tests/scripts/demo/demo-conditions.real.test.ts`
     - The Fallback_Step condition of the committed summary holds; 14.17, 14.26 and 14.27 hold; the Parameter_Table used equals the committed `params.json` `parameters` deep-equal and the merged table adds only `commuterPass.price.*` entries (14.28); checks 14.13, 14.14, 14.15, 14.16 and 14.24 on the committed Demo_Save and lists (14.29); 14.1, 14.3 and 14.4
     - _Requirements: 14.28, 14.29, 14.1, 14.3, 14.4, 19.7_
 
-  - [~] 19.5 Write real-file Data_Loader and view tests `tests/game/real-data.test.ts`
+  - [x] 19.5 Write real-file Data_Loader and view tests `tests/game/real-data.test.ts`
     - `loadDataFiles` over the 6 real files (read through a file-backed `FetchPort`) returns `ok: true`
     - Price_To_Income on the real `history.json` (**needs `medianTotalPrice` from data-pipeline tasks 16 to 21**): a hand-computed value for one district and quarter, and the estimate flag
     - View values equal `runRange` for one district per city and two quarters on real data (18.5)

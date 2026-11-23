@@ -133,17 +133,20 @@ The City_View mixes real data with illustrative shapes. The screen says which is
 7. THE District_List of game-ui Requirement 4.6 SHALL remain on the Game_Screen as the complete non-visual way to select a district.
 8. THE City_View SHALL keep the Selected_District, the Map_Indicator and the camera position WHEN the viewport is resized or rotated.
 
-### Requirement 6: Ghosts in the city
+### Requirement 6: Ghosts and butterflies in the city
 
-**User Story:** As a player, I want to see the ghosts of people pushed out of a district, so that the cost of a policy is visible in the place where it happens.
+**User Story:** As a player, I want to see where my policies push people over a rent or commute line, and where they bring people back under it, so that the cost and the gain of a policy are visible in the place where they happen.
+
+> **Change 2026-11-23 (decided by Claude Code under the user's delegation):** a measurement on the real data showed that the Ghost count is almost all real-history burden (about 1.09 million people, 1,090 ghosts at 1 ghost = 1,000 residents, in 2021Q1), while even strong policies move it by tens to a few hundred people per district. The floored count therefore never changes on the map. The figures now show the difference from real history in persons; the Ghost count itself stays in the District_Panel. No Engine formula or Parameter changes.
 
 #### Acceptance Criteria
 
-1. THE City_View SHALL show above each district a number of Ghost_Figures equal to its Ghost count of Requirement 2.2, up to 12 per district.
-2. THE exact Ghost count SHALL be shown as text in the District_Panel (game-ui Requirement 6.7); THE City_View SHALL not be the only place where a Ghost count is shown.
-3. WHILE no quarter is computed, THE City_View SHALL show no Ghost_Figure.
-4. THE Ghost_Figures SHALL float slowly and SHALL not flash (game-ui Requirement 17.11).
-5. THE Ghost_Figures SHALL receive no pointer events.
+1. THE Game_Controller SHALL give for each district the Ghost_Difference: the sum of the Ghost count Causes of the central Scenario in the Displayed_Quarter other than the Baseline and the floor adjustment, times Ghost_Size, in persons and not floored (`ghostDiffPersons`; null before any quarter is computed).
+2. THE City_View SHALL show above each district round(|Ghost_Difference| / 10) figures, at most 12: ghosts WHERE the Ghost_Difference is positive (more people above a line than in real history) and butterflies WHERE it is negative (fewer).
+3. THE Game_Screen SHALL explain next to the legend that each ghost is about 10 more people and each butterfly about 10 fewer than in real history; the exact Ghost count stays in the District_Panel (game-ui Requirement 6.7).
+4. WHILE no quarter is computed, and on the real track, THE City_View SHALL show no figure.
+5. THE figures SHALL move slowly, SHALL not flash (game-ui Requirement 17.11), SHALL stand still under reduced motion and SHALL receive no pointer events.
+6. THE Test_Suite SHALL check that the Ghost_Difference is 0 on the real track and equals, within one person, the difference of two Engine runs with Ghost_Size 1 on the Demo_Save (`tests/game/ghost-diff.test.ts`).
 
 ### Requirement 7: Landmarks (phase 2)
 

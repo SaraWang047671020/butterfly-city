@@ -360,6 +360,8 @@ export const UI_STRINGS = {
     qualityHigh: 'Quality: high',
     qualityLow: 'Quality: low',
     toolsLabel: 'City view',
+    figuresNote:
+      'Ghosts and butterflies show the change from real history: each ghost above a district is about 10 more people above a rent or commute line, each butterfly about 10 fewer.',
     metro: {
       prompt: '{station} station. Press E or',
       button: 'Take the metro',
@@ -386,5 +388,12 @@ export const UI_STRINGS = {
   // Citizen stories (story-layer spec). Story text itself comes from citizens.json.
   story: {
     noValue: 'no value',
+    title: 'Citizen',
+    pickerHeading: 'Follow one household through the years. Each quarter shows what your policies mean for them.',
+    change: 'Follow another household',
+    quarter: 'Quarter {quarter}',
+    noQuarter: 'The story starts when the first quarter is computed.',
+    endingHeading: 'From 2015 to 2025',
+    loadError: 'The citizen stories could not be loaded: {error}',
   },
 } as const;

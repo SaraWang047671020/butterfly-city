@@ -56,6 +56,8 @@ export interface App {
   readonly cityLayer: HTMLElement;
   showLoading(loaded: number): void;
   showLoadError(failures: readonly { readonly file: string; readonly message: string }[]): void;
+  /** Adds a floating panel to the Game_Screen and returns its body (story-layer Story_Panel). */
+  addPanel(name: string, title: string, collapsed: boolean): HTMLElement;
   /** Renders `controller.screen()` now and after every publish. Returns a detach function. */
   attach(controller: AppController): () => void;
 }
@@ -212,6 +214,7 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   mountComponent(block(policyHost, 'policy-panel'), policyPanel);
   mountComponent(block(timelineHost, 'timeline'), timeline);
   // The Illustration_Note sits with the legend (city-3d Requirement 11.1).
+  el(doc, 'p', 'ui-illustration-note', mapHost, UI_STRINGS.city.figuresNote);
   el(doc, 'p', 'ui-illustration-note', mapHost, UI_STRINGS.city.illustrationNote);
 
   // ---- Dialogs and live regions (available on every screen) ----------------------------------------------------
@@ -318,6 +321,7 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
 
   return {
     cityLayer,
+    addPanel: (name, title, collapsed) => panel(name, title, collapsed),
     showLoading,
     showLoadError,
     attach(controller) {

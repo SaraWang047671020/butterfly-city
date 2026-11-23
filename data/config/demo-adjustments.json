@@ -1,10 +1,342 @@
 {
-  "schemaVersion": 1,
-  "status": "TODO: set with the real params.json (Open Question 15)",
-  "ghostThreshold": 1,
-  "rentBurdenThreshold": 0.1,
-  "base": [
-    { "quarter": "2015Q1", "tool": "rentSubsidy", "field": "amount", "area": "Taipei", "kind": "value", "value": 0 }
-  ],
-  "enlarged": []
+    "schemaVersion":  1,
+    "status":  "set with the real params.json (game-ui task 19.1, rent subsidy at 50% of real)",
+    "ghostThreshold":  1,
+    "rentBurdenThreshold":  0.1,
+    "base":  [
+                 {
+                     "quarter":  "2015Q1",
+                     "tool":  "rentSubsidy",
+                     "field":  "amount",
+                     "area":  "Taipei",
+                     "kind":  "value",
+                     "value":  2350
+                 },
+                 {
+                     "quarter":  "2015Q1",
+                     "tool":  "rentSubsidy",
+                     "field":  "amount",
+                     "area":  "New Taipei",
+                     "kind":  "value",
+                     "value":  1824
+                 },
+                 {
+                     "quarter":  "2015Q1",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "65000210",
+                     "kind":  "value",
+                     "value":  18
+                 },
+                 {
+                     "quarter":  "2015Q2",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "65000210",
+                     "kind":  "real-track"
+                 },
+                 {
+                     "quarter":  "2015Q2",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "65000220",
+                     "kind":  "value",
+                     "value":  18
+                 },
+                 {
+                     "quarter":  "2015Q3",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "65000220",
+                     "kind":  "real-track"
+                 },
+                 {
+                     "quarter":  "2015Q3",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "65000240",
+                     "kind":  "value",
+                     "value":  18
+                 },
+                 {
+                     "quarter":  "2015Q4",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "65000240",
+                     "kind":  "real-track"
+                 },
+                 {
+                     "quarter":  "2016Q1",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "63000070",
+                     "kind":  "value",
+                     "value":  301
+                 },
+                 {
+                     "quarter":  "2016Q2",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "63000070",
+                     "kind":  "real-track"
+                 },
+                 {
+                     "quarter":  "2016Q2",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "63000060",
+                     "kind":  "value",
+                     "value":  64
+                 },
+                 {
+                     "quarter":  "2016Q3",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "63000060",
+                     "kind":  "real-track"
+                 },
+                 {
+                     "quarter":  "2016Q3",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "63000090",
+                     "kind":  "value",
+                     "value":  11
+                 },
+                 {
+                     "quarter":  "2016Q4",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "63000090",
+                     "kind":  "real-track"
+                 },
+                 {
+                     "quarter":  "2017Q1",
+                     "tool":  "rentSubsidy",
+                     "field":  "amount",
+                     "area":  "Taipei",
+                     "kind":  "real-track"
+                 },
+                 {
+                     "quarter":  "2017Q1",
+                     "tool":  "rentSubsidy",
+                     "field":  "amount",
+                     "area":  "New Taipei",
+                     "kind":  "real-track"
+                 },
+                 {
+                     "quarter":  "2017Q1",
+                     "tool":  "rentSubsidy",
+                     "field":  "amount",
+                     "area":  "Taipei",
+                     "kind":  "value",
+                     "value":  2350
+                 },
+                 {
+                     "quarter":  "2017Q1",
+                     "tool":  "rentSubsidy",
+                     "field":  "amount",
+                     "area":  "New Taipei",
+                     "kind":  "value",
+                     "value":  1824
+                 },
+                 {
+                     "quarter":  "2019Q1",
+                     "tool":  "commuterPass",
+                     "field":  "subsidy",
+                     "area":  "Taipei",
+                     "kind":  "value",
+                     "value":  20
+                 },
+                 {
+                     "quarter":  "2019Q1",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "63000040",
+                     "kind":  "value",
+                     "value":  14
+                 },
+                 {
+                     "quarter":  "2019Q2",
+                     "tool":  "commuterPass",
+                     "field":  "subsidy",
+                     "area":  "Taipei",
+                     "kind":  "real-track"
+                 },
+                 {
+                     "quarter":  "2019Q2",
+                     "tool":  "socialHousing",
+                     "field":  "unitsStarted",
+                     "area":  "63000040",
+                     "kind":  "real-track"
+                 }
+             ],
+    "enlarged":  [
+                     {
+                         "quarter":  "2015Q1",
+                         "tool":  "rentSubsidy",
+                         "field":  "amount",
+                         "area":  "Taipei",
+                         "kind":  "value",
+                         "value":  2350
+                     },
+                     {
+                         "quarter":  "2015Q1",
+                         "tool":  "rentSubsidy",
+                         "field":  "amount",
+                         "area":  "New Taipei",
+                         "kind":  "value",
+                         "value":  1824
+                     },
+                     {
+                         "quarter":  "2015Q1",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "65000210",
+                         "kind":  "value",
+                         "value":  22
+                     },
+                     {
+                         "quarter":  "2015Q2",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "65000210",
+                         "kind":  "real-track"
+                     },
+                     {
+                         "quarter":  "2015Q2",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "65000220",
+                         "kind":  "value",
+                         "value":  22
+                     },
+                     {
+                         "quarter":  "2015Q3",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "65000220",
+                         "kind":  "real-track"
+                     },
+                     {
+                         "quarter":  "2015Q3",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "65000240",
+                         "kind":  "value",
+                         "value":  22
+                     },
+                     {
+                         "quarter":  "2015Q4",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "65000240",
+                         "kind":  "real-track"
+                     },
+                     {
+                         "quarter":  "2016Q1",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "63000070",
+                         "kind":  "value",
+                         "value":  311
+                     },
+                     {
+                         "quarter":  "2016Q2",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "63000070",
+                         "kind":  "real-track"
+                     },
+                     {
+                         "quarter":  "2016Q2",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "63000060",
+                         "kind":  "value",
+                         "value":  69
+                     },
+                     {
+                         "quarter":  "2016Q3",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "63000060",
+                         "kind":  "real-track"
+                     },
+                     {
+                         "quarter":  "2016Q3",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "63000090",
+                         "kind":  "value",
+                         "value":  14
+                     },
+                     {
+                         "quarter":  "2016Q4",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "63000090",
+                         "kind":  "real-track"
+                     },
+                     {
+                         "quarter":  "2017Q1",
+                         "tool":  "rentSubsidy",
+                         "field":  "amount",
+                         "area":  "Taipei",
+                         "kind":  "real-track"
+                     },
+                     {
+                         "quarter":  "2017Q1",
+                         "tool":  "rentSubsidy",
+                         "field":  "amount",
+                         "area":  "New Taipei",
+                         "kind":  "real-track"
+                     },
+                     {
+                         "quarter":  "2017Q1",
+                         "tool":  "rentSubsidy",
+                         "field":  "amount",
+                         "area":  "Taipei",
+                         "kind":  "value",
+                         "value":  2350
+                     },
+                     {
+                         "quarter":  "2017Q1",
+                         "tool":  "rentSubsidy",
+                         "field":  "amount",
+                         "area":  "New Taipei",
+                         "kind":  "value",
+                         "value":  1824
+                     },
+                     {
+                         "quarter":  "2019Q1",
+                         "tool":  "commuterPass",
+                         "field":  "subsidy",
+                         "area":  "Taipei",
+                         "kind":  "value",
+                         "value":  30
+                     },
+                     {
+                         "quarter":  "2019Q1",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "63000040",
+                         "kind":  "value",
+                         "value":  20
+                     },
+                     {
+                         "quarter":  "2019Q2",
+                         "tool":  "commuterPass",
+                         "field":  "subsidy",
+                         "area":  "Taipei",
+                         "kind":  "real-track"
+                     },
+                     {
+                         "quarter":  "2019Q2",
+                         "tool":  "socialHousing",
+                         "field":  "unitsStarted",
+                         "area":  "63000040",
+                         "kind":  "real-track"
+                     }
+                 ]
 }

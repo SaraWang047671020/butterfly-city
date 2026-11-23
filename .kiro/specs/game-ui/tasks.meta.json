@@ -1211,6 +1211,21 @@
         "executionId": "791d02b9-881e-48ec-966d-0295dcaa61a7",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1795397325779
+      },
+      {
+        "executionId": "0aca85d9-e4f4-4159-9d9f-4e7b05cd650e",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1795398783651
+      },
+      {
+        "executionId": "6dd54b6d-81f6-4c2c-8836-058c0ef4eded",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1795401225807
+      },
+      {
+        "executionId": "6dd54b6d-81f6-4c2c-8836-058c0ef4eded",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1795401385562
       }
     ],
     "19.2 Generate and commit the Demo_Save": [
@@ -1218,6 +1233,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923960
+      },
+      {
+        "executionId": "6dd54b6d-81f6-4c2c-8836-058c0ef4eded",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1795401425197
+      },
+      {
+        "executionId": "6dd54b6d-81f6-4c2c-8836-058c0ef4eded",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1795401519639
       }
     ],
     "19.3 Write the Demo_Save output and recompute tests `tests/scripts/demo/demo-save.real.test.ts`": [
@@ -1225,6 +1250,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970923991
+      },
+      {
+        "executionId": "6dd54b6d-81f6-4c2c-8836-058c0ef4eded",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1795401559143
+      },
+      {
+        "executionId": "6dd54b6d-81f6-4c2c-8836-058c0ef4eded",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1795401728970
       }
     ],
     "19.4 Write the Demo_Save condition tests `tests/scripts/demo/demo-conditions.real.test.ts`": [
@@ -1232,6 +1267,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970924015
+      },
+      {
+        "executionId": "6dd54b6d-81f6-4c2c-8836-058c0ef4eded",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1795401560257
+      },
+      {
+        "executionId": "6dd54b6d-81f6-4c2c-8836-058c0ef4eded",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1795401729690
       }
     ],
     "19.5 Write real-file Data_Loader and view tests `tests/game/real-data.test.ts`": [
@@ -1239,6 +1284,16 @@
         "executionId": "fce9661d-2983-4b5e-a356-3b78bd53ac56",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794970924044
+      },
+      {
+        "executionId": "6dd54b6d-81f6-4c2c-8836-058c0ef4eded",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1795401560758
+      },
+      {
+        "executionId": "6dd54b6d-81f6-4c2c-8836-058c0ef4eded",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1795401727965
       }
     ],
     "20. Checkpoint - Phase D complete": [
@@ -1370,6 +1425,13 @@
         "executionId": "06239c85-923b-4ffa-9173-f3522513a182",
         "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
         "timestamp": 1794991901898
+      }
+    ],
+    "19. Real-data integration and the committed Demo_Save (Phase D). **Blocked until the real `params.json`, `commute-matrix.json` and `events.json` exist in `public/data/` and `history.json` has `medianTotalPrice` (data-pipeline tasks 16 to 21).**": [
+      {
+        "executionId": "6dd54b6d-81f6-4c2c-8836-058c0ef4eded",
+        "chatSessionId": "sess_55fcb94b-bb88-48d7-8836-c5ef185431b9",
+        "timestamp": 1795401729719
       }
     ]
   }

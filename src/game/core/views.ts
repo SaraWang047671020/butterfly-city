@@ -379,6 +379,22 @@ function districtPanel(c: Ctx, selected: DistrictCode | null): DistrictPanelView
 }
 
 /** Central Ghost count of the Displayed_Quarter, or null before any quarter is computed (city-3d 2.2). */
+/**
+ * Persons above a ghost line minus real history, central Scenario, Displayed_Quarter (city-3d Requirement 6).
+ * The Ghost count Causes are in ghost units and not floored; every Cause other than the Baseline (the real track)
+ * and the floor adjustment ('bound') is a difference from real history. Read from the Engine output, no formula.
+ */
+function ghostDiffOf(c: Ctx, code: DistrictCode): number | null {
+  if (!c.computed) return null;
+  const state = c.session.computed?.central[c.qi];
+  const breakdown = state?.causes['ghostCount']?.[code];
+  const size = c.session.params['ghost.size'];
+  if (breakdown === undefined || size === undefined || size.kind !== 'scalar') return null;
+  let ghosts = 0;
+  for (const cause of breakdown.causes) if (cause.id !== 'baseline' && cause.id !== 'bound') ghosts += cause.contribution;
+  return ghosts * size.value;
+}
+
 function ghostsOf(c: Ctx, code: DistrictCode): number | null {
   if (!c.computed) return null;
   const r = c.ranges?.['ghostCount']?.[code];
@@ -432,6 +448,7 @@ function mapView(c: Ctx): MapViewModel {
       dataPeriod: lowUse ? periodOf(c.data.history, d.code, c.qi) : null,
       selected: c.session.selectedDistrict === d.code,
       ghosts: ghostsOf(c, d.code),
+      ghostDiffPersons: ghostDiffOf(c, d.code),
       priceIndex: priceIndexOf(c.data.history, d.code, c.qi),
     };
   });
@@ -820,6 +837,7 @@ export function buildGameView(session: GameSession | null, ui: ControllerUiState
           dataPeriod: null,
           selected: false,
           ghosts: null,
+          ghostDiffPersons: null,
           priceIndex: priceIndexOf(data.history, d.code, 0),
         })),
         legend: {

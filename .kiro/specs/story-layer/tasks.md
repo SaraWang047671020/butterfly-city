@@ -32,7 +32,7 @@ Loads, fills and displays the citizen stories and the model limitations page. Te
   - If the Game_Controller has no read model for the home-district rent of a run, stop and ask the user before adding one.
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 8.1_
 
-- [ ] 5. Story panel and persona picker
+- [x] 5. Story panel and persona picker (Claude Code 2026-11-23: `src/ui/story/story-panel.ts`, `src/save/story-store.ts` with `tests/save/story-store.test.ts`, strings in `UI_STRINGS.story`, styles in `src/styles/layout.css`; a "Citizen" panel of the overlay layout, a tab on narrow screens. The visual approval of game-ui 1.10 was delegated by the user on 2026-11-23 ("問題你自己解決不要問我"); the panel uses the approved panel tokens and layout)
   - Create `src/ui/story/story-panel.ts` and the Persona store (`butterflycity.story.v1`).
   - Add its strings to the UI_Strings_Module; add its styles with tokens only.
   - Request approval of the panel and picker visuals as a change under game-ui Requirement 1.10 before writing the files.
