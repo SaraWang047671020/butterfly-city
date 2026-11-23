@@ -39,6 +39,8 @@ export interface CityStrings {
   readonly canvasLabel: string;
   /** Text shown when WebGL is unavailable (city-3d 12.3). */
   readonly fallback: string;
+  /** Name of the Close control of the city's dialogs (play-loop Requirement 9). */
+  readonly close: string;
   /** Metro texts (city-3d 8.6). {station} is replaced by the station name. */
   readonly metro: {
     readonly prompt: string;
@@ -178,7 +180,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
   const fade = doc.createElement('div');
   fade.className = 'city-fade';
   root.append(prompt, fade);
-  const dialog = createDialogManager(doc, () => canvas);
+  const dialog = createDialogManager(doc, () => canvas, o.strings.close);
   root.appendChild(dialog.root);
   const travel = (to: MetroStation) => {
     const [x, z] = metro.position(to);
@@ -220,7 +222,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       section.append(h, ul);
       body.appendChild(section);
     }
-    dialog.open({ title: o.strings.metro.title.replace('{station}', here.name), body, opener: promptButton });
+    dialog.open({ title: o.strings.metro.title.replace('{station}', here.name), body, opener: promptButton, size: 'lg' });
   };
   promptButton.addEventListener('click', openStations);
 

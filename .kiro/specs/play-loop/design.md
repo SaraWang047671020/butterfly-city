@@ -143,9 +143,9 @@ function briefItems(input: { completions; majorEvents; changes: { district; indi
 
 ## UI
 
-### Dialog_Frame (`src/ui/dialogs/frame.ts`)
+### Dialog_Frame (`src/ui/a11y/dialog.ts`)
 
-One function `openFrame(doc, { title, body, actions, closable, size: 'md' | 'lg' | 'full' })` returning `{ close, root }`. A native modal `<dialog>` (`showModal`), so focus is trapped by the browser and the dialog sits in the top layer above the pointer-transparent overlay. The existing dialogs of `dialogs.ts` (new game, export, import, Event_Cards, "Why?") and the station dialog are moved onto it. Sizes: `md` min(40rem, 100% − 2 gutters), `lg` min(64rem, …), full screen below 40rem. All values are tokens.
+Implemented as the existing dialog manager, which every dialog already used: `open({ title, kicker?, body, actions?, size?: 'md' | 'lg' | 'full', opener, onCancel })`. (The first draft named a new `frame.ts`; one manager avoids two modal paths.) A native modal `<dialog>` (`showModal`), so focus is trapped by the browser and the dialog sits in the top layer above the pointer-transparent overlay. The existing dialogs of `dialogs.ts` (new game, export, import, Event_Cards, "Why?") and the station dialog are moved onto it. Sizes: `md` min(40rem, 100% − 2 gutters), `lg` min(64rem, …), full screen below 40rem. All values are tokens.
 
 ### Character_Creation (`src/ui/character/creation.ts`)
 

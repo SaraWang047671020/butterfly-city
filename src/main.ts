@@ -143,6 +143,7 @@ async function start(): Promise<void> {
     statics: ctl.cityStatic(),
     strings: {
       canvasLabel: C.canvasLabel,
+      close: UI_STRINGS.dialogs.close,
       fallback: C.fallback,
       metro: C.metro,
       talk: C.talk,
@@ -248,7 +249,7 @@ async function start(): Promise<void> {
 
   // Limits_Dialog (story-layer Requirement 6): opened from the Map panel; texts from model-limits.json, filled from
   // model-facts.json (minutes as whole numbers). A Placeholder without a value shows "no value" for that item.
-  const limitsDialog = createDialogManager(document, () => document.querySelector<HTMLElement>('.turn-bar__button'));
+  const limitsDialog = createDialogManager(document, () => document.querySelector<HTMLElement>('.turn-bar__button'), UI_STRINGS.dialogs.close);
   host.appendChild(limitsDialog.root);
   limitsDialog.root.classList.add('ui-dialog--limits');
   app.addMapControl(UI_STRINGS.story.limitsButton, (opener) => {
@@ -277,13 +278,7 @@ async function start(): Promise<void> {
       sourcesLink: limits.page.sourcesLink,
       sections: limits.sections.map((sec) => ({ title: sec.title, items: sec.items.map((it) => ({ title: it.title, text: fill(`limits.${it.id}`, it.text) })) })),
     });
-    const close = document.createElement('button');
-    close.type = 'button';
-    close.className = 'ui-button';
-    close.textContent = UI_STRINGS.dialogs.close;
-    close.addEventListener('click', () => limitsDialog.close());
-    body.prepend(close);
-    limitsDialog.open({ title: limits.page.title, body, opener });
+    limitsDialog.open({ title: limits.page.title, body, opener, size: 'lg' });
   });
   app.attach(ctl);
 }

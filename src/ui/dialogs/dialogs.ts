@@ -5,7 +5,7 @@
 import type { DialogView, UiActions } from '../../types/view.ts';
 import type { Component } from '../component.ts';
 import { createDialogManager } from '../a11y/dialog.ts';
-import type { DialogManager } from '../a11y/dialog.ts';
+import type { DialogManager, DialogSize } from '../a11y/dialog.ts';
 import { createRangeSourceView } from '../explain/range-source-view.ts';
 import { formatRange } from '../format/range.ts';
 import { fieldLabel, formatAmount, toolName } from '../panels/policy-text.ts';
@@ -42,11 +42,6 @@ function button(doc: Document, label: string, onClick: () => void, primary = fal
   return b;
 }
 
-function actionRow(doc: Document, ...buttons: HTMLButtonElement[]): HTMLElement {
-  const row = el(doc, 'div', 'dialog__actions');
-  row.append(...buttons);
-  return row;
-}
 
 /** Key that identifies which dialog is open. The same key means update in place, a new key rebuilds. */
 function dialogKey(view: DialogView): string {
@@ -63,6 +58,9 @@ function dialogKey(view: DialogView): string {
 interface Built {
   readonly title: string;
   readonly body: HTMLElement;
+  /** Buttons of the Dialog_Frame action row, primary last. */
+  readonly actions: readonly HTMLElement[];
+  readonly size?: DialogSize;
   readonly onCancel: () => void;
   /** Applies a later view of the same dialog without rebuilding the body. */
   readonly refresh: (view: DialogView) => void;
@@ -121,11 +119,14 @@ function buildConfirm(doc: Document, actions: UiActions, view: Extract<DialogVie
         ? { title: D.confirmLoadDemoTitle, body: D.confirmLoadDemo }
         : { title: D.confirmImportTitle, body: D.confirmImport };
   const body = el(doc, 'div', 'dialog__content');
-  body.append(
-    el(doc, 'p', 'dialog__text', text.body),
-    actionRow(doc, button(doc, D.cancel, () => actions.confirm(false)), button(doc, D.confirm, () => actions.confirm(true), true)),
-  );
-  return { title: text.title, body, onCancel: () => actions.confirm(false), refresh: () => undefined };
+  body.append(el(doc, 'p', 'dialog__text', text.body));
+  return {
+    title: text.title,
+    body,
+    actions: [button(doc, D.cancel, () => actions.confirm(false)), button(doc, D.confirm, () => actions.confirm(true), true)],
+    onCancel: () => actions.confirm(false),
+    refresh: () => undefined,
+  };
 }
 
 function importErrorText(error: { step: string; path: string; reason: string }): string {
@@ -148,15 +149,11 @@ function buildImport(doc: Document, actions: UiActions): Built {
   error.setAttribute('role', 'alert');
   error.hidden = true;
   const confirm = button(doc, D.confirm, () => actions.importSaveCode(area.value), true);
-  body.append(
-    label,
-    area,
-    error,
-    actionRow(doc, button(doc, D.cancel, () => actions.closeDialog()), confirm),
-  );
+  body.append(label, area, error);
   return {
     title: D.importTitle,
     body,
+    actions: [button(doc, D.cancel, () => actions.closeDialog()), confirm],
     onCancel: () => actions.closeDialog(),
     refresh(view) {
       if (view.kind !== 'import') return;
@@ -178,11 +175,12 @@ function buildImport(doc: Document, actions: UiActions): Built {
 function buildExport(doc: Document, actions: UiActions, view: Extract<DialogView, { kind: 'export' | 'stored-export' }>): Built {
   const field = copyField(doc, actions, view.text);
   const body = el(doc, 'div', 'dialog__content');
-  body.append(field.block, actionRow(doc, button(doc, D.close, () => actions.closeDialog(), true)));
+  body.append(field.block);
   field.refresh(view.text, view.copyFailed);
   return {
     title: view.kind === 'export' ? D.exportTitle : D.storedTextTitle,
     body,
+    actions: [button(doc, D.close, () => actions.closeDialog(), true)],
     onCancel: () => actions.closeDialog(),
     refresh(next) {
       if (next.kind === 'export' || next.kind === 'stored-export') field.refresh(next.text, next.copyFailed);
@@ -219,8 +217,15 @@ function buildEventCards(doc: Document, actions: UiActions, view: Extract<Dialog
     }
     list.append(li);
   }
-  body.append(list, actionRow(doc, button(doc, UI_STRINGS.timeline.dismissCards, () => actions.dismissEventCards(), true)));
-  return { title: D.eventCardTitle, body, onCancel: () => actions.dismissEventCards(), refresh: () => undefined };
+  body.append(list);
+  return {
+    title: D.eventCardTitle,
+    body,
+    actions: [button(doc, UI_STRINGS.timeline.dismissCards, () => actions.dismissEventCards(), true)],
+    size: 'lg',
+    onCancel: () => actions.dismissEventCards(),
+    refresh: () => undefined,
+  };
 }
 
 function safeHost(url: string): string {
@@ -235,10 +240,12 @@ function buildRangeSource(doc: Document, actions: UiActions, view: Extract<Dialo
   const block = createRangeSourceView(doc);
   block.update(view.source);
   const body = el(doc, 'div', 'dialog__content');
-  body.append(block.root, actionRow(doc, button(doc, D.close, () => actions.closeDialog(), true)));
+  body.append(block.root);
   return {
     title: D.rangeSourceTitle,
     body,
+    actions: [button(doc, D.close, () => actions.closeDialog(), true)],
+    size: 'lg',
     onCancel: () => actions.closeDialog(),
     refresh(next) {
       if (next.kind === 'range-source') block.update(next.source);
@@ -249,12 +256,11 @@ function buildRangeSource(doc: Document, actions: UiActions, view: Extract<Dialo
 function buildDemo(doc: Document, actions: UiActions, view: Extract<DialogView, { kind: 'demo' }>): Built {
   const body = el(doc, 'div', 'dialog__content');
   const close = button(doc, D.cancel, () => actions.closeDialog());
+  let buttons: HTMLElement[];
   if (view.demo === null) {
     const reason = view.unavailableReason ?? '';
-    body.append(
-      el(doc, 'p', 'dialog__error', fillTemplate(DEMO.loadError, { reason })),
-      actionRow(doc, button(doc, D.close, () => actions.closeDialog(), true)),
-    );
+    body.append(el(doc, 'p', 'dialog__error', fillTemplate(DEMO.loadError, { reason })));
+    buttons = [button(doc, D.close, () => actions.closeDialog(), true)];
   } else {
     const demo = view.demo;
     const list = el(doc, 'ul', 'dialog__demo-list');
@@ -288,10 +294,10 @@ function buildDemo(doc: Document, actions: UiActions, view: Extract<DialogView, 
         }),
       ),
       el(doc, 'p', 'dialog__note', DEMO.examplesNote),
-      actionRow(doc, close, button(doc, D.confirm, () => actions.confirmDemo(), true)),
     );
+    buttons = [close, button(doc, D.confirm, () => actions.confirmDemo(), true)];
   }
-  return { title: DEMO.descriptionHeading, body, onCancel: () => actions.closeDialog(), refresh: () => undefined };
+  return { title: DEMO.descriptionHeading, body, actions: buttons, onCancel: () => actions.closeDialog(), refresh: () => undefined };
 }
 
 function build(doc: Document, actions: UiActions, view: DialogView): Built {
@@ -319,7 +325,7 @@ export interface DialogsComponent extends Component<DialogView | null> {
 
 /** Creates the dialogs component. `update(null)` closes the open dialog without calling any action. */
 export function createDialogs(doc: Document, actions: UiActions, deps: DialogsDeps): DialogsComponent {
-  const manager = createDialogManager(doc, deps.getFallbackFocus);
+  const manager = createDialogManager(doc, deps.getFallbackFocus, D.close);
   let currentKey: string | null = null;
   let current: Built | null = null;
   let lastOpener: HTMLElement | null = null;
@@ -346,7 +352,7 @@ export function createDialogs(doc: Document, actions: UiActions, deps: DialogsDe
         lastOpener = deps.getOpener?.() ?? (doc.activeElement instanceof HTMLElement ? doc.activeElement : null);
       }
       const opener = lastOpener;
-      manager.open({ title: built.title, body: built.body, opener, onCancel: built.onCancel });
+      manager.open({ title: built.title, body: built.body, actions: built.actions, size: built.size ?? 'md', opener, onCancel: built.onCancel });
       built.refresh(view);
     },
   };

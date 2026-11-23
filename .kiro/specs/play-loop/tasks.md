@@ -10,10 +10,10 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
   - [x] 1.1 Play_Loop_Design_Proposal (`docs/design-proposal/play-loop-proposal.html`): Character_Creation, main screen in Overview_Mode and Walk_Mode, Policy_Dialog, Quarter_Brief, City_Report, District_Card, First_Play_Guide, Dialog_Frame, Life dialog, at 360 and 1280 CSS pixels
   - [x] 1.2 Record the decision in `KIRO-LOG.md`
 
-- [ ] 2. Dialog_Frame (Requirement 9; first because it fixes the size problem the user reported)
-  - [ ] 2.1 `src/ui/dialogs/frame.ts` and its styles (tokens only)
-  - [ ] 2.2 Move the dialogs of `dialogs.ts`, the station dialog and the Limits_Dialog onto it
-  - [ ] 2.3 DOM tests (`showModal`, focus return, Escape) and the manual pointer-click check of 9.3
+- [x] 2. Dialog_Frame (Requirement 9; first because it fixes the size problem the user reported)
+  - [x] 2.1 Dialog_Frame as the existing dialog manager `src/ui/a11y/dialog.ts` (header with kicker, title and Close control; body; action row; sizes md, lg, full) and its styles in `src/styles/dialogs.css` (tokens only). Deviation from the design: no separate `frame.ts`, because every dialog already went through this one manager.
+  - [x] 2.2 Move the dialogs of `dialogs.ts`, the station dialog and the Limits_Dialog onto it
+  - [x] 2.3 Static test `tests/static/dialog-frame.test.ts` (no DOM test library in the project; adding one needs the user's approval) and the manual pointer-click check of 9.3, recorded in `KIRO-LOG.md`
 
 - [ ] 3. Data
   - [ ] 3.1 `src/data/character-loader.ts`: fetch and validate the Character_File and the Wage_File (Requirement 2.3 to 2.5)
