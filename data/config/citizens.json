@@ -16,6 +16,14 @@
         "url": "https://www.huduser.gov/portal/node/10587"
       },
       "note": "Display line for citizen stories only. The engine and the ghost count do not use it. Source row: data/research/RESEARCH-NOTES.md, rent burden table."
+    },
+    "commuteMonth": {
+      "tripsPerDay": 2,
+      "workdaysPerMonth": 22,
+      "unit": "one-way trips per working day; working days per month",
+      "status": "gap",
+      "assumption": "Display assumption for the {commuteHoursMonth} placeholder only: one trip to work and one back on each working day, and about 22 working days in a month of a five-day week. The engine does not use it.",
+      "note": "Added 2026-11-23 by Claude Code because params.json has no trips-per-day or days-per-month parameter (story-layer design, derived placeholders)."
     }
   },
   "personas": [

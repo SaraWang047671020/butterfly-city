@@ -26,7 +26,8 @@ export function landmarkClearings(table: readonly Landmark[] = LANDMARKS): Clear
 
 export interface LandmarkLayer {
   step(time: number, moving: boolean): void;
-  setLabelVisibility(camera: THREE.Camera): void;
+  /** Shows labels within `maxDistance` of the camera (LANDMARK_LABEL_DISTANCE by default). */
+  setLabelVisibility(camera: THREE.Camera, maxDistance?: number): void;
 }
 
 export function createLandmarks(scene: THREE.Scene, tokens: CityTokens, table: readonly Landmark[] = LANDMARKS): LandmarkLayer {
@@ -50,8 +51,8 @@ export function createLandmarks(scene: THREE.Scene, tokens: CityTokens, table: r
       if (!moving) return;
       for (const it of items) it.model.animate?.(time);
     },
-    setLabelVisibility(camera) {
-      for (const it of items) (it.label.element as HTMLElement).hidden = camera.position.distanceTo(it.position) > LANDMARK_LABEL_DISTANCE;
+    setLabelVisibility(camera, maxDistance = LANDMARK_LABEL_DISTANCE) {
+      for (const it of items) (it.label.element as HTMLElement).hidden = camera.position.distanceTo(it.position) > maxDistance;
     },
   };
 }

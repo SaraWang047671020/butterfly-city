@@ -18,7 +18,8 @@
     "data:download": "node scripts/download.ts",
     "data:check": "node scripts/check.ts",
     "events": "node scripts/build-events.ts",
-    "stations": "node scripts/build-stations.ts"
+    "stations": "node scripts/build-stations.ts",
+    "story-files": "node scripts/build-story-files.ts"
   },
   "devDependencies": {
     "@types/d3-geo": "3.1.1",

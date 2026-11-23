@@ -6,7 +6,9 @@ Loads, fills and displays the citizen stories and the model limitations page. Te
 
 ## Tasks
 
-- [ ] 1. Story file loading
+> **Implementation note (2026-11-23):** tasks 1, 3, 4 and 7 and the income-spread part of task 2 were implemented by Claude Code, not Kiro, for the 3D city's Citizen_Encounters (city-3d task 10). Deviations: (a) `citizens.json` and `model-limits.json` are copied and `income-spread.json` is written by `npm run story-files` (`scripts/build-story-files.ts`), not by `npm run data`, so the full pipeline does not have to run; (b) `loadStoryFiles` loads `citizens.json` and `income-spread.json` only, because `model-facts.json` (task 2, commute and backtest values) is not generated yet; (c) Story_Facts returns formatted values through a `format` function passed in by the caller, so `src/game/` imports nothing from `src/ui/`; (d) `citizens.json` gained a `thresholds.commuteMonth` block (2 trips a day, 22 working days a month, status gap) for `{commuteHoursMonth}`, because `params.json` has no such parameters; (e) `normalQuantile` is Acklam's approximation (no existing helper in the repository). Tasks 5, 6 and 8 (Story_Panel, picker, Limits_Dialog, wiring) wait for the game-ui screen.
+
+- [x] 1. Story file loading (Claude Code; see note (a), (b))
   - Add the copy of `data/config/citizens.json` and `data/config/model-limits.json` to `public/data/` in `scripts/build-data.ts`.
   - Create `src/data/story-loader.ts` with the file types, `loadStoryFiles`, `validateModelFacts` and `validateIncomeSpread` (design, Data section).
   - Document the four Story_Files in `data/SOURCES.md`.
@@ -20,11 +22,11 @@ Loads, fills and displays the citizen stories and the model limitations page. Te
   - Run `npm run data` and `npm run backtest` once the user confirms they can be run, and commit `public/data/model-facts.json` and `public/data/income-spread.json`; if the raw files are missing, stop and list what is needed.
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.8, 2.9_
 
-- [ ] 3. Template filler and registry
+- [x] 3. Template filler and registry (Claude Code)
   - Create `src/narrative/fill.ts` (`FillError`, `placeholdersOf`, `fillTemplate`), `src/narrative/registry.ts` (25 Placeholder names with producers) and `src/narrative/select.ts` (`StoryState`, `storyLines`, `endingLines`).
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.6, 3.7, 8.1_
 
-- [ ] 4. Persona numbers and story facts
+- [x] 4. Persona numbers and story facts (Claude Code; see note (c), (d), (e))
   - Create `src/simulation/persona.ts` (`normalQuantile`, `personaRentBurden`); reuse an existing normal quantile or CDF helper if the repository has one.
   - Create `src/game/story-facts.ts` with `buildStoryFacts`: rent from the run, commute from `commute-matrix.json`, income from `householdIncome` and `income-spread.json`, thresholds as mapped in the design, number formatting of game-ui.
   - If the Game_Controller has no read model for the home-district rent of a run, stop and ask the user before adding one.
@@ -41,7 +43,7 @@ Loads, fills and displays the citizen stories and the model limitations page. Te
   - Request approval of the dialog visuals together with task 5.
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 8.5, 8.6_
 
-- [ ] 7. Required tests
+- [x] 7. Required tests (Claude Code: `tests/narrative/placeholders.test.ts`, `banned-terms.test.ts`, plus `story-facts.test.ts` on the real data)
   - Create `tests/narrative/placeholders.test.ts`: every Template of both files fills from a complete fixture and the committed `model-facts.json`; a missing value fails with the Template_Id and the Placeholder. It also checks that the committed `income-spread.json` has 41 finite positive sigmas (the one schema check allowed beyond the two required tests).
   - Create `tests/narrative/banned-terms.test.ts`: raw and filled text, and the `templates.backtestResult` sentences, checked with `checkBannedTerms` and `parseTermList` from `scripts/pipeline/banned-terms.ts` and the two list files.
   - Run each file once; on failure try at most 2 fixes, then report file, test, expected and received.

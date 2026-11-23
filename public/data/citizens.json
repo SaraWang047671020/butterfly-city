@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "notes": [
+    "Draft content for the story-layer spec. Personas are illustrative households, not real people.",
+    "A persona's numbers are never typed here. Each quarter they are computed from simulation output for the persona's districts: rent = district median rent per m2 x dwellingSize; income = the incomePercentile point of the district household income distribution used by the ghost rule; commute = commute matrix minutes from homeDistrict to workDistrict.",
+    "Template states use four lines. rentGhostThreshold = ghost.rentThreshold.value and commuteGhostThreshold = ghost.commuteThreshold.value (central Scenario); commuteRiskThreshold = ghost.commuteThreshold.range.low; rentRiskThreshold comes from the thresholds block below, because the 30% line is a display line only and is not an engine parameter. Placeholders in braces are filled by the narrative code; numbers are formatted by the UI.",
+    "Text follows neutrality.md: what the numbers are, no verdicts, no causes. Causes are shown only in the Why? view."
+  ],
+  "thresholds": {
+    "rentRisk": {
+      "value": 30,
+      "unit": "percent of income",
+      "status": "verified",
+      "source": {
+        "citation": "U.S. Department of Housing and Urban Development (HUD), definition of a cost-burdened household (rent above 30 percent of income)",
+        "url": "https://www.huduser.gov/portal/node/10587"
+      },
+      "note": "Display line for citizen stories only. The engine and the ghost count do not use it. Source row: data/research/RESEARCH-NOTES.md, rent burden table."
+    },
+    "commuteMonth": {
+      "tripsPerDay": 2,
+      "workdaysPerMonth": 22,
+      "unit": "one-way trips per working day; working days per month",
+      "status": "gap",
+      "assumption": "Display assumption for the {commuteHoursMonth} placeholder only: one trip to work and one back on each working day, and about 22 working days in a month of a five-day week. The engine does not use it.",
+      "note": "Added 2026-11-23 by Claude Code because params.json has no trips-per-day or days-per-month parameter (story-layer design, derived placeholders)."
+    }
+  },
+  "personas": [
+    {
+      "id": "ting-zhonghe",
+      "name": "Ting",
+      "age": 25,
+      "household": "single, renting a studio",
+      "homeDistrict": "Zhonghe",
+      "homeCode": "65000030",
+      "workDistrict": "Xinyi",
+      "workCode": "63000020",
+      "tenure": "renter",
+      "dwellingSize": 13,
+      "incomePercentile": 30,
+      "intro": "Ting is 25 and works at an office in Xinyi. She rents a 13 m2 studio in Zhonghe, where rents are lower, and rides the MRT across the river each morning.",
+      "picker": "25, renter in Zhonghe, works in Xinyi"
+    },
+    {
+      "id": "lin-wanhua",
+      "name": "Mrs. Lin",
+      "age": 72,
+      "household": "lives alone, renting",
+      "homeDistrict": "Wanhua",
+      "homeCode": "63000070",
+      "workDistrict": null,
+      "workCode": null,
+      "tenure": "renter",
+      "dwellingSize": 26,
+      "incomePercentile": 10,
+      "intro": "Mrs. Lin is 72 and lives alone in a small rented flat in Wanhua, near the market she has used for forty years. Her income is a pension. She does not commute, so rent is the number that matters to her.",
+      "picker": "72, lives alone, renter in Wanhua"
+    },
+    {
+      "id": "huang-banqiao",
+      "name": "The Huangs",
+      "age": 38,
+      "household": "couple with two children, renting",
+      "homeDistrict": "Banqiao",
+      "homeCode": "65000010",
+      "workDistrict": "Zhongshan",
+      "workCode": "63000040",
+      "tenure": "renter",
+      "dwellingSize": 66,
+      "incomePercentile": 60,
+      "intro": "The Huangs both work, one in Banqiao and one in Zhongshan. With two children they need a three-room flat, which they rent in Banqiao. They are saving for a home of their own.",
+      "picker": "Dual-income family of four, renters in Banqiao"
+    },
+    {
+      "id": "kai-tamsui",
+      "name": "Kai",
+      "age": 31,
+      "household": "couple, renting",
+      "homeDistrict": "Tamsui",
+      "homeCode": "65000100",
+      "workDistrict": "Neihu",
+      "workCode": "63000100",
+      "tenure": "renter",
+      "dwellingSize": 40,
+      "incomePercentile": 50,
+      "intro": "Kai and his partner rent a flat in Tamsui, which has more space for the money. Kai works in Neihu, at the other end of the MRT network.",
+      "picker": "31, renter in Tamsui, works in Neihu"
+    },
+    {
+      "id": "mei-daan",
+      "name": "Mei",
+      "age": 34,
+      "household": "single, renting a room",
+      "homeDistrict": "Da'an",
+      "homeCode": "63000030",
+      "workDistrict": "Da'an",
+      "workCode": "63000030",
+      "tenure": "renter",
+      "dwellingSize": 13,
+      "incomePercentile": 25,
+      "intro": "Mei works at a restaurant in Da'an and rents a room a few streets away. She walks to work. Living close costs more each month than living farther out.",
+      "picker": "34, renter in Da'an, works in Da'an"
+    },
+    {
+      "id": "hao-sanchong",
+      "name": "Hao",
+      "age": 41,
+      "household": "single parent with one child, renting",
+      "homeDistrict": "Sanchong",
+      "homeCode": "65000020",
+      "workDistrict": "Zhongzheng",
+      "workCode": "63000050",
+      "tenure": "renter",
+      "dwellingSize": 40,
+      "incomePercentile": 35,
+      "intro": "Hao is raising his daughter alone. They rent a two-room flat in Sanchong, and Hao works in Zhongzheng, one bridge and a few MRT stops away.",
+      "picker": "41, single parent, renter in Sanchong"
+    }
+  ],
+  "templates": {
+    "rent": {
+      "below": "{name} spends {rentBurden}% of household income on rent this quarter.",
+      "atRisk": "{name} spends {rentBurden}% of household income on rent this quarter, above the {rentRiskThreshold}% line that housing agencies use for a cost burden.",
+      "ghost": "{name} now spends {rentBurden}% of household income on rent, above {rentGhostThreshold}%. In the district average this does not show: {name} is one of the people the average hides."
+    },
+    "commute": {
+      "none": "{name} does not commute.",
+      "below": "{name}'s trip from {homeDistrict} to {workDistrict} takes about {commuteMinutes} minutes each way.",
+      "atRisk": "{name}'s trip from {homeDistrict} to {workDistrict} takes about {commuteMinutes} minutes each way, longer than the {commuteRiskThreshold} minutes most commuters say they accept.",
+      "ghost": "{name}'s trip from {homeDistrict} to {workDistrict} takes about {commuteMinutes} minutes each way, more than {commuteGhostThreshold} minutes. Over a working month that is about {commuteHoursMonth} hours on the way to and from work."
+    },
+    "comparison": {
+      "same": "This is the same as in real history.",
+      "lower": "In real history the rent share was {rentBurdenReal}%. Under your policies it is {rentBurdenDiff} points lower.",
+      "higher": "In real history the rent share was {rentBurdenReal}%. Under your policies it is {rentBurdenDiff} points higher.",
+      "range": "Depending on the study used, the simulated value lies between {rentBurdenLow}% and {rentBurdenHigh}%."
+    },
+    "stateChange": {
+      "becameGhost": "This quarter {name} crossed the line. On the map, {name}'s district gains a ghost for every {ghostSize} people in the same situation.",
+      "leftGhost": "This quarter {name} moved back below the line.",
+      "becameGhostReal": "In real history {name} would have crossed the line in {realQuarter}."
+    },
+    "ending": {
+      "summary": "From 2015 to 2025, {name} spent {quartersAtRisk} of 44 quarters above the {rentRiskThreshold}% rent line, compared with {quartersAtRiskReal} in real history.",
+      "commuteSummary": "{name}'s commute averaged {commuteAvg} minutes, compared with {commuteAvgReal} minutes in real history.",
+      "ghostSummary": "{name} was a ghost for {quartersGhost} quarters ({quartersGhostReal} in real history).",
+      "closing": "Other households in {homeDistrict} had different results. The district panel shows how many people were above the line in each quarter."
+    }
+  }
+}

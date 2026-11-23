@@ -17,7 +17,10 @@ import { createScene, type QualityLevel } from './scene.ts';
 import { buildStreetGrid } from './street-grid.ts';
 import { readTokens } from './tokens.ts';
 import { createTraffic } from './traffic.ts';
-import { createWalker } from './walk.ts';
+import { createWalker, nearestFree } from './walk.ts';
+import { createCitizens, type CityCitizen } from './citizens.ts';
+
+export type { CityCitizen } from './citizens.ts';
 import { createDialogManager } from '../a11y/dialog.ts';
 import { openNetwork, stationNear, stationsByLine, type OpenNetwork } from './metro/network.ts';
 import { createMetro } from './metro/render.ts';
@@ -40,6 +43,22 @@ export interface CityStrings {
     readonly title: string;
     readonly here: string;
   };
+  /** City tools and the Illustration_Note (city-3d 10.3, 11.1, 12.2, 8.1). */
+  readonly tools?: {
+    readonly label: string;
+    readonly illustrationNote: string;
+    readonly walk: string;
+    readonly overview: string;
+    readonly pause: string;
+    readonly resume: string;
+    readonly qualityHigh: string;
+    readonly qualityLow: string;
+  };
+  /** Citizen_Encounter texts. {name} is replaced by the citizen's name. */
+  readonly talk: {
+    readonly prompt: string;
+    readonly button: string;
+  };
 }
 
 export interface CityViewOptions {
@@ -53,6 +72,8 @@ export interface CityViewOptions {
   readonly quality?: QualityLevel;
   /** Code of the district the opening flight looks at. */
   readonly introDistrict?: string;
+  /** The story-layer Personas met in Walk_Mode (phase 4); empty when the story files did not load. */
+  readonly citizens?: readonly CityCitizen[];
   /** Called when the mode changes, also when Escape leaves Walk_Mode (city-3d 8.1). */
   readonly onModeChange?: (mode: CityMode) => void;
 }
@@ -191,6 +212,44 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     dialog.open({ title: o.strings.metro.title.replace('{station}', here.name), body, opener: promptButton });
   };
   promptButton.addEventListener('click', openStations);
+
+  // --- Citizen_Encounters (phase 4): each Persona stands next to the metro station of its home district.
+  const citizenSpot = (homeCode: string): readonly [number, number] => {
+    const home = districts.byCode.get(homeCode);
+    const c = home?.center ?? new THREE.Vector3();
+    const all = openNetwork(METRO_DATA, '2025Q4');
+    const exit = stationNear({ ...all, stations: all.stations.filter((st) => st.district === homeCode) }, metro.position, c.x, c.z, Infinity);
+    const [sx, sz] = exit === null ? [c.x, c.z] : metro.position(exit);
+    // Next to the spot where Walk_Mode starts at this station (walker.start uses station + (2, 2)), so the citizen
+    // is the first person the player meets on coming up from the metro.
+    const [bx, bz] = nearestFree(collider, sx + 2, sz + 2, 0.5) ?? [sx + 2, sz + 2];
+    const offsets: readonly (readonly [number, number])[] = [[2.5, 0], [-2.5, 0], [0, 2.5], [0, -2.5], [1.8, 1.8], [-1.8, -1.8]];
+    const free = offsets.find(([dx, dz]) => !collider.blocked(bx + dx, bz + dz, 0.8));
+    return free === undefined ? [bx + 2.5, bz] : [bx + free[0], bz + free[1]];
+  };
+  const citizens = createCitizens(s.scene, o.citizens ?? [], citizenSpot, tokens);
+  let nearCitizen: CityCitizen | null = null;
+  const talk = doc.createElement('div');
+  talk.className = 'city-metro-prompt city-talk-prompt';
+  talk.hidden = true;
+  const talkText = doc.createElement('span');
+  const talkButton = doc.createElement('button');
+  talkButton.type = 'button';
+  talkButton.textContent = o.strings.talk.button;
+  talk.append(talkText, talkButton);
+  root.appendChild(talk);
+  const openTalk = () => {
+    if (nearCitizen === null) return;
+    const body = doc.createElement('div');
+    body.className = 'city-talk-body';
+    for (const text of nearCitizen.story().paragraphs) {
+      const p = doc.createElement('p');
+      p.textContent = text;
+      body.appendChild(p);
+    }
+    dialog.open({ title: nearCitizen.name, body, opener: talkButton });
+  };
+  talkButton.addEventListener('click', openTalk);
   const rand = mulberry32(20151);
   const traffic = createTraffic(s.scene, grid, tokens, rand);
   const ghosts = createGhosts(
@@ -285,16 +344,21 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       const [sx, sz] = exit === null ? [c.x, c.z] : metro.position(exit);
       walker.start(sx + 2, sz + 2, 0);
       walker.setVisible(true);
+      citizens.setVisible(true);
       walkDistrict = selected;
       canvas.focus();
     } else {
       walker.setVisible(false);
+      citizens.setVisible(false);
       nearStation = null;
       prompt.hidden = true;
+      nearCitizen = null;
+      talk.hidden = true;
       rig.controls.enabled = true;
       rig.flyTo(walker.position.clone(), 200, tokens.seconds('--city-motion-flight'));
     }
     o.onModeChange?.(mode);
+    syncTools();
   };
   const onKeyUp = (e: KeyboardEvent) => {
     if (mode === 'walk' && walker.key(e.key, false)) e.preventDefault();
@@ -306,6 +370,9 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
         e.preventDefault();
       } else if (e.key === '+' || e.key === '=' || e.key === '-' || e.key === '_') {
         walker.zoom(e.key === '+' || e.key === '=' ? 1 / 1.2 : 1.2);
+        e.preventDefault();
+      } else if ((e.key === 'e' || e.key === 'E') && nearCitizen !== null) {
+        openTalk();
         e.preventDefault();
       } else if ((e.key === 'e' || e.key === 'E') && nearStation !== null) {
         openStations();
@@ -393,14 +460,22 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
         prompt.hidden = st === null;
         if (st !== null) promptText.textContent = o.strings.metro.prompt.replace('{station}', st.name);
       }
+      const who = citizens.near(walker.position.x, walker.position.z);
+      if (who !== nearCitizen) {
+        nearCitizen = who;
+        talk.hidden = who === null;
+        if (who !== null) talkText.textContent = o.strings.talk.prompt.replace('{name}', who.name);
+      }
     } else rig.update(dt);
     const heightDuration = tokens.seconds('--city-motion-height');
     buildings.step(dt, heightDuration > 0 ? 4 / heightDuration : Infinity);
     if (motion()) traffic.step(dt, time);
     ghosts.step(time, motion());
     landmarks.step(time, motion());
-    landmarks.setLabelVisibility(s.camera);
+    // In Walk_Mode only the Landmarks around the Avatar are named.
+    landmarks.setLabelVisibility(s.camera, mode === 'walk' ? 45 : undefined);
     metro.setLabelVisibility(s.camera);
+    citizens.step(time, motion(), s.camera);
     districts.setLabelVisibility(s.camera.position.distanceTo(rig.controls.target));
     s.renderer.render(s.scene, s.camera);
     s.labels.render(s.scene, s.camera);
@@ -408,6 +483,45 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
   const onVisibility = () => s.renderer.setAnimationLoop(doc.hidden ? null : frame);
   doc.addEventListener('visibilitychange', onVisibility);
   onVisibility();
+
+  // --- city tools: walk, pause, quality, and the Illustration_Note (city-3d 8.1, 10.3, 11.1, 12.2)
+  const t = o.strings.tools;
+  let syncTools = () => {};
+  if (t !== undefined) {
+    const bar = doc.createElement('div');
+    bar.className = 'city-tools';
+    bar.setAttribute('role', 'toolbar');
+    bar.setAttribute('aria-label', t.label);
+    const mk = (onClick: () => void) => {
+      const b = doc.createElement('button');
+      b.type = 'button';
+      b.addEventListener('click', onClick);
+      bar.appendChild(b);
+      return b;
+    };
+    const walkBtn = mk(() => setMode(mode === 'walk' ? 'overview' : 'walk'));
+    const pauseBtn = mk(() => {
+      paused = !paused;
+      syncTools();
+    });
+    const qualityBtn = mk(() => {
+      quality = quality === 'high' ? 'low' : 'high';
+      applyQuality();
+      syncTools();
+    });
+    pauseBtn.setAttribute('aria-pressed', 'false');
+    const note = doc.createElement('p');
+    note.className = 'city-note';
+    note.textContent = t.illustrationNote;
+    root.append(bar, note);
+    syncTools = () => {
+      walkBtn.textContent = mode === 'walk' ? t.overview : t.walk;
+      pauseBtn.textContent = paused ? t.resume : t.pause;
+      pauseBtn.setAttribute('aria-pressed', String(paused));
+      qualityBtn.textContent = quality === 'high' ? t.qualityHigh : t.qualityLow;
+    };
+    syncTools();
+  }
 
   return {
     root,
@@ -444,12 +558,14 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     },
     setPaused(p) {
       paused = p;
+      syncTools();
     },
     setMode,
     mode: () => mode,
     setQuality(q) {
       quality = q;
       applyQuality();
+      syncTools();
     },
     dispose() {
       s.renderer.setAnimationLoop(null);

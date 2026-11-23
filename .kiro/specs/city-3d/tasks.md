@@ -59,5 +59,5 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-18, to save Kiro cre
 
 ## Phase 4: Citizen encounters and street detail
 
-- [ ] 10. Citizen_Encounters (depends on the story-layer narrative module)
+- [x] 10. Citizen_Encounters (2026-11-23): the 6 Personas stand next to the metro station of their home district in Walk_Mode, with a name label and a ring; walking up shows "<name> is here", and E or the Talk button opens a dialog with the Persona's intro and the filled story lines of the Displayed_Quarter (story-layer `buildStoryFacts` and `storyLines`; a line without a value shows "no value"). Checked by hand: Mrs. Lin in Wanhua, 2022Q1, 35.7% of income on rent
 - [ ] 11. Street detail near the Avatar: arcades, signs, street lights, finer windows

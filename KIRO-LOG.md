@@ -39,3 +39,5 @@ To keep the remaining Kiro credits for the game interface, some parts were imple
 |---|---|---|---|
 | 2026-11-18 | Event library: build script, validator, tests and `public/data/events.json` | Claude Code | `.kiro/specs/event-library/` (tasks.md has the implementation note) |
 | 2026-11-18 | 3D city: prototype (`prototype/`), the city-3d spec (requirements, design, tasks) and the change notes in the game-ui spec and steering; the City_View implementation follows | Claude Code | `.kiro/specs/city-3d/` (written by Claude Code at the user's request after the user saw the 2D Design_Proposal) |
+| 2026-11-23 | Story layer core (story-layer tasks 1, 3, 4, 7 and the income spread of task 2) and the 3D city's Citizen_Encounters | Claude Code | `.kiro/specs/story-layer/` (tasks.md has the implementation note and deviations), `.kiro/specs/city-3d/` task 10 |
+| 2026-11-23 | game-ui task 17.2: `src/main.ts`, `index.html`, demo-save placeholder; City_View mounted in the App with city tools and the Illustration_Note | Claude Code | `.kiro/specs/game-ui/` task 17.2, `.kiro/specs/city-3d/` task 6 |

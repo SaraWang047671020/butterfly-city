@@ -530,7 +530,7 @@ All code is TypeScript in `strict` mode. Modules imported by the Demo_Script (`s
     - No map or panel values and disabled turn controls while a load error shows
     - _Requirements: 2.5, 2.6, 2.7, 2.8, 12.4, 12.5, 12.7, 16.2, 16.3, 17.2_
 
-  - [~] 17.2 Implement `src/main.ts` and `index.html`
+  - [x] 17.2 Implement `src/main.ts` and `index.html` (**done by Claude Code 2026-11-23**, because main.ts is also where the 3D City_View and the Citizen_Encounters are mounted; `src/save/demo-save.generated.ts` is the placeholder of this task, and the start menu shows "The demo save has not been generated yet." until task 19.2; the controller gained `storySession()` for the story layer)
     - `main.ts` is the only file reading `import.meta.env`; mounts the App, calls `loadDataFiles(fetch, import.meta.env.BASE_URL, …)`, creates the `SaveStore` (with a `localStorage` adapter or `null` when access throws) only after `ok: true`, builds the `GameController` with `setTimeout(fn, 0)` as scheduler and `readDemo` on the imported `src/save/demo-save.generated.ts`, subscribes the App, and Retry calls the loader again
     - Until task 19.2 runs, commit `src/save/demo-save.generated.ts` as a placeholder exporting empty `DEMO_SAVE_CODE` and `DEMO_SUMMARY_TEXT` with a header stating it is a placeholder; `readDemo` then returns "The demo save has not been generated yet." (**deviation from design decision G10 while Open Question 15 is open; confirm with the user**)
     - `index.html` with the root element, `lang="en"`, viewport meta and the entry script

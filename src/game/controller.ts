@@ -152,6 +152,11 @@ export class GameController {
   private cityStaticCache: CityStaticView | null = null;
 
   /** Static district data for the City_View (city-3d Requirement 2.1); built once. */
+  /** The current session, read-only, for the story layer's Story_Facts (story-layer task 4); null before a game starts. */
+  storySession(): Readonly<GameSession> | null {
+    return this.session;
+  }
+
   cityStatic(): CityStaticView {
     this.cityStaticCache ??= buildCityStatic(this.data);
     return this.cityStaticCache;

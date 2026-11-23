@@ -326,6 +326,7 @@ export const UI_STRINGS = {
   },
 
   demo: {
+    notGenerated: 'The demo save has not been generated yet.',
     descriptionHeading: 'Demo game',
     examplesNote: 'These adjustments are examples, not recommendations.',
     adjustment: '{quarter}: {tool}, {field}, {area}: {value}',
@@ -344,5 +345,35 @@ export const UI_STRINGS = {
     engine: 'Error {code}: {text}',
     // TODO(user text): wording of the timeline-cap message (shown when the timeline cannot take more entries).
     timelineCap: 'TODO(user text): timeline limit message.',
+  },
+
+  // 3D City_View (city-3d spec, added by Claude Code 2026-11-23).
+  city: {
+    canvasLabel: '3D city of the 41 districts. Use [ and ] to move between districts and Enter to select. Every district is also in the district list.',
+    fallback: 'This browser cannot show the 3D city. Use the district list to select a district.',
+    illustrationNote:
+      'Buildings, streets, vehicles and people are illustrative. Their number follows population and their height follows the sale price per m². Landmarks are simplified models.',
+    walk: 'Walk the streets',
+    overview: 'Back to overview',
+    pause: 'Pause city motion',
+    resume: 'Resume city motion',
+    qualityHigh: 'Quality: high',
+    qualityLow: 'Quality: low',
+    toolsLabel: 'City view',
+    metro: {
+      prompt: '{station} station. Press E or',
+      button: 'Take the metro',
+      title: 'Metro from {station}: choose a station',
+      here: '{station} (you are here)',
+    },
+    talk: {
+      prompt: '{name} is here. Press E or',
+      button: 'Talk',
+    },
+  },
+
+  // Citizen stories (story-layer spec). Story text itself comes from citizens.json.
+  story: {
+    noValue: 'no value',
   },
 } as const;

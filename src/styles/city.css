@@ -159,3 +159,80 @@
 .city-fade.is-on {
   opacity: 1;
 }
+
+/* Citizen_Encounters (city-3d phase 4). */
+.city-talk-prompt {
+  bottom: calc(var(--space-7) * 4.4);
+}
+
+.city-citizen-label {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-panel);
+  color: var(--city-citizen);
+  font: var(--font-weight-semibold) var(--font-size-xs) / 1.2 var(--font-sans);
+  white-space: nowrap;
+}
+
+.city-talk-body {
+  max-width: 60ch;
+  font: var(--font-size-md) / var(--line-height-relaxed) var(--font-sans);
+}
+
+.city-talk-body p {
+  margin: 0 0 var(--space-3);
+}
+
+/* City tools and the Illustration_Note (city-3d 8.1, 10.3, 11.1, 12.2). */
+.city-tools {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  max-width: calc(100% - var(--space-5));
+}
+
+.city-tools button {
+  min-height: var(--target-comfortable);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-panel);
+  color: var(--color-text-primary);
+  font: var(--font-size-sm) / 1 var(--font-sans);
+  cursor: pointer;
+}
+
+.city-tools button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.city-note {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  max-width: min(28rem, calc(100% - var(--space-5)));
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-panel);
+  color: var(--color-text-muted);
+  font: var(--font-size-xs) / var(--line-height-normal) var(--font-sans);
+}
+
+@media (max-width: 63.99rem) {
+  .city-note {
+    display: none;
+  }
+}
+
+/* Page base (index.html has no other styles). */
+html,
+body {
+  margin: 0;
+  background: var(--color-bg-page);
+}

@@ -13,7 +13,10 @@ import { runRange } from '../src/simulation/engine.ts';
 import { RULE_REGISTRY } from '../src/simulation/registry.ts';
 import type { QuarterKey } from '../src/types/data-files.ts';
 import type { MapIndicatorId } from '../src/types/save.ts';
-import { mountCityView } from '../src/ui/city/index.ts';
+import { mountCityView, type CityCitizen } from '../src/ui/city/index.ts';
+import { loadStoryFiles } from '../src/data/story-loader.ts';
+import { buildStoryFacts } from '../src/game/story-facts.ts';
+import { storyLines } from '../src/narrative/select.ts';
 
 const UI: ControllerUiState = {
   busy: false,
@@ -50,6 +53,38 @@ session = { ...session, mapIndicator: (qs.get('ind') ?? 'rentBurden') as MapIndi
 status.textContent = r.ok ? `Real track computed to ${target}` : `Engine error: ${JSON.stringify(r)}`;
 
 const live = document.getElementById('live')!;
+// Story files: a load error leaves the city without citizens (story-layer 1.4).
+const story = await loadStoryFiles((url) => fetch(url).then((x) => x.text()), import.meta.env.BASE_URL, new Set(data.districts.map((d) => d.code)));
+const fmt = (x: number, d: number) => x.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const history = (id: 'rent' | 'householdIncome', code: string, qi: number): number | null => {
+  const ind = data.history.indicators.find((i) => i.id === id);
+  return ind === undefined || ind.level !== 'district' ? null : (ind.series[code]?.[qi]?.value ?? null);
+};
+const citizens: CityCitizen[] = !story.ok
+  ? []
+  : story.value.citizens.personas.map((persona) => ({
+      id: persona.id,
+      name: persona.name,
+      homeCode: persona.homeCode,
+      story: () => {
+        const ranges = session.computed?.ranges ?? [];
+        const facts = buildStoryFacts({
+          persona,
+          citizens: story.value.citizens,
+          spread: story.value.spread,
+          params: session.params,
+          commute: session.commute,
+          history,
+          ranges,
+          displayed: ranges.length - 1,
+          quarters: data.history.quarters,
+          format: fmt,
+        });
+        const lines = facts === null ? [] : storyLines(story.value.citizens.templates, facts.state, facts.values);
+        return { paragraphs: [persona.intro, ...lines.map((l) => ('text' in l ? l.text : 'no value'))] };
+      },
+    }));
+if (!story.ok) console.warn(story.error);
 const view = mountCityView(document.getElementById('city')!, {
   statics: buildCityStatic(data),
   strings: {
@@ -61,7 +96,9 @@ const view = mountCityView(document.getElementById('city')!, {
       title: 'Metro from {station}: choose a station',
       here: '{station} (you are here)',
     },
+    talk: { prompt: '{name} is here. Press E or', button: 'Talk' },
   },
+  citizens,
   selectDistrict: (code) => {
     session = { ...session, selectedDistrict: code };
     render();
