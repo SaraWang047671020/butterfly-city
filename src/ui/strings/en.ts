@@ -334,6 +334,41 @@ export const EN = {
     timelineCap: 'TODO(user text): timeline limit message.',
   },
 
+  // Policy_Cards and Policy_Dialog (play-loop Requirement 5).
+  policyCards: {
+    label: 'Policy tools',
+    realTrack: 'Real track',
+    changed: '{n} settings differ from real',
+    sites: 'Construction differs from real in {n} districts',
+    noPass: 'No commuter pass product in this quarter',
+    budgetLeft: 'TWD {amount} left in {year}',
+    carried: 'A carried value needs attention',
+    /** Short names on narrow screens. */
+    short: {
+      socialHousing: 'Housing',
+      rentSubsidy: 'Rent aid',
+      commuterPass: 'Pass',
+    },
+  },
+  policyDialog: {
+    appliesFrom: 'Changes apply from {quarter}',
+    district: 'District',
+    chooseDistrict: 'Choose a district',
+    preview: 'Preview',
+    previewChange: '{change} {unit} compared with your current value · takes effect {ready}',
+    previewCostMore: 'Budget {year}: TWD {cost} more committed · TWD {left} left',
+    previewCostLess: 'Budget {year}: TWD {cost} less committed · TWD {left} left',
+    previewLeft: 'Budget {year}: TWD {left} left',
+    realMark: 'real {value}',
+    lowerEnd: 'lower limit {value}',
+    upperEnd: 'upper limit {value}',
+    benefits: 'Who benefits',
+    costs: 'Who bears the cost',
+    details: 'Details and sources',
+    done: 'Done',
+    slider: '{field}, slider',
+  },
+
   /** City names (play-loop Requirement 12.5). */
   cityNames: {
     Taipei: 'Taipei',

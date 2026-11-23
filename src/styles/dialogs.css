@@ -160,6 +160,10 @@
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
 }
+.dialog__button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .dialog__button--primary {
   color: var(--color-accent-ink);
   background: var(--color-accent);

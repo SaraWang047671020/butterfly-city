@@ -26,7 +26,7 @@ import { createDialogs } from './dialogs/dialogs.ts';
 import { createIndicatorSwitch, createLegend, createIndicatorText, createPriceToIncomeLabel } from './map/map-controls.ts';
 import { createDistrictList } from './panels/district-list.ts';
 import { createDistrictPanel } from './panels/district-panel.ts';
-import { createPolicyPanel } from './panels/policy-panel.ts';
+import { createPolicyCards } from './policy/policy-cards.ts';
 import { createTimelineView } from './timeline/timeline-view.ts';
 import { createTurnBar } from './turn-bar/turn-bar.ts';
 import { createLiveRegion } from './a11y/live-region.ts';
@@ -194,7 +194,6 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   };
   const wide = (doc.defaultView?.innerWidth ?? 0) >= 1600;
   const districtHost = panel('district', L.district, false);
-  const policyHost = panel('policy', L.policy, false);
   const mapHost = panel('map', L.map, false);
   const timelineHost = panel('timeline', L.timeline, !wide);
   const leftHost = mapHost;
@@ -218,7 +217,8 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   const priceLabel = createPriceToIncomeLabel(doc, actions);
   const districtList = createDistrictList(doc, actions);
   const districtPanel = createDistrictPanel(doc, actions);
-  const policyPanel = createPolicyPanel(doc, actions);
+  // Policy_Cards replace the Policies panel (play-loop Requirement 5).
+  const policyCards = createPolicyCards(doc, actions);
   const timeline = createTimelineView(doc, actions);
 
   mountComponent(headerHost, turnBar);
@@ -228,7 +228,8 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   mountComponent(block(leftHost, 'map-controls'), priceLabel);
   mountComponent(block(leftHost, 'district-list'), districtList);
   mountComponent(block(rightHost, 'district-panel'), districtPanel);
-  mountComponent(block(policyHost, 'policy-panel'), policyPanel);
+  mountComponent(gameScreen, policyCards);
+  gameScreen.appendChild(policyCards.dialogRoot);
   mountComponent(block(timelineHost, 'timeline'), timeline);
   // The Illustration_Note sits with the legend (city-3d Requirement 11.1).
   el(doc, 'p', 'ui-illustration-note', mapHost, UI_STRINGS.city.figuresNote);
@@ -308,7 +309,14 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
     priceLabel.update(g.map);
     districtList.update(g.districtList);
     districtPanel.update(g.districtPanel);
-    policyPanel.update({ policy: g.policyPanel, planning: g.turnBar.planning, focusRequest: g.focusRequest, areaNames: names });
+    policyCards.update({
+      policy: g.policyPanel,
+      planning: g.turnBar.planning,
+      focusRequest: g.focusRequest,
+      areaNames: names,
+      districtGroups: g.districtList.groups,
+      selected: g.districtList.selected,
+    });
     timeline.update({ quarters: g.timeline, areaNames: names });
   };
 

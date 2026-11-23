@@ -48,10 +48,10 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
   - [ ] 7.2 "My life" in the Turn_Bar; Life_Decisions in the Timeline_View
   - [ ] 7.3 City_View `setHousehold(members)`
 
-- [ ] 8. Policy_Cards and Policy_Dialog (Requirement 5)
-  - [ ] 8.1 `only?: ToolId` prop of the Policy_Panel
-  - [ ] 8.2 `src/ui/policy/policy-cards.ts`, `policy-dialog.ts`: slider bound to the input, district picker, Quick_Preview, details disclosure
-  - [ ] 8.3 Tests of Requirement 11.4
+- [x] 8. Policy_Cards and Policy_Dialog (Requirement 5)
+  - [x] 8.1 Not needed: the dialog renders its own fields with the Policy_Panel text helpers (`policy-text.ts`), so no field is shown twice
+  - [x] 8.2 `src/ui/policy/policy-cards.ts` (cards and dialog) and `preview.ts`: slider bound to the input, district picker (a grouped list; the small map is left for task 10), Quick_Preview, details disclosure. Cards sit top left until task 10 moves them to the bottom centre
+  - [x] 8.3 Tests of Requirement 11.4 (`tests/ui/policy-preview.test.ts`; slider and input share one `editField` path, checked by hand in the browser)
 
 - [ ] 9. Three-step quarter and Quarter_Brief (Requirements 4 and 6)
   - [ ] 9.1 Turn_Bar step text and one primary action

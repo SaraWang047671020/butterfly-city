@@ -145,10 +145,16 @@
     width: 22rem;
   }
 
-  .ui-panel--policy {
+  /* Policy_Cards (play-loop task 8): top left for now; task 10 moves them to the bottom centre. */
+  .ui-policy-cards {
+    position: absolute;
     top: var(--space-3);
     left: var(--space-3);
-    max-height: calc(55vh - var(--space-3));
+    width: 16rem;
+  }
+
+  .ui-policy-cards__list {
+    flex-direction: column;
   }
 
   .ui-panel--map {
@@ -202,9 +208,49 @@
     display: none;
   }
 
+  .ui-policy-cards {
+    order: 2;
+    margin: 0 var(--space-2) var(--space-2);
+  }
+
+  .ui-policy-cards .ui-policy-card {
+    flex: 1 1 0;
+    grid-template-columns: 1fr;
+    grid-template-areas: 'icon' 'name' 'status';
+    justify-items: center;
+    padding: var(--space-2);
+    text-align: center;
+  }
+
+  .ui-policy-cards__budget {
+    display: none;
+  }
+
+  .ui-policy-cards .ui-policy-card__icon {
+    width: var(--space-6);
+    height: var(--space-6);
+    font-size: var(--font-size-md);
+  }
+
+  /* The full name stays as the accessible name, visually hidden; the short name is shown. */
+  .ui-policy-cards .ui-policy-card__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .ui-policy-cards .ui-policy-card__short {
+    display: block;
+    grid-area: name;
+    font-weight: var(--font-weight-semibold);
+  }
+
   .ui-tabs {
     display: flex;
-    order: 2;
+    order: 3;
     gap: var(--space-1);
     padding: var(--space-1) var(--space-2);
     background: var(--color-bg-panel);
@@ -222,7 +268,7 @@
   }
 
   .ui-app .ui-block--turn-bar {
-    order: 3;
+    order: 4;
   }
 
   .ui-app .ui-block--turn-bar .turn-bar {

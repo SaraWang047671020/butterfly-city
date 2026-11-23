@@ -157,7 +157,7 @@ An `lg` Dialog_Frame opened from "My life" in the Turn_Bar. Left: the household 
 
 ### Policy_Cards and Policy_Dialog (`src/ui/policy/`)
 
-`policy-cards.ts` renders the three Active_Tool cards from `view.policyPanel.domains`. `policy-dialog.ts` opens an `lg` Dialog_Frame per tool. It reuses the field logic of `createPolicyPanel` by mounting the existing component filtered to one tool (a new `only?: ToolId` prop) inside the "Details and sources" disclosure, and adds above it:
+`policy-cards.ts` renders the three Active_Tool cards from `view.policyPanel.domains` and opens an `lg` Dialog_Frame per tool. (Implemented without mounting the Policy_Panel inside the dialog, which would have shown every input twice: the dialog builds its own field rows with the Policy_Panel text helpers of `policy-text.ts`, and the "Details and sources" disclosure holds the same detail lines.) Each field row has:
 
 - a slider per editable field whose `input` event writes into the same input element the panel already validates, so there is one value and one validation path (Requirement 11.4);
 - for the district-scoped field a district picker (list plus the small SVG map of the district outlines already used by the 2D fallback);
