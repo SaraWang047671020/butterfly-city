@@ -33,6 +33,23 @@ export interface IncomeSpread {
   readonly sigma: Readonly<Record<string, number>>;
 }
 
+export interface LimitsFile {
+  readonly schemaVersion: 1;
+  readonly page: { readonly title: string; readonly intro: string; readonly disclosure: string; readonly sourcesLink: string };
+  readonly sections: readonly {
+    readonly id: string;
+    readonly title: string;
+    readonly items: readonly { readonly id: string; readonly title: string; readonly text: string }[];
+  }[];
+}
+
+export interface ModelFacts {
+  readonly schemaVersion: 1;
+  readonly commuteModelled: number;
+  readonly commuteSurvey: number;
+  readonly backtestResult: string;
+}
+
 export type Result<T> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: string };
 
 const isObj = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null && !Array.isArray(x);
@@ -86,24 +103,57 @@ export function validateIncomeSpread(x: unknown, districtCodes: ReadonlySet<stri
   return { ok: true, value: x as unknown as IncomeSpread };
 }
 
+export function validateLimitsFile(x: unknown): Result<LimitsFile> {
+  if (!isObj(x) || x['schemaVersion'] !== 1) return fail('model-limits.json: schemaVersion must be 1');
+  const p = x['page'];
+  if (!isObj(p) || !['title', 'intro', 'disclosure', 'sourcesLink'].every((k) => str(p[k]))) return fail('model-limits.json: page fields missing');
+  const ss = x['sections'];
+  if (!Array.isArray(ss) || ss.length === 0) return fail('model-limits.json: sections missing');
+  for (const [i, s] of ss.entries()) {
+    if (!isObj(s) || !str(s['id']) || !str(s['title']) || !Array.isArray(s['items'])) return fail(`model-limits.json: sections[${i}] incomplete`);
+    for (const [k, it] of (s['items'] as unknown[]).entries()) {
+      if (!isObj(it) || !str(it['id']) || !str(it['title']) || !str(it['text'])) return fail(`model-limits.json: sections[${i}].items[${k}] incomplete`);
+    }
+  }
+  return { ok: true, value: x as unknown as LimitsFile };
+}
+
+export function validateModelFacts(x: unknown): Result<ModelFacts> {
+  if (!isObj(x) || x['schemaVersion'] !== 1) return fail('model-facts.json: schemaVersion must be 1');
+  for (const k of ['commuteModelled', 'commuteSurvey']) {
+    const v = x[k];
+    if (!num(v) || v <= 0) return fail(`model-facts.json: ${k} must be a positive number`);
+  }
+  if (!str(x['backtestResult'])) return fail('model-facts.json: backtestResult missing');
+  return { ok: true, value: x as unknown as ModelFacts };
+}
+
 export interface StoryFiles {
   readonly citizens: CitizenFile;
   readonly spread: IncomeSpread;
+  readonly limits: LimitsFile;
+  readonly facts: ModelFacts;
 }
 
-/** Fetches and validates citizens.json and income-spread.json from `${baseUrl}data/`. */
+/** Fetches and validates the four Story_Files from `${baseUrl}data/`. */
 export async function loadStoryFiles(
   fetchText: (url: string) => Promise<string>,
   baseUrl: string,
   districtCodes: ReadonlySet<string>,
 ): Promise<Result<StoryFiles>> {
   try {
-    const [c, s] = await Promise.all([fetchText(`${baseUrl}data/citizens.json`), fetchText(`${baseUrl}data/income-spread.json`)]);
+    const [c, s, l, f] = await Promise.all(
+      ['citizens.json', 'income-spread.json', 'model-limits.json', 'model-facts.json'].map((n) => fetchText(`${baseUrl}data/${n}`)),
+    ) as [string, string, string, string];
     const citizens = validateCitizenFile(JSON.parse(c), districtCodes);
     if (!citizens.ok) return citizens;
     const spread = validateIncomeSpread(JSON.parse(s), districtCodes);
     if (!spread.ok) return spread;
-    return { ok: true, value: { citizens: citizens.value, spread: spread.value } };
+    const limits = validateLimitsFile(JSON.parse(l));
+    if (!limits.ok) return limits;
+    const facts = validateModelFacts(JSON.parse(f));
+    if (!facts.ok) return facts;
+    return { ok: true, value: { citizens: citizens.value, spread: spread.value, limits: limits.value, facts: facts.value } };
   } catch (e) {
     return fail(`story files: ${(e as Error).message}`);
   }

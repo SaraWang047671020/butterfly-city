@@ -194,7 +194,7 @@
         {
           "id": "ghost-size",
           "title": "One ghost, many people",
-          "text": "Each ghost on the map stands for 1,000 people. This is a display scale. The exact number is always shown next to the map."
+          "text": "In the district panel, each ghost stands for 1,000 people; this is a display scale. Policies change these counts by tens to a few hundred people, so the figures above the districts show the change from real history instead: each ghost is about 10 more people above a line, and each butterfly about 10 fewer. The exact ghost count is always shown in the district panel."
         }
       ]
     },

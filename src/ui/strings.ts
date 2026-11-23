@@ -395,5 +395,7 @@ export const UI_STRINGS = {
     noQuarter: 'The story starts when the first quarter is computed.',
     endingHeading: 'From 2015 to 2025',
     loadError: 'The citizen stories could not be loaded: {error}',
+    limitsButton: 'What the model can and cannot tell you',
+    limitsUnavailable: 'The model limitations page could not be loaded: {error}',
   },
 } as const;

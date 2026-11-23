@@ -319,3 +319,38 @@
   outline: var(--focus-ring);
   outline-offset: var(--focus-ring-offset);
 }
+
+/* ---- Limits_Dialog control and body (story-layer Requirement 6) ------------------------------------------------ */
+.ui-map-control {
+  width: 100%;
+  text-align: left;
+}
+
+.ui-dialog--limits {
+  max-width: min(44rem, calc(100vw - 2 * var(--space-3)));
+}
+
+.limits {
+  max-height: 70vh;
+  overflow-y: auto;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+.limits__disclosure,
+.limits__sources {
+  color: var(--color-text-secondary);
+}
+
+.limits__section h3 {
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: var(--font-size-md);
+}
+
+.limits dt {
+  font-weight: var(--font-weight-semibold);
+}
+
+.limits dd {
+  margin: 0 0 var(--space-3);
+}

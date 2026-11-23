@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "backtestResult": "The modelled change went in the same direction as the real change. The modelled change was 0.883 times the real change, inside the range of 0.500 to 2.000 set in advance. The real change lies within the range of model results.",
+  "commuteModelled": 54.01092505925197,
+  "commuteSurvey": 57
+}

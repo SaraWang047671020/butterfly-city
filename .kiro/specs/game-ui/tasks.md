@@ -563,7 +563,7 @@ All code is TypeScript in `strict` mode. Modules imported by the Demo_Script (`s
     - View values equal `runRange` for one district per city and two quarters on real data (18.5)
     - _Requirements: 2.3, 2.4, 3.5, 3.14, 18.5_
 
-- [~] 20. Checkpoint - Phase D complete
+- [x] 20. Checkpoint - Phase D complete
   - Run `npx vitest --run` and `npm run typecheck`; both exit 0 with no skipped, todo or `.only` test. Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 21. Manual checks

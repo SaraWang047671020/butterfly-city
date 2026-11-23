@@ -15,6 +15,9 @@ import { SaveStore, type StoragePort } from './save/store.ts';
 import { readPersonaId, writePersonaId } from './save/story-store.ts';
 import { endingLines } from './narrative/select.ts';
 import { createStoryPanel, type StoryPanelView } from './ui/story/story-panel.ts';
+import { buildLimitsBody } from './ui/story/limits-dialog.ts';
+import { createDialogManager } from './ui/a11y/dialog.ts';
+import { fillTemplate as fillStory } from './narrative/fill.ts';
 import { RULE_REGISTRY } from './simulation/registry.ts';
 import { districtAccessibleName } from './ui/a11y/accessible-name.ts';
 import { createApp } from './ui/app.ts';
@@ -26,8 +29,9 @@ import { UI_STRINGS } from './ui/strings.ts';
 import type { MapDistrictView, MapViewModel } from './types/view.ts';
 
 const BASE_URL = import.meta.env.BASE_URL;
-const host = document.getElementById('app');
-if (host === null) throw new Error('index.html has no #app element');
+const appRoot = document.getElementById('app');
+if (appRoot === null) throw new Error('index.html has no #app element');
+const host: HTMLElement = appRoot;
 
 const app = createApp(document, host, { onRetry: () => void start() });
 let city: CityView | null = null;
@@ -220,6 +224,46 @@ async function start(): Promise<void> {
   };
   renderStory();
   ctl.subscribe(() => renderStory());
+
+  // Limits_Dialog (story-layer Requirement 6): opened from the Map panel; texts from model-limits.json, filled from
+  // model-facts.json (minutes as whole numbers). A Placeholder without a value shows "no value" for that item.
+  const limitsDialog = createDialogManager(document, () => document.querySelector<HTMLElement>('.turn-bar__button'));
+  host.appendChild(limitsDialog.root);
+  limitsDialog.root.classList.add('ui-dialog--limits');
+  app.addMapControl(UI_STRINGS.story.limitsButton, (opener) => {
+    if (!story.ok) {
+      const p = document.createElement('p');
+      p.textContent = UI_STRINGS.story.limitsUnavailable.replace('{error}', story.error);
+      limitsDialog.open({ title: UI_STRINGS.story.limitsButton, body: p, opener });
+      return;
+    }
+    const { limits, facts } = story.value;
+    const values = {
+      commuteModelled: formatNumber(facts.commuteModelled, 0),
+      commuteSurvey: formatNumber(facts.commuteSurvey, 0),
+      backtestResult: facts.backtestResult,
+    };
+    const fill = (id: string, text: string): string => {
+      try {
+        return fillStory(id, text, values);
+      } catch {
+        return UI_STRINGS.story.noValue;
+      }
+    };
+    const body = buildLimitsBody(document, {
+      intro: limits.page.intro,
+      disclosure: limits.page.disclosure,
+      sourcesLink: limits.page.sourcesLink,
+      sections: limits.sections.map((sec) => ({ title: sec.title, items: sec.items.map((it) => ({ title: it.title, text: fill(`limits.${it.id}`, it.text) })) })),
+    });
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'ui-button';
+    close.textContent = UI_STRINGS.dialogs.close;
+    close.addEventListener('click', () => limitsDialog.close());
+    body.prepend(close);
+    limitsDialog.open({ title: limits.page.title, body, opener });
+  });
   app.attach(ctl);
 }
 

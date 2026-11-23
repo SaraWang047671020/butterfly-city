@@ -5,6 +5,7 @@
  * written when any case is "not computed".
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { backtestSentence, updateModelFacts } from './lib/model-facts.ts';
 import path from 'node:path';
 import { PUBLIC_DATA, ROOT } from './lib/paths.ts';
 import { adaptInputs, PARAMS_FILE } from './backtest/adapt.ts';
@@ -84,6 +85,29 @@ function main(): number {
     }
     return computeCase(entry.case, adapted.inputs, mrt);
   });
+
+  // Model_Facts (story-layer Requirement 2): the filled backtest sentences of the tpass-2023 case.
+  const tpass = results.find((r) => r.status === 'computed' && r.case.id === 'tpass-2023');
+  if (tpass !== undefined && tpass.status === 'computed') {
+    if (tpass.checks.ratio === null) {
+      console.error('backtest stopped: the tpass-2023 ratio has no value; public/data/model-facts.json was not changed.');
+      return 1;
+    }
+    const limits = JSON.parse(readFileSync(path.join(ROOT, 'data', 'config', 'model-limits.json'), 'utf8')) as {
+      templates: { backtestResult: Parameters<typeof backtestSentence>[0] };
+    };
+    updateModelFacts({
+      backtestResult: backtestSentence(limits.templates.backtestResult, {
+        direction: tpass.checks.direction,
+        ratioMet: tpass.checks.ratioWithinTolerance,
+        range: tpass.checks.range,
+        ratio: tpass.checks.ratio,
+        toleranceLow: tpass.case.tolerances.ratioLow,
+        toleranceHigh: tpass.case.tolerances.ratioHigh,
+      }),
+    });
+    console.log('wrote public/data/model-facts.json (backtestResult)');
+  }
 
   mkdirSync(path.dirname(REPORT_FILE), { recursive: true });
   writeFileSync(REPORT_FILE, renderReport({ results, parameterTableSha256: readParamsHash() }), 'utf8');

@@ -56,6 +56,8 @@ export interface App {
   readonly cityLayer: HTMLElement;
   showLoading(loaded: number): void;
   showLoadError(failures: readonly { readonly file: string; readonly message: string }[]): void;
+  /** Adds a button at the top of the Map panel (story-layer Limits_Dialog control). */
+  addMapControl(label: string, onClick: (button: HTMLButtonElement) => void): HTMLButtonElement;
   /** Adds a floating panel to the Game_Screen and returns its body (story-layer Story_Panel). */
   addPanel(name: string, title: string, collapsed: boolean): HTMLElement;
   /** Renders `controller.screen()` now and after every publish. Returns a detach function. */
@@ -322,6 +324,15 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   return {
     cityLayer,
     addPanel: (name, title, collapsed) => panel(name, title, collapsed),
+    addMapControl(label, onClick) {
+      const b = doc.createElement('button');
+      b.type = 'button';
+      b.className = 'ui-button ui-map-control';
+      b.textContent = label;
+      b.addEventListener('click', () => onClick(b));
+      mapHost.prepend(b);
+      return b;
+    },
     showLoading,
     showLoadError,
     attach(controller) {

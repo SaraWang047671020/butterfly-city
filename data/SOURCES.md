@@ -1425,3 +1425,11 @@ No district is entirely without a published value.
 - Opening dates after 2014 come from `OPENING_DATES` in `scripts/pipeline/commute/network.ts` (Dingpu 2015-07-06, Circular Line 2020-01-31). The City_View shows only what is open at the end of the displayed quarter.
 - Not included: the Sanying Line (opened 2026-06-30), the Danhai and Ankeng light rail (no English names in the NLSC file, no TDX run times) and the Taoyuan Airport MRT (not in the TDX files). Stations listed by TDX that have no segment are left out.
 - License: as for `stations/tdx-metro-station`.
+
+## Story files (story-layer spec)
+
+- `public/data/citizens.json`, `public/data/model-limits.json`: copies of `data/config/`, made by `npm run story-files`.
+- `public/data/income-spread.json`: by `npm run story-files` from the FIA comprehensive income tax statistics by village (data.gov.tw 103066), income year 2023, Open Government Data License 1.0. sigma = (ln Q3 − ln Q1) / (2 × 0.6745) per district, the formula of the rent ghost rule; the file holds the method text and its limits.
+- `public/data/model-facts.json`:
+  - `commuteModelled`, `commuteSurvey`: by `npm run story-files` with `surveyCheck` of `scripts/pipeline/commute/survey-check.ts` on the committed `commute-matrix.json`, the 2025 population of `history.json` and the `commute.jobShare.*` parameters of `params.json`; the survey figure is the one of that module.
+  - `backtestResult`: by `npm run backtest`, the `templates.backtestResult` sentences of `model-limits.json` filled with the tpass-2023 result of `docs/BACKTEST.md`.

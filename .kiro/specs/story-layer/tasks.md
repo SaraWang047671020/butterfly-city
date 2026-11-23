@@ -14,7 +14,7 @@ Loads, fills and displays the citizen stories and the model limitations page. Te
   - Document the four Story_Files in `data/SOURCES.md`.
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 2.7, 2.10_
 
-- [ ] 2. Generated data files (data pipeline and backtest)
+- [x] 2. Generated data files (data pipeline and backtest) (Claude Code 2026-11-23: `scripts/lib/model-facts.ts`; `npm run backtest` writes `backtestResult` (tpass-2023: 0.883, inside 0.5 to 2.0); `npm run story-files` writes `commuteModelled` (54.0 min) and `commuteSurvey` (57 min) with the pipeline's `surveyCheck` on the committed public data instead of inside `npm run data` (deviation (a)); tests in `tests/scripts/model-facts.test.ts`)
   - Create `scripts/lib/model-facts.ts` with `updateModelFacts`, `serializeModelFacts` and the missing-value stop.
   - Call it from the survey-check step in `scripts/pipeline/commute/step.ts` (`commuteModelled`, `commuteSurvey`) and from `scripts/backtest.ts` (`backtestResult`: pick `met` or `notMet` per check from `templates.backtestResult` of `model-limits.json`, fill, join).
   - Create `scripts/pipeline/income/spread.ts` and call it from `scripts/build-data.ts`: write `public/data/income-spread.json` (41 sigmas, source FIA income year 2023 dataset 103066, method text). Do not add it to `params.json`.
@@ -38,7 +38,7 @@ Loads, fills and displays the citizen stories and the model limitations page. Te
   - Request approval of the panel and picker visuals as a change under game-ui Requirement 1.10 before writing the files.
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 8.5, 8.6_
 
-- [ ] 6. Model limitations dialog
+- [x] 6. Model limitations dialog (Claude Code 2026-11-23: `src/ui/story/limits-dialog.ts` on the game-ui dialog manager, opened from the Map panel, Close button first; the `ghost-size` item of `model-limits.json` was corrected for the new map figures of city-3d Requirement 6)
   - Create `src/ui/story/limits-dialog.ts` on the game-ui dialog component, with the opening control and its strings.
   - Request approval of the dialog visuals together with task 5.
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 8.5, 8.6_
