@@ -232,6 +232,12 @@ export interface MapDistrictView {
    * pushed out than in real history. Null before any quarter is computed.
    */
   readonly ghostDiffPersons: number | null;
+  /**
+   * Central simulated value minus its comparison value (real history or Derived_Baseline) for the selected
+   * Map_Indicator, in the indicator's unit (percentage points for percent indicators). Null when not simulated
+   * (Price_To_Income, Low_Use_Housing_Rate) or before any quarter is computed.
+   */
+  readonly difference: number | null;
   /** salePrice of the displayed quarter ÷ salePrice of 2015Q1; null when either is missing or the 2015Q1 value is 0 (city-3d 2.2). */
   readonly priceIndex: number | null;
 }

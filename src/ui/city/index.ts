@@ -4,7 +4,10 @@ import type { CityStaticView, MapDistrictView, MapViewModel } from '../../types/
 import { createBuildings } from './buildings.ts';
 import { createCollider } from './collision.ts';
 import { createCamera } from './camera.ts';
-import { classOf, classToken } from './colours.ts';
+import { CHANGE_BOUNDS, changeToken, classOf, classToken } from './colours.ts';
+import { createSites, type SiteView } from './sites.ts';
+
+export type { SiteView } from './sites.ts';
 import { createDistricts } from './districts.ts';
 import { stepFocus } from './focus-order.ts';
 import { boundsOf, inAnyPolygon } from './geometry.ts';
@@ -53,7 +56,13 @@ export interface CityStrings {
     readonly resume: string;
     readonly qualityHigh: string;
     readonly qualityLow: string;
+    readonly showChange: string;
+    readonly showValues: string;
+    /** {unit}, {low}, {high} are filled. */
+    readonly changeLegend: string;
   };
+  /** Labels of the player's social housing in the city; {units}, {quarter} are filled. */
+  readonly sites?: { readonly done: string; readonly building: string };
   /** Citizen_Encounter texts. {name} is replaced by the citizen's name. */
   readonly talk: {
     readonly prompt: string;
@@ -86,6 +95,8 @@ export interface CityView {
   setPaused(paused: boolean): void;
   setQuality(q: QualityLevel): void;
   setMode(mode: CityMode): void;
+  /** The player's social housing: completed and under construction, per district. */
+  setSites(sites: readonly SiteView[]): void;
   readonly mode: () => CityMode;
   dispose(): void;
 }
@@ -109,7 +120,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     p.className = 'city-fallback';
     p.textContent = o.strings.fallback;
     root.appendChild(p);
-    return { root, webgl: false, update() {}, setPaused() {}, setQuality() {}, setMode() {}, mode: () => 'overview', dispose: () => root.remove() };
+    return { root, webgl: false, update() {}, setPaused() {}, setQuality() {}, setMode() {}, setSites() {}, mode: () => 'overview', dispose: () => root.remove() };
   }
 
   const canvas = s.renderer.domElement;
@@ -345,11 +356,13 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       walker.start(sx + 2, sz + 2, 0);
       walker.setVisible(true);
       citizens.setVisible(true);
+      ghosts.setStreetLevel(true);
       walkDistrict = selected;
       canvas.focus();
     } else {
       walker.setVisible(false);
       citizens.setVisible(false);
+      ghosts.setStreetLevel(false);
       nearStation = null;
       prompt.hidden = true;
       nearCitizen = null;
@@ -476,6 +489,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     landmarks.setLabelVisibility(s.camera, mode === 'walk' ? 45 : undefined);
     metro.setLabelVisibility(s.camera);
     citizens.step(time, motion(), s.camera);
+    sites.step(time, motion(), s.camera);
     districts.setLabelVisibility(s.camera.position.distanceTo(rig.controls.target));
     s.renderer.render(s.scene, s.camera);
     s.labels.render(s.scene, s.camera);
@@ -483,6 +497,37 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
   const onVisibility = () => s.renderer.setAnimationLoop(doc.hidden ? null : frame);
   doc.addEventListener('visibilitychange', onVisibility);
   onVisibility();
+
+  // --- colours: values (Indicator_Class) or change from real history (diverging, user feedback 2026-11-23)
+  let changeMode = false;
+  let changeLegend: HTMLElement | null = null;
+  let syncChange = () => {};
+  function paint(): void {
+    if (map === null) return;
+    const m = map;
+    for (const d of m.districts) {
+      const i = indexOf.get(d.code);
+      if (i === undefined) continue;
+      let colour: THREE.Color | null;
+      if (changeMode) {
+        colour = d.difference === null ? null : tokens.color(changeToken(m.indicator, d.difference));
+      } else {
+        const cls = d.classIndex ?? classOf(d.central, m.legend.bounds);
+        colour = cls === null ? null : tokens.color(classToken(m.indicator, cls));
+      }
+      districts.setColour(d.code, colour);
+      buildings.setDistrictColour(i, colour);
+    }
+    const t2 = o.strings.tools;
+    if (changeLegend !== null && t2 !== undefined) {
+      const b = CHANGE_BOUNDS[m.indicator];
+      changeLegend.hidden = !changeMode;
+      changeLegend.textContent = t2.changeLegend
+        .replace('{unit}', m.legend.unit)
+        .replace('{low}', String(b[0]))
+        .replace('{high}', String(b[b.length - 1]));
+    }
+  }
 
   // --- city tools: walk, pause, quality, and the Illustration_Note (city-3d 8.1, 10.3, 11.1, 12.2)
   const t = o.strings.tools;
@@ -510,6 +555,18 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       syncTools();
     });
     pauseBtn.setAttribute('aria-pressed', 'false');
+    const changeBtn = mk(() => {
+      changeMode = !changeMode;
+      paint();
+      syncTools();
+    });
+    changeLegend = doc.createElement('p');
+    changeLegend.className = 'city-change-legend';
+    root.append(changeLegend);
+    syncChange = () => {
+      changeBtn.textContent = changeMode ? t.showValues : t.showChange;
+      changeBtn.setAttribute('aria-pressed', String(changeMode));
+    };
     root.append(bar);
     // The App shows the Illustration_Note next to the legend; the City_View shows it only when given one.
     if (t.illustrationNote !== '') {
@@ -523,25 +580,37 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       pauseBtn.textContent = paused ? t.resume : t.pause;
       pauseBtn.setAttribute('aria-pressed', String(paused));
       qualityBtn.textContent = quality === 'high' ? t.qualityHigh : t.qualityLow;
+      syncChange();
     };
     syncTools();
   }
 
+  // --- social housing the player started (visible policy) and the street-level figures of Walk_Mode
+  const sites = createSites(s.scene, tokens, (code) => {
+    const c = districts.byCode.get(code)?.center ?? new THREE.Vector3();
+    return nearestFree(collider, c.x + 6, c.z - 6, 4) ?? [c.x + 6, c.z - 6];
+  });
+
   return {
     root,
     webgl: true,
+    setSites(list) {
+      const L = o.strings.sites;
+      if (L === undefined) return;
+      sites.setSites(list, {
+        done: (units) => L.done.replace('{units}', String(units)),
+        building: (units, quarter) => L.building.replace('{units}', String(units)).replace('{quarter}', quarter),
+      });
+    },
     update(next) {
       map = next;
       const scales: number[] = new Array(statics.length).fill(1);
       const counts: (number | null)[] = new Array(statics.length).fill(null);
       const flutter: number[] = new Array(statics.length).fill(0);
+      paint();
       for (const d of next.districts) {
         const i = indexOf.get(d.code);
         if (i === undefined) continue;
-        const cls = d.classIndex ?? classOf(d.central, next.legend.bounds);
-        const colour = cls === null ? null : tokens.color(classToken(next.indicator, cls));
-        districts.setColour(d.code, colour);
-        buildings.setDistrictColour(i, colour);
         scales[i] = heightScale(d.priceIndex);
         // Figures show the change from real history, not the total (city-3d Requirement 6, changed 2026-11-23).
         const f = figuresOf(d.ghostDiffPersons);

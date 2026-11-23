@@ -236,3 +236,27 @@ body {
   margin: 0;
   background: var(--color-bg-page);
 }
+
+/* Visible policy (user feedback 2026-11-23): social housing labels and the change legend. */
+.city-site-label {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-panel);
+  color: var(--city-social-housing);
+  font: var(--font-weight-semibold) var(--font-size-xs) / 1.2 var(--font-sans);
+  white-space: nowrap;
+}
+
+.city-change-legend {
+  position: absolute;
+  top: calc(var(--space-3) + 11.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: min(26rem, calc(100% - var(--space-5)));
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-panel);
+  color: var(--color-text-secondary);
+  font: var(--font-size-xs) / var(--line-height-normal) var(--font-sans);
+}

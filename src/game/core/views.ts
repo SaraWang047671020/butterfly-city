@@ -449,6 +449,7 @@ function mapView(c: Ctx): MapViewModel {
       selected: c.session.selectedDistrict === d.code,
       ghosts: ghostsOf(c, d.code),
       ghostDiffPersons: ghostDiffOf(c, d.code),
+      difference: cell !== null && cell.range !== null && cell.comparison.value !== null ? cell.range.central - cell.comparison.value : null,
       priceIndex: priceIndexOf(c.data.history, d.code, c.qi),
     };
   });
@@ -838,6 +839,7 @@ export function buildGameView(session: GameSession | null, ui: ControllerUiState
           selected: false,
           ghosts: null,
           ghostDiffPersons: null,
+          difference: null,
           priceIndex: priceIndexOf(data.history, d.code, 0),
         })),
         legend: {

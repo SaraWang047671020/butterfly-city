@@ -75,6 +75,8 @@ export interface GhostLayer {
   setCounts(counts: readonly (number | null)[]): void;
   /** Shows min(12, count) butterflies above each district. */
   setButterflies(counts: readonly number[]): void;
+  /** Street level (Walk_Mode): figures drift a few metres above the streets instead of high above the district. */
+  setStreetLevel(on: boolean): void;
   step(time: number, moving: boolean): void;
 }
 
@@ -107,7 +109,12 @@ export function createGhosts(scene: THREE.Scene, centers: readonly THREE.Vector3
       return { sprite, base, phase: rand() * Math.PI * 2 };
     }),
   );
+  let lift = 0;
   return {
+    setStreetLevel(on) {
+      // The sky figures float 70 to 110 units up; at street level they hover 2 to 6 units above the ground.
+      lift = on ? -1 : 0;
+    },
     setButterflies(counts) {
       flock.forEach((list, d) => {
         const n = Math.min(MAX_GHOSTS_PER_DISTRICT, Math.max(0, Math.round(counts[d] ?? 0)));
@@ -125,14 +132,16 @@ export function createGhosts(scene: THREE.Scene, centers: readonly THREE.Vector3
         for (const g of list) {
           if (!g.sprite.visible) continue;
           const a = moving ? time * 0.8 + g.phase : g.phase;
-          g.sprite.position.set(g.base.x + Math.sin(a * 0.7) * 6, g.base.y + Math.sin(a) * 3, g.base.z + Math.cos(a * 0.6) * 6);
+          const y = lift < 0 ? 4 + (g.base.y % 4) : g.base.y;
+          g.sprite.position.set(g.base.x + Math.sin(a * 0.7) * 6, y + Math.sin(a) * (lift < 0 ? 0.6 : 3), g.base.z + Math.cos(a * 0.6) * 6);
         }
       }
       for (const list of flock) {
         for (const b of list) {
           if (!b.sprite.visible) continue;
           const a = moving ? time * 1.3 + b.phase : b.phase;
-          b.sprite.position.set(b.base.x + Math.sin(a * 0.5) * 9, b.base.y + Math.sin(a * 1.7) * 2, b.base.z + Math.cos(a * 0.4) * 9);
+          const by = lift < 0 ? 3 + (b.base.y % 3) : b.base.y;
+          b.sprite.position.set(b.base.x + Math.sin(a * 0.5) * 9, by + Math.sin(a * 1.7) * (lift < 0 ? 0.4 : 2), b.base.z + Math.cos(a * 0.4) * 9);
           b.sprite.scale.x = moving ? 4 * (0.35 + 0.65 * Math.abs(Math.sin(time * 9 + b.phase))) : 4;
         }
       }

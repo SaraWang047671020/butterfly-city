@@ -360,6 +360,11 @@ export const UI_STRINGS = {
     qualityHigh: 'Quality: high',
     qualityLow: 'Quality: low',
     toolsLabel: 'City view',
+    showChange: 'Colour: change from real history',
+    showValues: 'Colour: values',
+    changeLegend: 'Change from real history ({unit}): {low} or less … {high} or more. Grey: no simulated value.',
+    socialHousingLabel: '{units} social homes (yours)',
+    constructionLabel: 'Building {units} social homes · ready {quarter}',
     figuresNote:
       'Ghosts and butterflies show the change from real history: each ghost above a district is about 10 more people above a rent or commute line, each butterfly about 10 fewer.',
     metro: {

@@ -23,7 +23,7 @@ import { districtAccessibleName } from './ui/a11y/accessible-name.ts';
 import { createApp } from './ui/app.ts';
 // After app.ts so that the approved overlay layout follows the shell styles of app.css.
 import './styles/layout.css';
-import { mountCityView, type CityCitizen, type CityView } from './ui/city/index.ts';
+import { mountCityView, type CityCitizen, type CityView, type SiteView } from './ui/city/index.ts';
 import { formatNumber } from './ui/format/number.ts';
 import { UI_STRINGS } from './ui/strings.ts';
 import type { MapDistrictView, MapViewModel } from './types/view.ts';
@@ -154,7 +154,11 @@ async function start(): Promise<void> {
         resume: C.resume,
         qualityHigh: C.qualityHigh,
         qualityLow: C.qualityLow,
+        showChange: C.showChange,
+        showValues: C.showValues,
+        changeLegend: C.changeLegend,
       },
+      sites: { done: C.socialHousingLabel, building: C.constructionLabel },
     },
     selectDistrict: (code) => ctl.actions.selectDistrict(code),
     announce: (text) => {
@@ -167,6 +171,22 @@ async function start(): Promise<void> {
   const cityView = city;
   cityView.update(ctl.view().map);
   ctl.subscribe((view) => cityView.update(view.map));
+  // The player's social housing in the city: extra units under construction and completed (only differences > 0).
+  const sitesOf = (view: ReturnType<typeof ctl.view>): SiteView[] => {
+    const by = new Map<string, { completed: number; building: number; progress: number; ready: string | null }>();
+    const at = (code: string) => by.get(code) ?? (by.set(code, { completed: 0, building: 0, progress: 0, ready: null }), by.get(code)!);
+    for (const q of view.timeline) for (const it of q.items) if (it.kind === 'completion' && it.item.difference > 0) at(it.item.district).completed += it.item.difference;
+    for (const r of view.policyPanel.construction) {
+      if (r.difference <= 0) continue;
+      const s = at(r.district);
+      s.building += r.difference;
+      s.progress = Math.max(s.progress, (r.progress + 1) / Math.max(1, r.lag));
+      s.ready = s.ready === null || r.effect < s.ready ? r.effect : s.ready;
+    }
+    return [...by.entries()].map(([district, s]) => ({ district, ...s }));
+  };
+  cityView.setSites(sitesOf(ctl.view()));
+  ctl.subscribe((view) => cityView.setSites(sitesOf(view)));
 
   // Story_Panel (story-layer Requirement 5): pick one Persona, then read its update each quarter.
   const port = storagePort();
