@@ -354,3 +354,8 @@
 .limits dd {
   margin: 0 0 var(--space-3);
 }
+
+/* Dialogs live inside the overlay, which lets pointer events through to the city; a dialog must take them back. */
+.ui-app dialog {
+  pointer-events: auto;
+}

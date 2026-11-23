@@ -95,7 +95,9 @@ export function buildStoryFacts(x: StoryInputs): StoryFacts | null {
     values['rentBurdenHigh'] = f(now.max, PERCENT_DECIMALS);
   }
   if (real !== null) values['rentBurdenReal'] = f(real, PERCENT_DECIMALS);
-  if (now !== null && real !== null) values['rentBurdenDiff'] = f(Math.abs(now.central - real), PERCENT_DECIMALS);
+  // The difference of the shown (rounded) values, so that the sentence agrees with the two numbers it names.
+  const shown = (x: number) => Math.round(x * 10 ** PERCENT_DECIMALS) / 10 ** PERCENT_DECIMALS;
+  if (now !== null && real !== null) values['rentBurdenDiff'] = f(Math.abs(shown(now.central) - shown(real)), PERCENT_DECIMALS);
   if (minutes !== null) {
     values['commuteMinutes'] = f(minutes, MINUTE_DECIMALS);
     values['commuteHoursMonth'] = f((minutes * month.tripsPerDay * month.workdaysPerMonth) / 60, 0);

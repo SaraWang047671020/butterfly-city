@@ -1,0 +1,362 @@
+/*
+ * Game HUD skin (user feedback 2026-11-23: panels hard to read and not attractive). Loaded last; restyles the
+ * game-ui components inside the overlay panels without changing their content. Tokens only.
+ * Principles: one card per panel (no nested cards), one heading per panel, compact type, numbers in tabular
+ * figures of the UI font, details muted and small, a glass panel so the city stays present.
+ */
+
+/* ---- Panels: glass, smaller, one heading ------------------------------------------------------------------------ */
+.ui-app .ui-panel {
+  background: color-mix(in srgb, var(--color-bg-panel) 84%, transparent);
+  backdrop-filter: blur(10px);
+  border-color: color-mix(in srgb, var(--color-line) 40%, transparent);
+  font-size: var(--font-size-sm);
+}
+
+.ui-app .ui-panel__head {
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-3);
+}
+
+.ui-app .ui-panel__title {
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.ui-app .ui-panel__toggle {
+  min-height: var(--target-min);
+  padding: 0 var(--space-2);
+  background: none;
+  border-color: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.ui-app .ui-panel__body {
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3) var(--space-3);
+}
+
+/* Inner component cards lose their own card: the panel is the card. */
+.ui-app .ui-panel .ui-policy-panel,
+.ui-app .ui-panel .ui-district-panel,
+.ui-app .ui-panel .map-controls,
+.ui-app .ui-panel .timeline,
+.ui-app .ui-panel .ui-district-list,
+.ui-app .ui-panel .map-switch,
+.ui-app .ui-panel .map-legend {
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+
+/* Duplicate headings: the panel title already names the block. */
+.ui-app .ui-panel .ui-policy-heading,
+.ui-app .ui-panel .timeline__heading {
+  display: none;
+}
+
+/* Numbers: tabular figures of the UI font instead of a monospace block. */
+.ui-app .ui-panel strong,
+.ui-app .ui-panel .ui-row-value,
+.ui-app .ui-panel .ui-policy-budget-committed,
+.ui-app .ui-panel .ui-policy-budget-remaining,
+.ui-app .ui-panel .ui-row-difference {
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Turn_Bar: a slim game bar ---------------------------------------------------------------------------------- */
+.ui-app .ui-block--turn-bar .turn-bar {
+  background: color-mix(in srgb, var(--color-bg-panel) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-color: color-mix(in srgb, var(--color-line) 40%, transparent);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-4);
+  column-gap: var(--space-3);
+}
+
+.ui-app .ui-block--turn-bar .turn-bar__disclosure {
+  order: 10;
+  flex-basis: 100%;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.ui-app .ui-block--turn-bar .turn-bar__planning {
+  display: none; /* the Displayed_Quarter and the turn number say where the game is; Planning is the next one */
+}
+
+.ui-app .ui-block--turn-bar .turn-bar__displayed {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.ui-app .ui-block--turn-bar .turn-bar__turn {
+  font-size: var(--font-size-xs);
+}
+
+.ui-app .ui-block--turn-bar .turn-bar__controls,
+.ui-app .ui-block--turn-bar .turn-bar__save {
+  flex-wrap: nowrap;
+  gap: var(--space-1);
+}
+
+.ui-app .ui-block--turn-bar .turn-bar__button {
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-4);
+}
+
+/* Save and import are secondary actions. */
+.ui-app .ui-block--turn-bar .turn-bar__save .turn-bar__button {
+  background: none;
+  color: var(--color-text-secondary);
+  border-color: var(--color-line-subtle);
+  font-weight: var(--font-weight-regular);
+  padding: var(--space-1) var(--space-3);
+}
+
+/* ---- Policy panel: tool cards ----------------------------------------------------------------------------------- */
+.ui-app .ui-panel .ui-policy-budget {
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-raised);
+  border: 0;
+  border-radius: var(--radius-md);
+}
+
+.ui-app .ui-panel .ui-policy-budget-title {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+}
+
+.ui-app .ui-panel .ui-policy-budget-committed,
+.ui-app .ui-panel .ui-policy-budget-remaining {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ui-app .ui-panel .ui-policy-budget-note {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.ui-app .ui-panel .ui-policy-domain-heading {
+  margin: var(--space-3) 0 var(--space-1);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.ui-app .ui-panel .ui-policy-tool {
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-2);
+  background: var(--color-bg-raised);
+  border: 1px solid transparent;
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-md);
+}
+
+.ui-app .ui-panel .ui-policy-tool-name {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Effects, costs and limits: kept, but as quiet small print under the controls. */
+.ui-app .ui-panel .ui-policy-effects,
+.ui-app .ui-panel .ui-policy-costs,
+.ui-app .ui-panel .ui-policy-lag,
+.ui-app .ui-panel .ui-policy-unit-cost,
+.ui-app .ui-panel .ui-policy-limit-lower,
+.ui-app .ui-panel .ui-policy-limit-upper,
+.ui-app .ui-panel .ui-policy-note,
+.ui-app .ui-panel .ui-policy-real {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-normal);
+}
+
+.ui-app .ui-panel .ui-policy-effect {
+  margin: 0 0 var(--space-1);
+  padding-left: var(--space-2);
+  border-left-width: 2px;
+}
+
+.ui-app .ui-panel .ui-policy-field {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-line-subtle);
+}
+
+.ui-app .ui-panel .ui-policy-field-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ui-app .ui-panel .ui-policy-input {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- District panel: label | value rows ------------------------------------------------------------------------- */
+.ui-app .ui-panel .ui-district-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+}
+
+.ui-app .ui-panel .ui-district-city,
+.ui-app .ui-panel .ui-district-mode {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.ui-app .ui-panel .ui-district-row {
+  padding: var(--space-2) 0;
+  margin: 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--color-line-subtle);
+  border-radius: 0;
+}
+
+.ui-app .ui-panel .ui-row-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ui-app .ui-panel .ui-row-value {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.ui-app .ui-panel .ui-row-comparison,
+.ui-app .ui-panel .ui-row-methods,
+.ui-app .ui-panel .ui-row-source,
+.ui-app .ui-panel .ui-row-note,
+.ui-app .ui-panel .ui-district-ghost-size {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.ui-app .ui-panel .ui-row-difference {
+  font-size: var(--font-size-sm);
+  color: var(--color-accent);
+}
+
+/* ---- Map panel: compact indicator switch ------------------------------------------------------------------------ */
+.ui-app .ui-panel .map-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-1);
+}
+
+.ui-app .ui-panel .map-switch__legend {
+  grid-column: 1 / -1;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.ui-app .ui-panel .map-switch__option {
+  min-height: var(--target-min);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-sm);
+}
+
+.ui-app .ui-panel .map-legend__item,
+.ui-app .ui-panel .map-text,
+.ui-app .ui-panel .map-price-label {
+  font-size: var(--font-size-xs);
+}
+
+.ui-app .ui-map-control {
+  font-size: var(--font-size-xs);
+  min-height: var(--target-min);
+  padding: var(--space-1) var(--space-3);
+}
+
+/* ---- Timeline: quiet list --------------------------------------------------------------------------------------- */
+.ui-app .ui-panel .timeline__entry {
+  padding: var(--space-1) 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--color-line-subtle);
+  border-radius: 0;
+  font-size: var(--font-size-xs);
+}
+
+.ui-app .ui-panel .timeline__quarter-heading {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
+}
+
+/* ---- Panel sizes on wide screens -------------------------------------------------------------------------------- */
+@media (min-width: 64rem) {
+  .ui-app .ui-panel {
+    width: 20rem;
+  }
+
+  .ui-app .ui-panel--district,
+  .ui-app .ui-panel--timeline {
+    width: 21rem;
+  }
+
+  .ui-app .ui-panel--story {
+    left: calc(20rem + 2 * var(--space-3));
+    width: 21rem;
+  }
+
+  .ui-app .ui-block--turn-bar {
+    width: auto;
+    max-width: calc(100% - 2 * 21rem - 4 * var(--space-3));
+  }
+}
+
+/* ---- Second pass: timeline items flat, smaller radios, story text size ------------------------------------------ */
+.ui-app .ui-panel .timeline__item {
+  padding: var(--space-1) 0;
+  margin: 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--color-line-subtle);
+  border-radius: 0;
+  box-shadow: none;
+  font-size: var(--font-size-xs);
+}
+
+.ui-app .ui-panel .timeline__title {
+  font-size: var(--font-size-sm);
+}
+
+.ui-app .ui-panel .map-switch__input {
+  width: var(--space-4);
+  height: var(--space-4);
+}
+
+.ui-app .ui-panel .map-switch__option {
+  min-height: var(--target-min);
+  gap: var(--space-1);
+}
+
+.ui-app .ui-panel .story-panel {
+  font-size: var(--font-size-sm);
+}
+
+.ui-app .ui-panel .story-panel__intro {
+  font-size: var(--font-size-xs);
+}
+
+.ui-app .ui-panel .story-panel__name {
+  font-size: var(--font-size-md);
+}

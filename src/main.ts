@@ -23,6 +23,7 @@ import { districtAccessibleName } from './ui/a11y/accessible-name.ts';
 import { createApp } from './ui/app.ts';
 // After app.ts so that the approved overlay layout follows the shell styles of app.css.
 import './styles/layout.css';
+import './styles/hud.css';
 import { mountCityView, type CityCitizen, type CityView, type SiteView } from './ui/city/index.ts';
 import { formatNumber } from './ui/format/number.ts';
 import { UI_STRINGS } from './ui/strings.ts';
