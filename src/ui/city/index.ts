@@ -63,6 +63,12 @@ export interface CityStrings {
     /** {unit}, {low}, {high} are filled. */
     readonly changeLegend: string;
   };
+  /** Quarter_Key to its display label (play-loop Requirement 12.6). Optional; the key is shown when absent. */
+  readonly quarterLabel?: (quarter: string) => string;
+  /** Show Chinese station, line and Landmark names (Traditional Chinese locale, play-loop Requirement 12.5). */
+  readonly chineseNames?: boolean;
+  /** Unit text to its display label (play-loop Requirement 12). Optional. */
+  readonly unitLabel?: (unit: string) => string;
   /** Labels of the player's social housing in the city; {units}, {quarter} are filled. */
   readonly sites?: { readonly done: string; readonly building: string };
   /** Citizen_Encounter texts. {name} is replaced by the citizen's name. */
@@ -154,7 +160,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     inputs.filter((_, i) => placements[i]!.urban).flatMap((p) => p.polygons),
     clearings,
   );
-  const landmarks = createLandmarks(s.scene, tokens);
+  const landmarks = createLandmarks(s.scene, tokens, undefined, o.strings.chineseNames === true);
   const allPolygons = inputs.flatMap((p) => p.polygons);
   const collider = createCollider(
     placements.flatMap((p) => p.buildings.map((b) => ({ x: b.x, z: b.z, hw: b.width / 2, hd: b.depth / 2 }))),
@@ -196,6 +202,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       doc.defaultView?.setTimeout(arrive, seconds * 1000);
     }
   };
+  const stationName = (st: MetroStation): string => (o.strings.chineseNames === true ? st.zh : st.name);
   const openStations = () => {
     if (nearStation === null) return;
     const here = nearStation;
@@ -204,13 +211,13 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     for (const group of stationsByLine(METRO_DATA, net)) {
       const section = doc.createElement('section');
       const h = doc.createElement('h3');
-      h.textContent = group.name;
+      h.textContent = o.strings.chineseNames === true ? group.zh : group.name;
       const ul = doc.createElement('ul');
       for (const st of group.stations) {
         const li = doc.createElement('li');
         const b = doc.createElement('button');
         b.type = 'button';
-        b.textContent = st.key === here.key ? o.strings.metro.here.replace('{station}', st.name) : st.name;
+        b.textContent = st.key === here.key ? o.strings.metro.here.replace('{station}', stationName(st)) : stationName(st);
         b.disabled = st.key === here.key;
         b.addEventListener('click', () => {
           dialog.close();
@@ -222,7 +229,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       section.append(h, ul);
       body.appendChild(section);
     }
-    dialog.open({ title: o.strings.metro.title.replace('{station}', here.name), body, opener: promptButton, size: 'lg' });
+    dialog.open({ title: o.strings.metro.title.replace('{station}', stationName(here)), body, opener: promptButton, size: 'lg' });
   };
   promptButton.addEventListener('click', openStations);
 
@@ -473,7 +480,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       if (st !== nearStation) {
         nearStation = st;
         prompt.hidden = st === null;
-        if (st !== null) promptText.textContent = o.strings.metro.prompt.replace('{station}', st.name);
+        if (st !== null) promptText.textContent = o.strings.metro.prompt.replace('{station}', stationName(st));
       }
       const who = citizens.near(walker.position.x, walker.position.z);
       if (who !== nearCitizen) {
@@ -525,7 +532,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       const b = CHANGE_BOUNDS[m.indicator];
       changeLegend.hidden = !changeMode;
       changeLegend.textContent = t2.changeLegend
-        .replace('{unit}', m.legend.unit)
+        .replace('{unit}', o.strings.unitLabel?.(m.legend.unit) ?? m.legend.unit)
         .replace('{low}', String(b[0]))
         .replace('{high}', String(b[b.length - 1]));
     }
@@ -601,7 +608,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       if (L === undefined) return;
       sites.setSites(list, {
         done: (units) => L.done.replace('{units}', String(units)),
-        building: (units, quarter) => L.building.replace('{units}', String(units)).replace('{quarter}', quarter),
+        building: (units, quarter) => L.building.replace('{units}', String(units)).replace('{quarter}', o.strings.quarterLabel?.(quarter) ?? quarter),
       });
     },
     update(next) {

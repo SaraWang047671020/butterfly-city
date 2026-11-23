@@ -2,7 +2,7 @@
 import type { ParameterAssumptionView, RangeSourceView } from '../../types/view.ts';
 import { formatNumber } from '../format/number.ts';
 import { formatRange } from '../format/range.ts';
-import { fillTemplate, UI_STRINGS } from '../strings.ts';
+import { fillTemplate, UI_STRINGS, unitLabel } from '../strings.ts';
 
 export interface AssumptionText {
   readonly name: string;
@@ -53,7 +53,7 @@ function assumptionText(a: ParameterAssumptionView): AssumptionText {
     line: fillTemplate(UI_STRINGS.rangeSource.parameterValue, {
       name,
       value: formatNumber(a.value, decimalsOf(a.value)),
-      unit: a.unit,
+      unit: unitLabel(a.unit),
     }).trimEnd(),
     citation,
     url: hasUrl ? (a.url as string) : null,

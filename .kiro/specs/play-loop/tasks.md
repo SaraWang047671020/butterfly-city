@@ -15,6 +15,11 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
   - [x] 2.2 Move the dialogs of `dialogs.ts`, the station dialog and the Limits_Dialog onto it
   - [x] 2.3 Static test `tests/static/dialog-frame.test.ts` (no DOM test library in the project; adding one needs the user's approval) and the manual pointer-click check of 9.3, recorded in `KIRO-LOG.md`
 
+- [x] 2A. Language mechanism (Requirement 12.1 to 12.3, 12.6; before the new screens so that every new string is written once in both languages)
+  - [x] 2A.1 `src/ui/strings.ts` split into `strings/en.ts` and `strings/zh-Hant.ts` with one key set; `main.ts` chooses the locale before the App is mounted; language control and reload with the game saved
+  - [x] 2A.2 Key and Placeholder parity test; quarter format per language; unit and city names per language
+  - [x] 2A.3 Chinese district, Landmark and station names from the boundary and TDX files (pipeline and `npm run stations`), with sources
+
 - [ ] 3. Data
   - [ ] 3.1 `src/data/character-loader.ts`: fetch and validate the Character_File and the Wage_File (Requirement 2.3 to 2.5)
   - [ ] 3.2 DGBAS earnings download in `scripts/download.ts`, `scripts/story/wages.ts`, `public/data/wages.json`, `data/SOURCES.md` row (Requirement 3.4); confirm the industry codes and the coverage of the education industry against the table
@@ -60,6 +65,11 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
 
 - [ ] 11. First_Play_Guide (Requirement 8)
   - [ ] 11.1 `src/ui/guide/first-play.ts`; replay from the City_Report
+
+- [ ] 11A. Translation of the existing text (Requirement 12.4, 12.5, 12.7, 12.8)
+  - [ ] 11A.1 Chinese part of the Banned_Term_List
+  - [ ] 11A.2 Bilingual fields and validators for `citizens.json`, `model-limits.json`, `events.json` and the policy effect texts; draft translations
+  - [ ] 11A.3 User approval of the Traditional Chinese text, recorded in `KIRO-LOG.md`
 
 - [ ] 12. Finish
   - [ ] 12.1 Strings review of Requirement 10.1 recorded in `KIRO-LOG.md`

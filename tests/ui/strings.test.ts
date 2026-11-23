@@ -9,7 +9,9 @@ import {
   parseTermList,
 } from '../../scripts/pipeline/banned-terms.ts';
 import { SCENARIO_EFFECT_IDS } from '../../src/simulation/params.ts';
-import { DISCLOSURE_TEXT, UI_STRINGS } from '../../src/ui/strings.ts';
+import { DISCLOSURE_TEXT, quarterLabel, UI_STRINGS } from '../../src/ui/strings.ts';
+import { EN } from '../../src/ui/strings/en.ts';
+import { ZH } from '../../src/ui/strings/zh-Hant.ts';
 
 /** Every string of the module with its dotted key (array items get an index). */
 function flatten(value: unknown, key: string, out: Array<[string, string]>): Array<[string, string]> {
@@ -74,8 +76,47 @@ describe('UI_STRINGS', () => {
 
   it('marks user-authored text with TODO(user text)', () => {
     expect(UI_STRINGS.errors.timelineCap).toContain('TODO(user text)');
-    const source = readFileSync('src/ui/strings.ts', 'utf8');
+    const source = readFileSync('src/ui/strings/en.ts', 'utf8');
     expect(source).toMatch(/TODO\(user text\): review the wording of the effect statements/);
     expect(source).toMatch(/TODO\(user text\): wording of the timeline-cap message/);
+  });
+});
+
+describe('English and Traditional Chinese (play-loop Requirement 12.3)', () => {
+  const en = new Map(flatten(EN, '', []));
+  const zh = new Map(flatten(ZH, '', []));
+  const placeholders = (t: string) => [...t.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+
+  it('uses English outside a browser', () => {
+    expect(UI_STRINGS).toBe(EN);
+  });
+
+  it('has the same keys in both languages', () => {
+    expect([...zh.keys()].sort()).toEqual([...en.keys()].sort());
+  });
+
+  it('has the same Placeholders in each pair of strings', () => {
+    const differ: string[] = [];
+    for (const [key, text] of en) {
+      const other = zh.get(key) ?? '';
+      if (placeholders(text).join(',') !== placeholders(other).join(',')) differ.push(key);
+    }
+    expect(differ).toEqual([]);
+  });
+
+  it('has a Chinese text for every key that is not a language name or a pure Placeholder', () => {
+    const untranslated = [...en].filter(
+      ([key, text]) =>
+        zh.get(key) === text &&
+        /[A-Za-z]{3}/.test(text.replace(/\{\w+\}/g, '')) &&
+        !/^app\.language(En|Zh)$/.test(key) &&
+        !key.startsWith('errors.timelineCap'),
+    );
+    expect(untranslated.map(([k]) => k)).toEqual([]);
+  });
+
+  it('labels quarters per language', () => {
+    expect(quarterLabel('2016Q3')).toBe('2016 Q3');
+    expect(quarterLabel('not a quarter')).toBe('not a quarter');
   });
 });

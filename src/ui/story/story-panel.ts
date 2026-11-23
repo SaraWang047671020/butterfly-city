@@ -1,7 +1,7 @@
 // Story_Panel and Persona picker (story-layer Requirement 5). The view is built by main.ts from the story layer;
 // this component only renders it. Text comes from citizens.json and the UI_Strings_Module.
 import { setText } from '../component.ts';
-import { fillTemplate, UI_STRINGS } from '../strings.ts';
+import { fillTemplate, UI_STRINGS, quarterLabel } from '../strings.ts';
 
 export type StoryPanelView =
   | { readonly kind: 'error'; readonly error: string }
@@ -109,7 +109,7 @@ export function createStoryPanel(doc: Document, actions: StoryPanelActions): Sto
       }
       setText(name, view.name);
       setText(intro, view.intro);
-      setText(quarter, view.quarter === null ? T.noQuarter : fillTemplate(T.quarter, { quarter: view.quarter }));
+      setText(quarter, view.quarter === null ? T.noQuarter : fillTemplate(T.quarter, { quarter: quarterLabel(view.quarter) }));
       const text = view.lines.join('\n');
       if (text !== shownLines) {
         shownLines = text;

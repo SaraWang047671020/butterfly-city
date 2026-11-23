@@ -44,7 +44,7 @@ describe('rejection messages (Requirements 9.2, 9.7, 9.11)', () => {
 
   it('shows the fixed-quarter and format messages and none for ok', () => {
     expect(checkMessage({ status: 'fixed-quarter', planning: '2018Q2' }, 'x')).toBe(
-      'Computed quarters are fixed. Changes apply from 2018Q2.',
+      'Computed quarters are fixed. Changes apply from 2018 Q2.',
     );
     expect(checkMessage({ status: 'invalid-format', expected: 'integer' }, 'Units')).toContain('Units');
     expect(checkMessage({ status: 'unchanged', budget: null }, 'x')).toBeNull();

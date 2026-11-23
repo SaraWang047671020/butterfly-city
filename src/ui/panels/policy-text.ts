@@ -9,7 +9,7 @@ import type {
   ParameterRefView,
 } from '../../types/view.ts';
 import { formatNumber } from '../format/number.ts';
-import { buildEngineErrorText, fillTemplate, UI_STRINGS } from '../strings.ts';
+import { buildEngineErrorText, fillTemplate, UI_STRINGS, quarterLabel, unitLabel } from '../strings.ts';
 
 const P = UI_STRINGS.policy;
 
@@ -44,7 +44,7 @@ export function parameterSourceText(ref: ParameterRefView | null): string {
 }
 
 export function limitProblemText(problem: LimitProblem): string {
-  const values = { limit: formatAmount(problem.limit), unit: problem.unit };
+  const values = { limit: formatAmount(problem.limit), unit: unitLabel(problem.unit) };
   const head = fillTemplate(problem.side === 'lower' ? P.breaksLower : P.breaksUpper, values);
   const reason = problem.ref?.assumption ?? problem.ref?.citation ?? P.noSource;
   return `${head} ${fillTemplate(P.limitReason, { reason })}`;
@@ -63,7 +63,7 @@ export function budgetProblemText(problem: BudgetProblemView): string {
 export function checkMessage(check: EditCheckView, fieldName: string): string | null {
   switch (check.status) {
     case 'fixed-quarter':
-      return fillTemplate(P.fixedQuarter, { quarter: check.planning ?? '' });
+      return fillTemplate(P.fixedQuarter, { quarter: check.planning === null ? '' : quarterLabel(check.planning) });
     case 'invalid-format':
       return fillTemplate(check.expected === 'integer' ? P.invalidInteger : P.invalidNumber, { field: fieldName });
     case 'timeline-full':
@@ -89,7 +89,7 @@ export function carriedProblemText(c: CarriedProblemView, fieldName: string, are
     area,
     value: formatAmount(c.value),
     rule,
-    quarter: c.quarter,
+    quarter: quarterLabel(c.quarter),
   });
 }
 
@@ -105,8 +105,8 @@ export function constructionLabels(row: ConstructionRowView): { progress: string
 
 /** Field key of an editable input is the view key; real value text with the estimate flag. */
 export function realValueText(field: FieldView, quarter: string | null): string {
-  const label = fillTemplate(P.realValueLabel, { quarter: quarter ?? '' });
+  const label = fillTemplate(P.realValueLabel, { quarter: quarter === null ? '' : quarterLabel(quarter) });
   if (field.real === null) return `${label}: ${P.noRealValue}`;
   const flag = field.real.estimated ? ` (${UI_STRINGS.range.estimated})` : '';
-  return `${label}: ${formatAmount(field.real.value)} ${field.unit}${flag}`;
+  return `${label}: ${formatAmount(field.real.value)} ${unitLabel(field.unit)}${flag}`;
 }

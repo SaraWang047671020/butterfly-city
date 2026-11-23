@@ -2,7 +2,7 @@
 // Styling comes from src/styles (class names only here). The bar is a native <progress>, so it needs no motion.
 import type { ConstructionRowView } from '../../types/view.ts';
 import { reconcileKeyed, setAttr, setText, type Component } from '../component.ts';
-import { UI_STRINGS } from '../strings.ts';
+import { UI_STRINGS, quarterLabel } from '../strings.ts';
 import { constructionLabels } from './policy-text.ts';
 
 const C = UI_STRINGS.construction;
@@ -82,7 +82,7 @@ export function createConstructionRows(doc: Document): Component<readonly Constr
         if (row === undefined) continue;
         const labels = constructionLabels(row);
         setText(parts.district, row.districtName);
-        setText(parts.quarters, `${C.committedQuarter} ${row.committed}, ${C.effectQuarter} ${row.effect}`);
+        setText(parts.quarters, `${C.committedQuarter} ${quarterLabel(row.committed)}, ${C.effectQuarter} ${quarterLabel(row.effect)}`);
         setText(parts.units, labels.units);
         setText(parts.progressText, labels.progress);
         parts.bar.max = row.lag;

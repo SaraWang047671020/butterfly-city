@@ -5,7 +5,7 @@ import type { DistrictCode, QuarterKey } from '../../types/data-files.ts';
 import type { FieldView, GameView, PolicyPanelView, ToolView, UiActions } from '../../types/view.ts';
 import { reconcileKeyed, setAttr, setText, type Component } from '../component.ts';
 import { formatNumber } from '../format/number.ts';
-import { fillTemplate, UI_STRINGS } from '../strings.ts';
+import { fillTemplate, UI_STRINGS, unitLabel } from '../strings.ts';
 import { createConstructionRows } from './construction-rows.ts';
 import '../../styles/panels.css';
 import {
@@ -215,7 +215,7 @@ export function createPolicyPanel(doc: Document, actions: UiActions): Component<
     const year = yearOf(props.planning);
     setText(parts.title, `${name} (${areaName})`);
     setText(parts.real, realValueText(f, props.planning));
-    setText(parts.player, `${P.yourValue}: ${f.player === null ? UI_STRINGS.range.noValue : `${formatAmount(f.player)} ${f.unit}`}`);
+    setText(parts.player, `${P.yourValue}: ${f.player === null ? UI_STRINGS.range.noValue : `${formatAmount(f.player)} ${unitLabel(f.unit)}`}`);
     setText(
       parts.unitCost,
       f.unitCost === null
@@ -226,18 +226,18 @@ export function createPolicyPanel(doc: Document, actions: UiActions): Component<
     setText(parts.lag, `${P.lag}: ${formatAmount(f.lag.value)} · ${P.citation}: ${parameterSourceText(f.lag)}`);
     setText(
       parts.lower,
-      `${P.lowerLimit}: ${formatAmount(f.limits.lower)} ${f.unit} · ${P.citation}: ${parameterSourceText(f.limits.lowerRef)}`,
+      `${P.lowerLimit}: ${formatAmount(f.limits.lower)} ${unitLabel(f.unit)} · ${P.citation}: ${parameterSourceText(f.limits.lowerRef)}`,
     );
     setText(
       parts.upper,
-      `${P.upperLimit}: ${formatAmount(f.limits.upper)} ${f.unit} · ${P.citation}: ${parameterSourceText(f.limits.upperRef)}`,
+      `${P.upperLimit}: ${formatAmount(f.limits.upper)} ${unitLabel(f.unit)} · ${P.citation}: ${parameterSourceText(f.limits.upperRef)}`,
     );
     setText(parts.ceiling, `${fillTemplate(P.remainingCeiling, { year })}: ${formatAmount(f.remainingCeiling)}`);
     const showCityYear = f.limits.scope === 'city-year' && f.cityYearTotal !== null;
     parts.cityYear.hidden = !showCityYear;
     setText(
       parts.cityYear,
-      showCityYear ? `${fillTemplate(P.cityYearTotal, { year })}: ${formatAmount(f.cityYearTotal ?? 0)} ${f.unit}` : '',
+      showCityYear ? `${fillTemplate(P.cityYearTotal, { year })}: ${formatAmount(f.cityYearTotal ?? 0)} ${unitLabel(f.unit)}` : '',
     );
 
     const editable = f.editable === 'yes';
@@ -245,7 +245,7 @@ export function createPolicyPanel(doc: Document, actions: UiActions): Component<
     setText(parts.note, f.editable === 'select-district' ? P.selectDistrict : f.editable === 'no-pass-product' ? P.noCommuterPass : '');
     parts.controls.hidden = !editable;
     setText(parts.label, name);
-    setText(parts.unit, f.unit);
+    setText(parts.unit, unitLabel(f.unit));
     parts.input.inputMode = f.countField ? 'numeric' : 'decimal';
 
     // Never rewrite an input while it has focus (task 16.5). Rejected text stays as entered (Requirement 9.5).
@@ -278,7 +278,7 @@ export function createPolicyPanel(doc: Document, actions: UiActions): Component<
           li.className = 'ui-policy-real-value';
           const area = props.areaNames?.get(v.area as DistrictCode) ?? v.area;
           const flag = v.estimated ? `, ${UI_STRINGS.range.estimated}` : '';
-          li.textContent = `${area}: ${formatNumber(v.value, v.decimals)} ${v.unit} (${P.realValue}${flag})`;
+          li.textContent = `${area}: ${formatNumber(v.value, v.decimals)} ${unitLabel(v.unit)} (${P.realValue}${flag})`;
           return li;
         }),
       );

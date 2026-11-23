@@ -31,7 +31,7 @@ import { createTimelineView } from './timeline/timeline-view.ts';
 import { createTurnBar } from './turn-bar/turn-bar.ts';
 import { createLiveRegion } from './a11y/live-region.ts';
 import { mountComponent, setText } from './component.ts';
-import { buildEngineErrorText, fillTemplate, UI_STRINGS } from './strings.ts';
+import { buildEngineErrorText, fillTemplate, UI_STRINGS, LOCALE, type Locale, quarterLabel } from './strings.ts';
 import '../styles/app.css';
 
 const A = UI_STRINGS.app;
@@ -49,6 +49,8 @@ export interface AppController {
 export interface AppOptions {
   /** Called when the player activates "Retry" in the load-error screen. */
   readonly onRetry: () => void;
+  /** Called with the other language when the player activates the language control (play-loop Requirement 12.1). */
+  readonly onLanguage?: (next: Locale) => void;
 }
 
 export interface App {
@@ -97,7 +99,7 @@ function storedProblemText(problem: StoredProblemView): string {
 function announcementText(a: Announcement): string {
   if (a.engineError !== null) return buildEngineErrorText(a.engineError.code, a.engineError.details);
   const parts: string[] = [];
-  if (a.quarter !== null) parts.push(fillTemplate(N.quarterComputed, { quarter: a.quarter }));
+  if (a.quarter !== null) parts.push(fillTemplate(N.quarterComputed, { quarter: quarterLabel(a.quarter) }));
   if (a.eventTitles.length > 0) parts.push(fillTemplate(N.majorEvents, { titles: a.eventTitles.join(', ') }));
   return parts.join(' ');
 }
@@ -106,6 +108,14 @@ function areaNamesOf(list: DistrictListView): ReadonlyMap<DistrictCode, string> 
   const map = new Map<DistrictCode, string>();
   for (const g of list.groups) for (const d of g.districts) map.set(d.code, d.name);
   return map;
+}
+
+/** The language the language control switches to, and its label written in that language. */
+export function otherLocale(): Locale {
+  return LOCALE === 'zh-Hant' ? 'en' : 'zh-Hant';
+}
+export function languageLabel(): string {
+  return otherLocale() === 'zh-Hant' ? UI_STRINGS.app.languageZh : UI_STRINGS.app.languageEn;
 }
 
 export function createApp(doc: Document, host: HTMLElement, options: AppOptions): App {
@@ -133,6 +143,11 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   const startProblem = el(doc, 'p', 'ui-screen__problem', startScreen);
   startProblem.setAttribute('role', 'status');
   const startButtons = el(doc, 'div', 'ui-screen__actions', startScreen);
+  if (options.onLanguage !== undefined) {
+    const onLanguage = options.onLanguage;
+    const lang = button(doc, 'ui-button ui-language', languageLabel(), () => onLanguage(otherLocale()), startScreen);
+    lang.lang = otherLocale();
+  }
 
   // ---- Game screen: independent blocks, each mounted into its own host ---------------------------------------
   const gameScreen = el(doc, 'div', 'ui-game', overlay);

@@ -9,7 +9,7 @@ import type { DialogManager, DialogSize } from '../a11y/dialog.ts';
 import { createRangeSourceView } from '../explain/range-source-view.ts';
 import { formatRange } from '../format/range.ts';
 import { fieldLabel, formatAmount, toolName } from '../panels/policy-text.ts';
-import { fillTemplate, UI_STRINGS } from '../strings.ts';
+import { fillTemplate, UI_STRINGS, quarterLabel } from '../strings.ts';
 import '../../styles/dialogs.css';
 import '../../styles/range-source.css';
 
@@ -193,7 +193,7 @@ function buildEventCards(doc: Document, actions: UiActions, view: Extract<Dialog
   const list = el(doc, 'ul', 'dialog__cards');
   for (const card of view.cards) {
     const li = el(doc, 'li', 'dialog__card');
-    const date = card.firstQuarter === card.lastQuarter ? card.firstQuarter : `${card.firstQuarter} - ${card.lastQuarter}`;
+    const date = card.firstQuarter === card.lastQuarter ? quarterLabel(card.firstQuarter) : `${quarterLabel(card.firstQuarter)} - ${quarterLabel(card.lastQuarter)}`;
     li.append(
       el(doc, 'p', 'dialog__card-date', date),
       el(doc, 'h3', 'dialog__card-title', card.title),
@@ -271,7 +271,7 @@ function buildDemo(doc: Document, actions: UiActions, view: Extract<DialogView, 
           'li',
           'dialog__demo-item',
           fillTemplate(DEMO.adjustment, {
-            quarter: e.quarter,
+            quarter: quarterLabel(e.quarter),
             tool: toolName(e.tool),
             field: fieldLabel(e.tool, e.field),
             area: e.area,

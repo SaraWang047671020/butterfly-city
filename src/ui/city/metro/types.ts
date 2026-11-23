@@ -3,6 +3,8 @@
 export interface MetroStation {
   readonly key: string;
   readonly name: string;
+  /** Chinese name (TDX StationName.Zh_tw), shown in Traditional Chinese (play-loop Requirement 12.5). */
+  readonly zh: string;
   readonly ids: readonly string[];
   readonly lines: readonly string[];
   readonly lon: number;
@@ -21,7 +23,7 @@ export interface MetroSegment {
 }
 
 export interface MetroData {
-  readonly lines: readonly { readonly id: string; readonly name: string }[];
+  readonly lines: readonly { readonly id: string; readonly name: string; readonly zh: string }[];
   readonly stations: readonly MetroStation[];
   readonly segments: readonly MetroSegment[];
 }

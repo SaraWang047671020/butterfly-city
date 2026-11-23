@@ -17,9 +17,20 @@ export const METRO_LINE_NAMES: Readonly<Record<string, string>> = {
   Y: 'Circular Line',
 };
 
+/** Chinese line names as used by Taipei Rapid Transit Corporation (https://www.metro.taipei/). */
+export const METRO_LINE_NAMES_ZH: Readonly<Record<string, string>> = {
+  BL: '板南線',
+  BR: '文湖線',
+  R: '淡水信義線',
+  G: '松山新店線',
+  O: '中和新蘆線',
+  Y: '環狀線',
+};
+
 export interface MetroStation {
   readonly key: string; // lower-case English name without spaces; unique
   readonly name: string; // English name
+  readonly zh: string; // Chinese name (TDX StationName.Zh_tw)
   readonly ids: readonly string[]; // TDX station ids, ascending
   readonly lines: readonly string[]; // line ids, in METRO_LINE_NAMES order
   readonly lon: number;
@@ -36,7 +47,7 @@ export interface MetroSegment {
 }
 
 export interface MetroData {
-  readonly lines: readonly { readonly id: string; readonly name: string }[];
+  readonly lines: readonly { readonly id: string; readonly name: string; readonly zh: string }[];
   readonly stations: readonly MetroStation[];
   readonly segments: readonly MetroSegment[];
 }
@@ -44,6 +55,7 @@ export interface MetroData {
 interface RawRow {
   readonly id: string;
   readonly en: string;
+  readonly zh: string;
   readonly lon: number;
   readonly lat: number;
 }
@@ -78,7 +90,7 @@ export function parseStationRows(file: string, text: string): RawRow[] {
   const doc = JSON.parse(text) as unknown;
   if (!Array.isArray(doc)) throw new Error(`${file}: expected a JSON array`);
   return doc.map((r: unknown, i) => {
-    const row = r as { StationID?: unknown; StationName?: { En?: unknown }; StationPosition?: { PositionLon?: unknown; PositionLat?: unknown } };
+    const row = r as { StationID?: unknown; StationName?: { En?: unknown; Zh_tw?: unknown }; StationPosition?: { PositionLon?: unknown; PositionLat?: unknown } };
     const id = row.StationID;
     const en = row.StationName?.En;
     const lon = row.StationPosition?.PositionLon;
@@ -86,7 +98,9 @@ export function parseStationRows(file: string, text: string): RawRow[] {
     if (typeof id !== 'string' || typeof en !== 'string' || typeof lon !== 'number' || typeof lat !== 'number') {
       throw new Error(`${file}: row ${i + 1} has no StationID, StationName.En or StationPosition`);
     }
-    return { id, en: en.trim(), lon, lat };
+    const zh = row.StationName?.Zh_tw;
+    if (typeof zh !== 'string' || zh.trim() === '') throw new Error(`${file}: row ${i + 1} has no StationName.Zh_tw`);
+    return { id, en: en.trim(), zh: zh.trim(), lon, lat };
   });
 }
 
@@ -134,7 +148,7 @@ export function buildMetroData(
       // A transfer station opened when its first line opened there.
       const dates = ids.map(openedOf);
       const opened = dates.includes(null) ? null : [...(dates as string[])].sort()[0]!;
-      return { key, name: list[0]!.en, ids, lines, lon, lat, district, opened };
+      return { key, name: list[0]!.en, zh: list[0]!.zh, ids, lines, lon, lat, district, opened };
     })
     .sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
 
@@ -159,7 +173,7 @@ export function buildMetroData(
   segments.sort((x, y) => (x.line + x.from + x.to < y.line + y.from + y.to ? -1 : 1));
   // A station with no segment is not open in the 2025Q4 network (for example a station listed before it opened).
   const linked = new Set(segments.flatMap((g) => [g.from, g.to]));
-  return { lines: lineOrder.map((id) => ({ id, name: METRO_LINE_NAMES[id]! })), stations: stations.filter((st) => linked.has(st.key)), segments };
+  return { lines: lineOrder.map((id) => ({ id, name: METRO_LINE_NAMES[id]!, zh: METRO_LINE_NAMES_ZH[id]! })), stations: stations.filter((st) => linked.has(st.key)), segments };
 }
 
 /** The generated TypeScript module text (deterministic). */

@@ -5,7 +5,7 @@ import type { DistrictCode } from '../../types/data-files.ts';
 import type { EventCardView, TimelineItemView, TimelineQuarterView, UiActions } from '../../types/view.ts';
 import { reconcileKeyed, setText, type Component, type ComponentFactory } from '../component.ts';
 import { formatNumber } from '../format/number.ts';
-import { fillTemplate, UI_STRINGS } from '../strings.ts';
+import { fillTemplate, UI_STRINGS, quarterLabel } from '../strings.ts';
 import { fieldLabel, formatAmount, toolName } from '../panels/policy-text.ts';
 import '../../styles/timeline.css';
 
@@ -53,7 +53,7 @@ function renderEvent(doc: Document, li: HTMLElement, card: EventCardView, major:
   }
   const date = doc.createElement('p');
   date.className = 'timeline__date';
-  date.textContent = card.firstQuarter === card.lastQuarter ? card.firstQuarter : `${card.firstQuarter} - ${card.lastQuarter}`;
+  date.textContent = card.firstQuarter === card.lastQuarter ? quarterLabel(card.firstQuarter) : `${quarterLabel(card.firstQuarter)} - ${quarterLabel(card.lastQuarter)}`;
   const title = doc.createElement('h4');
   title.className = 'timeline__title';
   title.textContent = card.title;
@@ -159,7 +159,7 @@ export const createTimelineView: ComponentFactory<TimelineViewProps> = (
       for (const q of view.quarters) {
         const p = parts.get(q.quarter);
         if (p === undefined) continue;
-        setText(p.title, fillTemplate(T.quarterHeading, { quarter: q.quarter }));
+        setText(p.title, fillTemplate(T.quarterHeading, { quarter: quarterLabel(q.quarter) }));
         const keys = q.items.map(itemKey);
         reconcileKeyed(p.items, p.cache, keys, (key) => {
           const li = doc.createElement('li');

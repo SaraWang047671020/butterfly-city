@@ -43,11 +43,12 @@ function idOnLine(s: MetroStation, line: string): string {
 }
 
 /** Open stations of each open line, in line order, for the station dialog. */
-export function stationsByLine(data: MetroData, net: OpenNetwork): { readonly line: string; readonly name: string; readonly stations: readonly MetroStation[] }[] {
+export function stationsByLine(data: MetroData, net: OpenNetwork): { readonly line: string; readonly name: string; readonly zh: string; readonly stations: readonly MetroStation[] }[] {
   return data.lines
     .map((l) => ({
       line: l.id,
       name: l.name,
+      zh: l.zh,
       stations: net.stations.filter((s) => net.linesAt.get(s.key)?.includes(l.id)).sort((a, b) => (idOnLine(a, l.id) < idOnLine(b, l.id) ? -1 : 1)),
     }))
     .filter((g) => g.stations.length > 0);

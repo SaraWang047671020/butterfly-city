@@ -28,6 +28,8 @@ Phase 1 shows the Character's own numbers each quarter (rent burden, commute) an
 5. Life decisions are made slowly during the game, not all at the start. Character_Creation asks only who the Character is at the start of 2015 (name, origin, first job, where they live, appearance). Partner, children, caring for a parent, moving and changing jobs are Life_Decisions the player makes in later quarters.
 6. A partner can be of any gender, including a same-sex partner. Where the law of the time treats couples differently (for example marriage of same-sex couples, possible from 2019-05-24 under the Act for Implementation of J.Y. Interpretation No. 748), the game states the legal fact of that date with its source and does not comment on it.
 
+7. The game can switch between English and Traditional Chinese (user request 2026-11-23; the user left the timing to Claude Code). The switching mechanism is built in phase 1 before the new screens, so that every new string is written once in both languages; existing text is translated at the end of phase 1; phase 3 story text is written in both languages from the start.
+
 ### Who implements
 
 Claude Code implements this spec, not Kiro, to save Kiro credits (recorded in `KIRO-LOG.md`, section "Work not done by Kiro").
@@ -218,6 +220,21 @@ Claude Code implements this spec, not Kiro, to save Kiro credits (recorded in `K
 3. THE Test_Suite SHALL check the Brief_Item rule: order, the limit of 3, and the empty case.
 4. THE Test_Suite SHALL check that the Policy_Dialog slider and input field always hold the same value and that the Quick_Preview cost equals the `checkBudget` result.
 5. THE Test_Suite SHALL check the module boundaries of game-ui Requirement 18 for the new modules.
+
+### Requirement 12: English and Traditional Chinese
+
+**User Story:** As a player in Taiwan or abroad, I want to play in Traditional Chinese or English, so that the game reads naturally in my language.
+
+#### Acceptance Criteria
+
+1. THE Game_Screen SHALL offer a language control (English / 繁體中文) on the start screen and in the City_Report, and SHALL remember the choice in browser storage (key `butterflycity.lang.v1`), defaulting to Traditional Chinese WHERE the browser language starts with `zh` and to English otherwise.
+2. WHEN the player changes the language, THE App SHALL save the game state and reload the page in the new language; the Save, the Character and the Life_Timeline SHALL be unchanged.
+3. THE UI_Strings_Module SHALL hold every UI string in both languages with the same keys, and THE Test_Suite SHALL fail IF a key or a Placeholder exists in one language and not in the other.
+4. THE Character_File, `citizens.json`, `model-limits.json`, the Event_Card texts of `events.json` and the policy effect texts SHALL hold each displayed text in both languages, and the validators SHALL reject a text that is missing in one language.
+5. District names, Landmark names and metro station names SHALL be shown in Chinese characters in Traditional Chinese, from a cited source (the district boundary file and the TDX station file), and romanized in English.
+6. Numbers SHALL use the same digits and decimals in both languages; quarters SHALL read "2016 Q3" in English and "2016 年第 3 季" in Traditional Chinese.
+7. THE Banned_Term_List SHALL have a Traditional Chinese part, and every Traditional Chinese text SHALL pass it and the `neutrality.md` review check.
+8. Claude Code SHALL draft every translation; the user SHALL approve the Traditional Chinese text before it is marked final, recorded in `KIRO-LOG.md`.
 
 ## Open questions
 

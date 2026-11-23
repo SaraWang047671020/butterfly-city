@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Butterfly City: a Taipei and New Taipei housing and transport policy game built on real open data, 2015 to 2025." />
     <title>Butterfly City</title>
+    <script>
+      // Language before any module runs (play-loop Requirement 12.1): stored choice, else the browser language.
+      (function () {
+        var l = null;
+        try { l = localStorage.getItem('butterflycity.lang.v1'); } catch (e) {}
+        if (l !== 'en' && l !== 'zh-Hant') l = /^zh/i.test(navigator.language || '') ? 'zh-Hant' : 'en';
+        document.documentElement.lang = l;
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>

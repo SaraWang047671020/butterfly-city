@@ -8,33 +8,40 @@ export const METRO_DATA: MetroData = {
   "lines": [
     {
       "id": "BL",
-      "name": "Bannan Line"
+      "name": "Bannan Line",
+      "zh": "板南線"
     },
     {
       "id": "BR",
-      "name": "Wenhu Line"
+      "name": "Wenhu Line",
+      "zh": "文湖線"
     },
     {
       "id": "R",
-      "name": "Tamsui-Xinyi Line"
+      "name": "Tamsui-Xinyi Line",
+      "zh": "淡水信義線"
     },
     {
       "id": "G",
-      "name": "Songshan-Xindian Line"
+      "name": "Songshan-Xindian Line",
+      "zh": "松山新店線"
     },
     {
       "id": "O",
-      "name": "Zhonghe-Xinlu Line"
+      "name": "Zhonghe-Xinlu Line",
+      "zh": "中和新蘆線"
     },
     {
       "id": "Y",
-      "name": "Circular Line"
+      "name": "Circular Line",
+      "zh": "環狀線"
     }
   ],
   "stations": [
     {
       "key": "banqiao",
       "name": "Banqiao",
+      "zh": "板橋",
       "ids": [
         "BL07",
         "Y16"
@@ -51,6 +58,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "banxin",
       "name": "Banxin",
+      "zh": "板新",
       "ids": [
         "Y15"
       ],
@@ -65,6 +73,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "beimen",
       "name": "Beimen",
+      "zh": "北門",
       "ids": [
         "G13"
       ],
@@ -79,6 +88,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "beitou",
       "name": "Beitou",
+      "zh": "北投",
       "ids": [
         "R22"
       ],
@@ -93,6 +103,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "cailiao",
       "name": "Cailiao",
+      "zh": "菜寮",
       "ids": [
         "O14"
       ],
@@ -107,6 +118,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "chiangkaishekmemorialhall",
       "name": "Chiang Kai-Shek Memorial Hall",
+      "zh": "中正紀念堂",
       "ids": [
         "G10",
         "R08"
@@ -123,6 +135,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "daan",
       "name": "Daan",
+      "zh": "大安",
       "ids": [
         "BR09",
         "R05"
@@ -139,6 +152,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "daanpark",
       "name": "Daan Park",
+      "zh": "大安森林公園",
       "ids": [
         "R06"
       ],
@@ -153,6 +167,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "dahupark",
       "name": "Dahu Park",
+      "zh": "大湖公園",
       "ids": [
         "BR20"
       ],
@@ -167,6 +182,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "danfeng",
       "name": "Danfeng",
+      "zh": "丹鳳",
       "ids": [
         "O20"
       ],
@@ -181,6 +197,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "dapinglin",
       "name": "Dapinglin",
+      "zh": "大坪林",
       "ids": [
         "G04",
         "Y07"
@@ -197,6 +214,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "daqiaotou",
       "name": "Daqiaotou",
+      "zh": "大橋頭",
       "ids": [
         "O12"
       ],
@@ -211,6 +229,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "dazhi",
       "name": "Dazhi",
+      "zh": "大直",
       "ids": [
         "BR14"
       ],
@@ -225,6 +244,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "dingpu",
       "name": "Dingpu",
+      "zh": "頂埔",
       "ids": [
         "BL01"
       ],
@@ -239,6 +259,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "dingxi",
       "name": "Dingxi",
+      "zh": "頂溪",
       "ids": [
         "O04"
       ],
@@ -253,6 +274,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "donghu",
       "name": "Donghu",
+      "zh": "東湖",
       "ids": [
         "BR22"
       ],
@@ -267,6 +289,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "dongmen",
       "name": "Dongmen",
+      "zh": "東門",
       "ids": [
         "O06",
         "R07"
@@ -283,6 +306,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "fareasternhospital",
       "name": "Far Eastern Hospital",
+      "zh": "亞東醫院",
       "ids": [
         "BL05"
       ],
@@ -297,6 +321,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "fujenuniversity",
       "name": "Fu Jen University",
+      "zh": "輔大",
       "ids": [
         "O19"
       ],
@@ -311,6 +336,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "fuxinggang",
       "name": "Fuxinggang",
+      "zh": "復興崗",
       "ids": [
         "R23"
       ],
@@ -325,6 +351,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "fuzhong",
       "name": "Fuzhong",
+      "zh": "府中",
       "ids": [
         "BL06"
       ],
@@ -339,6 +366,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "gangqian",
       "name": "Gangqian",
+      "zh": "港墘",
       "ids": [
         "BR17"
       ],
@@ -353,6 +381,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "gongguan",
       "name": "Gongguan",
+      "zh": "公館",
       "ids": [
         "G07"
       ],
@@ -367,6 +396,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "guandu",
       "name": "Guandu",
+      "zh": "關渡",
       "ids": [
         "R25"
       ],
@@ -381,6 +411,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "guting",
       "name": "Guting",
+      "zh": "古亭",
       "ids": [
         "G09",
         "O05"
@@ -397,6 +428,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "haishan",
       "name": "Haishan",
+      "zh": "海山",
       "ids": [
         "BL04"
       ],
@@ -411,6 +443,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "hongshulin",
       "name": "Hongshulin",
+      "zh": "紅樹林",
       "ids": [
         "R27"
       ],
@@ -425,6 +458,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "houshanpi",
       "name": "Houshanpi",
+      "zh": "後山埤",
       "ids": [
         "BL20"
       ],
@@ -439,6 +473,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "huilong",
       "name": "Huilong",
+      "zh": "迴龍",
       "ids": [
         "O21"
       ],
@@ -453,6 +488,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "huzhou",
       "name": "Huzhou",
+      "zh": "葫洲",
       "ids": [
         "BR21"
       ],
@@ -467,6 +503,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "jiangzicui",
       "name": "Jiangzicui",
+      "zh": "江子翠",
       "ids": [
         "BL09"
       ],
@@ -481,6 +518,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "jiannanrd",
       "name": "Jiannan Rd.",
+      "zh": "劍南路",
       "ids": [
         "BR15"
       ],
@@ -495,6 +533,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "jiantan",
       "name": "Jiantan",
+      "zh": "劍潭",
       "ids": [
         "R15"
       ],
@@ -509,6 +548,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "jingan",
       "name": "Jingan",
+      "zh": "景安",
       "ids": [
         "O02",
         "Y11"
@@ -525,6 +565,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "jingmei",
       "name": "Jingmei",
+      "zh": "景美",
       "ids": [
         "G05"
       ],
@@ -539,6 +580,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "jingping",
       "name": "Jingping",
+      "zh": "景平",
       "ids": [
         "Y10"
       ],
@@ -553,6 +595,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "kunyang",
       "name": "Kunyang",
+      "zh": "昆陽",
       "ids": [
         "BL21"
       ],
@@ -567,6 +610,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "linguang",
       "name": "Linguang",
+      "zh": "麟光",
       "ids": [
         "BR06"
       ],
@@ -581,6 +625,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "liuzhangli",
       "name": "Liuzhangli",
+      "zh": "六張犁",
       "ids": [
         "BR07"
       ],
@@ -595,6 +640,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "longshantemple",
       "name": "Longshan Temple",
+      "zh": "龍山寺",
       "ids": [
         "BL10"
       ],
@@ -609,6 +655,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "luzhou",
       "name": "Luzhou",
+      "zh": "蘆洲",
       "ids": [
         "O54"
       ],
@@ -623,6 +670,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "mingde",
       "name": "Mingde",
+      "zh": "明德",
       "ids": [
         "R18"
       ],
@@ -637,6 +685,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "minquanwrd",
       "name": "Minquan W. Rd.",
+      "zh": "民權西路",
       "ids": [
         "O11",
         "R13"
@@ -653,6 +702,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "muzha",
       "name": "Muzha",
+      "zh": "木柵",
       "ids": [
         "BR02"
       ],
@@ -667,6 +717,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "nangang",
       "name": "Nangang",
+      "zh": "南港",
       "ids": [
         "BL22"
       ],
@@ -681,6 +732,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "nangangsoftwarepark",
       "name": "Nangang Software Park",
+      "zh": "南港軟體園區",
       "ids": [
         "BR23"
       ],
@@ -695,6 +747,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "nanjingfuxing",
       "name": "Nanjing Fuxing",
+      "zh": "南京復興",
       "ids": [
         "BR11",
         "G16"
@@ -711,6 +764,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "nanjingsanmin",
       "name": "Nanjing Sanmin",
+      "zh": "南京三民",
       "ids": [
         "G18"
       ],
@@ -725,6 +779,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "nanshijiao",
       "name": "Nanshijiao",
+      "zh": "南勢角",
       "ids": [
         "O01"
       ],
@@ -739,6 +794,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "neihu",
       "name": "Neihu",
+      "zh": "內湖",
       "ids": [
         "BR19"
       ],
@@ -753,6 +809,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "newtaipeiindustrialpark",
       "name": "New Taipei Industrial Park",
+      "zh": "新北產業園區",
       "ids": [
         "Y20"
       ],
@@ -767,6 +824,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "ntuhospital",
       "name": "NTU Hospital",
+      "zh": "台大醫院",
       "ids": [
         "R09"
       ],
@@ -781,6 +839,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "qiaohe",
       "name": "Qiaohe",
+      "zh": "橋和",
       "ids": [
         "Y13"
       ],
@@ -795,6 +854,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "qilian",
       "name": "Qilian",
+      "zh": "唭哩岸",
       "ids": [
         "R20"
       ],
@@ -809,6 +869,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "qiyan",
       "name": "Qiyan",
+      "zh": "奇岩",
       "ids": [
         "R21"
       ],
@@ -823,6 +884,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "qizhang",
       "name": "Qizhang",
+      "zh": "七張",
       "ids": [
         "G03"
       ],
@@ -837,6 +899,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "sanchong",
       "name": "Sanchong",
+      "zh": "三重",
       "ids": [
         "O15"
       ],
@@ -851,6 +914,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "sanchongelementaryschool",
       "name": "Sanchong Elementary School",
+      "zh": "三重國小",
       "ids": [
         "O50"
       ],
@@ -865,6 +929,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "sanhejuniorhighschool",
       "name": "Sanhe Junior High School",
+      "zh": "三和國中",
       "ids": [
         "O51"
       ],
@@ -879,6 +944,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "sanminseniorhighschool",
       "name": "Sanmin Senior High School",
+      "zh": "三民高中",
       "ids": [
         "O53"
       ],
@@ -893,6 +959,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "shandaotemple",
       "name": "Shandao Temple",
+      "zh": "善導寺",
       "ids": [
         "BL13"
       ],
@@ -907,6 +974,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "shilin",
       "name": "Shilin",
+      "zh": "士林",
       "ids": [
         "R16"
       ],
@@ -921,6 +989,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "shipai",
       "name": "Shipai",
+      "zh": "石牌",
       "ids": [
         "R19"
       ],
@@ -935,6 +1004,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "shisizhang",
       "name": "Shisizhang",
+      "zh": "十四張",
       "ids": [
         "Y08"
       ],
@@ -949,6 +1019,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "shuanglian",
       "name": "Shuanglian",
+      "zh": "雙連",
       "ids": [
         "R12"
       ],
@@ -963,6 +1034,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "songjiangnanjing",
       "name": "Songjiang Nanjing",
+      "zh": "松江南京",
       "ids": [
         "G15",
         "O08"
@@ -979,6 +1051,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "songshan",
       "name": "Songshan",
+      "zh": "松山",
       "ids": [
         "G19"
       ],
@@ -993,6 +1066,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "songshanairport",
       "name": "Songshan Airport",
+      "zh": "松山機場",
       "ids": [
         "BR13"
       ],
@@ -1007,6 +1081,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "stlgnatiushighschool",
       "name": "St.lgnatius High School",
+      "zh": "徐匯中學",
       "ids": [
         "O52"
       ],
@@ -1021,6 +1096,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "sunyatsenmemorialhall",
       "name": "Sun Yat-Sen Memorial Hall",
+      "zh": "國父紀念館",
       "ids": [
         "BL17"
       ],
@@ -1035,6 +1111,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "taipei101worldtradecenter",
       "name": "Taipei 101/World Trade Center",
+      "zh": "台北101/世貿",
       "ids": [
         "R03"
       ],
@@ -1049,6 +1126,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "taipeiarena",
       "name": "Taipei Arena",
+      "zh": "台北小巨蛋",
       "ids": [
         "G17"
       ],
@@ -1063,6 +1141,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "taipeibridge",
       "name": "Taipei Bridge",
+      "zh": "台北橋",
       "ids": [
         "O13"
       ],
@@ -1077,6 +1156,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "taipeicityhall",
       "name": "Taipei City Hall",
+      "zh": "市政府",
       "ids": [
         "BL18"
       ],
@@ -1091,6 +1171,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "taipeimainstation",
       "name": "Taipei Main Station",
+      "zh": "台北車站",
       "ids": [
         "BL12",
         "R10"
@@ -1107,6 +1188,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "taipeinangangexhibitioncenter",
       "name": "Taipei Nangang Exhibition Center",
+      "zh": "南港展覽館",
       "ids": [
         "BL23",
         "BR24"
@@ -1123,6 +1205,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "taipeizoo",
       "name": "Taipei Zoo",
+      "zh": "動物園",
       "ids": [
         "BR01"
       ],
@@ -1137,6 +1220,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "taipowerbuilding",
       "name": "Taipower Building",
+      "zh": "台電大樓",
       "ids": [
         "G08"
       ],
@@ -1151,6 +1235,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "tamsui",
       "name": "Tamsui",
+      "zh": "淡水",
       "ids": [
         "R28"
       ],
@@ -1165,6 +1250,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "technologybuilding",
       "name": "Technology Building",
+      "zh": "科技大樓",
       "ids": [
         "BR08"
       ],
@@ -1179,6 +1265,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "touqianzhuang",
       "name": "Touqianzhuang",
+      "zh": "頭前庄",
       "ids": [
         "O17",
         "Y18"
@@ -1195,6 +1282,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "tucheng",
       "name": "Tucheng",
+      "zh": "土城",
       "ids": [
         "BL03"
       ],
@@ -1209,6 +1297,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "wanfangcommunity",
       "name": "Wanfang Community",
+      "zh": "萬芳社區",
       "ids": [
         "BR03"
       ],
@@ -1223,6 +1312,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "wanfanghospital",
       "name": "Wanfang Hospital",
+      "zh": "萬芳醫院",
       "ids": [
         "BR04"
       ],
@@ -1237,6 +1327,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "wanlong",
       "name": "Wanlong",
+      "zh": "萬隆",
       "ids": [
         "G06"
       ],
@@ -1251,6 +1342,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "wende",
       "name": "Wende",
+      "zh": "文德",
       "ids": [
         "BR18"
       ],
@@ -1265,6 +1357,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xiangshan",
       "name": "Xiangshan",
+      "zh": "象山",
       "ids": [
         "R02"
       ],
@@ -1279,6 +1372,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xiansetemple",
       "name": "Xianse Temple",
+      "zh": "先嗇宮",
       "ids": [
         "O16"
       ],
@@ -1293,6 +1387,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xiaobitan",
       "name": "Xiaobitan",
+      "zh": "小碧潭",
       "ids": [
         "G03A"
       ],
@@ -1307,6 +1402,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xiaonanmen",
       "name": "Xiaonanmen",
+      "zh": "小南門",
       "ids": [
         "G11"
       ],
@@ -1321,6 +1417,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xihu",
       "name": "Xihu",
+      "zh": "西湖",
       "ids": [
         "BR16"
       ],
@@ -1335,6 +1432,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "ximen",
       "name": "Ximen",
+      "zh": "西門",
       "ids": [
         "BL11",
         "G12"
@@ -1351,6 +1449,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xinbeitou",
       "name": "Xinbeitou",
+      "zh": "新北投",
       "ids": [
         "R22A"
       ],
@@ -1365,6 +1464,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xindian",
       "name": "Xindian",
+      "zh": "新店",
       "ids": [
         "G01"
       ],
@@ -1379,6 +1479,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xindiandistrictoffice",
       "name": "Xindian District Office",
+      "zh": "新店區公所",
       "ids": [
         "G02"
       ],
@@ -1393,6 +1494,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xingfu",
       "name": "Xingfu",
+      "zh": "幸福",
       "ids": [
         "Y19"
       ],
@@ -1407,6 +1509,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xingtiantemple",
       "name": "Xingtian Temple",
+      "zh": "行天宮",
       "ids": [
         "O09"
       ],
@@ -1421,6 +1524,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xinhai",
       "name": "Xinhai",
+      "zh": "辛亥",
       "ids": [
         "BR05"
       ],
@@ -1435,6 +1539,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xinpu",
       "name": "Xinpu",
+      "zh": "新埔",
       "ids": [
         "BL08"
       ],
@@ -1449,6 +1554,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xinpuminsheng",
       "name": "Xinpu Minsheng",
+      "zh": "新埔民生",
       "ids": [
         "Y17"
       ],
@@ -1463,6 +1569,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xinyianhe",
       "name": "Xinyi Anhe",
+      "zh": "信義安和",
       "ids": [
         "R04"
       ],
@@ -1477,6 +1584,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xinzhuang",
       "name": "Xinzhuang",
+      "zh": "新莊",
       "ids": [
         "O18"
       ],
@@ -1491,6 +1599,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "xiulangbridge",
       "name": "Xiulang Bridge",
+      "zh": "秀朗橋",
       "ids": [
         "Y09"
       ],
@@ -1505,6 +1614,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "yonganmarket",
       "name": "Yongan Market",
+      "zh": "永安市場",
       "ids": [
         "O03"
       ],
@@ -1519,6 +1629,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "yongchun",
       "name": "Yongchun",
+      "zh": "永春",
       "ids": [
         "BL19"
       ],
@@ -1533,6 +1644,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "yongning",
       "name": "Yongning",
+      "zh": "永寧",
       "ids": [
         "BL02"
       ],
@@ -1547,6 +1659,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "yuanshan",
       "name": "Yuanshan",
+      "zh": "圓山",
       "ids": [
         "R14"
       ],
@@ -1561,6 +1674,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "zhishan",
       "name": "Zhishan",
+      "zh": "芝山",
       "ids": [
         "R17"
       ],
@@ -1575,6 +1689,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "zhonghe",
       "name": "Zhonghe",
+      "zh": "中和",
       "ids": [
         "Y12"
       ],
@@ -1589,6 +1704,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "zhongshan",
       "name": "Zhongshan",
+      "zh": "中山",
       "ids": [
         "G14",
         "R11"
@@ -1605,6 +1721,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "zhongshanelementaryschool",
       "name": "Zhongshan Elementary School",
+      "zh": "中山國小",
       "ids": [
         "O10"
       ],
@@ -1619,6 +1736,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "zhongshanjuniorhighschool",
       "name": "Zhongshan Junior High School",
+      "zh": "中山國中",
       "ids": [
         "BR12"
       ],
@@ -1633,6 +1751,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "zhongxiaodunhua",
       "name": "Zhongxiao Dunhua",
+      "zh": "忠孝敦化",
       "ids": [
         "BL16"
       ],
@@ -1647,6 +1766,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "zhongxiaofuxing",
       "name": "Zhongxiao Fuxing",
+      "zh": "忠孝復興",
       "ids": [
         "BL15",
         "BR10"
@@ -1663,6 +1783,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "zhongxiaoxinsheng",
       "name": "Zhongxiao Xinsheng",
+      "zh": "忠孝新生",
       "ids": [
         "BL14",
         "O07"
@@ -1679,6 +1800,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "zhongyi",
       "name": "Zhongyi",
+      "zh": "忠義",
       "ids": [
         "R24"
       ],
@@ -1693,6 +1815,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "zhongyuan",
       "name": "Zhongyuan",
+      "zh": "中原",
       "ids": [
         "Y14"
       ],
@@ -1707,6 +1830,7 @@ export const METRO_DATA: MetroData = {
     {
       "key": "zhuwei",
       "name": "Zhuwei",
+      "zh": "竹圍",
       "ids": [
         "R26"
       ],

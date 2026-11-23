@@ -74,9 +74,9 @@ describe('open network by quarter (city-3d 8.6, 8.7)', () => {
 
 describe('build script on a small input', () => {
   const stations = JSON.stringify([
-    { StationID: 'BL01', StationName: { En: 'Dingpu' }, StationPosition: { PositionLon: 121.418744, PositionLat: 24.959351 } },
-    { StationID: 'BL02', StationName: { En: 'Yongning' }, StationPosition: { PositionLon: 121.43613, PositionLat: 24.96682 } },
-    { StationID: 'LB01', StationName: { En: 'Sanying X' }, StationPosition: { PositionLon: 121.43613, PositionLat: 24.96682 } },
+    { StationID: 'BL01', StationName: { En: 'Dingpu', Zh_tw: '頂埔' }, StationPosition: { PositionLon: 121.418744, PositionLat: 24.959351 } },
+    { StationID: 'BL02', StationName: { En: 'Yongning', Zh_tw: '永寧' }, StationPosition: { PositionLon: 121.43613, PositionLat: 24.96682 } },
+    { StationID: 'LB01', StationName: { En: 'Sanying X', Zh_tw: '三鶯' }, StationPosition: { PositionLon: 121.43613, PositionLat: 24.96682 } },
   ]);
   const s2s = JSON.stringify([{ LineID: 'BL', RouteID: 'BL-1', TravelTimes: [{ FromStationID: 'BL01', ToStationID: 'BL02', RunTime: 120, StopTime: 30 }] }]);
 

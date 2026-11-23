@@ -3,7 +3,7 @@
 import type { CityName } from '../../types/data-files.ts';
 import type { ResultRange } from '../../types/simulation.ts';
 import { formatRange } from '../format/range.ts';
-import { fillTemplate, UI_STRINGS } from '../strings.ts';
+import { fillTemplate, UI_STRINGS, unitLabel, cityLabel } from '../strings.ts';
 
 export interface DistrictAccessibleNameInput {
   readonly name: string;
@@ -23,10 +23,10 @@ export function districtAccessibleName(input: DistrictAccessibleNameInput): stri
   const r = UI_STRINGS.range;
   const prefix = fillTemplate(r.a11yPrefix, {
     name: input.name,
-    city: input.city,
+    city: cityLabel(input.city),
     indicator: input.indicator,
   });
-  const text = formatRange(input.range, input.decimals, input.unit);
+  const text = formatRange(input.range, input.decimals, unitLabel(input.unit));
   let body: string;
   if (text.kind === 'none') {
     // A null value is never read as 0 and carries no estimate suffix or data period.
@@ -35,13 +35,13 @@ export function districtAccessibleName(input: DistrictAccessibleNameInput): stri
   if (text.kind === 'same') {
     body = fillTemplate(r.a11ySame, {
       value: text.value,
-      unit: input.unit,
+      unit: unitLabel(input.unit),
       sameInAll: r.sameInAll,
     });
   } else {
     body = fillTemplate(r.a11yRange, {
       value: text.central,
-      unit: input.unit,
+      unit: unitLabel(input.unit),
       min: text.min,
       max: text.max,
     });

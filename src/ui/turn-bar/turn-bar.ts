@@ -1,7 +1,7 @@
 import type { TurnBarView, UiActions } from '../../types/view.ts';
 import { setAttr, setText } from '../component.ts';
 import type { Component, ComponentFactory } from '../component.ts';
-import { buildEngineErrorText, fillTemplate, UI_STRINGS } from '../strings.ts';
+import { buildEngineErrorText, fillTemplate, UI_STRINGS, quarterLabel } from '../strings.ts';
 import '../../styles/turn-bar.css';
 
 const T = UI_STRINGS.turnBar;
@@ -73,10 +73,10 @@ export const createTurnBar: ComponentFactory<TurnBarView> = (doc: Document, acti
 
   function update(view: TurnBarView): void {
     setOptional(demo, view.demo ? T.demoLabel : null);
-    setOptional(planning, view.planning === null ? null : `${T.planningQuarter}: ${view.planning}`);
+    setOptional(planning, view.planning === null ? null : `${T.planningQuarter}: ${quarterLabel(view.planning)}`);
     setText(
       displayed,
-      view.displayed === null ? T.noQuarterComputed : `${T.displayedQuarter}: ${view.displayed}`,
+      view.displayed === null ? T.noQuarterComputed : `${T.displayedQuarter}: ${quarterLabel(view.displayed)}`,
     );
     setText(turn, fillTemplate(T.turnNumber, { n: String(view.turn) }));
     setOptional(complete, view.complete ? T.complete : null);

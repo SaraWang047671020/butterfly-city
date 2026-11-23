@@ -1,6 +1,7 @@
 // App entry (game-ui task 17.2, city-3d task 6, story-layer Citizen_Encounters). Written by Claude Code.
 // The only module that reads import.meta.env. Wires Data_Loader -> Game_Controller -> UI, and mounts the 3D City_View
 // into the App's city layer.
+import { DISTRICT_NAMES_ZH } from './ui/strings/district-names.generated.ts';
 import './styles/tokens.css';
 import './styles/city.css';
 import { loadDataFiles } from './data/loader.ts';
@@ -20,13 +21,14 @@ import { createDialogManager } from './ui/a11y/dialog.ts';
 import { fillTemplate as fillStory } from './narrative/fill.ts';
 import { RULE_REGISTRY } from './simulation/registry.ts';
 import { districtAccessibleName } from './ui/a11y/accessible-name.ts';
-import { createApp } from './ui/app.ts';
+import { createApp, languageLabel, otherLocale } from './ui/app.ts';
+import { LANG_KEY, type Locale } from './ui/strings/locale.ts';
 // After app.ts so that the approved overlay layout follows the shell styles of app.css.
 import './styles/layout.css';
 import './styles/hud.css';
 import { mountCityView, type CityCitizen, type CityView, type SiteView } from './ui/city/index.ts';
 import { formatNumber } from './ui/format/number.ts';
-import { UI_STRINGS } from './ui/strings.ts';
+import { UI_STRINGS, quarterLabel, unitLabel, LOCALE } from './ui/strings.ts';
 import type { MapDistrictView, MapViewModel } from './types/view.ts';
 
 const BASE_URL = import.meta.env.BASE_URL;
@@ -34,7 +36,16 @@ const appRoot = document.getElementById('app');
 if (appRoot === null) throw new Error('index.html has no #app element');
 const host: HTMLElement = appRoot;
 
-const app = createApp(document, host, { onRetry: () => void start() });
+// Language (play-loop Requirement 12.2): store the choice and reload; the game is already saved in the browser.
+const switchLanguage = (next: Locale): void => {
+  try {
+    localStorage.setItem(LANG_KEY, next);
+  } catch {
+    // storage unavailable: the reload falls back to the browser language
+  }
+  location.reload();
+};
+const app = createApp(document, host, { onRetry: () => void start(), onLanguage: switchLanguage });
 let city: CityView | null = null;
 let controller: GameController | null = null;
 
@@ -118,7 +129,12 @@ async function start(): Promise<void> {
     app.showLoadError(result.failures);
     return;
   }
-  const data = result.data;
+  // Traditional Chinese: district names from the boundary data's TOWNNAME (play-loop Requirement 12.5). Names are
+  // display text only; every rule and file matches districts by District_Code.
+  const data =
+    LOCALE === 'zh-Hant'
+      ? { ...result.data, districts: result.data.districts.map((d) => ({ ...d, name: DISTRICT_NAMES_ZH[d.code] ?? d.name })) }
+      : result.data;
   // The Save_Store is created only after a successful load (game-ui 2.6).
   controller = new GameController({
     data,
@@ -144,6 +160,9 @@ async function start(): Promise<void> {
     strings: {
       canvasLabel: C.canvasLabel,
       close: UI_STRINGS.dialogs.close,
+      quarterLabel,
+      unitLabel,
+      chineseNames: LOCALE === 'zh-Hant',
       fallback: C.fallback,
       metro: C.metro,
       talk: C.talk,
@@ -280,6 +299,8 @@ async function start(): Promise<void> {
     });
     limitsDialog.open({ title: limits.page.title, body, opener, size: 'lg' });
   });
+  const langButton = app.addMapControl(languageLabel(), () => switchLanguage(otherLocale()));
+  langButton.lang = otherLocale();
   app.attach(ctl);
 }
 

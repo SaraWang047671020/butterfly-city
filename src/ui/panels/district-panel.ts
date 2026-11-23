@@ -6,7 +6,7 @@ import { reconcileKeyed, setAttr, setText, type Component } from '../component.t
 import { formatDifference } from '../format/difference.ts';
 import { formatNumber } from '../format/number.ts';
 import { formatRange } from '../format/range.ts';
-import { fillTemplate, UI_STRINGS } from '../strings.ts';
+import { fillTemplate, UI_STRINGS, quarterLabel, unitLabel, cityLabel } from '../strings.ts';
 import '../../styles/panels.css';
 
 const D = UI_STRINGS.districtPanel;
@@ -126,10 +126,10 @@ export function createDistrictPanel(doc: Document, actions: UiActions): Componen
     setText(parts.label, name);
     const sim = row.simulated;
     if (sim !== null) {
-      const text = formatRange(sim.range, sim.decimals, sim.unit);
+      const text = formatRange(sim.range, sim.decimals, unitLabel(sim.unit));
       setText(parts.value, text.text);
-      setText(parts.comparison, `${comparisonLabel(sim.comparison.label)}: ${valueWithUnit(sim.comparison.value, sim.decimals, sim.unit)}`);
-      const diffUnit = row.percentRow ? D.units.percentagePoints : sim.unit;
+      setText(parts.comparison, `${comparisonLabel(sim.comparison.label)}: ${valueWithUnit(sim.comparison.value, sim.decimals, unitLabel(sim.unit))}`);
+      const diffUnit = row.percentRow ? D.units.percentagePoints : unitLabel(sim.unit);
       // No difference is shown when a value is missing (Requirement 6.6).
       const noDiff = text.kind === 'none' || sim.comparison.value === null;
       setText(parts.difference, noDiff ? '' : formatDifference(sim.range.central, sim.comparison.value, sim.decimals, diffUnit));
@@ -142,7 +142,7 @@ export function createDistrictPanel(doc: Document, actions: UiActions): Componen
       setHidden(parts.about, false);
     } else {
       const real = row.realOnly;
-      setText(parts.value, valueWithUnit(real?.value ?? null, row.decimals, row.unit));
+      setText(parts.value, valueWithUnit(real?.value ?? null, row.decimals, unitLabel(row.unit)));
       setText(parts.comparison, real === null ? '' : comparisonLabel(real.label));
       setHidden(parts.comparison, real === null);
       setText(parts.difference, '');
@@ -175,8 +175,8 @@ export function createDistrictPanel(doc: Document, actions: UiActions): Componen
       setHidden(body, isPrompt);
       if (isPrompt || view.district === null) return;
       setText(title, view.district.name);
-      setText(city, view.district.city);
-      setText(mode, view.mode === 'real-2015Q1' ? UI_STRINGS.turnBar.realData2015Q1 : (view.quarter ?? ''));
+      setText(city, cityLabel(view.district.city));
+      setText(mode, view.mode === 'real-2015Q1' ? UI_STRINGS.turnBar.realData2015Q1 : view.quarter === null ? '' : quarterLabel(view.quarter));
       reconcileKeyed(rowsHost, rowEls, view.rows.map((r) => r.id), createRow);
       for (const row of view.rows) {
         const parts = rowCache.get(row.id);

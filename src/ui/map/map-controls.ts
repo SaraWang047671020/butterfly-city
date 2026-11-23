@@ -7,7 +7,7 @@ import type { MapIndicatorId } from '../../types/save.ts';
 import type { MapViewModel, UiActions } from '../../types/view.ts';
 import { setAttr, setText } from '../component.ts';
 import type { Component, ComponentFactory } from '../component.ts';
-import { fillTemplate, UI_STRINGS } from '../strings.ts';
+import { fillTemplate, UI_STRINGS, quarterLabel, unitLabel } from '../strings.ts';
 import { classColorToken, INDICATOR_CLASSES } from './indicator-classes.ts';
 import '../../styles/map-controls.css';
 
@@ -129,7 +129,7 @@ export const createLegend: ComponentFactory<MapControlsView> = (doc: Document): 
       if (key !== lastKey) {
         lastKey = key;
         list.textContent = '';
-        const texts = legendClassTexts(legend.bounds, legend.unit, legend.decimals);
+        const texts = legendClassTexts(legend.bounds, unitLabel(legend.unit), legend.decimals);
         texts.forEach((text, i) => addItem('', classColorToken(id, i), text));
         // A null value is "No data" (Low_Use_Housing_Rate) or "no value", never class 0.
         addItem(
@@ -161,13 +161,13 @@ export const createIndicatorText: ComponentFactory<MapControlsView> = (doc: Docu
         indicator,
         fillTemplate(M.textIndicator, {
           indicator: INDICATOR_NAMES[view.indicator],
-          unit: INDICATOR_CLASSES[view.indicator].unit,
+          unit: unitLabel(INDICATOR_CLASSES[view.indicator].unit),
         }),
       );
       let text: string;
       if (view.labelMode === 'real-2015Q1') text = UI_STRINGS.turnBar.realData2015Q1;
       else if (view.quarter === null) text = M.textNoQuarter;
-      else text = fillTemplate(M.textQuarter, { quarter: view.quarter });
+      else text = fillTemplate(M.textQuarter, { quarter: quarterLabel(view.quarter) });
       setText(quarter, text);
     },
   };

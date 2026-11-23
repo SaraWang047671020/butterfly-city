@@ -1,4 +1,5 @@
 // Landmarks in the City_View (city-3d Requirement 7): models at their real positions, labels when the camera is close.
+import { LANDMARK_NAMES_ZH } from './names-zh.ts';
 import * as THREE from 'three';
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { GROUND_DEPTH } from '../districts.ts';
@@ -30,7 +31,7 @@ export interface LandmarkLayer {
   setLabelVisibility(camera: THREE.Camera, maxDistance?: number): void;
 }
 
-export function createLandmarks(scene: THREE.Scene, tokens: CityTokens, table: readonly Landmark[] = LANDMARKS): LandmarkLayer {
+export function createLandmarks(scene: THREE.Scene, tokens: CityTokens, table: readonly Landmark[] = LANDMARKS, chinese = false): LandmarkLayer {
   const items: { model: LandmarkModel; label: CSS2DObject; position: THREE.Vector3 }[] = table.map((l) => {
     const model = buildLandmark(l.model, tokens);
     const [x, z] = project([l.lon, l.lat]);
@@ -40,7 +41,7 @@ export function createLandmarks(scene: THREE.Scene, tokens: CityTokens, table: r
     scene.add(model.group);
     const el = document.createElement('div');
     el.className = 'city-landmark-label';
-    el.textContent = l.name;
+    el.textContent = chinese ? (LANDMARK_NAMES_ZH[l.id] ?? l.name) : l.name;
     const label = new CSS2DObject(el);
     label.position.set(x, GROUND_DEPTH + model.top + 4, z);
     scene.add(label);
