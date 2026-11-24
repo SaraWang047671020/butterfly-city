@@ -69,14 +69,16 @@ At the start, every tool is set to its **real historical value**. The player adj
 
 ## Citizens and ghosts (the Halloween theme is functional)
 
-- At the start, the player picks one citizen to follow from 5–6 fixed personas, e.g.:
+- At the start, the player **creates a Character** (play-loop spec): name, pronouns and look; where they grew up (born in Taipei, born in New Taipei, or moved from elsewhere in Taiwan); an occupation with its real regular monthly earnings (DGBAS, 2015–2025); and how they live (renting, or with family in the family's city) in a chosen district. The Character file is `data/config/characters.json`.
+- Each quarter shows the Character's rent burden and commute time (the character chip and "My life"), computed from Engine output, the real earnings of the occupation and the rent of a small home (registered leases). Pronouns and look never change a number.
+- Life decisions are made over time in "My life" (move home, change job, a partner of any gender moves in or out, marriage where the law of that quarter allows it, a child joins, a parent moves in or out); each shows the Character's numbers with and without the decision and changes no Engine result.
+- The six fixed personas of the story-layer spec stay in the game as citizens: they stand in the city in Walk_Mode and appear in the People tab of the City report, e.g.:
   - 25-year-old renter living in Zhonghe, commuting to Xinyi
   - Elderly resident living alone in Wanhua
   - Dual-income family in Banqiao
   - Commuter in Tamsui
   - Small shop owner in Da'an
-- Each quarter shows the citizen's rent burden, commute time, and where they live.
-- Citizen updates are generated from **fixed text templates**. Generated text may be added later under the rules of "Direction after phase 1" below; every number still comes from the Engine.
+- Character and citizen updates are generated from **fixed text templates**. Generated text may be added later under the rules of "Direction after phase 1" below; every number still comes from the Engine.
 - **A ghost is a person hidden by averages.** A resident becomes a ghost when rent burden or commute time crosses a cited threshold, or when they are forced to move out.
 - The number of ghosts in each district is determined by simulation output. One ghost represents a fixed number of residents (default 1,000). Each district has a display cap, and the exact total is always shown as a number. Never place a ghost for decoration.
 

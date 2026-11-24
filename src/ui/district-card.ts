@@ -63,7 +63,7 @@ export function createDistrictCard(doc: Document, actions: UiActions, on: { read
   buttons.className = 'ui-district-card__buttons';
   const walk = doc.createElement('button');
   walk.type = 'button';
-  walk.className = 'dialog__button dialog__button--primary';
+  walk.className = 'dialog__button dialog__button--primary ui-walk-action';
   walk.textContent = K.walk;
   const report = doc.createElement('button');
   report.type = 'button';

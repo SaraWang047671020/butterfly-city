@@ -573,6 +573,7 @@ function fieldView(p: PanelCtx, rule: ToolRule, field: ToolField, area: AreaKey,
       player: null,
       limits: { lower: 0, upper: 0, scope: info.scope, lowerRef: null, upperRef: null },
       cityYearTotal: null,
+      sliderUpper: 0,
       remainingCeiling: info.remainingCeiling,
       draft: null,
       applyEnabled: false,
@@ -591,6 +592,7 @@ function fieldView(p: PanelCtx, rule: ToolRule, field: ToolField, area: AreaKey,
   }
 
   let cityYearTotal: number | null = null;
+  let sliderUpper = info.upper;
   if (field.limitScope === 'city-year') {
     const codes = c.data.districts.filter((d) => d.city === city).map((d) => d.code);
     const year = quarterYear(p.planning);
@@ -602,6 +604,17 @@ function fieldView(p: PanelCtx, rule: ToolRule, field: ToolField, area: AreaKey,
       for (const code of codes) total += values[code] ?? 0;
     }
     cityYearTotal = total;
+    // The same running total as the city-year check (`checks.ts`): the quarters of the year through the Planning_Quarter.
+    let through = 0;
+    for (let i = 1; i <= 4; i += 1) {
+      const q = `${year}Q${i}` as QuarterKey;
+      if (q > p.planning) break;
+      const values = p.timeline.find((x) => x.quarter === q)?.tools[rule.id]?.[field.id];
+      if (values === undefined) continue;
+      for (const code of codes) through += values[code] ?? 0;
+    }
+    const own = p.timeline.find((x) => x.quarter === p.planning)?.tools[rule.id]?.[field.id]?.[area] ?? 0;
+    sliderUpper = cityYearSliderUpper(info.lower, info.upper, through, own);
   }
 
   const draft = ui.drafts.get(key) ?? null;
@@ -619,6 +632,7 @@ function fieldView(p: PanelCtx, rule: ToolRule, field: ToolField, area: AreaKey,
       upperRef: info.upperParameterId === null ? null : refOf(params, info.upperParameterId, info.upper),
     },
     cityYearTotal,
+    sliderUpper,
     remainingCeiling: info.remainingCeiling,
     draft,
     applyEnabled: usable && draft !== null && draft.check.status === 'ok',
@@ -959,4 +973,14 @@ export function briefOf(data: LoadedData, session: GameSession): BriefView | nul
     };
   });
   return { quarter: now.quarter, items };
+}
+
+/**
+ * Pure: the largest value one district can take in the Planning_Quarter under a city-year limit (Decision D6): the
+ * city's upper limit less every other value counted in the year's running total through the Planning_Quarter. Never
+ * below the lower limit or above the upper limit. Used as the Policy_Dialog slider's upper end (play-loop task 12.3:
+ * the slider offered the whole city limit to one district, so values the check rejects could be chosen).
+ */
+export function cityYearSliderUpper(lower: number, upper: number, totalThroughPlanning: number, ownAtPlanning: number): number {
+  return Math.max(lower, Math.min(upper, upper - (totalThroughPlanning - ownAtPlanning)));
 }

@@ -325,6 +325,8 @@ export const ZH: UiStrings = {
     realTrack: '與真實相同',
     changed: '{n} 項設定與真實不同',
     sites: '{n} 個區的工程與真實不同',
+    changedOne: '1 項設定與真實不同',
+    sitesOne: '1 個區的工程與真實不同',
     noPass: '這一季還沒有通勤月票',
     budgetLeft: '{year} 年剩餘 {amount} 元',
     carried: '有一個沿用的數值需要處理',
@@ -446,6 +448,7 @@ export const ZH: UiStrings = {
     lifeTimeline: '我的人生',
     lifeEmpty: '還沒有做任何人生決定。',
     lifeEntry: '{quarter} · {decision}',
+    randomNames: ['小雨', '阿哲', '佳穎', '承恩', '子晴', '冠廷'],
   },
 
   guide: {

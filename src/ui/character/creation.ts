@@ -398,7 +398,7 @@ export function createCharacterCreation(doc: Document, deps: CreationDeps): Char
     const homes = deps.districts.filter((d) => state.tenure !== 'family' || d.city === o.familyCity);
     state.home = any(homes).code;
     if (!nameOk()) {
-      const names = LOCALE === 'zh-Hant' ? ['小雨', '阿哲', '佳穎', '承恩', '子晴', '冠廷'] : ['Mei', 'Kai', 'Yu', 'Jun', 'An', 'Lin'];
+      const names = UI_STRINGS.characterUi.randomNames;
       state.name = any(names);
       nameInput.value = state.name;
     }

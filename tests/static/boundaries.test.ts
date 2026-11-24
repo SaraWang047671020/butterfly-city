@@ -101,3 +101,42 @@ describe('module boundaries', () => {
     expect(v).toEqual([]);
   });
 });
+
+// play-loop Requirement 11.5: the boundaries above hold for the new modules. The list makes sure each one is
+// really in the checked set (a moved or renamed file fails here instead of silently leaving the scan).
+const PLAY_LOOP_MODULES = [
+  'src/data/character-loader.ts',
+  'src/save/character-store.ts',
+  'src/game/brief.ts',
+  'src/game/core/change-bounds.ts',
+  'src/game/life/availability.ts',
+  'src/game/life/controller.ts',
+  'src/game/life/life-state.ts',
+  'src/game/life/numbers.ts',
+  'src/ui/brief/quarter-brief.ts',
+  'src/ui/character/chip.ts',
+  'src/ui/character/creation.ts',
+  'src/ui/district-card.ts',
+  'src/ui/guide/first-play.ts',
+  'src/ui/life/life-dialog.ts',
+  'src/ui/policy/policy-cards.ts',
+  'src/ui/policy/preview.ts',
+  'src/ui/report/city-report.ts',
+  'src/ui/strings/en.ts',
+  'src/ui/strings/zh-Hant.ts',
+];
+
+describe('play-loop module boundaries (play-loop 11.5)', () => {
+  it('checks every play-loop module', () => {
+    const checked = new Set(files.map(rel));
+    expect(PLAY_LOOP_MODULES.filter((m) => !checked.has(m))).toEqual([]);
+  });
+
+  it('the play-loop modules of src/game, src/save and src/data import nothing from src/ui', () => {
+    const lower = PLAY_LOOP_MODULES.filter((m) => !m.startsWith('src/ui/'));
+    const v = refs
+      .filter((r) => lower.includes(rel(r.file)) && into(r, 'ui'))
+      .map((r) => `${rel(r.file)} imports '${r.spec}'`);
+    expect(v).toEqual([]);
+  });
+});

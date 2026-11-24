@@ -142,6 +142,8 @@ export interface FieldView {
     readonly upperRef: ParameterRefView | null;
   };
   readonly cityYearTotal: number | null;
+  /** Upper end of the slider: `limits.upper`, or for a city-year limit what is left of it for this district. */
+  readonly sliderUpper: number;
   readonly remainingCeiling: number;
   readonly draft: { readonly text: string; readonly check: EditCheckView } | null;
   readonly applyEnabled: boolean;

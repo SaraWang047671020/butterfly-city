@@ -203,7 +203,7 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
     parts.controls.hidden = !editable;
 
     setAttr(parts.slider, 'min', String(f.limits.lower));
-    setAttr(parts.slider, 'max', String(f.limits.upper));
+    setAttr(parts.slider, 'max', String(f.sliderUpper));
     setAttr(parts.slider, 'step', f.countField ? '1' : 'any');
     setAttr(parts.slider, 'aria-label', fillTemplate(D.slider, { field: `${name} · ${areaName}` }));
     const active = doc.activeElement;
@@ -220,7 +220,7 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
     setText(parts.unit, unit);
     (parts.root.querySelector('label') as HTMLLabelElement).textContent = `${name} · ${areaName}`;
     setText(parts.lower, fillTemplate(D.lowerEnd, { value: formatAmount(f.limits.lower) }));
-    setText(parts.upper, fillTemplate(D.upperEnd, { value: formatAmount(f.limits.upper) }));
+    setText(parts.upper, fillTemplate(D.upperEnd, { value: formatAmount(f.sliderUpper) }));
     parts.real.hidden = f.real === null;
     setText(parts.real, f.real === null ? '' : fillTemplate(D.realMark, { value: formatAmount(f.real.value) }));
 
@@ -398,7 +398,9 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
             ? C.realTrack
             : s.kind === 'no-pass'
               ? C.noPass
-              : fillTemplate(s.kind === 'sites' ? C.sites : C.changed, { n: String(s.n) });
+              : s.n === 1
+                ? (s.kind === 'sites' ? C.sitesOne : C.changedOne)
+                : fillTemplate(s.kind === 'sites' ? C.sites : C.changed, { n: String(s.n) });
         setText(b.querySelector('.ui-policy-card__status')!, text);
         b.classList.toggle('is-changed', s.kind === 'changed' || s.kind === 'sites');
         b.classList.toggle('is-warning', carriedHere);

@@ -212,11 +212,21 @@
   .ui-district-card {
     order: 1;
     margin: 0 var(--space-2) var(--space-2);
+    /* Opened by the player, so drawn above the character chip when the two meet. */
+    position: relative;
+    z-index: 1;
   }
 
   .ui-policy-cards {
     order: 2;
     margin: 0 var(--space-2) var(--space-2);
+  }
+
+  /* Walk_Mode on a narrow screen: the street, the metro and talk prompts and the Turn_Bar need the height, so the
+     Policy_Cards and the District_Card step aside until "Back to overview" (play-loop task 12.3, 360 x 740). */
+  .ui-app:has(.city-view.is-walking) .ui-policy-cards,
+  .ui-app:has(.city-view.is-walking) .ui-district-card {
+    display: none;
   }
 
   .ui-policy-cards .ui-policy-card {
@@ -283,10 +293,11 @@
     display: none;
   }
 
-  /* The character chip sits under the city tools, which take the top of a narrow screen. */
+  /* The character chip and the Walk_Mode prompts sit under the city tools, which take the top of a narrow screen
+     in two or three rows (by width and language); src/ui/top-stack.ts sets --stack-top from the measured heights. */
   .ui-character-chip {
     position: absolute;
-    top: calc(2 * var(--target-comfortable) + 3 * var(--space-2));
+    top: var(--stack-top, calc(2 * var(--target-comfortable) + 3 * var(--space-2)));
     left: var(--space-2);
   }
 
@@ -301,12 +312,12 @@
   }
 
   .city-metro-prompt {
-    top: calc(var(--target-comfortable) + 2 * var(--space-3));
+    top: var(--stack-top, calc(var(--target-comfortable) + 2 * var(--space-3)));
     bottom: auto;
   }
 
   .city-talk-prompt {
-    top: calc(2 * var(--target-comfortable) + 3 * var(--space-3));
+    top: var(--stack-top, calc(2 * var(--target-comfortable) + 3 * var(--space-3)));
   }
 
   .city-joystick {
@@ -622,4 +633,11 @@
 /* Dialogs live inside the overlay, which lets pointer events through to the city; a dialog must take them back. */
 .ui-app dialog {
   pointer-events: auto;
+}
+
+/* ---- Without WebGL ------------------------------------------------------------------------------------------- */
+/* The City_View shows its fallback text and cannot walk, so "Walk here" and "Go there" are not offered
+   (play-loop task 12.3; city-3d 12.3). */
+.ui-app:has(.city-fallback) .ui-walk-action {
+  display: none;
 }

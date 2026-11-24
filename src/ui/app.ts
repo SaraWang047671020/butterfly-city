@@ -99,7 +99,7 @@ function el<K extends keyof HTMLElementTagNameMap>(
   return e;
 }
 
-function button(doc: Document, className: string, label: string, onClick: () => void, parent: Element): HTMLButtonElement {
+function button(doc: Document, className: string, label: string, onClick: () => void, parent?: Element): HTMLButtonElement {
   const b = el(doc, 'button', className, parent, label);
   b.type = 'button';
   // Enter and Space activate a native button as a click.
@@ -184,7 +184,8 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   const mapHost = report.addTab('map', R.map);
   const leftHost = mapHost;
   const timelineHost = report.addTab('timeline', R.timeline);
-  const reportButton = button(doc, 'ui-report-open ui-report-button', R.open, () => report.open(null, reportButton), headerHost);
+  // Mounted after the Turn_Bar below, so the focus order follows the visual order (game-ui 17.2).
+  const reportButton = button(doc, 'ui-report-open ui-report-button', R.open, () => report.open(null, reportButton));
 
   // Placeholder: actions are bound in `attach`; components keep a stable reference to this proxy.
   let current: UiActions | null = null;
@@ -209,6 +210,7 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   const timeline = createTimelineView(doc, actions);
 
   mountComponent(headerHost, turnBar);
+  headerHost.appendChild(reportButton);
   // Turn steps (play-loop Requirement 4.2): decide, compute, what changed.
   const steps = el(doc, 'p', 'ui-turn-steps', headerHost);
   const stepBars = el(doc, 'span', 'ui-turn-steps__bars', steps);
@@ -242,7 +244,8 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
     walk: (code) => options.onGoThere?.({ district: code, kind: 'station' }),
     report: (opener) => report.open('districts', opener),
   });
-  gameScreen.appendChild(districtCard.root);
+  // Before the Policy_Cards in the DOM: the card is shown above them, so focus reaches it first (game-ui 17.2).
+  gameScreen.insertBefore(districtCard.root, policyCards.root);
   const placeCard = (): void => {
     const code = districtCard.shown();
     const win = doc.defaultView;

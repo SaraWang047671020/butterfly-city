@@ -99,7 +99,7 @@ export function createQuarterBrief(doc: Document, actions: UiActions, goThere: (
       if (item.kind !== 'major-event') {
         const go = doc.createElement('button');
         go.type = 'button';
-        go.className = 'dialog__button ui-brief__go';
+        go.className = 'dialog__button ui-brief__go ui-walk-action';
         go.textContent = B.goThere;
         go.setAttribute('aria-label', `${B.goThere}: ${item.districtName}`);
         const place: GoThere = { district: item.district, kind: item.kind === 'completion' ? 'site' : 'station' };

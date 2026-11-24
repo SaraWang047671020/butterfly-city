@@ -8,12 +8,17 @@ export function wrapFocusIndex(count: number, current: number, backwards: boolea
 
 const FOCUSABLE =
   'a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),' +
-  'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  'textarea:not([disabled]),details > summary:first-of-type,[tabindex]:not([tabindex="-1"])';
 
-/** Focusable descendants of `root` in DOM order (which is the visual reading order here). */
+/**
+ * Focusable descendants of `root` in DOM order (which is the visual reading order here). Only rendered elements
+ * count: an element inside a `hidden` block, a `display: none` block or a closed `<details>` has no box and is
+ * skipped by the browser's Tab order, so the trap must skip it too, or Tab from the real last element leaves the
+ * dialog (play-loop task 12.3).
+ */
 export function focusableIn(root: Element): HTMLElement[] {
   return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
-    (el) => !el.hasAttribute('hidden') && el.getAttribute('aria-hidden') !== 'true',
+    (el) => el.closest('[hidden],[aria-hidden="true"],[inert]') === null && el.getClientRects().length > 0,
   );
 }
 

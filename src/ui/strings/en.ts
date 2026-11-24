@@ -340,6 +340,8 @@ export const EN = {
     realTrack: 'Real track',
     changed: '{n} settings differ from real',
     sites: 'Construction differs from real in {n} districts',
+    changedOne: '1 setting differs from real',
+    sitesOne: 'Construction differs from real in 1 district',
     noPass: 'No commuter pass product in this quarter',
     budgetLeft: 'TWD {amount} left in {year}',
     carried: 'A carried value needs attention',
@@ -468,6 +470,7 @@ export const EN = {
     lifeTimeline: 'My life',
     lifeEmpty: 'No life decisions yet.',
     lifeEntry: '{quarter} · {decision}',
+    randomNames: ['Mei', 'Kai', 'Yu', 'Jun', 'An', 'Lin'],
   },
 
   // First_Play_Guide (play-loop Requirement 8); the step texts come from the Character_File.

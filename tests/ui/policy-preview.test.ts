@@ -23,6 +23,7 @@ function field(over: Partial<FieldView> = {}): FieldView {
     lag: ref,
     limits: { lower: 0, upper: 400, scope: 'city-year', lowerRef: null, upperRef: null },
     cityYearTotal: null,
+    sliderUpper: 400,
     remainingCeiling: 0,
     draft: null,
     applyEnabled: false,
@@ -87,6 +88,10 @@ describe('sliderValue', () => {
         expect(s).toBe(Math.min(400, Math.max(0, v)));
       }),
     );
+  });
+
+  it('stops at sliderUpper, the share of a city-year limit left for this district', () => {
+    expect(sliderValue(field({ sliderUpper: 150, draft: { text: '300', check: { status: 'invalid-format', expected: 'integer' } } }))).toBe(150);
   });
 
   it('uses the player value when the draft is not a number', () => {

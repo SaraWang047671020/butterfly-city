@@ -71,9 +71,9 @@ export function cardStatus(tool: Extract<ToolView, { kind: 'active' }>, construc
   return n > 0 ? { kind: 'changed', n } : { kind: 'real' };
 }
 
-/** The slider's value: the draft when it is a number, else the player's value, else the real value, inside the limits. */
+/** The slider's value: the draft when it is a number, else the player's value, else the real value, inside the limits (the upper end is `sliderUpper`). */
 export function sliderValue(field: FieldView): number {
   const draft = field.draft === null ? Number.NaN : Number(field.draft.text);
   const v = Number.isFinite(draft) ? draft : (field.player ?? field.real?.value ?? field.limits.lower);
-  return Math.min(field.limits.upper, Math.max(field.limits.lower, v));
+  return Math.min(field.sliderUpper, Math.max(field.limits.lower, v));
 }

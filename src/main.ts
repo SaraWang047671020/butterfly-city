@@ -12,6 +12,7 @@ import { LifeController } from './game/life/controller.ts';
 import { readCharacter, writeCharacter } from './save/character-store.ts';
 import { createCharacterCreation, pick, type CreationFiles } from './ui/character/creation.ts';
 import { createCharacterChip } from './ui/character/chip.ts';
+import { keepTopStack } from './ui/top-stack.ts';
 import { createLifeDialog, type LifeFiles } from './ui/life/life-dialog.ts';
 import { createFirstPlayGuide } from './ui/guide/first-play.ts';
 import { GameController, type DemoPort } from './game/controller.ts';
@@ -397,6 +398,8 @@ async function start(): Promise<void> {
     host.appendChild(creation.root);
     const chip = createCharacterChip(document);
     app.addMainBlock(chip.root);
+    // Narrow screens: the chip and the Walk_Mode prompts are stacked under the city tools by their measured heights.
+    keepTopStack(document, '.city-tools', ['.ui-character-chip', '.city-metro-prompt', '.city-talk-prompt'], 8);
     // "My life" (play-loop task 7): the Life dialog from the Turn_Bar row.
     const lifeDialog = createLifeDialog(document, {
       files: files as unknown as LifeFiles,
