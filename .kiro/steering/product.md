@@ -76,7 +76,7 @@ At the start, every tool is set to its **real historical value**. The player adj
   - Commuter in Tamsui
   - Small shop owner in Da'an
 - Each quarter shows the citizen's rent burden, commute time, and where they live.
-- Citizen updates are generated from **fixed text templates**. No AI.
+- Citizen updates are generated from **fixed text templates**. Generated text may be added later under the rules of "Direction after phase 1" below; every number still comes from the Engine.
 - **A ghost is a person hidden by averages.** A resident becomes a ghost when rent burden or commute time crosses a cited threshold, or when they are forced to move out.
 - The number of ghosts in each district is determined by simulation output. One ghost represents a fixed number of residents (default 1,000). Each district has a display cap, and the exact total is always shown as a number. Never place a ghost for decoration.
 
@@ -104,5 +104,17 @@ Shown clearly in the UI:
 ## Language
 
 - UI text, README, code comments, and all `.kiro` steering and spec documents: English.
-- District names use romanized English only, e.g., Wanhua, Banqiao, Zhonghe, Da'an.
+- The game itself is bilingual: English and Traditional Chinese (play-loop spec Requirement 12). District, station and landmark names are romanized in English and in Chinese characters in Traditional Chinese.
 - Conversation with the user: Traditional Chinese.
+
+## Direction after phase 1 (user decisions 2026-11-23 and 2026-11-24)
+
+The user's long-term design document `docs/design-proposal/Butterfly_City_Hybrid_Game_Design.md` is the source of later phases. Its features are adapted to these decisions:
+
+1. **Real Taipei and New Taipei stay.** The game keeps the 41 real districts and real 2015–2025 history. A fictional build-your-own city is not planned.
+2. **Transit construction:** in Historical mode the metro and TOD rules follow real history, and the chain "transit → land value → rent → displacement" is told with real openings (for example the Circular Line, 2020). Player-built transit belongs to Future mode (2026–2036).
+3. **Generated text (AI) may be tried** for narration only: news clippings, letters, the CITY CORE advisor's voice. The Engine decides every number; generated text may only use values of the game state and must pass the Banned_Term_List and the `neutrality.md` review. The site is static (GitHub Pages) with no server, so no API key may reach the browser: text is generated at build time, reviewed and committed, unless a server is added later.
+4. **One turn is one quarter.** The open data is quarterly; monthly turns are not planned.
+5. The player creates a Character and lives in the city they govern (play-loop spec); life decisions are made over time; a partner of any gender; bad endings are allowed and shown as outcomes, not verdicts.
+
+Candidate later phases from the design document, after play-loop, street-change, life-story and polish: city memory and the mystery line (CITY CORE, records that do not match the street, an investigation), citizen groups and opinion by group, endings that weigh several outcomes, then interest groups and council votes.

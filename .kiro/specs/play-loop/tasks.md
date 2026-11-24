@@ -26,12 +26,12 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
   - [x] 3.3 Copy the Character_File in `npm run story-files`; the Character_File is bilingual (schema 2, English approved, Chinese draft). The `model-limits.json` item on regular earnings and industry means moves to task 6, when the Character first appears on screen
   - [x] 3.4 Validator tests and the committed-file check (Requirement 11.1)
 
-- [ ] 4. Pure logic (`src/game/life/`, `src/game/brief.ts`)
-  - [ ] 4.1 `life-state.ts` (`lifeStateAt`)
-  - [ ] 4.2 `availability.ts` with the legal rule of same-sex marriage
-  - [ ] 4.3 `numbers.ts` (`characterNumbers`)
-  - [ ] 4.4 Move `CHANGE_BOUNDS` to `src/game/core/change-bounds.ts`; `brief.ts` (`briefItems`)
-  - [ ] 4.5 Unit and property tests of Requirements 11.2, 11.2a and 11.3
+- [x] 4. Pure logic (`src/game/life/`, `src/game/brief.ts`)
+  - [x] 4.1 `life-state.ts` (`lifeStateAt`)
+  - [x] 4.2 `availability.ts` with the legal rule of same-sex marriage
+  - [x] 4.3 `numbers.ts` (`characterNumbers`)
+  - [x] 4.4 Move `CHANGE_BOUNDS` to `src/game/core/change-bounds.ts`; `brief.ts` (`briefItems`)
+  - [x] 4.5 Unit and property tests of Requirements 11.2, 11.2a and 11.3 (`tests/game/life.test.ts`, `tests/game/brief.test.ts`)
 
 - [ ] 5. Store and controller
   - [ ] 5.1 `src/save/character-store.ts` (`butterflycity.character.v1`: Character, Life_Timeline, `guideDone`)
