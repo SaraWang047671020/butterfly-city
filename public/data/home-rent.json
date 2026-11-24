@@ -1,0 +1,524 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "citation": "MOI Department of Land Administration, real-price registration, rentals (實價登錄 租賃), data.gov.tw 25118",
+    "url": "https://data.gov.tw/dataset/25118",
+    "license": "Open Government Data License, version 1.0"
+  },
+  "method": "Rent per m² of qualifying residential leases 2015Q1 to 2025Q4 (the filter of the rent indicator). For each district and floor-area band (registered total floor area, shared areas included), the median rent per m² of the band divided by the median rent per m² of all leases of the district. Bands with fewer than 30 leases use the city's ratio of that band.",
+  "bands": [
+    {
+      "id": "upTo40",
+      "maxArea": 40
+    },
+    {
+      "id": "upTo60",
+      "maxArea": 60
+    },
+    {
+      "id": "upTo90",
+      "maxArea": 90
+    },
+    {
+      "id": "over90",
+      "maxArea": null
+    }
+  ],
+  "premium": {
+    "63000010": [
+      1.421,
+      1.132,
+      0.978,
+      0.827
+    ],
+    "63000020": [
+      1.639,
+      1.199,
+      0.855,
+      0.941
+    ],
+    "63000030": [
+      1.474,
+      1.249,
+      1.066,
+      0.841
+    ],
+    "63000040": [
+      1.098,
+      1.063,
+      1.121,
+      0.861
+    ],
+    "63000050": [
+      1.206,
+      1.145,
+      0.951,
+      0.854
+    ],
+    "63000060": [
+      1.126,
+      0.96,
+      1.169,
+      0.883
+    ],
+    "63000070": [
+      1.289,
+      1.061,
+      0.878,
+      0.761
+    ],
+    "63000080": [
+      1.728,
+      1.272,
+      1.05,
+      0.854
+    ],
+    "63000090": [
+      2.171,
+      1.396,
+      1.011,
+      0.877
+    ],
+    "63000100": [
+      1.704,
+      1.334,
+      1.07,
+      0.868
+    ],
+    "63000110": [
+      1.341,
+      1.002,
+      0.792,
+      0.97
+    ],
+    "63000120": [
+      1.245,
+      1.171,
+      0.966,
+      0.905
+    ],
+    "65000010": [
+      2.046,
+      1.374,
+      0.931,
+      0.793
+    ],
+    "65000020": [
+      1.749,
+      1.279,
+      0.901,
+      0.77
+    ],
+    "65000030": [
+      1.773,
+      1.223,
+      0.968,
+      0.807
+    ],
+    "65000040": [
+      1.847,
+      1.312,
+      0.996,
+      0.803
+    ],
+    "65000050": [
+      1.869,
+      1.377,
+      1.045,
+      0.853
+    ],
+    "65000060": [
+      1.892,
+      1.345,
+      1.06,
+      0.871
+    ],
+    "65000070": [
+      1.894,
+      1.539,
+      1.14,
+      0.896
+    ],
+    "65000080": [
+      2.287,
+      1.325,
+      1.168,
+      0.908
+    ],
+    "65000090": [
+      1.937,
+      1.479,
+      1.14,
+      0.834
+    ],
+    "65000100": [
+      1.531,
+      1.497,
+      1.131,
+      0.856
+    ],
+    "65000110": [
+      1.671,
+      1.291,
+      1.093,
+      0.841
+    ],
+    "65000120": [
+      1.889,
+      1.423,
+      1.025,
+      0.894
+    ],
+    "65000130": [
+      1.658,
+      1.448,
+      1.095,
+      0.884
+    ],
+    "65000140": [
+      2.423,
+      1.509,
+      1.155,
+      0.894
+    ],
+    "65000150": [
+      1.645,
+      1.602,
+      1.242,
+      0.924
+    ],
+    "65000160": [
+      1.977,
+      1.289,
+      1.008,
+      0.93
+    ],
+    "65000170": [
+      1.933,
+      1.815,
+      1.36,
+      0.916
+    ],
+    "65000180": [
+      1.889,
+      1.423,
+      1.092,
+      0.847
+    ],
+    "65000190": [
+      1.889,
+      1.423,
+      1.082,
+      0.806
+    ],
+    "65000200": [
+      1.889,
+      1.423,
+      1.082,
+      0.806
+    ],
+    "65000210": [
+      1.337,
+      1.131,
+      0.924,
+      0.653
+    ],
+    "65000220": [
+      1.889,
+      1.423,
+      1.082,
+      0.806
+    ],
+    "65000230": [
+      1.889,
+      1.661,
+      1.323,
+      0.936
+    ],
+    "65000240": [
+      1.889,
+      1.423,
+      1.082,
+      0.806
+    ],
+    "65000250": [
+      1.889,
+      1.423,
+      1.082,
+      0.806
+    ],
+    "65000260": [
+      1.889,
+      1.423,
+      1.082,
+      0.806
+    ],
+    "65000270": [
+      1.889,
+      1.423,
+      1.137,
+      0.778
+    ],
+    "65000280": [
+      1.889,
+      1.307,
+      0.877,
+      0.806
+    ],
+    "65000290": [
+      1.889,
+      1.423,
+      1.082,
+      0.806
+    ]
+  },
+  "fallback": {
+    "63000010": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "63000020": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "63000030": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "63000040": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "63000050": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "63000060": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "63000070": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "63000080": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "63000090": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "63000100": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "63000110": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "63000120": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000010": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000020": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000030": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000040": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000050": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000060": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000070": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000080": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000090": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000100": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000110": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000120": [
+      true,
+      true,
+      false,
+      false
+    ],
+    "65000130": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000140": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000150": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000160": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000170": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000180": [
+      true,
+      true,
+      false,
+      false
+    ],
+    "65000190": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "65000200": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "65000210": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "65000220": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "65000230": [
+      true,
+      false,
+      false,
+      false
+    ],
+    "65000240": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "65000250": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "65000260": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "65000270": [
+      true,
+      true,
+      false,
+      false
+    ],
+    "65000280": [
+      true,
+      false,
+      false,
+      true
+    ],
+    "65000290": [
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "records": 171949
+}

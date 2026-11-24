@@ -3,7 +3,7 @@
 // and the guide flag in the Character_Store. It never changes the session, an Engine input or the Save (3A.6).
 // Deviation from the design (which put these actions on the Game_Controller): a separate controller keeps the
 // game-ui controller and its UiActions unchanged.
-import type { CharacterFiles } from '../../data/character-loader.ts';
+import { homePremiumOf, type CharacterFiles } from '../../data/character-loader.ts';
 import { quarterIndex } from '../../simulation/quarter.ts';
 import type { QuarterKey } from '../../types/data-files.ts';
 import type { GameSession } from '../core/session.ts';
@@ -64,6 +64,7 @@ export class LifeController {
       industryOf: new Map(f.characters.occupations.map((o) => [o.id, o.industry])),
       earnings: f.wages.earnings,
       dwellingSize: new Map(f.characters.dwellings.map((d) => [d.persons, d.size])),
+      homePremium: homePremiumOf(f.homeRent),
     };
     const stored = deps.store.read();
     if (stored !== null) {

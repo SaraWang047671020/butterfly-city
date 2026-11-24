@@ -23,6 +23,7 @@ const files = {
     legal: [{ id: 'same-sex-marriage', from: '2019Q2' }],
   },
   wages: { earnings: { Q: { '2015': 50_000 } } },
+  homeRent: { schemaVersion: 1, bands: [{ id: 'all', maxArea: null }], premium: {} },
 } as unknown as CharacterFiles;
 
 /** A session with two computed quarters; the player rent of Zhonghe is 650 in 2015Q2 (real history: 600). */

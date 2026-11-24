@@ -17,6 +17,9 @@ import { updateModelFacts } from './lib/model-facts.ts';
 import { surveyCheck } from './pipeline/commute/survey-check.ts';
 import { WAGES_FILE } from './sources/wages.ts';
 import { parseWagesXml, serializeWageFile, wageFileOf } from './story/wages.ts';
+import { homeRentFileOf, serializeHomeRentFile } from './story/home-rent.ts';
+import { lvrPaths } from './pipeline/indicators/lvr-input.ts';
+import { dedupeById, filterLvr, parseLvrCsv } from './pipeline/parsers/lvr.ts';
 
 const COPIES = ['citizens.json', 'model-limits.json', 'characters.json'] as const;
 
@@ -36,6 +39,10 @@ try {
   outputs.set(path.join(ROOT, 'public', 'data', 'income-spread.json'), serializeIncomeSpread(spread));
   const wageFile = wageFileOf(parseWagesXml(fs.readFileSync(raw(WAGES_FILE), 'utf8'), `data/raw/${WAGES_FILE}`), `data/raw/${WAGES_FILE}`);
   outputs.set(path.join(ROOT, 'public', 'data', 'wages.json'), serializeWageFile(wageFile));
+  // Home_Rent_File (play-loop task 6.4): rent per m² by home size relative to the district, from the rentals.
+  const rentals = dedupeById(lvrPaths('rental').map((p) => ({ file: `data/raw/${p}`, records: parseLvrCsv(fs.readFileSync(raw(p), 'utf8'), `data/raw/${p}`, 'rental') })));
+  const homeRent = homeRentFileOf(filterLvr(rentals.records, rentals.duplicates).qualifying, DISTRICTS.map((d) => ({ code: d.code, city: d.city })));
+  outputs.set(path.join(ROOT, 'public', 'data', 'home-rent.json'), serializeHomeRentFile(homeRent));
   // Model_Facts commute values from the committed public data, with the survey check of the data pipeline
   // (scripts/pipeline/commute/survey-check.ts): New Taipei residents (2025 mean population) to Taipei jobs (job shares).
   const pub = (name: string) => JSON.parse(fs.readFileSync(path.join(ROOT, 'public', 'data', name), 'utf8'));
@@ -64,7 +71,7 @@ try {
   updateModelFacts({ commuteModelled: survey.modelled, commuteSurvey: survey.survey });
   const values = Object.values(spread.sigma);
   console.log(
-    `npm run story-files: copied ${COPIES.join(', ')}; income-spread.json with ${values.length} sigmas (${Math.min(...values)}–${Math.max(...values)}); model-facts.json commute ${survey.modelled.toFixed(1)} min modelled, ${survey.survey} min survey; wages.json with ${Object.keys(wageFile.earnings).length} industries.`,
+    `npm run story-files: copied ${COPIES.join(', ')}; income-spread.json with ${values.length} sigmas (${Math.min(...values)}–${Math.max(...values)}); model-facts.json commute ${survey.modelled.toFixed(1)} min modelled, ${survey.survey} min survey; wages.json with ${Object.keys(wageFile.earnings).length} industries; home-rent.json from ${homeRent.records} leases.`,
   );
 } catch (e) {
   console.error(`npm run story-files: ${(e as Error).message}; nothing was written.`);

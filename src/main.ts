@@ -7,7 +7,7 @@ import './styles/city.css';
 import { loadDataFiles } from './data/loader.ts';
 import type { LoadedData } from './data/convert.ts';
 import { loadStoryFiles, type StoryFiles } from './data/story-loader.ts';
-import { loadCharacterFiles } from './data/character-loader.ts';
+import { homePremiumOf, loadCharacterFiles } from './data/character-loader.ts';
 import { LifeController } from './game/life/controller.ts';
 import { readCharacter, writeCharacter } from './save/character-store.ts';
 import { createCharacterCreation, pick, type CreationFiles } from './ui/character/creation.ts';
@@ -357,7 +357,11 @@ async function start(): Promise<void> {
     const creation = createCharacterCreation(document, {
       files: files as unknown as CreationFiles,
       districts: districtRows,
-      rent2015: (code) => (rentSeries === undefined || rentSeries.level !== 'district' ? null : (rentSeries.series[code]?.[0]?.value ?? null)),
+      // A new Character is single: the rent per m² of a home up to 40 m² (district rent × Home_Rent_File premium).
+      rent2015: (code) => {
+        const base = rentSeries === undefined || rentSeries.level !== 'district' ? null : (rentSeries.series[code]?.[0]?.value ?? null);
+        return base === null ? null : base * homePremiumOf(files.homeRent)(code, 20);
+      },
       preview: (start) => lifeCtl.previewStart(start),
       onConfirm: (c) => lifeCtl.createCharacter(c),
       fallbackFocus: () => document.querySelector<HTMLElement>('.turn-bar__button'),

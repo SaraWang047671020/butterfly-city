@@ -13,6 +13,11 @@ export interface NumbersData {
   /** Dwelling size in m² by household size 1 to 5 (Character_File). */
   readonly dwellingSize: ReadonlyMap<number, number>;
   readonly commute: CommuteMatrix;
+  /**
+   * Rent per m² of a home of `size` m² in `district` relative to the district rent per m² (Home_Rent_File, task 6.4);
+   * 1 when absent. Small homes rent for more per m² than the mean lease.
+   */
+  readonly homePremium?: (district: string, size: number) => number;
 }
 
 export interface CharacterNumbers {
@@ -57,7 +62,8 @@ export function characterNumbers(s: LifeState, year: number, rentPerM2: number |
     income += wage;
   }
 
-  const rent = family ? 0 : rentPerM2 === null ? null : rentPerM2 * size;
+  const premium = d.homePremium?.(s.home, size) ?? 1;
+  const rent = family ? 0 : rentPerM2 === null ? null : rentPerM2 * premium * size;
   const rentBurden = income === null || income <= 0 || rent === null ? null : (rent / income) * 100;
   const me = s.members.find((m) => m.kind === 'self');
   return { persons, size, income, rent, rentBurden, commuteMinutes: commuteMinutes(d.commute, s.home, me?.workCode ?? null) };

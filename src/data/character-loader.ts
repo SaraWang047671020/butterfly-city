@@ -156,24 +156,55 @@ export function validateWageFile(x: unknown): Result<WageFile> {
   return { ok: true, value: x as unknown as WageFile };
 }
 
+export interface HomeRentFile {
+  readonly schemaVersion: 1;
+  readonly bands: readonly { readonly id: string; readonly maxArea: number | null }[];
+  readonly premium: Readonly<Record<string, readonly number[]>>;
+}
+
+export function validateHomeRentFile(x: unknown, districtCodes: ReadonlySet<string>): Result<HomeRentFile> {
+  const where = 'home-rent.json';
+  if (!isObj(x) || x['schemaVersion'] !== 1) return fail(`${where}: schemaVersion must be 1`);
+  const bands = x['bands'];
+  const premium = x['premium'];
+  if (!Array.isArray(bands) || bands.length === 0) return fail(`${where}: bands missing`);
+  if (!isObj(premium)) return fail(`${where}: premium missing`);
+  for (const code of districtCodes) {
+    const p = premium[code];
+    if (!Array.isArray(p) || p.length !== bands.length || p.some((v) => typeof v !== 'number' || !(v > 0))) return fail(`${where}: no premium for ${code}`);
+  }
+  return { ok: true, value: x as unknown as HomeRentFile };
+}
+
+/** The premium of a home of `size` m² in `district`: the band whose maxArea is the first at or above the size. */
+export function homePremiumOf(f: HomeRentFile): (district: string, size: number) => number {
+  return (district, size) => {
+    const i = f.bands.findIndex((b) => b.maxArea === null || size <= b.maxArea);
+    return f.premium[district]?.[i < 0 ? f.bands.length - 1 : i] ?? 1;
+  };
+}
+
 export interface CharacterFiles {
   readonly characters: CharacterFile;
   readonly wages: WageFile;
+  readonly homeRent: HomeRentFile;
 }
 
-/** Fetches and validates the Character_File and the Wage_File from `${baseUrl}data/`. */
+/** Fetches and validates the Character_File, the Wage_File and the Home_Rent_File from `${baseUrl}data/`. */
 export async function loadCharacterFiles(
   fetchText: (url: string) => Promise<string>,
   baseUrl: string,
   districtCodes: ReadonlySet<string>,
 ): Promise<Result<CharacterFiles>> {
   try {
-    const [c, w] = (await Promise.all(['characters.json', 'wages.json'].map((n) => fetchText(`${baseUrl}data/${n}`)))) as [string, string];
+    const [c, w, h] = (await Promise.all(['characters.json', 'wages.json', 'home-rent.json'].map((n) => fetchText(`${baseUrl}data/${n}`)))) as [string, string, string];
     const wages = validateWageFile(JSON.parse(w));
     if (!wages.ok) return wages;
     const characters = validateCharacterFile(JSON.parse(c), districtCodes, new Set(Object.keys(wages.value.earnings)));
     if (!characters.ok) return characters;
-    return { ok: true, value: { characters: characters.value, wages: wages.value } };
+    const homeRent = validateHomeRentFile(JSON.parse(h), districtCodes);
+    if (!homeRent.ok) return homeRent;
+    return { ok: true, value: { characters: characters.value, wages: wages.value, homeRent: homeRent.value } };
   } catch (e) {
     return fail(`character files: ${(e as Error).message}`);
   }

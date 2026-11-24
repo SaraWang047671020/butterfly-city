@@ -215,6 +215,22 @@
       ]
     },
     {
+      "id": "character",
+      "title": "Your character",
+      "items": [
+        {
+          "id": "character-wages",
+          "title": "Wages are industry means",
+          "text": "Your character earns the mean regular monthly earnings of the industry of their job, as published by DGBAS for each year. It is not the pay of one person: it excludes bonuses and overtime, includes every job in the industry, and is above the median pay of most industries. The survey does not cover schools, so a teacher is a cram school teacher; the education and health figures change level in 2019 because the survey started to cover more of those industries."
+        },
+        {
+          "id": "character-homes",
+          "title": "Home sizes and their rent",
+          "text": "Home sizes are assumptions of the game: about 20 m² for one person up to 80 m² for five, including shared areas. Small homes rent for more per square metre than the district median, so your character's rent uses the ratio between the rent per square metre of homes of that size and of all homes in the district, measured on the registered leases of 2015 to 2025. Districts with few leases of a size use the ratio of their city."
+        }
+      ]
+    },
+    {
       "id": "validation",
       "title": "How the model was checked",
       "items": [

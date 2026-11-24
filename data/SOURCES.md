@@ -1438,6 +1438,12 @@ No district is entirely without a published value.
 - Values: the annual figure of each year as DGBAS publishes it (the year record of the file), 2015 to 2025, for the 8 industries of the Character_File occupations (C, G, H, I, J, K, P, Q). The build stops when a year record is more than 0.5% from the mean of its 12 monthly records (measured: at most 0.13%).
 - Coverage, from the dataset notes: no agriculture, government, schools above primary level, religious or occupational organisations; education covered only supplementary and other education (cram schools and similar) until 2018 and pre-primary education from 2019; health covered only human health before 2018. The education and health series therefore change level in 2019.
 
+## Rent of small homes for the player's Character (play-loop task 6.4, user decision 2026-11-24)
+
+- `public/data/home-rent.json`: by `npm run story-files` (`scripts/story/home-rent.ts`) from the real-price registration rentals already used for the `rent` indicator (data.gov.tw 25118, `data/raw/lvr/*_lvr_land_c.csv`), with the same qualifying filter, 171,949 leases of 2015Q1 to 2025Q4.
+- For each district and floor-area band (up to 40, 60, 90 m² and above, registered total floor area): median rent per m² of the band ÷ median rent per m² of all leases of the district; a band with fewer than 30 leases uses the city's ratio. The Character's rent per m² is the district rent of the Engine times this ratio. Measured: homes up to 40 m² rent for 1.47 (Da'an) to 2.05 (Banqiao) times the district median per m².
+- Floor area is used instead of the rental type (出租型態) because the files before 2021 have no rental type column.
+
 ## Story files (story-layer spec)
 
 - `public/data/citizens.json`, `public/data/model-limits.json`: copies of `data/config/`, made by `npm run story-files`.
