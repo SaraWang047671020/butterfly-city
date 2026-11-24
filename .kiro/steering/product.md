@@ -80,7 +80,7 @@ At the start, every tool is set to its **real historical value**. The player adj
   - Small shop owner in Da'an
 - Character and citizen updates are generated from **fixed text templates**. Generated text may be added later under the rules of "Direction after phase 1" below; every number still comes from the Engine.
 - **A ghost is a person hidden by averages.** A resident becomes a ghost when rent burden or commute time crosses a cited threshold, or when they are forced to move out.
-- The number of ghosts in each district is determined by simulation output. One ghost represents a fixed number of residents (default 1,000). Each district has a display cap, and the exact total is always shown as a number. Never place a ghost for decoration.
+- The number of ghosts in each district is determined by simulation output. One ghost represents a fixed number of residents (default 1,000). Each district has a display cap, and the exact total is always shown as a number. Never place a ghost for decoration. **Exception (night-ghosts spec, approved by the user on 2026-11-24): Mission_Ghosts are a game element added at night for a Mission not met; they look different, are counted separately, are named as a game element in the legend, and never change a simulation number.**
 
 ## Visual tone
 
