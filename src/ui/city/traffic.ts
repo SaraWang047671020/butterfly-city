@@ -89,6 +89,43 @@ export function buildModels(t: CityTokens) {
   return { car, scooter, person };
 }
 
+/** Hair styles of the Character_File appearance (play-loop Requirement 2). */
+export type HairStyle = 'short' | 'medium' | 'long' | 'tied' | 'none';
+
+/**
+ * The Avatar: the person model with the look chosen in Character_Creation (play-loop task 6.3, extended after the
+ * user found that the walking figure did not look like the chosen Character). Skin and hair use the same tokens as
+ * the 2D preview (--look-skin, --look-hair); the hair shape follows the preview: a cap (short), to the chin (medium),
+ * down the back (long), a cap with a bun at the back (tied), or none. The person faces +x; z is sideways. The
+ * clothing colour is the instance colour (tint) and the body width is set by the Walker.
+ */
+export function avatarModel(t: CityTokens, hair: string): THREE.BufferGeometry {
+  const pants = t.color('--city-pants');
+  const white = new THREE.Color(1, 1, 1);
+  const skin = t.color('--look-skin');
+  const h = t.color('--look-hair');
+  const cap = { g: ball(0.09, -0.012, 0.85, 0), c: h };
+  const hairParts: Record<HairStyle, Part[]> = {
+    short: [cap],
+    medium: [cap, { g: box(0.11, 0.13, 0.195, -0.035, 0.785, 0), c: h }],
+    long: [cap, { g: box(0.1, 0.32, 0.2, -0.045, 0.69, 0), c: h }],
+    tied: [cap, { g: ball(0.05, -0.11, 0.84, 0), c: h }],
+    none: [],
+  };
+  return model(
+    [
+      { g: box(0.09, 0.4, 0.09, 0, 0.2, 0.06), c: pants, limb: 1 },
+      { g: box(0.09, 0.4, 0.09, 0, 0.2, -0.06), c: pants, limb: -1 },
+      { g: box(0.13, 0.32, 0.25, 0, 0.56, 0), c: white, tint: 1 },
+      { g: box(0.07, 0.28, 0.07, 0, 0.55, 0.165), c: white, tint: 1, limb: -2 },
+      { g: box(0.07, 0.28, 0.07, 0, 0.55, -0.165), c: white, tint: 1, limb: 2 },
+      { g: ball(0.085, 0, 0.82, 0), c: skin },
+      ...(hairParts[hair as HairStyle] ?? hairParts.short),
+    ],
+    0.85,
+  );
+}
+
 export function moverMaterial(time: { value: number }, walk: boolean): THREE.MeshStandardMaterial {
   const mat = new THREE.MeshStandardMaterial({ roughness: 0.55, metalness: 0.25, vertexColors: true });
   mat.onBeforeCompile = (sh) => {

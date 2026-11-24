@@ -41,7 +41,7 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
 - [x] 6. Character_Creation (Requirement 2)
   - [x] 6.1 `src/ui/character/creation.ts`: four steps, live SVG preview, sources, Random character; the character chip `src/ui/character/chip.ts`
   - [x] 6.2 New game flow: Character_Creation before the first Decide_Step (`onNewGame` of the Game_Controller); restore from the Character_Store on load
-  - [x] 6.3 City_View `setAvatar(look)` (clothing colour and body width; hair only in the 2D preview)
+  - [x] 6.3 City_View `setAvatar(look)` (clothing colour and body width; hair only in the 2D preview). Changed 2026-11-24 after the user found that the walking figure did not look like the chosen Character: the Avatar has its own model with the preview's skin and hair colours and the five hair styles (`avatarModel` in `src/ui/city/traffic.ts`)
   - [x] 6.4 (Done 2026-11-24 with the user's option 1: `public/data/home-rent.json`, premium by floor-area band from the registered leases; draft `model-limits.json` section "Your character" for the user to review.) Rent of small homes: the district rent per m² is a mean over whole-home leases, so a 20 m² home is priced below real studio rents (2015Q1: Neihu 290 TWD per m², 5,800 TWD a month). Decision of the user pending; then the `model-limits.json` item on wages and home sizes (moved here from task 3.3)
 
 - [x] 7. Life dialog (Requirement 3A)

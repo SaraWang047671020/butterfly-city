@@ -114,7 +114,7 @@ export interface CityView {
   /** Enters Walk_Mode at a place of a district (play-loop Requirement 6.5, Go_There_Action). */
   walkTo(place: WalkPlace): void;
   /** The player Character's look on the Avatar: clothing colour id and body id (play-loop task 6.3). */
-  setAvatar(look: { readonly colour: string; readonly body: string }): void;
+  setAvatar(look: { readonly colour: string; readonly body: string; readonly hair: string }): void;
   /** The household other than the Character, standing at the home (play-loop task 7.3). */
   setHousehold(home: string | null, members: readonly { readonly kind: string; readonly colour: string }[]): void;
   /** Viewport position of a district's centre, a little above the ground; null when behind the camera (District_Card). */
@@ -716,7 +716,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       if (householdMesh.instanceColor !== null) householdMesh.instanceColor.needsUpdate = true;
     },
     setAvatar(look) {
-      walker.setLook(tokens.color(`--look-${look.colour}`), look.body === 'a' ? 0.85 : look.body === 'c' ? 1.2 : 1);
+      walker.setLook(tokens.color(`--look-${look.colour}`), look.body === 'a' ? 0.85 : look.body === 'c' ? 1.2 : 1, look.hair);
     },
     project(code) {
       const m = districts.byCode.get(code);

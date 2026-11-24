@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { slideMove, type Collider } from './collision.ts';
 import { GROUND_DEPTH } from './districts.ts';
 import type { CityTokens } from './tokens.ts';
-import { buildModels, moverMaterial } from './traffic.ts';
+import { avatarModel, buildModels, moverMaterial } from './traffic.ts';
 
 export const AVATAR_RADIUS = 0.5;
 const WALK_SPEED = 4; // world units per second (game scale)
@@ -29,7 +29,8 @@ export interface Walker {
   start(x: number, z: number, heading: number): void;
   setVisible(v: boolean): void;
   /** The Character's look: clothing colour and a body width factor (play-loop Requirement 2.7: display only). */
-  setLook(colour: THREE.Color, width: number): void;
+  /** The Character's look: clothing colour, body width and hair style (play-loop task 6.3). */
+  setLook(colour: THREE.Color, width: number, hair: string): void;
   /** Moves the Avatar and the camera; `snap` places the camera without easing (reduced motion). */
   update(dt: number, camera: THREE.PerspectiveCamera, snap: boolean): void;
   key(key: string, down: boolean): boolean;
@@ -61,6 +62,8 @@ export function createWalker(scene: THREE.Scene, collider: Collider, tokens: Cit
   const time = { value: 0 };
   const geo = buildModels(tokens).person;
   const avatar = new THREE.InstancedMesh(geo, moverMaterial(time, true), 1);
+  // One model per hair style, built when first used and kept (the Avatar swaps between them).
+  const hairModels = new Map<string, THREE.BufferGeometry>();
   avatar.setColorAt(0, tokens.color('--city-avatar'));
   avatar.castShadow = true;
   avatar.frustumCulled = false; // the instance moves far from the bounds computed at creation
@@ -164,7 +167,13 @@ export function createWalker(scene: THREE.Scene, collider: Collider, tokens: Cit
       heading = best;
       place();
     },
-    setLook(colour, width) {
+    setLook(colour, width, hair) {
+      let g = hairModels.get(hair);
+      if (g === undefined) {
+        g = avatarModel(tokens, hair);
+        hairModels.set(hair, g);
+      }
+      if (avatar.geometry !== g) avatar.geometry = g;
       avatar.setColorAt(0, colour);
       if (avatar.instanceColor !== null) avatar.instanceColor.needsUpdate = true;
       bodyWidth = width;
@@ -224,6 +233,7 @@ export function createWalker(scene: THREE.Scene, collider: Collider, tokens: Cit
     dispose() {
       joystick.remove();
       geo.dispose();
+      for (const g of hairModels.values()) g.dispose();
     },
   };
 }
