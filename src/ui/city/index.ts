@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import type { CityStaticView, MapDistrictView, MapViewModel } from '../../types/view.ts';
 import { createBuildings } from './buildings.ts';
-import { createCollider } from './collision.ts';
+import { createCollider, unionCollider } from './collision.ts';
 import { createCamera } from './camera.ts';
 import { CHANGE_BOUNDS, changeToken, classOf, classToken } from './colours.ts';
 import { createSites, type SiteView } from './sites.ts';
@@ -18,9 +18,11 @@ import { project } from './projection.ts';
 import { mulberry32 } from './random.ts';
 import { createScene, type QualityLevel } from './scene.ts';
 import { buildStreetGrid } from './street-grid.ts';
+import { indexBuildings } from './street-detail.ts';
+import { createStreetDetail } from './street-detail-layer.ts';
 import { readTokens } from './tokens.ts';
 import { buildModels, createTraffic, moverMaterial } from './traffic.ts';
-import { createWalker, nearestFree } from './walk.ts';
+import { AVATAR_RADIUS, createWalker, nearestFree } from './walk.ts';
 import { createCitizens, type CityCitizen } from './citizens.ts';
 
 export type { CityCitizen } from './citizens.ts';
@@ -181,7 +183,16 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     clearings.map((c) => ({ x: c.x, z: c.z, r: c.r * 0.85 })),
     allPolygons,
   );
-  const walker = createWalker(s.scene, collider, tokens, doc);
+  // Street detail around the Avatar in Walk_Mode (city-3d Requirement 14). Its columns and lamp poles block the
+  // Avatar (user decision B2, 2026-11-24); they exist only near the Avatar, so the walker tests both colliders.
+  const detailBuildings = placements.flatMap((p) => p.buildings.map((b) => ({ x: b.x, z: b.z, hw: b.width / 2, hd: b.depth / 2 })));
+  const detail = createStreetDetail(
+    s.scene,
+    { buildings: detailBuildings, index: indexBuildings(detailBuildings), grid, avoid: stationClear, heightOf: (i) => buildings.heightOf(i) },
+    tokens,
+    quality,
+  );
+  const walker = createWalker(s.scene, unionCollider(collider, () => detail.collider), tokens, doc);
   root.appendChild(walker.joystick);
 
   // --- metro (city-3d 8.6, 8.7)
@@ -313,6 +324,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     s.setQuality(quality);
     traffic.setShare(quality === 'high' ? 1 : LOW_SHARE);
     buildings.setTreeShare(quality === 'high' ? 1 : LOW_SHARE);
+    detail.setQuality(quality);
   };
   applyQuality();
 
@@ -478,12 +490,18 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
   observer.observe(root);
   resize();
 
+  let detailShown = false;
   const clock = new THREE.Clock();
   const frame = () => {
     const dt = Math.min(clock.getDelta(), 0.05);
     const time = clock.elapsedTime;
     if (mode === 'walk') {
       walker.update(dt, s.camera, !motion());
+      detail.update(walker.position.x, walker.position.z, AVATAR_RADIUS);
+      if (!detailShown) {
+        detailShown = true;
+        buildings.setFineWindows(true);
+      }
       // The District_Panel follows the district where the Avatar stands (city-3d 8.4).
       const here = inputs.find((p) => inAnyPolygon(walker.position.x, walker.position.z, p.polygons))?.code ?? null;
       if (here !== null && here !== walkDistrict) {
@@ -502,7 +520,14 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
         talk.hidden = who === null;
         if (who !== null) talkText.textContent = o.strings.talk.prompt.replace('{name}', who.name);
       }
-    } else rig.update(dt);
+    } else {
+      rig.update(dt);
+      if (detailShown) {
+        detailShown = false;
+        detail.hide();
+        buildings.setFineWindows(false);
+      }
+    }
     const heightDuration = tokens.seconds('--city-motion-height');
     buildings.step(dt, heightDuration > 0 ? 4 / heightDuration : Infinity);
     if (motion()) traffic.step(dt, time);
@@ -674,6 +699,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
         flutter[i] = f.butterflies;
       }
       buildings.setHeightTargets(scales);
+      detail.invalidate();
       net = openNetwork(METRO_DATA, next.quarter ?? '2015Q1');
       metro.setOpen(net);
       ghosts.setCounts(counts);
@@ -749,6 +775,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
       canvas.removeEventListener('pointerup', onTouchUp);
       canvas.removeEventListener('pointercancel', onTouchUp);
       walker.dispose();
+      detail.dispose();
       canvas.removeEventListener('blur', onBlur);
       rig.dispose();
       districts.hatch.dispose();

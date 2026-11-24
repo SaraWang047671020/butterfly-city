@@ -231,3 +231,17 @@ The City_View mixes real data with illustrative shapes. The screen says which is
 3. THE Test_Suite SHALL include a property test that a vehicle routed on the Street_Grid stays on streets of the Street_Grid for any number of steps.
 4. THE Test_Suite SHALL include a test that every module importing `three` is in `src/ui/city/` (extending the boundary test of game-ui Requirement 18.2).
 5. THE Developer SHALL check the City_View by hand at 360, 768, 1280 and 1920 CSS pixels, with reduced motion on and off, with the keyboard only, and with WebGL disabled, and SHALL record the result in `KIRO-LOG.md`.
+
+### Requirement 14: Street detail near the Avatar (phase 4)
+
+**User Story:** As a player walking the streets, I want the street around me to look like a Taipei street at night, so that walking feels like being in the city. (Approved design `docs/design-proposal/street-detail-proposal.html`, 2026-11-24, with decision B2.)
+
+#### Acceptance Criteria
+
+1. WHILE Walk_Mode is on, THE City_View SHALL show arcades (a lit shopfront on the ground floor, and where the pavement allows a slab and a row of columns), shop signs (horizontal bands and vertical signs) and street lights with a light pool, for the buildings and street edges within the detail radius of the Avatar (42 units at Quality_Level high, 25 at low; no light pools at low). IN Overview_Mode none of it SHALL be shown.
+2. THE street detail SHALL be deterministic: the detail of a building depends only on its position and current height, and the street lights of a street edge only on the edge, not on where the Avatar stands.
+3. THE arcade slab, the columns and the shopfront SHALL stay off the road and out of the kerb strip; the street lights SHALL stand only on the kerb of streets of the Street_Grid, outside every building and away from the metro stations.
+4. THE vertical signs SHALL stay between the first floor and the roof of their building, and the lamp arms below every sign. Signs SHALL show abstract glyph blocks only: no text, names, brands or symbols (`neutrality.md`).
+5. WHILE Walk_Mode is on, the buildings near the camera SHALL show finer windows (frame, mullion, curtain shading, no windows in the shopfront storey); far buildings and Overview_Mode SHALL look as before.
+6. THE arcade columns and the lamp poles SHALL block the Avatar (user decision B2, 2026-11-24). A new obstacle SHALL never appear on top of the Avatar.
+7. THE street detail SHALL be static (no flicker or animation), add no text or control, and take its colours from the `--city-sign-*`, `--city-shop-*`, `--city-arcade*`, `--city-pole`, `--city-lamp` and `--city-lamp-glow` tokens.

@@ -182,6 +182,21 @@
   --city-landmark-water: #9fd6ff;
   --city-landmark-green-tile: #3f8f6a;
   --city-avatar: #55c1ff;
+  /* Street detail near the Avatar (city-3d Requirement 14, approved 2026-11-24): sign neon, shop light, arcade,
+     street lights. Shown only in Walk_Mode near the Avatar; no Map_Indicator meaning. */
+  --city-sign-0: #ff4d5e;
+  --city-sign-1: #ffb340;
+  --city-sign-2: #3fdcff;
+  --city-sign-3: #ff70d0;
+  --city-sign-4: #6cf08a;
+  --city-sign-5: #f2eeff;
+  --city-shop-0: #ffcf8f;
+  --city-shop-1: #dcefff;
+  --city-arcade: #545a70;
+  --city-arcade-column: #8a8fa6;
+  --city-pole: #3c4152;
+  --city-lamp: #ffe3a6;
+  --city-lamp-glow: #ffc870;
   /* The player Character's look (play-loop Requirement 2.2): clothing colours, skin and hair of the preview. */
   --look-teal: #3fb5a8;
   --look-amber: #f0a03c;

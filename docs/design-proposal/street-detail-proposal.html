@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Street Detail Proposal</title>
+<style>
+  :root {
+    --bg: #0a1020; --panel: #111a2e; --raised: #1a2540; --line: #7183a8; --line-subtle: #2c3a5c;
+    --text: #eaf0fb; --text2: #b4c0d9; --muted: #98a6c4; --accent: #55c1ff; --warn: #ffb454;
+    --font: system-ui, "Segoe UI", "Microsoft JhengHei", "PingFang TC", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--font); }
+  main { max-width: 1120px; margin: 0 auto; padding: 32px 16px 80px; }
+  h1 { font-size: 30px; margin: 0 0 4px; }
+  h2 { font-size: 22px; margin: 48px 0 6px; border-top: 1px solid var(--line-subtle); padding-top: 24px; }
+  h3 { font-size: 16px; margin: 22px 0 6px; color: var(--accent); }
+  p, li { color: var(--text2); }
+  .lead { font-size: 17px; color: var(--text); }
+  .muted { color: var(--muted); font-size: 14px; }
+  .note { background: var(--raised); border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 6px; margin: 12px 0; color: var(--text); }
+  .note.warn { border-left-color: var(--warn); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  td, th { border-bottom: 1px solid var(--line-subtle); padding: 7px 8px; text-align: left; vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  figure { margin: 16px 0; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line-subtle); border-radius: 10px; }
+  figcaption { color: var(--muted); font-size: 14px; margin-top: 6px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .phones { display: flex; gap: 16px; flex-wrap: wrap; }
+  .phones figure { width: 240px; flex: 0 0 auto; }
+  .tag { display: inline-block; padding: 1px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; background: var(--raised); color: var(--text); margin-bottom: 6px; }
+  .sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; border: 1px solid var(--line-subtle); }
+  code { font-size: 13px; color: var(--text); background: var(--raised); padding: 1px 5px; border-radius: 4px; }
+  @media (max-width: 720px) { .pair { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>街景細節設計稿</h1>
+  <p class="muted">city-3d 任務 11 · 2026-11-24 · Claude Code · 截圖來自原型 <code>prototype/street-detail.html</code>，用的是遊戲本身的 3D 城市和真實資料（2019 Q2）</p>
+
+  <p class="lead">走路模式下，角色周圍約 42 單位內的街道會多出四種細節：<b>騎樓</b>、<b>招牌</b>、<b>路燈</b>，還有更細的<b>窗戶</b>。離開這個範圍、空中視角和整體地圖都完全不變。</p>
+  <div class="note">不新增任何按鈕、文字或操作。細節是固定的，沒有閃爍或動畫，所以減少動態效果的設定下也一樣。所有顏色都放在 Token_File，招牌上只有抽象的方塊圖案，不是真的字，也沒有任何店名或品牌。</div>
+
+  <h2>1. 前後比較：大安區（1280 × 800）</h2>
+  <div class="pair">
+    <figure><span class="tag">現在</span><img src="street-detail/daan-1280-off.png" alt="大安區街道，現在的樣子：只有建築方塊和窗格"></figure>
+    <figure><span class="tag">加上細節</span><img src="street-detail/daan-1280-on.png" alt="同一個位置加上細節：直立招牌、騎樓、路燈和雙格窗"></figure>
+  </div>
+  <p class="muted">同一個位置、同一個視角。右邊可以看到建築側面的直立招牌、遠處騎樓的柱子和頂板，以及路邊的路燈和燈下光暈。</p>
+
+  <h2>2. 萬華區龍山寺站附近（1280 × 800）</h2>
+  <div class="pair">
+    <figure><span class="tag">現在</span><img src="street-detail/street-1280-off.png" alt="萬華區街道，現在的樣子"></figure>
+    <figure><span class="tag">加上細節</span><img src="street-detail/street-1280-on.png" alt="萬華區街道加上細節：兩側騎樓、亮著的店面、招牌"></figure>
+  </div>
+  <p class="muted">兩側建築一樓是亮著的店面，前面是騎樓頂板和一排柱子。上面的橫招牌和直招牌往街道伸出，近處的窗戶分成兩格，有窗框。</p>
+
+  <h2>3. 手機版（360 × 740）</h2>
+  <div class="phones">
+    <figure><span class="tag">現在</span><img src="street-detail/street-360-off.png" alt="手機寬度，現在的樣子"></figure>
+    <figure><span class="tag">加上細節</span><img src="street-detail/street-360-on.png" alt="手機寬度加上細節"></figure>
+  </div>
+  <p class="muted">手機上的細節和電腦版一樣。這張截圖用的是原型的 42 單位範圍；正式版在低畫質（手機預設）時會縮小到 25 單位，也不畫路燈光暈（見第 6 節）。</p>
+
+  <h2>4. 四種細節</h2>
+  <table>
+    <tr><th>細節</th><th>放在哪裡</th><th>樣子</th></tr>
+    <tr><td><b>騎樓</b></td><td>建築面向街道，而且和路邊還有至少 0.6 單位空間的那一面</td><td>一樓高 1.5 單位的亮店面，有門窗分隔線和較暗的櫃台；店面前方是頂板（最深 1.3 單位，不會超出人行道），外緣每 1.4 單位一根柱子。空間不夠的那一面只有店面，沒有頂板和柱子。</td></tr>
+    <tr><td><b>招牌</b></td><td>面向街道的那一面，約一半的面有一條橫招牌；65% 的面有 1 到 2 塊直招牌</td><td>暗色板子加上亮邊框，裡面是抽象的方塊「字」（不是真的字）。六種霓虹色，每塊招牌由建築位置決定顏色，所以每次經過都一樣。直招牌只出現在二樓以上，高度不會超過屋頂。</td></tr>
+    <tr><td><b>路燈</b></td><td>每段街道 2 支，交錯在兩側，離路口有一段距離</td><td>2.2 單位高的燈桿，燈臂伸向路中央，燈頭是暖白色，地上有柔和的圓形光暈。燈臂比最低的招牌還低，所以不會和招牌撞在一起。</td></tr>
+    <tr><td><b>細緻窗戶</b></td><td>鏡頭 25 到 70 單位內的建築（漸變）</td><td>窗戶加上窗框和中間的直條，亮著的窗戶有上亮下暗的窗簾漸層，暖色或冷色依每扇窗而不同；沒開燈的窗戶有一點點反光。店面那一層沒有窗戶。遠處的窗戶和現在完全一樣。</td></tr>
+  </table>
+
+  <h3>新增的顏色 token（放在 tokens.css 的 <code>--city-*</code> 底下）</h3>
+  <table>
+    <tr><th>Token</th><th>顏色</th><th>用在哪裡</th></tr>
+    <tr><td><code>--city-sign-0</code> 到 <code>-5</code></td><td><span class="sw" style="background:#ff4d5e"></span><span class="sw" style="background:#ffb340"></span><span class="sw" style="background:#3fdcff"></span><span class="sw" style="background:#ff70d0"></span><span class="sw" style="background:#6cf08a"></span><span class="sw" style="background:#f2eeff"></span></td><td>招牌的霓虹色（紅、琥珀、青、粉、綠、白）</td></tr>
+    <tr><td><code>--city-shop-0</code>、<code>-1</code></td><td><span class="sw" style="background:#ffcf8f"></span><span class="sw" style="background:#dcefff"></span></td><td>店面燈光（暖色、冷白色）</td></tr>
+    <tr><td><code>--city-arcade</code>、<code>--city-arcade-column</code></td><td><span class="sw" style="background:#545a70"></span><span class="sw" style="background:#8a8fa6"></span></td><td>騎樓頂板、柱子（一樓店面照上來，所以稍微發亮）</td></tr>
+    <tr><td><code>--city-pole</code>、<code>--city-lamp</code>、<code>--city-lamp-glow</code></td><td><span class="sw" style="background:#3c4152"></span><span class="sw" style="background:#ffe3a6"></span><span class="sw" style="background:#ffc870"></span></td><td>燈桿、燈頭、地上的光暈</td></tr>
+  </table>
+  <p class="muted">這些顏色只出現在角色附近的街道上，不代表任何指標，也不會影響地圖顏色的意義（Map_Indicator 還是只看地面和建築的顏色）。</p>
+
+  <h2>5. 中立性與無障礙</h2>
+  <ul>
+    <li>招牌上沒有可讀的文字、店名、品牌或政治符號，只有隨機的方塊圖案（<code>neutrality.md</code>）。</li>
+    <li>沒有閃爍或動畫：產品規則禁止全畫面閃爍，招牌如果會閃也可能讓人不舒服，所以全部是靜態的。減少動態效果的設定下畫面一樣。</li>
+    <li>不新增文字、按鈕或焦點目標，鍵盤操作和螢幕閱讀器的內容都不變。</li>
+    <li>細節只在走路模式出現。不支援 WebGL 的瀏覽器本來就沒有 3D 城市，所以不受影響。</li>
+  </ul>
+
+  <h2>6. 效能</h2>
+  <ul>
+    <li>角色每走 10 單位，才重新計算一次周圍的細節。全部用 instanced 方塊畫，每種細節只要一次 draw call（共 9 次），每次約 4,200 個方塊和 70 盞路燈。</li>
+    <li>原型重新計算一次要 9 到 12 毫秒，因為每次都掃過全部 4,800 棟建築。正式版會用空間索引，只看附近的建築，目標是 2 毫秒以內。</li>
+    <li>低畫質（手機預設）時，範圍縮小到 25 單位，也不畫路燈光暈。</li>
+  </ul>
+
+  <h2>7. 原型裡看到、正式版要修的地方</h2>
+  <ul>
+    <li>捷運站的白色圓台上也會出現路燈（大安那張圖）。正式版會讓路燈避開車站周圍。</li>
+    <li>細節的擺放規則會寫成不依賴 three 的純函式，並加上測試：同一個城市每次結果都一樣；路燈只在存在的街道上，而且不在建築裡面；騎樓不會超出人行道；直招牌不會高過屋頂（city-3d Requirement 13.1）。</li>
+  </ul>
+
+  <h2>8. 決定（2026-11-24 核准）</h2>
+  <p class="note">產品負責人核准本設計稿：「核准，A 可以，B2」。A：四種細節和第 4 節的顏色照提案。B2：騎樓柱子和燈桿會擋住角色。</p>
+  <h3>當時的選項</h3>
+  <div class="note warn">
+    <p style="margin:0 0 8px;color:var(--text)"><b>A. 整體樣式</b>：核准這四種細節和第 4 節的顏色嗎？</p>
+    <p style="margin:0 0 8px;color:var(--text)"><b>B. 柱子和燈桿會不會擋路</b>：</p>
+    <ul style="margin:0">
+      <li><b>B1（建議）不擋</b>：角色可以直接穿過柱子和燈桿，走路比較順，也不會卡在柱子之間。</li>
+      <li><b>B2 會擋</b>：比較真實，但角色可能在騎樓柱子之間卡住，特別是用手機搖桿的時候。</li>
+    </ul>
+  </div>
+</main>
+</body>
+</html>

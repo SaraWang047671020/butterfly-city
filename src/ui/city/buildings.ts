@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { GROUND_DEPTH } from './districts.ts';
 import type { Placement } from './placement.ts';
+import { SHOP_HEIGHT, SLAB } from './street-detail.ts';
 import type { CityTokens } from './tokens.ts';
 
 export interface BuildingLayer {
@@ -14,6 +15,11 @@ export interface BuildingLayer {
   /** Advances the height transition; `rate` is the approach rate per second (Infinity: jump). */
   step(dt: number, rate: number): void;
   setTreeShare(share: number): void;
+  /** Finer windows near the camera (city-3d Requirement 14.5); on in Walk_Mode only. */
+  setFineWindows(on: boolean): void;
+  /** Height of building `i` (in placement order) at the lower of its current and target scale, so that the street
+   * detail stays below the roof during a height transition. */
+  heightOf(i: number): number;
 }
 
 export function createBuildings(scene: THREE.Scene, placements: readonly Placement[], tokens: CityTokens): BuildingLayer {
@@ -21,11 +27,15 @@ export function createBuildings(scene: THREE.Scene, placements: readonly Placeme
   const box = new THREE.BoxGeometry(1, 1, 1);
   box.translate(0, 0.5, 0);
   const material = new THREE.MeshStandardMaterial({ roughness: 0.7, metalness: 0.15 });
+  let fineUniform: { value: number } | null = null;
   const warm = tokens.color('--city-window-warm');
   const cool = tokens.color('--city-window-cool');
+  const fineWindows = { value: 0 };
   material.onBeforeCompile = (sh) => {
     sh.uniforms['uWarm'] = { value: warm };
     sh.uniforms['uCool'] = { value: cool };
+    sh.uniforms['uFine'] = { value: fineWindows.value };
+    fineUniform = sh.uniforms['uFine'] as { value: number };
     sh.vertexShader = sh.vertexShader
       .replace('#include <common>', '#include <common>\nvarying vec3 vWPos;\nvarying vec3 vONrm;')
       .replace(
@@ -41,7 +51,7 @@ export function createBuildings(scene: THREE.Scene, placements: readonly Placeme
       .replace(
         '#include <common>',
         `#include <common>
-        uniform vec3 uWarm; uniform vec3 uCool; varying vec3 vWPos; varying vec3 vONrm;
+        uniform vec3 uWarm; uniform vec3 uCool; uniform float uFine; varying vec3 vWPos; varying vec3 vONrm;
         float h3(vec3 p) { return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }`,
       )
       .replace(
@@ -55,7 +65,18 @@ export function createBuildings(scene: THREE.Scene, placements: readonly Placeme
           float lit = step(0.72, h3(floor(vec3(u * 1.4, vWPos.y * 1.1, vWPos.x + vWPos.z))));
           float near = 1.0 - smoothstep(120.0, 420.0, length(vViewPosition));
           totalEmissiveRadiance += diffuseColor.rgb * 0.3;
-          totalEmissiveRadiance += near * mix(uWarm, uCool, h3(floor(vWPos * 0.37))) * 1.1 * win * side * lit;
+          // Finer windows near the camera in Walk_Mode (city-3d 14.5): frame, mullion, curtain shading, a faint
+          // reflection on dark panes, and no windows in the shopfront storey. With uFine = 0 this is the plain window.
+          float fine = uFine * (1.0 - smoothstep(25.0, 70.0, length(vViewPosition)));
+          float wy = (fy - 0.4) / 0.32, wu = (fu - 0.3) / 0.4;
+          float pane = step(0.1, wy) * step(wy, 0.9) * step(0.08, wu) * step(wu, 0.92) * step(0.035, abs(wu - 0.5));
+          float frameK = mix(1.0, pane, fine);
+          float curtain = mix(1.0, 0.7 + 0.45 * wy, fine);
+          float upper = mix(1.0, step(${(GROUND_DEPTH + SHOP_HEIGHT + SLAB).toFixed(2)}, vWPos.y), fine);
+          float perWindow = h3(floor(vec3(u * 1.4, vWPos.y * 1.1, vWPos.x + vWPos.z)) + 3.1);
+          vec3 tint = mix(uWarm, uCool, mix(h3(floor(vWPos * 0.37)), perWindow, fine * 0.6));
+          totalEmissiveRadiance += near * tint * 1.1 * win * side * lit * frameK * curtain * upper;
+          totalEmissiveRadiance += fine * (1.0 - lit) * win * side * pane * upper * uCool * 0.07;
         }`,
       );
   };
@@ -139,6 +160,14 @@ export function createBuildings(scene: THREE.Scene, placements: readonly Placeme
     },
     setTreeShare(share) {
       trees.count = Math.round(treeSpots.length * share);
+    },
+    setFineWindows(on) {
+      fineWindows.value = on ? 1 : 0;
+      if (fineUniform !== null) fineUniform.value = fineWindows.value;
+    },
+    heightOf(i) {
+      const s = spots[i];
+      return s === undefined ? 0 : s.height * Math.min(now[s.d]!, target[s.d]!);
     },
   };
 }

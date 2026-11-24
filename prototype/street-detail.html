@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Street Detail Prototype</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #05070f; color: #e8ecff; font: 13px system-ui, sans-serif; }
+  #city { position: fixed; inset: 0; }
+  #status { position: fixed; left: 12px; bottom: 12px; padding: 6px 10px; background: rgba(12, 16, 36, 0.85); border-radius: 6px; white-space: pre; }
+  #live { position: fixed; left: 12px; top: 12px; padding: 6px 10px; background: rgba(12, 16, 36, 0.85); border-radius: 6px; }
+  #detail { position: fixed; right: 12px; top: 12px; padding: 6px 10px; background: rgba(12, 16, 36, 0.85); border-radius: 6px; }
+  /* Proposed new Token_File entries (city-3d task 11). The prototype sets them here; production puts them in tokens.css. */
+  :root {
+    --city-sign-0: #ff4d5e;
+    --city-sign-1: #ffb340;
+    --city-sign-2: #3fdcff;
+    --city-sign-3: #ff70d0;
+    --city-sign-4: #6cf08a;
+    --city-sign-5: #f2eeff;
+    --city-shop-0: #ffcf8f;
+    --city-shop-1: #dcefff;
+    --city-arcade: #545a70;
+    --city-arcade-column: #8a8fa6;
+    --city-pole: #3c4152;
+    --city-lamp: #ffe3a6;
+    --city-lamp-glow: #ffc870;
+  }
+</style>
+</head>
+<body>
+<div id="city"></div>
+<div id="live" aria-live="polite"></div>
+<div id="status">Loading</div>
+<div id="detail"></div>
+<button id="walk" type="button" style="position:fixed;right:12px;bottom:12px;padding:8px 14px">Walk the streets</button>
+<script type="module" src="./street-detail.ts"></script>
+</body>
+</html>

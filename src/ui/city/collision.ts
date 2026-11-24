@@ -22,8 +22,8 @@ export interface Collider {
 const CELL = 8;
 const cellKey = (i: number, j: number) => `${i},${j}`;
 
-export function createCollider(boxes: readonly BoxFootprint[], circles: readonly CircleFootprint[], land: readonly PolygonXZ[]): Collider {
-  // Spatial hash of the boxes so that a test looks at a few boxes only.
+/** Boxes only, in a spatial hash so that a test looks at a few boxes. No land test: nothing outside a box is blocked. */
+export function boxCollider(boxes: readonly BoxFootprint[]): Collider {
   const cells = new Map<string, BoxFootprint[]>();
   for (const b of boxes) {
     for (let i = Math.floor((b.x - b.hw) / CELL); i <= Math.floor((b.x + b.hw) / CELL); i++) {
@@ -37,8 +37,6 @@ export function createCollider(boxes: readonly BoxFootprint[], circles: readonly
   }
   return {
     blocked(x, z, radius) {
-      if (!inAnyPolygon(x, z, land)) return true;
-      for (const c of circles) if (Math.hypot(x - c.x, z - c.z) < c.r + radius) return true;
       for (let i = Math.floor((x - radius) / CELL); i <= Math.floor((x + radius) / CELL); i++) {
         for (let j = Math.floor((z - radius) / CELL); j <= Math.floor((z + radius) / CELL); j++) {
           for (const b of cells.get(cellKey(i, j)) ?? []) {
@@ -52,6 +50,22 @@ export function createCollider(boxes: readonly BoxFootprint[], circles: readonly
       return false;
     },
   };
+}
+
+export function createCollider(boxes: readonly BoxFootprint[], circles: readonly CircleFootprint[], land: readonly PolygonXZ[]): Collider {
+  const hash = boxCollider(boxes);
+  return {
+    blocked(x, z, radius) {
+      if (!inAnyPolygon(x, z, land)) return true;
+      for (const c of circles) if (Math.hypot(x - c.x, z - c.z) < c.r + radius) return true;
+      return hash.blocked(x, z, radius);
+    },
+  };
+}
+
+/** Blocked where either collider is blocked; `extra` is read on every test, so it can be replaced. */
+export function unionCollider(base: Collider, extra: () => Collider): Collider {
+  return { blocked: (x, z, radius) => base.blocked(x, z, radius) || extra().blocked(x, z, radius) };
 }
 
 /**

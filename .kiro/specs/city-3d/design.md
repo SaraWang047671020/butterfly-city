@@ -75,6 +75,16 @@ The exact positions are part of the City_Design_Proposal (Requirement 1.1).
 
 `mountCityView` tries `WebGLRenderer`; on failure it renders the fallback text in the City layer and returns a no-op handle. The render loop is `renderer.setAnimationLoop`, paused on `visibilitychange` hidden. `dispose()` disposes geometries, materials, textures, the renderer and the listeners.
 
+## Street detail (Requirement 14)
+
+`street-detail.ts` (pure) places the detail as axis-aligned boxes: `streetFaces` finds the faces of a building that look onto an existing grid street with at most 3 units of ground before the road; each such face gets a shopfront, and with at least 0.6 units of free pavement a slab (depth up to 1.3, ending 0.15 before the road edge) and columns every 1.4 units. Signs depend on the current building height (`BuildingLayer.heightOf`, the lower of the current and the target Price_Index scale, so that a sign never shows above a shrinking roof). Each street edge gets two lights at 30 % and 70 % of its length on alternating kerbs, left out within 1 unit of a station circle. Random choices are seeded by the building position or the edge key. `indexBuildings` is a 16-unit cell index, so a rebuild looks at the nearby buildings only.
+
+`street-detail-layer.ts` (three) draws one InstancedMesh of unit boxes per kind and one of ground planes for the light pools, and rebuilds when the Avatar has moved 10 units, the heights changed (`invalidate` from `update`) or the Quality_Level changed. Shopfronts, signs and light pools use MeshBasicMaterial with a shader patch that gives each face metric coordinates (an `aSize` instance attribute); each patched material has its own program key. The sign glyphs are blocks on a 0.34-unit grid lit by a hash, with a lit outline.
+
+Obstacles (decision B2): the columns and poles of the current build form a `boxCollider`; the walker tests `unionCollider(collider, () => detail.collider)`. `obstaclesClearOf` leaves out an obstacle that would overlap the Avatar at the build point, so the Avatar is never trapped.
+
+Finer windows: a `uFine` uniform in the building shader, 1 in Walk_Mode; with 0 the shader gives the earlier window exactly.
+
 ## Testing
 
 - Pure modules: unit and fast-check property tests in `tests/ui/city/` (placement determinism and containment, grid membership, routing stays on grid, collision never inside a footprint, focus order covers 41 districts once per pass, colour mapping covers every class and "no value").
