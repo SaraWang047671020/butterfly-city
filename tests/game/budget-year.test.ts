@@ -46,5 +46,5 @@ describe('year-end projection of an edit', () => {
     }
     expect(without).toBeGreaterThan(0);
     expect(withOverrun).toBeGreaterThan(0);
-  });
+  }, 60_000); // runs the Engine for every accepted value
 });

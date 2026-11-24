@@ -301,27 +301,6 @@
   color: var(--color-accent);
 }
 
-/* ---- Panel sizes on wide screens -------------------------------------------------------------------------------- */
-@media (min-width: 64rem) {
-  .ui-app .ui-panel {
-    width: 20rem;
-  }
-
-  .ui-app .ui-panel--district,
-  .ui-app .ui-panel--timeline {
-    width: 21rem;
-  }
-
-  .ui-app .ui-panel--story {
-    left: calc(20rem + 2 * var(--space-3));
-    width: 21rem;
-  }
-
-  .ui-app .ui-block--turn-bar {
-    width: auto;
-    max-width: calc(100% - 2 * 21rem - 4 * var(--space-3));
-  }
-}
 
 /* ---- Second pass: timeline items flat, smaller radios, story text size ------------------------------------------ */
 .ui-app .ui-panel .timeline__item {

@@ -28,6 +28,8 @@ import { createDistrictList } from './panels/district-list.ts';
 import { createDistrictPanel } from './panels/district-panel.ts';
 import { createPolicyCards } from './policy/policy-cards.ts';
 import { createQuarterBrief, type GoThere } from './brief/quarter-brief.ts';
+import { createCityReport } from './report/city-report.ts';
+import { createDistrictCard } from './district-card.ts';
 import { createTimelineView } from './timeline/timeline-view.ts';
 import { createTurnBar } from './turn-bar/turn-bar.ts';
 import { createLiveRegion } from './a11y/live-region.ts';
@@ -54,6 +56,8 @@ export interface AppOptions {
   readonly onLanguage?: (next: Locale) => void;
   /** Go_There_Action of the Quarter_Brief (play-loop Requirement 6.5): Walk_Mode at the place. */
   readonly onGoThere?: (place: GoThere) => void;
+  /** Screen position of a district (the City_View projection), for the District_Card; null when off screen. */
+  readonly project?: (code: string) => { readonly x: number; readonly y: number } | null;
 }
 
 export interface App {
@@ -61,10 +65,12 @@ export interface App {
   readonly cityLayer: HTMLElement;
   showLoading(loaded: number): void;
   showLoadError(failures: readonly { readonly file: string; readonly message: string }[]): void;
-  /** Adds a button at the top of the Map panel (story-layer Limits_Dialog control). */
+  /** Adds a button to the tools row of the City_Report (the language control). */
   addMapControl(label: string, onClick: (button: HTMLButtonElement) => void): HTMLButtonElement;
-  /** Adds a floating panel to the Game_Screen and returns its body (story-layer Story_Panel). */
+  /** Adds a City_Report tab and returns its host (story-layer Story_Panel). `collapsed` is no longer used. */
   addPanel(name: string, title: string, collapsed: boolean): HTMLElement;
+  /** Adds a City_Report tab whose content is built when it is shown (play-loop Requirement 7.2). */
+  addReportTab(name: string, title: string, onShow: (host: HTMLElement) => void): HTMLElement;
   /** Renders `controller.screen()` now and after every publish. Returns a detach function. */
   attach(controller: AppController): () => void;
 }
@@ -159,48 +165,18 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   const headerHost = el(doc, 'header', 'ui-block ui-block--turn-bar', gameScreen);
   const block = (parent: Element, name: string): HTMLElement => el(doc, 'div', `ui-block ui-block--${name}`, parent);
 
-  // Floating panels (city-3d Requirement 9). Wide screens: each panel can be hidden and shown from its header.
-  // Narrow screens: a tab row opens one panel at a time as a sheet above the Turn_Bar.
-  const L = UI_STRINGS.layout;
-  const tabs = el(doc, 'nav', 'ui-tabs', gameScreen);
-  tabs.setAttribute('aria-label', L.tabsLabel);
-  const panels: { name: string; tab: HTMLButtonElement; setSheet: (on: boolean) => void }[] = [];
-  const panel = (name: string, title: string, collapsed: boolean): HTMLElement => {
-    const section = el(doc, 'section', `ui-panel ui-panel--${name}`, gameScreen);
-    const head = el(doc, 'div', 'ui-panel__head', section);
-    const heading = el(doc, 'h2', 'ui-panel__title', head, title);
-    heading.id = `ui-panel-title-${name}`;
-    section.setAttribute('aria-labelledby', heading.id);
-    const body = el(doc, 'div', 'ui-panel__body', section);
-    body.id = `ui-panel-body-${name}`;
-    const toggle = button(doc, 'ui-panel__toggle', L.hide, () => setCollapsed(!section.classList.contains('is-collapsed')), head);
-    toggle.setAttribute('aria-controls', body.id);
-    const setCollapsed = (on: boolean): void => {
-      section.classList.toggle('is-collapsed', on);
-      toggle.textContent = on ? L.show : L.hide;
-      toggle.setAttribute('aria-expanded', String(!on));
-    };
-    setCollapsed(collapsed);
-    const tab = button(doc, 'ui-tabs__tab', title, () => {
-      const open = !section.classList.contains('is-sheet');
-      for (const p of panels) p.setSheet(false);
-      if (open) panels.find((p) => p.name === name)?.setSheet(true);
-    }, tabs);
-    tab.setAttribute('aria-controls', section.id = `ui-panel-${name}`);
-    const setSheet = (on: boolean): void => {
-      section.classList.toggle('is-sheet', on);
-      tab.setAttribute('aria-expanded', String(on));
-    };
-    setSheet(false);
-    panels.push({ name, tab, setSheet });
-    return body;
-  };
-  const wide = (doc.defaultView?.innerWidth ?? 0) >= 1600;
-  const districtHost = panel('district', L.district, false);
-  const mapHost = panel('map', L.map, false);
-  const timelineHost = panel('timeline', L.timeline, !wide);
+  // City_Report (play-loop Requirement 7): the detail that left the main screen, in tabs of a full-screen dialog.
+  const R = UI_STRINGS.report;
+  const report = createCityReport(doc, { title: R.title, close: UI_STRINGS.dialogs.close, tabsLabel: R.tabsLabel }, () =>
+    headerHost.querySelector<HTMLElement>('.turn-bar__button'),
+  );
+  const districtsHost = report.addTab('districts', R.districts);
+  const districtListHost = el(doc, 'div', 'ui-report__list', districtsHost);
+  const rightHost = el(doc, 'div', 'ui-report__detail', districtsHost);
+  const mapHost = report.addTab('map', R.map);
   const leftHost = mapHost;
-  const rightHost = districtHost;
+  const timelineHost = report.addTab('timeline', R.timeline);
+  const reportButton = button(doc, 'ui-report-open', R.open, () => report.open(null, reportButton), headerHost);
 
   // Placeholder: actions are bound in `attach`; components keep a stable reference to this proxy.
   let current: UiActions | null = null;
@@ -241,14 +217,48 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   mountComponent(block(leftHost, 'map-controls'), indicatorText);
   mountComponent(block(leftHost, 'map-controls'), legend);
   mountComponent(block(leftHost, 'map-controls'), priceLabel);
-  mountComponent(block(leftHost, 'district-list'), districtList);
+  mountComponent(block(districtListHost, 'district-list'), districtList);
   mountComponent(block(rightHost, 'district-panel'), districtPanel);
   mountComponent(gameScreen, policyCards);
   gameScreen.appendChild(policyCards.dialogRoot);
   mountComponent(block(timelineHost, 'timeline'), timeline);
-  // The Illustration_Note sits with the legend (city-3d Requirement 11.1).
+  gameScreen.appendChild(report.root);
+  // The figures note sits with the legend in the report; the Illustration_Note stays on the main screen
+  // (city-3d Requirement 11.1, play-loop Requirement 7.3).
   el(doc, 'p', 'ui-illustration-note', mapHost, UI_STRINGS.city.figuresNote);
   el(doc, 'p', 'ui-illustration-note', mapHost, UI_STRINGS.city.illustrationNote);
+  el(doc, 'p', 'ui-main-note', gameScreen, UI_STRINGS.city.illustrationNote);
+
+  // District_Card (play-loop Requirement 7.4): near the selected district on wide screens, docked on narrow ones.
+  const districtCard = createDistrictCard(doc, actions, {
+    walk: (code) => options.onGoThere?.({ district: code, kind: 'station' }),
+    report: (opener) => report.open('districts', opener),
+  });
+  gameScreen.appendChild(districtCard.root);
+  const placeCard = (): void => {
+    const code = districtCard.shown();
+    const win = doc.defaultView;
+    if (code !== null && win !== null && win.innerWidth >= 1024 && options.project !== undefined) {
+      const p = options.project(code);
+      const card = districtCard.root;
+      if (p === null) {
+        card.classList.add('is-docked');
+      } else {
+        card.classList.remove('is-docked');
+        const w = card.offsetWidth;
+        const h = card.offsetHeight;
+        const x = Math.min(Math.max(p.x - w / 2, 16), win.innerWidth - w - 16);
+        // Below the Turn_Bar and above the Policy_Cards.
+        const top = headerHost.getBoundingClientRect().bottom + 12;
+        const bottom = policyCards.root.getBoundingClientRect().top - 12;
+        const y = Math.min(Math.max(p.y - h - 24, top), Math.max(top, bottom - h));
+        card.style.setProperty('--card-x', `${Math.round(x)}px`);
+        card.style.setProperty('--card-y', `${Math.round(y)}px`);
+      }
+    }
+    win?.requestAnimationFrame(placeCard);
+  };
+  doc.defaultView?.requestAnimationFrame(placeCard);
 
   // ---- Dialogs and live regions (available on every screen) ----------------------------------------------------
   const dialogs = createDialogs(doc, actions, {
@@ -337,6 +347,7 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
       briefOpen: g.brief !== null,
     });
     timeline.update({ quarters: g.timeline, areaNames: names });
+    districtCard.update({ panel: g.districtPanel, construction: g.policyPanel.construction });
   };
 
   const render = (ctl: AppController): void => {
@@ -366,14 +377,15 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
 
   return {
     cityLayer,
-    addPanel: (name, title, collapsed) => panel(name, title, collapsed),
+    addPanel: (name, title) => report.addTab(name, title),
+    addReportTab: (name, title, onShow) => report.addTab(name, title, onShow),
     addMapControl(label, onClick) {
       const b = doc.createElement('button');
       b.type = 'button';
-      b.className = 'ui-button ui-map-control';
+      b.className = 'dialog__button ui-map-control';
       b.textContent = label;
       b.addEventListener('click', () => onClick(b));
-      mapHost.prepend(b);
+      report.tools.appendChild(b);
       return b;
     },
     showLoading,

@@ -9,7 +9,7 @@ import type { DialogManager, DialogSize } from '../a11y/dialog.ts';
 import { createRangeSourceView } from '../explain/range-source-view.ts';
 import { formatRange } from '../format/range.ts';
 import { fieldLabel, formatAmount, toolName } from '../panels/policy-text.ts';
-import { fillTemplate, UI_STRINGS, quarterLabel } from '../strings.ts';
+import { fillTemplate, UI_STRINGS, quarterLabel, cityLabel } from '../strings.ts';
 import '../../styles/dialogs.css';
 import '../../styles/range-source.css';
 
@@ -274,7 +274,7 @@ function buildDemo(doc: Document, actions: UiActions, view: Extract<DialogView, 
             quarter: quarterLabel(e.quarter),
             tool: toolName(e.tool),
             field: fieldLabel(e.tool, e.field),
-            area: e.area,
+            area: cityLabel(e.area),
             value: e.kind === 'real-track' || e.value === null ? DEMO.realTrack : formatAmount(e.value),
           }),
         ),

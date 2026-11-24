@@ -4,7 +4,7 @@
 import type { DistrictCode } from '../../types/data-files.ts';
 import type { DistrictListView, UiActions } from '../../types/view.ts';
 import { reconcileKeyed, setAttr, setText, type Component } from '../component.ts';
-import { fillTemplate, UI_STRINGS } from '../strings.ts';
+import { fillTemplate, UI_STRINGS, cityLabel } from '../strings.ts';
 
 const D = UI_STRINGS.districtPanel;
 
@@ -38,7 +38,7 @@ export function createDistrictList(doc: Document, actions: UiActions): Component
     const h = doc.createElement('h3');
     h.className = 'ui-district-group-heading';
     h.id = `ui-district-group-${(groupIdCounter += 1)}`;
-    h.textContent = fillTemplate(D.cityHeading, { city });
+    h.textContent = fillTemplate(D.cityHeading, { city: cityLabel(city) });
     groupRoot.setAttribute('aria-labelledby', h.id);
     const list = doc.createElement('ul');
     list.className = 'ui-district-items';

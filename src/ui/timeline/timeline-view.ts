@@ -5,7 +5,7 @@ import type { DistrictCode } from '../../types/data-files.ts';
 import type { EventCardView, TimelineItemView, TimelineQuarterView, UiActions } from '../../types/view.ts';
 import { reconcileKeyed, setText, type Component, type ComponentFactory } from '../component.ts';
 import { formatNumber } from '../format/number.ts';
-import { fillTemplate, UI_STRINGS, quarterLabel } from '../strings.ts';
+import { fillTemplate, UI_STRINGS, quarterLabel, cityLabel } from '../strings.ts';
 import { fieldLabel, formatAmount, toolName } from '../panels/policy-text.ts';
 import '../../styles/timeline.css';
 
@@ -87,7 +87,7 @@ function renderEvent(doc: Document, li: HTMLElement, card: EventCardView, major:
 }
 
 function entryText(item: Extract<TimelineItemView, { kind: 'entry' }>, areaNames: TimelineViewProps['areaNames']): string {
-  const area = areaNames?.get(item.area as DistrictCode) ?? item.area;
+  const area = areaNames?.get(item.area as DistrictCode) ?? cityLabel(item.area);
   const after =
     item.entryKind === 'real-track'
       ? fillTemplate(T.realTrack, { value: item.after === null ? formatNumber(null, 0) : formatAmount(item.after) })

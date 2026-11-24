@@ -17,7 +17,6 @@ import { readPersonaId, writePersonaId } from './save/story-store.ts';
 import { endingLines } from './narrative/select.ts';
 import { createStoryPanel, type StoryPanelView } from './ui/story/story-panel.ts';
 import { buildLimitsBody } from './ui/story/limits-dialog.ts';
-import { createDialogManager } from './ui/a11y/dialog.ts';
 import { fillTemplate as fillStory } from './narrative/fill.ts';
 import { RULE_REGISTRY } from './simulation/registry.ts';
 import { districtAccessibleName } from './ui/a11y/accessible-name.ts';
@@ -47,7 +46,13 @@ const switchLanguage = (next: Locale): void => {
 };
 // Go_There_Action of the Quarter_Brief: set once the City_View is mounted.
 let goThere: (place: { readonly district: string; readonly kind: 'site' | 'station' | 'centre' }) => void = () => {};
-const app = createApp(document, host, { onRetry: () => void start(), onLanguage: switchLanguage, onGoThere: (place) => goThere(place) });
+let projectDistrict: (code: string) => { readonly x: number; readonly y: number } | null = () => null;
+const app = createApp(document, host, {
+  onRetry: () => void start(),
+  onLanguage: switchLanguage,
+  onGoThere: (place) => goThere(place),
+  project: (code) => projectDistrict(code),
+});
 let city: CityView | null = null;
 let controller: GameController | null = null;
 
@@ -193,6 +198,7 @@ async function start(): Promise<void> {
   });
   const cityView = city;
   goThere = (place) => cityView.walkTo(place);
+  projectDistrict = (code) => cityView.project(code);
   cityView.update(ctl.view().map);
   ctl.subscribe((view) => cityView.update(view.map));
   // The player's social housing in the city: extra units under construction and completed (only differences > 0).
@@ -225,7 +231,7 @@ async function start(): Promise<void> {
       renderStory();
     },
   });
-  app.addPanel('story', UI_STRINGS.story.title, false).appendChild(storyPanel.root);
+  app.addPanel('story', UI_STRINGS.report.people, false).appendChild(storyPanel.root);
   let personaId = story.ok ? readPersonaId(port, story.value.citizens.personas.map((p) => p.id)) : null;
   const renderStory = (): void => storyPanel.update(storyView());
   const storyView = (): StoryPanelView => {
@@ -269,16 +275,16 @@ async function start(): Promise<void> {
   renderStory();
   ctl.subscribe(() => renderStory());
 
-  // Limits_Dialog (story-layer Requirement 6): opened from the Map panel; texts from model-limits.json, filled from
-  // model-facts.json (minutes as whole numbers). A Placeholder without a value shows "no value" for that item.
-  const limitsDialog = createDialogManager(document, () => document.querySelector<HTMLElement>('.turn-bar__button'), UI_STRINGS.dialogs.close);
-  host.appendChild(limitsDialog.root);
-  limitsDialog.root.classList.add('ui-dialog--limits');
-  app.addMapControl(UI_STRINGS.story.limitsButton, (opener) => {
+  // Model limits (story-layer Requirement 6): a City_Report tab, built when first shown (play-loop Requirement 7.2);
+  // texts from model-limits.json, filled from model-facts.json. A Placeholder without a value shows "no value".
+  let limitsBuilt = false;
+  app.addReportTab('limits', UI_STRINGS.report.limits, (tabHost) => {
+    if (limitsBuilt) return;
+    limitsBuilt = true;
     if (!story.ok) {
       const p = document.createElement('p');
       p.textContent = UI_STRINGS.story.limitsUnavailable.replace('{error}', story.error);
-      limitsDialog.open({ title: UI_STRINGS.story.limitsButton, body: p, opener });
+      tabHost.appendChild(p);
       return;
     }
     const { limits, facts } = story.value;
@@ -300,7 +306,10 @@ async function start(): Promise<void> {
       sourcesLink: limits.page.sourcesLink,
       sections: limits.sections.map((sec) => ({ title: sec.title, items: sec.items.map((it) => ({ title: it.title, text: fill(`limits.${it.id}`, it.text) })) })),
     });
-    limitsDialog.open({ title: limits.page.title, body, opener, size: 'lg' });
+    const heading = document.createElement('h2');
+    heading.className = 'ui-report__heading';
+    heading.textContent = limits.page.title;
+    tabHost.append(heading, body);
   });
   const langButton = app.addMapControl(languageLabel(), () => switchLanguage(otherLocale()));
   langButton.lang = otherLocale();

@@ -397,6 +397,28 @@ export const EN = {
     rule: 'Up to 3 changes by a fixed rule: finished homes and major events first, then the largest change of a difference from real history.',
   },
 
+  // City_Report and District_Card (play-loop Requirement 7).
+  report: {
+    open: 'City report',
+    title: 'City report',
+    tabsLabel: 'Report sections',
+    districts: 'Districts',
+    map: 'Map colours',
+    timeline: 'Timeline',
+    people: 'People',
+    limits: 'Model limits',
+  },
+  districtCard: {
+    close: 'Close district card',
+    walk: 'Walk here',
+    report: 'Open in report',
+    sameAsReal: 'same as real history',
+    aboveReal: '{diff} {unit} above real history',
+    belowReal: '{diff} {unit} below real history',
+    housingMore: 'Your social housing: {units} more units than real · ready {quarter}',
+    housingFewer: 'Your social housing: {units} fewer units than real · from {quarter}',
+  },
+
   /** City names (play-loop Requirement 12.5). */
   cityNames: {
     Taipei: 'Taipei',

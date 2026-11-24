@@ -59,10 +59,10 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
   - [x] 9.3 City_View `walkTo(place)` and Go there
   - [x] 9.4 Year-end projection in the Quick_Preview (Requirement 5.9) and the blocked tool opening by itself (Requirement 5.10); Quick_Preview cost against the same quarter without the edit (fix of task 8)
 
-- [ ] 10. City_Report and District_Card (Requirement 7)
-  - [ ] 10.1 `src/ui/report/city-report.ts` with five tabs mounting the existing components
-  - [ ] 10.2 `src/ui/district-card.ts` and City_View `project(code)`
-  - [ ] 10.3 Main screen reduced to Turn_Bar, Policy_Cards, city tools, District_Card, Illustration_Note and disclosure; `layout.css` and `hud.css` updated
+- [x] 10. City_Report and District_Card (Requirement 7)
+  - [x] 10.1 `src/ui/report/city-report.ts` with five tabs mounting the existing components (model limits built when the tab is first shown; the language control in the report tools row)
+  - [x] 10.2 `src/ui/district-card.ts` and City_View `project(code)`; the card is placed between the Turn_Bar and the Policy_Cards
+  - [x] 10.3 Main screen reduced to Turn_Bar, Policy_Cards, city tools, District_Card, Illustration_Note and disclosure; `layout.css` and `hud.css` updated. The small district map of the Policy_Dialog (task 8.2) stays a list: the District_Card and the report list cover district choice
 
 - [ ] 11. First_Play_Guide (Requirement 8)
   - [ ] 11.1 `src/ui/guide/first-play.ts`; replay from the City_Report

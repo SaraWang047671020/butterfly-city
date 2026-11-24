@@ -379,6 +379,27 @@ export const ZH: UiStrings = {
     rule: '依固定規則最多列出 3 件：先列完工和重大事件，再依「與真實歷史的差距」變化最大的排序。',
   },
 
+  report: {
+    open: '城市報告',
+    title: '城市報告',
+    tabsLabel: '報告分頁',
+    districts: '各區數據',
+    map: '地圖顏色',
+    timeline: '時間軸',
+    people: '市民',
+    limits: '模型限制',
+  },
+  districtCard: {
+    close: '關閉區域小卡',
+    walk: '走到這裡',
+    report: '在報告中查看',
+    sameAsReal: '與真實歷史相同',
+    aboveReal: '比真實歷史高 {diff} {unit}',
+    belowReal: '比真實歷史低 {diff} {unit}',
+    housingMore: '你的社宅：比真實多 {units} 戶 · {quarter} 完工',
+    housingFewer: '你的社宅：比真實少 {units} 戶 · {quarter} 起',
+  },
+
   cityNames: {
     Taipei: '臺北市',
     'New Taipei': '新北市',

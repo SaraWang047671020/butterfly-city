@@ -113,6 +113,8 @@ export interface CityView {
   setSites(sites: readonly SiteView[]): void;
   /** Enters Walk_Mode at a place of a district (play-loop Requirement 6.5, Go_There_Action). */
   walkTo(place: WalkPlace): void;
+  /** Viewport position of a district's centre, a little above the ground; null when behind the camera (District_Card). */
+  project(code: string): { readonly x: number; readonly y: number } | null;
   readonly mode: () => CityMode;
   dispose(): void;
 }
@@ -136,7 +138,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     p.className = 'city-fallback';
     p.textContent = o.strings.fallback;
     root.appendChild(p);
-    return { root, webgl: false, update() {}, setPaused() {}, setQuality() {}, setMode() {}, setSites() {}, walkTo() {}, mode: () => 'overview', dispose: () => root.remove() };
+    return { root, webgl: false, update() {}, setPaused() {}, setQuality() {}, setMode() {}, setSites() {}, walkTo() {}, project: () => null, mode: () => 'overview', dispose: () => root.remove() };
   }
 
   const canvas = s.renderer.domElement;
@@ -681,6 +683,16 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     },
     setMode,
     walkTo,
+    project(code) {
+      const m = districts.byCode.get(code);
+      if (m === undefined || mode === 'walk') return null;
+      const v = m.center.clone();
+      v.y += 12;
+      v.project(s.camera);
+      if (v.z > 1 || v.z < -1) return null;
+      const r = canvas.getBoundingClientRect();
+      return { x: r.left + ((v.x + 1) / 2) * r.width, y: r.top + ((1 - v.y) / 2) * r.height };
+    },
     mode: () => mode,
     setQuality(q) {
       quality = q;
