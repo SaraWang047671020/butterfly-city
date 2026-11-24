@@ -12,6 +12,7 @@ import { LifeController } from './game/life/controller.ts';
 import { readCharacter, writeCharacter } from './save/character-store.ts';
 import { createCharacterCreation, pick, type CreationFiles } from './ui/character/creation.ts';
 import { createCharacterChip } from './ui/character/chip.ts';
+import { createLifeDialog, type LifeFiles } from './ui/life/life-dialog.ts';
 import { GameController, type DemoPort } from './game/controller.ts';
 import { describeDemo, readDemo } from './game/demo.ts';
 import { buildStoryFacts } from './game/story-facts.ts';
@@ -32,7 +33,7 @@ import './styles/layout.css';
 import './styles/hud.css';
 import { mountCityView, type CityCitizen, type CityView, type SiteView } from './ui/city/index.ts';
 import { formatNumber } from './ui/format/number.ts';
-import { UI_STRINGS, quarterLabel, unitLabel, LOCALE } from './ui/strings.ts';
+import { UI_STRINGS, fillTemplate, quarterLabel, unitLabel, LOCALE } from './ui/strings.ts';
 import type { MapDistrictView, MapViewModel } from './types/view.ts';
 
 const BASE_URL = import.meta.env.BASE_URL;
@@ -369,11 +370,46 @@ async function start(): Promise<void> {
     host.appendChild(creation.root);
     const chip = createCharacterChip(document);
     app.addMainBlock(chip.root);
+    // "My life" (play-loop task 7): the Life dialog from the Turn_Bar row.
+    const lifeDialog = createLifeDialog(document, {
+      files: files as unknown as LifeFiles,
+      districts: districtRows,
+      view: () => lifeCtl.view(),
+      preview: (d) => lifeCtl.previewLife(d),
+      apply: (d) => lifeCtl.applyLife(d),
+      fallbackFocus: () => document.querySelector<HTMLElement>('.turn-bar__button'),
+    });
+    host.appendChild(lifeDialog.root);
+    const lifeButton = app.addHeaderButton(UI_STRINGS.characterUi.myLife, (b) => lifeDialog.open(b));
+    // Life_Decisions under their quarters in the report's Timeline tab (Requirement 3A.7), labelled "My life".
+    const lifeList = document.createElement('section');
+    lifeList.className = 'ui-life-timeline';
+    app.reportTab('timeline')?.prepend(lifeList);
+    const kindTitle = (kind: string) => pick(((files.characters.decisions as Record<string, unknown>)[kind] as Record<string, Parameters<typeof pick>[0]> | undefined)?.['title']);
+    const renderLifeList = (entries: readonly { quarter: string; decision: { kind: string } }[]): void => {
+      const h = document.createElement('h3');
+      h.className = 'ui-report__heading';
+      h.textContent = UI_STRINGS.characterUi.lifeTimeline;
+      const ul = document.createElement('ul');
+      ul.className = 'ui-life-timeline__items';
+      for (const e of entries) {
+        const li = document.createElement('li');
+        li.textContent = fillTemplate(UI_STRINGS.characterUi.lifeEntry, { quarter: quarterLabel(e.quarter), decision: kindTitle(e.decision.kind) });
+        ul.appendChild(li);
+      }
+      const empty = document.createElement('p');
+      empty.className = 'ui-illustration-note';
+      empty.textContent = UI_STRINGS.characterUi.lifeEmpty;
+      lifeList.replaceChildren(h, entries.length === 0 ? empty : ul);
+    };
     const renderLife = (): void => {
       const v = lifeCtl.view();
       chip.update({ view: v, occupationName, districtName: nameOfDistrict });
       const me = v?.life.members.find((m) => m.kind === 'self');
       if (me !== undefined) cityView.setAvatar(me.look);
+      cityView.setHousehold(v?.life.home ?? null, (v?.life.members ?? []).filter((m) => m.kind !== 'self').map((m) => ({ kind: m.kind, colour: m.look.colour })));
+      lifeButton.hidden = v === null || v.planning === null;
+      renderLifeList(v?.timeline ?? []);
       if (ctl.screen().kind === 'game' && !lifeCtl.hasCharacter() && !creation.isOpen()) creation.open();
     };
     lifeCtl.subscribe(renderLife);

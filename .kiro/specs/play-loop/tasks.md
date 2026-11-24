@@ -44,10 +44,10 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
   - [x] 6.3 City_View `setAvatar(look)` (clothing colour and body width; hair only in the 2D preview)
   - [x] 6.4 (Done 2026-11-24 with the user's option 1: `public/data/home-rent.json`, premium by floor-area band from the registered leases; draft `model-limits.json` section "Your character" for the user to review.) Rent of small homes: the district rent per m² is a mean over whole-home leases, so a 20 m² home is priced below real studio rents (2015Q1: Neihu 290 TWD per m², 5,800 TWD a month). Decision of the user pending; then the `model-limits.json` item on wages and home sizes (moved here from task 3.3)
 
-- [ ] 7. Life dialog (Requirement 3A)
-  - [ ] 7.1 `src/ui/life/life-dialog.ts`: decision cards, reasons and legal facts, with / without comparison
-  - [ ] 7.2 "My life" in the Turn_Bar; Life_Decisions in the Timeline_View
-  - [ ] 7.3 City_View `setHousehold(members)`
+- [x] 7. Life dialog (Requirement 3A)
+  - [x] 7.1 `src/ui/life/life-dialog.ts`: decision cards, reasons and legal facts, with / without comparison
+  - [x] 7.2 "My life" in the Turn_Bar row; Life_Decisions in a "My life" list at the top of the City_Report Timeline tab
+  - [x] 7.3 City_View `setHousehold(home, members)`: the household stands at the home (walking with the Avatar is phase 2)
 
 - [x] 8. Policy_Cards and Policy_Dialog (Requirement 5)
   - [x] 8.1 Not needed: the dialog renders its own fields with the Policy_Panel text helpers (`policy-text.ts`), so no field is shown twice

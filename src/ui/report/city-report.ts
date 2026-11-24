@@ -15,6 +15,8 @@ export interface CityReport {
   isOpen(): boolean;
   /** Shows a tab without opening the report (keyboard and pointer use the tab buttons). */
   select(tab: string): void;
+  /** The panel host of a tab, or null. */
+  host(tab: string): HTMLElement | null;
 }
 
 let reportCounter = 0;
@@ -101,5 +103,6 @@ export function createCityReport(doc: Document, strings: { readonly title: strin
     close: () => dialog.close(),
     isOpen: () => dialog.isOpen(),
     select,
+    host: (name) => tabs.find((t) => t.name === name)?.panel ?? null,
   };
 }

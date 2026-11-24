@@ -451,6 +451,23 @@ export const EN = {
     chipCommute: 'Commute',
     chipWhere: '{occupation} · {tenure} in {district}',
     loadError: 'The character files could not be loaded: {error}',
+    // Life dialog (play-loop Requirement 3A)
+    myLife: 'My life',
+    household: 'Household',
+    householdLine: '{members} · {tenure} in {district}',
+    memberSelf: 'you',
+    memberPartner: 'partner',
+    memberChild: 'child',
+    memberParent: 'parent',
+    married: 'married',
+    chooseDecision: 'Choose a decision to see what it changes for you.',
+    job: 'Job',
+    yes: 'Yes',
+    no: 'No',
+    source: 'Source',
+    lifeTimeline: 'My life',
+    lifeEmpty: 'No life decisions yet.',
+    lifeEntry: '{quarter} · {decision}',
   },
 
   /** City names (play-loop Requirement 12.5). */

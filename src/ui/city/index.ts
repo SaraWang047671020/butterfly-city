@@ -8,7 +8,7 @@ import { CHANGE_BOUNDS, changeToken, classOf, classToken } from './colours.ts';
 import { createSites, type SiteView } from './sites.ts';
 
 export type { SiteView } from './sites.ts';
-import { createDistricts } from './districts.ts';
+import { createDistricts, GROUND_DEPTH } from './districts.ts';
 import { stepFocus } from './focus-order.ts';
 import { boundsOf, inAnyPolygon } from './geometry.ts';
 import { createGhosts, figuresOf } from './ghosts.ts';
@@ -19,7 +19,7 @@ import { mulberry32 } from './random.ts';
 import { createScene, type QualityLevel } from './scene.ts';
 import { buildStreetGrid } from './street-grid.ts';
 import { readTokens } from './tokens.ts';
-import { createTraffic } from './traffic.ts';
+import { buildModels, createTraffic, moverMaterial } from './traffic.ts';
 import { createWalker, nearestFree } from './walk.ts';
 import { createCitizens, type CityCitizen } from './citizens.ts';
 
@@ -115,6 +115,8 @@ export interface CityView {
   walkTo(place: WalkPlace): void;
   /** The player Character's look on the Avatar: clothing colour id and body id (play-loop task 6.3). */
   setAvatar(look: { readonly colour: string; readonly body: string }): void;
+  /** The household other than the Character, standing at the home (play-loop task 7.3). */
+  setHousehold(home: string | null, members: readonly { readonly kind: string; readonly colour: string }[]): void;
   /** Viewport position of a district's centre, a little above the ground; null when behind the camera (District_Card). */
   project(code: string): { readonly x: number; readonly y: number } | null;
   readonly mode: () => CityMode;
@@ -140,7 +142,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     p.className = 'city-fallback';
     p.textContent = o.strings.fallback;
     root.appendChild(p);
-    return { root, webgl: false, update() {}, setPaused() {}, setQuality() {}, setMode() {}, setSites() {}, walkTo() {}, setAvatar() {}, project: () => null, mode: () => 'overview', dispose: () => root.remove() };
+    return { root, webgl: false, update() {}, setPaused() {}, setQuality() {}, setMode() {}, setSites() {}, walkTo() {}, setAvatar() {}, setHousehold() {}, project: () => null, mode: () => 'overview', dispose: () => root.remove() };
   }
 
   const canvas = s.renderer.domElement;
@@ -612,6 +614,15 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     return nearestFree(collider, c.x + 6, c.z - 6, 4) ?? [c.x + 6, c.z - 6];
   };
   const sites = createSites(s.scene, tokens, siteSpot);
+  // The Character's household at home (play-loop task 7.3): standing figures, the same person model as the Traffic.
+  const HOUSEHOLD_MAX = 6;
+  const householdMesh = new THREE.InstancedMesh(buildModels(tokens).person, moverMaterial({ value: 0 }, false), HOUSEHOLD_MAX);
+  // The mover shader reads instanceColor, which three.js creates on the first setColorAt: set every slot now,
+  // before the first render, or the program does not compile.
+  for (let i = 0; i < HOUSEHOLD_MAX; i++) householdMesh.setColorAt(i, tokens.color('--city-avatar'));
+  householdMesh.count = 0;
+  householdMesh.frustumCulled = false;
+  s.scene.add(householdMesh);
 
   // Go_There_Action: Walk_Mode at a place of the district, then the district is selected.
   const walkTo = (place: WalkPlace): void => {
@@ -685,6 +696,25 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     },
     setMode,
     walkTo,
+    setHousehold(home, members) {
+      const m = home === null ? undefined : districts.byCode.get(home);
+      householdMesh.count = 0;
+      if (m === undefined) return;
+      const [hx, hz] = nearestFree(collider, m.center.x - 6, m.center.z + 6, 3) ?? [m.center.x - 6, m.center.z + 6];
+      const tmp = new THREE.Object3D();
+      members.slice(0, HOUSEHOLD_MAX).forEach((p, i) => {
+        const child = p.kind === 'child';
+        tmp.position.set(hx + i * 1.4, GROUND_DEPTH, hz);
+        tmp.rotation.set(0, Math.PI / 2, 0);
+        tmp.scale.setScalar(child ? 0.9 : 1.4);
+        tmp.updateMatrix();
+        householdMesh.setMatrixAt(i, tmp.matrix);
+        householdMesh.setColorAt(i, tokens.color(`--look-${p.colour}`));
+      });
+      householdMesh.count = Math.min(HOUSEHOLD_MAX, members.length);
+      householdMesh.instanceMatrix.needsUpdate = true;
+      if (householdMesh.instanceColor !== null) householdMesh.instanceColor.needsUpdate = true;
+    },
     setAvatar(look) {
       walker.setLook(tokens.color(`--look-${look.colour}`), look.body === 'a' ? 0.85 : look.body === 'c' ? 1.2 : 1);
     },

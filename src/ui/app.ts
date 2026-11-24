@@ -71,6 +71,10 @@ export interface App {
   addPanel(name: string, title: string, collapsed: boolean): HTMLElement;
   /** Places a block on the main game screen (the character chip). */
   addMainBlock(block: HTMLElement): void;
+  /** Adds a button to the Turn_Bar row, next to the City_Report button ("My life"). */
+  addHeaderButton(label: string, onClick: (button: HTMLButtonElement) => void): HTMLButtonElement;
+  /** The host of a City_Report tab (to add a section), or null. */
+  reportTab(name: string): HTMLElement | null;
   /** Adds a City_Report tab whose content is built when it is shown (play-loop Requirement 7.2). */
   addReportTab(name: string, title: string, onShow: (host: HTMLElement) => void): HTMLElement;
   /** Renders `controller.screen()` now and after every publish. Returns a detach function. */
@@ -383,6 +387,16 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
     addMainBlock: (block) => {
       gameScreen.appendChild(block);
     },
+    addHeaderButton(label, onClick) {
+      const b = doc.createElement('button');
+      b.type = 'button';
+      b.className = 'ui-report-open';
+      b.textContent = label;
+      b.addEventListener('click', () => onClick(b));
+      headerHost.insertBefore(b, reportButton);
+      return b;
+    },
+    reportTab: (name) => report.host(name),
     addReportTab: (name, title, onShow) => report.addTab(name, title, onShow),
     addMapControl(label, onClick) {
       const b = doc.createElement('button');

@@ -1,0 +1,140 @@
+/* Life dialog (play-loop Requirement 3A, approved design 2026-11-23). Tokens only; cards and chips reuse character.css. */
+.ui-life {
+  display: grid;
+  grid-template-columns: 16rem minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.ui-life__household {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-raised);
+}
+
+.ui-life__figures {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  min-height: var(--space-7);
+  margin: var(--space-2) 0;
+}
+
+.ui-life__figure {
+  display: block;
+  width: var(--space-5);
+  height: var(--space-7);
+  border-radius: var(--radius-pill) var(--radius-pill) var(--radius-sm) var(--radius-sm);
+}
+
+.ui-life__figure--child {
+  height: var(--space-6);
+  width: var(--space-4);
+}
+
+.ui-life-look--teal { background: var(--look-teal); }
+.ui-life-look--amber { background: var(--look-amber); }
+.ui-life-look--rose { background: var(--look-rose); }
+.ui-life-look--slate { background: var(--look-slate); }
+.ui-life-look--lime { background: var(--look-lime); }
+.ui-life-look--violet { background: var(--look-violet); }
+
+.ui-life__line {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.ui-life__decisions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ui-life__intro {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.ui-life__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: var(--space-2);
+}
+
+.ui-life__card.is-unavailable {
+  opacity: 0.6;
+}
+
+.ui-life__card:disabled {
+  cursor: not-allowed;
+}
+
+.ui-life__why {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.ui-life__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ui-life__form:empty {
+  display: none;
+}
+
+.ui-life__legal {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-page);
+  border: 1px solid var(--color-line-subtle);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.ui-life__legal p {
+  margin: 0 0 var(--space-2);
+}
+
+.ui-life__compare {
+  margin: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+  font-size: var(--font-size-sm);
+}
+
+.ui-life__compare:empty {
+  display: none;
+}
+
+@media (max-width: 40rem) {
+  .ui-life {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Life_Decisions in the City_Report timeline (Requirement 3A.7). */
+.ui-life-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-line-subtle);
+}
+
+.ui-life-timeline__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-sm);
+}
+
+.ui-life-timeline__items li {
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--color-line-subtle);
+}
