@@ -182,6 +182,15 @@
   --city-landmark-water: #9fd6ff;
   --city-landmark-green-tile: #3f8f6a;
   --city-avatar: #55c1ff;
+  /* The player Character's look (play-loop Requirement 2.2): clothing colours, skin and hair of the preview. */
+  --look-teal: #3fb5a8;
+  --look-amber: #f0a03c;
+  --look-rose: #e07a9a;
+  --look-slate: #8a97b2;
+  --look-lime: #a6d65a;
+  --look-violet: #9a7bc4;
+  --look-skin: #f1c9a5;
+  --look-hair: #3a2a22;
   --city-citizen: #ffb454;
   --city-butterfly: #7fe3ff;
   --city-social-housing: #62e0a0;

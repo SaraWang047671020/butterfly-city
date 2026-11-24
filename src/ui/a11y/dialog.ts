@@ -17,6 +17,8 @@ export interface DialogOpenOptions {
   /** Called on Escape (the `cancel` event) and by the Close control. Must cancel the action and close the dialog. Defaults to `close()`. */
   readonly onCancel?: () => void;
   readonly size?: DialogSize;
+  /** False hides the Close control (a step the player must complete, such as Character_Creation). Default true. */
+  readonly closable?: boolean;
 }
 
 export interface DialogManager {
@@ -111,6 +113,7 @@ export function createDialogManager(doc: Document, getFallbackFocus: () => HTMLE
       opener = options.opener;
       onCancel = options.onCancel ?? null;
       root.dataset['size'] = options.size ?? 'md';
+      closeButton.hidden = options.closable === false;
       kicker.textContent = options.kicker ?? '';
       kicker.hidden = options.kicker === undefined;
       heading.textContent = options.title;

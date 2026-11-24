@@ -100,7 +100,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
-    width: min(52rem, calc(100% - 2 * var(--space-3)));
+    width: min(52rem, calc(100% - 2 * 20rem));
   }
 
   .ui-app .ui-block--turn-bar .turn-bar {
@@ -154,6 +154,21 @@
     left: var(--space-3);
     bottom: var(--space-3);
     max-width: 15rem;
+  }
+
+  /* Character chip (play-loop Requirement 7.1): top left. */
+  .ui-character-chip {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    max-width: 18rem;
+  }
+
+  .ui-character-chip__where {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 9rem;
   }
 
   /* District_Card near the selected district; the App sets --card-x and --card-y each frame. */
@@ -249,6 +264,17 @@
   }
 
   .ui-main-note {
+    display: none;
+  }
+
+  /* The character chip sits under the city tools, which take the top of a narrow screen. */
+  .ui-character-chip {
+    position: absolute;
+    top: calc(2 * var(--target-comfortable) + 3 * var(--space-2));
+    left: var(--space-2);
+  }
+
+  .ui-character-chip__where {
     display: none;
   }
 

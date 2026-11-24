@@ -113,6 +113,8 @@ export interface CityView {
   setSites(sites: readonly SiteView[]): void;
   /** Enters Walk_Mode at a place of a district (play-loop Requirement 6.5, Go_There_Action). */
   walkTo(place: WalkPlace): void;
+  /** The player Character's look on the Avatar: clothing colour id and body id (play-loop task 6.3). */
+  setAvatar(look: { readonly colour: string; readonly body: string }): void;
   /** Viewport position of a district's centre, a little above the ground; null when behind the camera (District_Card). */
   project(code: string): { readonly x: number; readonly y: number } | null;
   readonly mode: () => CityMode;
@@ -138,7 +140,7 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     p.className = 'city-fallback';
     p.textContent = o.strings.fallback;
     root.appendChild(p);
-    return { root, webgl: false, update() {}, setPaused() {}, setQuality() {}, setMode() {}, setSites() {}, walkTo() {}, project: () => null, mode: () => 'overview', dispose: () => root.remove() };
+    return { root, webgl: false, update() {}, setPaused() {}, setQuality() {}, setMode() {}, setSites() {}, walkTo() {}, setAvatar() {}, project: () => null, mode: () => 'overview', dispose: () => root.remove() };
   }
 
   const canvas = s.renderer.domElement;
@@ -683,6 +685,9 @@ export function mountCityView(host: HTMLElement, o: CityViewOptions): CityView {
     },
     setMode,
     walkTo,
+    setAvatar(look) {
+      walker.setLook(tokens.color(`--look-${look.colour}`), look.body === 'a' ? 0.85 : look.body === 'c' ? 1.2 : 1);
+    },
     project(code) {
       const m = districts.byCode.get(code);
       if (m === undefined || mode === 'walk') return null;

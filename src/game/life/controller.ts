@@ -112,6 +112,11 @@ export class LifeController {
     return this.guide;
   }
 
+  /** Character_Numbers of a start state in 2015Q1 with real history rent (Character_Creation, Requirement 2.8). */
+  previewStart(start: LifeState): CharacterNumbers {
+    return this.numbersOf(start, 2015, this.deps.historyRent(start.home, 0));
+  }
+
   /** Character_Numbers of the Planning_Quarter with and without a decision (Requirement 3A.5); null when none applies. */
   previewLife(decision: LifeDecision): { readonly with: CharacterNumbers; readonly without: CharacterNumbers } | null {
     const v = this.view();

@@ -28,6 +28,8 @@ export interface Walker {
   /** Places the Avatar at the free spot nearest to (x, z), facing `heading`. */
   start(x: number, z: number, heading: number): void;
   setVisible(v: boolean): void;
+  /** The Character's look: clothing colour and a body width factor (play-loop Requirement 2.7: display only). */
+  setLook(colour: THREE.Color, width: number): void;
   /** Moves the Avatar and the camera; `snap` places the camera without easing (reduced motion). */
   update(dt: number, camera: THREE.PerspectiveCamera, snap: boolean): void;
   key(key: string, down: boolean): boolean;
@@ -129,10 +131,11 @@ export function createWalker(scene: THREE.Scene, collider: Collider, tokens: Cit
     return { forward: Math.max(-1, Math.min(1, fwd)), turn: Math.max(-1, Math.min(1, turn)), run: keys.has('shift') };
   };
 
+  let bodyWidth = 1;
   const place = () => {
     tmp.position.copy(position);
     tmp.rotation.set(0, heading, 0);
-    tmp.scale.setScalar(AVATAR_SCALE);
+    tmp.scale.set(AVATAR_SCALE * bodyWidth, AVATAR_SCALE, AVATAR_SCALE * bodyWidth);
     tmp.updateMatrix();
     avatar.setMatrixAt(0, tmp.matrix);
     avatar.instanceMatrix.needsUpdate = true;
@@ -159,6 +162,12 @@ export function createWalker(scene: THREE.Scene, collider: Collider, tokens: Cit
         }
       }
       heading = best;
+      place();
+    },
+    setLook(colour, width) {
+      avatar.setColorAt(0, colour);
+      if (avatar.instanceColor !== null) avatar.instanceColor.needsUpdate = true;
+      bodyWidth = width;
       place();
     },
     setVisible(v) {

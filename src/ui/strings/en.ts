@@ -419,6 +419,40 @@ export const EN = {
     housingFewer: 'Your social housing: {units} fewer units than real · from {quarter}',
   },
 
+  // Character_Creation and the character chip (play-loop Requirement 2). Texts about the options come from the
+  // Character_File; these are the controls.
+  characterUi: {
+    step: 'Step {n} of 4',
+    back: 'Back',
+    next: 'Next',
+    name: 'Name',
+    pronouns: 'Pronouns',
+    body: 'Body',
+    hair: 'Hair',
+    colour: 'Clothing colour',
+    bodies: { a: 'Slim', b: 'Medium', c: 'Broad' },
+    hairs: { short: 'Short', medium: 'Medium', long: 'Long', tied: 'Tied', none: 'None' },
+    colours: { teal: 'Teal', amber: 'Amber', rose: 'Rose', slate: 'Slate', lime: 'Lime', violet: 'Violet' },
+    workWhere: 'Where do you work?',
+    tenure: 'How you live',
+    renting: 'Renting',
+    family: 'With family',
+    district: 'District',
+    youIn: 'You in {quarter}',
+    ofIncome: 'of income on rent',
+    toWork: 'minutes to work',
+    noTrip: 'You work in the district where you live.',
+    noValue: 'no value',
+    nameRequired: 'Enter a name of 1 to 20 characters.',
+    wage: 'TWD {wage} a month in {year}',
+    rentPerM2: 'TWD {rent} per m²',
+    chipLabel: 'You: {name}',
+    chipRent: 'Rent',
+    chipCommute: 'Commute',
+    chipWhere: '{occupation} · {tenure} in {district}',
+    loadError: 'The character files could not be loaded: {error}',
+  },
+
   /** City names (play-loop Requirement 12.5). */
   cityNames: {
     Taipei: 'Taipei',

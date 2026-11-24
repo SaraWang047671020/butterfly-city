@@ -69,6 +69,8 @@ export interface App {
   addMapControl(label: string, onClick: (button: HTMLButtonElement) => void): HTMLButtonElement;
   /** Adds a City_Report tab and returns its host (story-layer Story_Panel). `collapsed` is no longer used. */
   addPanel(name: string, title: string, collapsed: boolean): HTMLElement;
+  /** Places a block on the main game screen (the character chip). */
+  addMainBlock(block: HTMLElement): void;
   /** Adds a City_Report tab whose content is built when it is shown (play-loop Requirement 7.2). */
   addReportTab(name: string, title: string, onShow: (host: HTMLElement) => void): HTMLElement;
   /** Renders `controller.screen()` now and after every publish. Returns a detach function. */
@@ -378,6 +380,9 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   return {
     cityLayer,
     addPanel: (name, title) => report.addTab(name, title),
+    addMainBlock: (block) => {
+      gameScreen.appendChild(block);
+    },
     addReportTab: (name, title, onShow) => report.addTab(name, title, onShow),
     addMapControl(label, onClick) {
       const b = doc.createElement('button');

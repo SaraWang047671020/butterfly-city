@@ -10,6 +10,8 @@ import { loadStoryFiles, type StoryFiles } from './data/story-loader.ts';
 import { loadCharacterFiles } from './data/character-loader.ts';
 import { LifeController } from './game/life/controller.ts';
 import { readCharacter, writeCharacter } from './save/character-store.ts';
+import { createCharacterCreation, pick, type CreationFiles } from './ui/character/creation.ts';
+import { createCharacterChip } from './ui/character/chip.ts';
 import { GameController, type DemoPort } from './game/controller.ts';
 import { describeDemo, readDemo } from './game/demo.ts';
 import { buildStoryFacts } from './game/story-facts.ts';
@@ -154,6 +156,8 @@ async function start(): Promise<void> {
     store: new SaveStore(storagePort()),
     scheduler: { defer: (fn) => window.setTimeout(fn, 0) },
     demo: demoPort(data),
+    // A new game asks for a new Character (play-loop Requirement 2.1).
+    onNewGame: () => life?.clearCharacter(),
   });
   const ctl = controller;
 
@@ -342,6 +346,36 @@ async function start(): Promise<void> {
   });
   const langButton = app.addMapControl(languageLabel(), () => switchLanguage(otherLocale()));
   langButton.lang = otherLocale();
+  // Character_Creation and the character chip (play-loop task 6). The creation screen opens on the game screen
+  // whenever there is no Character (a new game, or the first game after this feature).
+  const lifeCtl = life;
+  if (lifeCtl !== null && characterFiles.ok) {
+    const files = characterFiles.value;
+    const districtRows = data.districts.map((d) => ({ code: d.code, name: d.name, city: d.city as string }));
+    const nameOfDistrict = (code: string) => districtRows.find((d) => d.code === code)?.name ?? code;
+    const occupationName = (id: string | null) => pick(files.characters.occupations.find((o) => o.id === id)?.name);
+    const creation = createCharacterCreation(document, {
+      files: files as unknown as CreationFiles,
+      districts: districtRows,
+      rent2015: (code) => (rentSeries === undefined || rentSeries.level !== 'district' ? null : (rentSeries.series[code]?.[0]?.value ?? null)),
+      preview: (start) => lifeCtl.previewStart(start),
+      onConfirm: (c) => lifeCtl.createCharacter(c),
+      fallbackFocus: () => document.querySelector<HTMLElement>('.turn-bar__button'),
+    });
+    host.appendChild(creation.root);
+    const chip = createCharacterChip(document);
+    app.addMainBlock(chip.root);
+    const renderLife = (): void => {
+      const v = lifeCtl.view();
+      chip.update({ view: v, occupationName, districtName: nameOfDistrict });
+      const me = v?.life.members.find((m) => m.kind === 'self');
+      if (me !== undefined) cityView.setAvatar(me.look);
+      if (ctl.screen().kind === 'game' && !lifeCtl.hasCharacter() && !creation.isOpen()) creation.open();
+    };
+    lifeCtl.subscribe(renderLife);
+    ctl.subscribe(renderLife);
+    renderLife();
+  }
   app.attach(ctl);
 }
 

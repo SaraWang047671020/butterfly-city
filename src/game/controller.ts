@@ -59,6 +59,8 @@ export interface GameControllerDeps {
   readonly store: SaveStorePort;
   readonly scheduler: Scheduler;
   readonly demo: DemoPort;
+  /** Called when a new game replaces the session (play-loop Requirement 2.1: the new game asks for a Character). */
+  readonly onNewGame?: () => void;
 }
 
 type Pending =
@@ -95,6 +97,7 @@ export class GameController {
   private readonly store: SaveStorePort;
   private readonly scheduler: Scheduler;
   private readonly demo: DemoPort;
+  private readonly onNewGame: (() => void) | undefined;
   private readonly listeners = new Set<(view: GameView) => void>();
 
   private session: GameSession | null = null;
@@ -124,6 +127,7 @@ export class GameController {
     this.store = deps.store;
     this.scheduler = deps.scheduler;
     this.demo = deps.demo;
+    this.onNewGame = deps.onNewGame;
     this.storedExists = false;
     this.readStoredAtStart();
     this.actions = this.makeActions();
@@ -299,6 +303,7 @@ export class GameController {
       this.dialog = { kind: 'confirm', action: 'new-game' };
     } else {
       this.replaceSession(newSession(this.data, this.registry), null);
+      this.onNewGame?.();
     }
     this.publish();
   }
@@ -363,7 +368,10 @@ export class GameController {
       this.publish();
       return;
     }
-    if (p.action === 'new-game') this.replaceSession(newSession(this.data, this.registry), null);
+    if (p.action === 'new-game') {
+      this.replaceSession(newSession(this.data, this.registry), null);
+      this.onNewGame?.();
+    }
     else if (p.action === 'load-demo') {
       if (this.demo.ok) this.loadDemo(this.demo.save);
       else this.dialog = { kind: 'demo', demo: null, unavailableReason: this.demo.reason };
