@@ -41,18 +41,18 @@ const clone = (): Json => JSON.parse(JSON.stringify(real));
 const rules = (x: unknown, c: ValidationContext = ctx): string[] => validateParamsFile(x, c).map((e) => e.rule);
 
 describe('the committed params.json', () => {
-  it('has 81 ids and source types 8 / 54 / 19', () => {
-    expect(ids).toHaveLength(81);
+  it('has 74 ids and source types 8 / 54 / 12', () => {
+    expect(ids).toHaveLength(74);
     const counts = { 1: 0, 2: 0, 3: 0 };
     for (const id of ids) counts[typeOf(id)] += 1;
-    expect(counts).toEqual({ 1: 8, 2: 54, 3: 19 });
-    expect(EXPECTED_SOURCE_TYPE_COUNTS).toEqual({ 1: 8, 2: 54, 3: 19 });
+    expect(counts).toEqual({ 1: 8, 2: 54, 3: 12 });
+    expect(EXPECTED_SOURCE_TYPE_COUNTS).toEqual({ 1: 8, 2: 54, 3: 12 });
   });
 
-  it('has status counts 8 verified, 53 secondary, 20 gap', () => {
+  it('has status counts 8 verified, 53 secondary, 13 gap', () => {
     const status: Record<string, number> = {};
     for (const e of Object.values<Json>(real.parameters)) status[e.status] = (status[e.status] ?? 0) + 1;
-    expect(status).toEqual({ verified: 8, secondary: 53, gap: 20 });
+    expect(status).toEqual({ verified: 8, secondary: 53, gap: 13 });
   });
 
   it('passes the validator with no error', () => {
@@ -134,7 +134,7 @@ describe('validateParamsFile, one defect each', () => {
     expect(rules(real, { ...ctx, sourceTypes: st })).toContain('source-type');
   });
 
-  it('reports a source type count that differs from 8 / 54 / 19', () => {
+  it('reports a source type count that differs from 8 / 54 / 12', () => {
     const type2 = ids.find((id) => typeOf(id) === 2) as string;
     const st = { ...sourceTypes, [type2]: 1 as const };
     const errs = validateParamsFile(real, { ...ctx, sourceTypes: st });

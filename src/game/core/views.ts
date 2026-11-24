@@ -67,7 +67,7 @@ import { run } from '../../simulation/engine.ts';
 import { roundHalfUp } from '../../simulation/numeric.ts';
 import { scalar } from '../../simulation/params.ts';
 import { quarterAt, quarterIndex, quarterYear } from '../../simulation/quarter.ts';
-import { refOf } from './checks.ts';
+import { affordableValue, refOf } from './checks.ts';
 import { constructionEntries } from './construction.ts';
 import { populationChange, priceToIncome } from './conversions.ts';
 import { followsRealTrack, playerTimeline, playerValue } from './policy.ts';
@@ -615,6 +615,10 @@ function fieldView(p: PanelCtx, rule: ToolRule, field: ToolField, area: AreaKey,
     }
     const own = p.timeline.find((x) => x.quarter === p.planning)?.tools[rule.id]?.[field.id]?.[area] ?? 0;
     sliderUpper = cityYearSliderUpper(info.lower, info.upper, through, own);
+  }
+  // No Documented_Limit: the slider ends where the budget of the year runs out (housing-tools Requirement 2.2).
+  if (!Number.isFinite(sliderUpper) && editable === 'yes' && !p.complete) {
+    sliderUpper = Math.max(info.lower, affordableValue(s, target, field.integer === true));
   }
 
   const draft = ui.drafts.get(key) ?? null;

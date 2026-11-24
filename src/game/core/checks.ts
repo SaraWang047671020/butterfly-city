@@ -225,6 +225,42 @@ function candidateValue(candidate: PolicyTimeline, t: FieldTarget, q: QuarterKey
   return typeof v === 'number' ? v : null;
 }
 
+/** Largest search value of `affordableValue`; far above any real field value. */
+const AFFORD_CAP = 1e12;
+
+/**
+ * The largest value of a field the Annual_Budget and the tool ceiling allow in the Planning_Quarter, with every
+ * other field as it is (housing-tools Requirement 2.2: a field without a Documented_Limit is limited by the budget
+ * only). Used as the slider end; the check of an edit stays `checkEditSync`. Integer fields give an integer;
+ * other fields are searched to 1 unit. Returns the current value when even that does not fit.
+ */
+export function affordableValue(session: EditSession, target: FieldTarget, integer: boolean): number {
+  const p = session.planning;
+  if (p === 'complete') return 0;
+  const ctx = context(session);
+  const tools = session.registry.tools;
+  const ledger = session.ledger ?? emptyLedger(planBudget(session.realTrack, session.params, tools, ctx));
+  const fits = (v: number): boolean => {
+    const setting = settingOf(playerTimeline(session.realTrack, withValue(session.diffs, session.realTrack, target, p, v)), p);
+    return setting !== undefined && checkBudget(setting, ledger, session.params, tools, ctx).ok;
+  };
+  const current = playerValue(session.realTrack, session.diffs, target, p) ?? 0;
+  let lo = Math.max(0, current);
+  if (!fits(lo)) return lo;
+  let hi = Math.max(1, lo * 2);
+  while (hi < AFFORD_CAP && fits(hi)) {
+    lo = hi;
+    hi *= 2;
+  }
+  if (hi >= AFFORD_CAP && fits(AFFORD_CAP)) return AFFORD_CAP;
+  while (hi - lo > 1) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (fits(mid)) lo = mid;
+    else hi = mid;
+  }
+  return integer ? Math.floor(lo) : lo;
+}
+
 /** Phase 1 (no Engine run). */
 export function checkEditSync(session: EditSession, req: EditRequest): EditCheck {
   const p = session.planning;

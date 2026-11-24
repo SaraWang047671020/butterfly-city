@@ -47,3 +47,9 @@ The user asked that the spec follow this guidance (pasted in the session, summar
 ## Ghost lines and ghosts who give Missions (2026-11-24)
 
 The user's request: 「我覺得可以給鬼一些罐頭台詞，然後讓鬼指派任務給玩家」. Proposed limits in the requirements draft (Requirement 4.2 and 5A), to be confirmed with the requirements: Kind C ghosts and Memorial_Points never give Missions and have no invented lines; the Mission_Givers are Kind A ghosts, Kind B ghosts and Model_Ghosts (composite residents); a line after a Mission not met never blames the player.
+
+## Missions as outcomes; order of the specs (2026-11-24)
+
+The user: 「任務的部分現在都太簡單了，直接告訴玩家要去做什麼。應該是要給一個結果，然後讓玩家自己去判斷要用什麼方法才能達成。」 Answers: a Mission states an outcome (for example fewer people above the rent line in a district, a shorter mean commute), not a policy setting; its deadline is 4 to 8 quarters by how slowly the outcome responds; at most 2 Missions at a time (option chosen: 「依目標難度，4 到 8 季」). This changes the approved Requirement 4 and the design's Mission types; the change is written when the work returns to this spec.
+
+The user also found the policy range too small for varied lines and Missions and approved the order: `housing-tools` (with the budget made the real constraint, see its requirements), then `more-policies` with public transport fares, childcare, elder care and urban renewal, then back to `night-ghosts` (「可以，照這個順序，more-policies 就做你建議的四種」). The pure night modules already committed stay; `missions.ts` will be redone for outcome Missions.

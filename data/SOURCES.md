@@ -1244,7 +1244,7 @@ Regression: least squares with an intercept of the adult full fare (TWD) on the 
 
 ## 12. Parameter table
 
-The file public/data/params.json holds 81 parameter ids. Parameter_Source_Type 1 is a value from published research (8 ids), type 2 is a value computed from the open data of this pipeline (54 ids), and type 3 is a gap value (19 ids).
+The file public/data/params.json holds 74 parameter ids. Parameter_Source_Type 1 is a value from published research (8 ids), type 2 is a value computed from the open data of this pipeline (54 ids), and type 3 is a gap value (12 ids).
 
 ### All parameter ids
 
@@ -1307,13 +1307,6 @@ The file public/data/params.json holds 81 parameter ids. Parameter_Source_Type 1
 | `housing.householdSize.Taipei` | 2 | persons per household | verified | MOI Department of Household Registration, ODRP014 households and population by village, December 2020, https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP014 |
 | `housing.renterRate.New Taipei` | 2 | share of households | verified | DGBAS 2020 Population and Housing Census, table 34 (home ownership of ordinary households), New Taipei, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11065/230886/s034.ods |
 | `housing.renterRate.Taipei` | 2 | share of households | verified | DGBAS 2020 Population and Housing Census, table 34 (home ownership of ordinary households), Taipei, https://ws.dgbas.gov.tw/001/Upload/463/relfile/11065/230887/s034.ods |
-| `limit.commuterPass.subsidy.lowerFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
-| `limit.rentSubsidy.amount.lowerFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
-| `limit.rentSubsidy.amount.upperFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
-| `limit.rentSubsidy.households.lowerFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
-| `limit.rentSubsidy.households.upperFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
-| `limit.socialHousing.unitsStarted.lowerFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
-| `limit.socialHousing.unitsStarted.upperFactor` | 3 | multiple of the real value | gap | game default (.kiro/steering/simulation.md, policy tool limits), .kiro/steering/simulation.md |
 | `migration.commuteCostPerMinute` | 2 | TWD per minute per commuter per month | secondary | TDX Rail/Metro ODFare, Taipei Metro (TRTC), New Taipei Metro (NTMC), Danhai LRT (NTDLRT) and Ankeng LRT (NTALRT), adult single-journey full fare, Ministry of Transport and Communications, https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/ODFare/{TRTC,NTMC,NTDLRT,NTALRT}?%24format=JSON |
 | `migration.exitShare` | 3 | share of registered move-outs | gap | Ministry of the Interior, Department of Household Registration, registered move-in and move-out by village (ODRP002 for 2016 to 2017, ODRP011 from 2018) and population by village; Open Government Data License 1.0, https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP011 |
 | `migration.share` | 3 | share of residents per quarter | gap | Ministry of the Interior, Department of Household Registration, registered move-in and move-out by village (ODRP002 for 2016 to 2017, ODRP011 from 2018) and population by village; Open Government Data License 1.0, https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP011 |
@@ -1338,6 +1331,8 @@ These ids are not in params.json. When an id is absent, the engine applies the d
 
 | Id | Default applied by the engine |
 | --- | --- |
+| `limit.socialHousing.unitsStarted.lowerFactor` | No default recorded. |
+| `limit.socialHousing.unitsStarted.upperFactor` | No default recorded. |
 | `limit.socialHousing.unitsStarted.upperMin` | Absent: the upper limit is the upper factor times the real value, with a floor of 0 (budget.ts, checkLimit). |
 | `limit.socialHousing.unitsStarted.min` | Absent: the lower limit is the lower factor times the real value (budget.ts, checkLimit). |
 | `limit.socialHousing.unitsStarted.max` | Absent: the upper limit is the upper factor times the real value, raised to the upper minimum when that is present (budget.ts, checkLimit). |
@@ -1356,13 +1351,6 @@ The values below are game defaults or approximations chosen where no suitable me
 | `ghost.commuteThreshold` | 60 minutes one way | project rule; no study found for 60 minutes | The assumption is: project rule; no study found for 60 minutes. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
 | `ghost.shareBoth` | 0.004442 share of residents | Independence: a resident being rent burdened and a resident having a long commute are treated as independent events, so the joint share is the product of the two shares. No data on the joint distribution was found; it would replace this assumption. | The assumption is: Independence: a resident being rent burdened and a resident having a long commute are treated as independent events, so the joint share is the product of the two shares. No data on the joint distribution was found; it would replace this assumption.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
 | `ghost.size` | 1000 persons per ghost | One ghost stands for 1,000 residents; the value is a display scale. | The assumption is: One ghost stands for 1,000 residents; the value is a display scale.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
-| `limit.commuterPass.subsidy.lowerFactor` | 0 multiple of the real value | The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement. | The assumption is: The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
-| `limit.rentSubsidy.amount.lowerFactor` | 0 multiple of the real value | The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement. | The assumption is: The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
-| `limit.rentSubsidy.amount.upperFactor` | 2 multiple of the real value | The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement. | The assumption is: The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
-| `limit.rentSubsidy.households.lowerFactor` | 0 multiple of the real value | The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement. | The assumption is: The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
-| `limit.rentSubsidy.households.upperFactor` | 2 multiple of the real value | The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement. | The assumption is: The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
-| `limit.socialHousing.unitsStarted.lowerFactor` | 0 multiple of the real value | The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement. | The assumption is: The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
-| `limit.socialHousing.unitsStarted.upperFactor` | 2 multiple of the real value | The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement. | The assumption is: The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
 | `migration.exitShare` | 0.379541 share of registered move-outs | The share of residents who leave their district under rent pressure and also leave the two cities is assumed equal to the share of all registered move-outs that go outside the two cities. This is only an approximation: the files give the destination at the level of city or county and not district to district, they hold all moves and not only moves driven by rent burden, and the registered total includes cancelled registrations and "other" cases whose destination is unknown, which count as exits. Residents who leave because of rent may go to Taoyuan or Keelung more often or less often than other movers. A published measure of the destinations of rent-driven movers would replace it. This value is an assumption and not a research result. | The assumption is: The share of residents who leave their district under rent pressure and also leave the two cities is assumed equal to the share of all registered move-outs that go outside the two cities. This is only an approximation: the files give the destination at the level of city or county and not district to district, they hold all moves and not only moves driven by rent burden, and the registered total includes cancelled registrations and "other" cases whose destination is unknown, which count as exits. Residents who leave because of rent may go to Taoyuan or Keelung more often or less often than other movers. A published measure of the destinations of rent-driven movers would replace it. This value is an assumption and not a research result.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
 | `migration.share` | 0.011891 share of residents per quarter | The share of residents who leave when the burden excess passes the threshold is assumed equal to the ordinary quarterly move-out rate. This is only an approximation: the registered rate measures all moves, made for any reason (work, family, housing), not moves caused by a rise in rent burden, and the baseline already contains this ordinary movement, so the simulated movement partly counts it again. No study of the share of residents who leave because of a rent-burden rise in Taipei or New Taipei was found. A published measure of rent-driven displacement for the two cities, for example from a household survey of reasons for moving, would replace it. This value is an assumption and not a research result. | The assumption is: The share of residents who leave when the burden excess passes the threshold is assumed equal to the ordinary quarterly move-out rate. This is only an approximation: the registered rate measures all moves, made for any reason (work, family, housing), not moves caused by a rise in rent burden, and the baseline already contains this ordinary movement, so the simulated movement partly counts it again. No study of the share of residents who leave because of a rent-burden rise in Taipei or New Taipei was found. A published measure of rent-driven displacement for the two cities, for example from a household survey of reasons for moving, would replace it. This value is an assumption and not a research result.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
 | `migration.threshold` | 0.5 percentage points of rent burden | A rent-burden rise is assumed to move people only when it exceeds the ordinary year-to-year variation of the burden across districts. This is only an approximation: the spread of the baseline measures how much burden varied in the past for any reason, including income estimates that are interpolated, and not the rise at which households decide to move. No study of the rent-burden rise that triggers a move in Taipei or New Taipei was found. A household survey or panel study of rent burden before and after moves in the two cities would replace it. This value is an assumption and not a research result. | The assumption is: A rent-burden rise is assumed to move people only when it exceeds the ordinary year-to-year variation of the burden across districts. This is only an approximation: the spread of the baseline measures how much burden varied in the past for any reason, including income estimates that are interpolated, and not the rise at which households decide to move. No study of the rent-burden rise that triggers a move in Taipei or New Taipei was found. A household survey or panel study of rent burden before and after moves in the two cities would replace it. This value is an assumption and not a research result.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
@@ -1415,72 +1403,3 @@ Every district has a published value in every period.
 ### Data gaps of the low-use indicators
 
 No district is entirely without a published value.
-
-## Metro stations in the 3D city (city-3d spec)
-
-`src/ui/city/metro/station-data.ts` is generated by `npm run stations` (`scripts/build-stations.ts`, `scripts/metro/build.ts`) from the source `stations/tdx-metro-station` above and the TDX S2STravelTime files of the same source (`data/raw/stations/tdx-s2s-travel-time-TRTC.json`, `...-NTMC.json`).
-
-- Fields used: `StationID`, `StationName.En`, `StationName.Zh_tw` (Chinese name, shown in the Traditional Chinese UI), `StationPosition` (station files); `FromStationID`, `ToStationID`, `LineID` (S2S files, only to know which stations are consecutive).
-- Stations of the same English name on several lines are one station with several lines. A station is placed at the mean of its coordinates and assigned to a district by point-in-polygon on `public/data/districts.json`.
-- Opening dates after 2014 come from `OPENING_DATES` in `scripts/pipeline/commute/network.ts` (Dingpu 2015-07-06, Circular Line 2020-01-31). The City_View shows only what is open at the end of the displayed quarter.
-- Not included: the Sanying Line (opened 2026-06-30), the Danhai and Ankeng light rail (no English names in the NLSC file, no TDX run times) and the Taoyuan Airport MRT (not in the TDX files). Stations listed by TDX that have no segment are left out.
-- License: as for `stations/tdx-metro-station`.
-
-## Chinese names in the Traditional Chinese UI (play-loop spec, Requirement 12.5)
-
-- Districts: `src/ui/strings/district-names.generated.ts`, written by `npm run names` from `scripts/lib/districts.ts`, whose Chinese names are TOWNNAME of the MOI district boundary data (source of `districts.json` above).
-- Metro stations: `StationName.Zh_tw` of the TDX station files (section above). Line names: Taipei Rapid Transit Corporation (https://www.metro.taipei/), in `scripts/metro/build.ts`.
-- Landmarks: `src/ui/city/landmarks/names-zh.ts`, the Chinese Wikipedia title of each landmark whose coordinates `table.ts` cites (read 2026-11-23).
-
-## Wages of the player's Character (play-loop spec, Requirement 3.4)
-
-- `public/data/wages.json`: by `npm run story-files` (`scripts/story/wages.ts`) from DGBAS 歷年受僱員工每人每月經常性薪資 (regular monthly earnings per employee by industry), data.gov.tw 9663 (https://data.gov.tw/dataset/9663), XML, downloaded by `node scripts/download.ts wages` to `data/raw/wages/dgbas-9663-regular-earnings.xml` (2026-11-24), Open Government Data License 1.0.
-- Values: the annual figure of each year as DGBAS publishes it (the year record of the file), 2015 to 2025, for the 8 industries of the Character_File occupations (C, G, H, I, J, K, P, Q). The build stops when a year record is more than 0.5% from the mean of its 12 monthly records (measured: at most 0.13%).
-- Coverage, from the dataset notes: no agriculture, government, schools above primary level, religious or occupational organisations; education covered only supplementary and other education (cram schools and similar) until 2018 and pre-primary education from 2019; health covered only human health before 2018. The education and health series therefore change level in 2019.
-
-## Rent of small homes for the player's Character (play-loop task 6.4, user decision 2026-11-24)
-
-- `public/data/home-rent.json`: by `npm run story-files` (`scripts/story/home-rent.ts`) from the real-price registration rentals already used for the `rent` indicator (data.gov.tw 25118, `data/raw/lvr/*_lvr_land_c.csv`), with the same qualifying filter, 171,949 leases of 2015Q1 to 2025Q4.
-- For each district and floor-area band (up to 40, 60, 90 m² and above, registered total floor area): median rent per m² of the band ÷ median rent per m² of all leases of the district; a band with fewer than 30 leases uses the city's ratio. The Character's rent per m² is the district rent of the Engine times this ratio. Measured: homes up to 40 m² rent for 1.47 (Da'an) to 2.05 (Banqiao) times the district median per m².
-- Floor area is used instead of the rental type (出租型態) because the files before 2021 have no rental type column.
-
-## Story files (story-layer spec)
-
-- `public/data/citizens.json`, `public/data/model-limits.json`: copies of `data/config/`, made by `npm run story-files`.
-- `public/data/income-spread.json`: by `npm run story-files` from the FIA comprehensive income tax statistics by village (data.gov.tw 103066), income year 2023, Open Government Data License 1.0. sigma = (ln Q3 − ln Q1) / (2 × 0.6745) per district, the formula of the rent ghost rule; the file holds the method text and its limits.
-- `public/data/model-facts.json`:
-  - `commuteModelled`, `commuteSurvey`: by `npm run story-files` with `surveyCheck` of `scripts/pipeline/commute/survey-check.ts` on the committed `commute-matrix.json`, the 2025 population of `history.json` and the `commute.jobShare.*` parameters of `params.json`; the survey figure is the one of that module.
-  - `backtestResult`: by `npm run backtest`, the `templates.backtestResult` sentences of `model-limits.json` filled with the tpass-2023 result of `docs/BACKTEST.md`.
-
-## The Character's life story (life-story spec)
-
-- `public/data/application-supply.json`, `public/data/life-events.json`, `public/data/life-story.json`: copies of `data/config/`, made by `npm run story-files`. Texts approved by the user on 2026-11-24.
-- Research notes with every value, URL and access date (2026-11-24): `data/research/life-story-social-housing-2026-11-24.md`, `data/research/life-story-rent-subsidy-2026-11-24.md`.
-- Values that no source gives are marked in the file with an assumption: real social housing odds of years without a dated round (Taipei 6.5 %, New Taipei 11.5 %), income limits and minimum living expenses of missing years (interpolated), the 4-quarter rent subsidy period, the treatment of the Character as under 40, the largest-multiplier rule, and the lease interval of the `leaseEnd` Life_Event (8 quarters).
-- The `passLaunch` Life_Event text uses the 2016 public transport share of commuters (Taipei 47.6 %, New Taipei 34.0 %), MOTC 111年民眾日常使用運具狀況調查摘要分析, 附表6.
-
-| Id | Status | Title | URL |
-|---|---|---|---|
-| `tp-sh-2018` | secondary | 松山健康公宅中籤率4.73% 遭批抽籤有漏洞 (PTS, 2018-03-29) | https://news.pts.org.tw/article/389739 |
-| `tp-sh-2019` | secondary | 捷運、租金連年漲 行天宮公宅中籤率1.7% (TVBS, 2019-04-23): 5 sites, 167 units, 4,163 applications | https://news.tvbs.com.tw/life/1120567 |
-| `tp-sh-2021` | secondary | 北市瑞光社會住宅抽籤結束 整體中籤率約6.9％ (好房網, 2021-05-19) | https://news.housefun.com.tw/news/article/174372297745.html |
-| `tp-sh-2022` | secondary | 北市4社宅聯合招租中籤率僅5.8％ (中時, 2022-05-13) | https://www.chinatimes.com/realtimenews/20220513002507-260405 |
-| `tp-sh-2025` | secondary | 北市社宅抽籤…住都中心全說了：中籤率7.5% (台灣好新聞, 2025-05-06); historical average 5–8 % | https://www.taisounds.com/news/content/71/188881 |
-| `nt-sh-2020` | secondary | 7,400元入住7字頭央北 中籤率近三成 (自由時報, 2020-06-02): 926 drawn of 3,202 | https://estate.ltn.com.tw/article/9738 |
-| `nt-sh-2025` | secondary | 新北青年社宅抽籤完成！三峽國光二期中籤率逾3成 (工商時報, 2025-10-28) | https://www.ctee.com.tw/news/20251028701751-431401 |
-| `ngo-odds` | secondary | 台灣社會住宅中籤率一覽表 (社會住宅推動聯盟, NGO list without dates) | http://socialhousingtw.blogspot.com/2019/05/1085.html |
-| `tp-rules` | official | 臺北市社會住宅出租辦法 (2017 text; full revision 2023-10-27) | https://laws.gov.taipei/law/LawSearch/LawExport/FL071776?type=0 |
-| `nt-rules` | official | 新北市社會住宅承租辦法 (2021-10-13) | https://nthurc.org.tw/storage/legal-advocacy-social-housing-download-file/syNnSQeieTrAWlznJ6ynokzxv.pdf |
-| `tp-limits` | official | Taipei social housing income limits: 健康 notice 2018, 東明 FAQ 2019, 安心樂租網 2020, 莒光 FAQ 2022, 南港機廠 handbook 2025 | https://rent.thurc.org.taipei/news/detail/89 |
-| `nt-limits` | official | New Taipei youth social housing income limits: 三峽國光 notice 2021, 城鄉局 notice 2023, NTHURC 2024 and 2025 | https://www.nthurc.org.tw/news/426 |
-| `rent-share` | official | Taipei list rent 85 % of market (青年社會住宅租金分級機制之研究); New Taipei 80 % for general households | https://www.rde.ntpc.gov.tw/userfiles/1160700/files/10青年社會住宅租金分級機制之研究.pdf |
-| `tp-rs` | official | 臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047) | https://data.gov.tw/en/datasets/132047 |
-| `nt-rs` | official | 新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939) | https://data.gov.tw/dataset/122939 |
-| `rs-rules` | official | 整合住宅補貼資源實施方案 (內政部, 110年4月 revision), §貳.五 | https://www.nlma.gov.tw/uploads/files/0afab4b2444d39f041633e9c638dcd65.pdf |
-| `rs-2022` | official | 減輕租客負擔 300億元中央擴大租金補貼上路 (行政院, 2022-06-30) | https://www.ey.gov.tw/Page/9277F759E41CCD91/e32d04b4-4c2c-42f6-94c0-ea68dd18ba68 |
-| `rs-taipei-2018` | official | 臺北市都發局 news release 2018-02-14: single applicants must be 40 or over | https://udd.gov.taipei/assets/38-10850/Documents/1070214%E5%88%86%E7%B4%9A%E7%A7%9F%E5%B1%8B%E8%A3%9C%E8%B2%BC%E6%96%B0%E8%81%9E%E7%A8%BF.pdf |
-| `mle` | official | 最低生活費 100–109年度 (衛福部); Taipei 2025 from 臺北輕鬆住 plan; 2022 and 2025 limits ÷ 3 | https://mohw.gov.tw/dl-56565-342d1532-05b6-4e52-8197-9f4123087def.html |
-| `rs-multipliers` | official | 300億元中央擴大租金補貼專案 (行政院, 2022-03-31) | https://www.ey.gov.tw/Page/448DE008087A1971/f655f525-71ad-45a8-838e-414d85a88dab |
-| `nlma-gender` | official | 本署居住權相關性平統計資料 (國土管理署, 2025-11) | https://www.nlma.gov.tw/uploads/files/b0367e31345c69c4685a21d9db796fa3.pdf |
-| `tp-rs-gender` | official | 臺北市住宅補貼辦理情形 10890-02-01 (113年) | https://udd.gov.taipei/assets/ryqFDkS5nf51tnVwRGM8JD/attachs/10890-02-01臺北市住宅補貼辦理情形.pdf |
-| `tp-transit-gender` | official | 臺北市政府主計處 市政統計週報 第1341號 (2025-07-16), citing MOTC | https://www-ws.gov.taipei/001/Upload/367/relfile/46908/9442607/0bbf97f1-faca-4f2c-b296-3013a137e3f0.pdf |

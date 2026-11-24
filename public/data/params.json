@@ -479,69 +479,6 @@
       "status": "verified",
       "estimated": { "method": "Renting households (129267) ÷ ordinary households living in housing units (933940) of Taipei, 2020 census table 34 (November 2020). The renter rate is a single-year value (census of November 2020) and is used as a constant for all quarters." }
     },
-    "limit.commuterPass.subsidy.lowerFactor": {
-      "kind": "scalar",
-      "value": 0,
-      "unit": "multiple of the real value",
-      "status": "gap",
-      "assumption": "The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.",
-      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
-      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
-    },
-    "limit.rentSubsidy.amount.lowerFactor": {
-      "kind": "scalar",
-      "value": 0,
-      "unit": "multiple of the real value",
-      "status": "gap",
-      "assumption": "The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.",
-      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
-      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
-    },
-    "limit.rentSubsidy.amount.upperFactor": {
-      "kind": "scalar",
-      "value": 2,
-      "unit": "multiple of the real value",
-      "status": "gap",
-      "assumption": "The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.",
-      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
-      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
-    },
-    "limit.rentSubsidy.households.lowerFactor": {
-      "kind": "scalar",
-      "value": 0,
-      "unit": "multiple of the real value",
-      "status": "gap",
-      "assumption": "The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.",
-      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
-      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
-    },
-    "limit.rentSubsidy.households.upperFactor": {
-      "kind": "scalar",
-      "value": 2,
-      "unit": "multiple of the real value",
-      "status": "gap",
-      "assumption": "The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.",
-      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
-      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
-    },
-    "limit.socialHousing.unitsStarted.lowerFactor": {
-      "kind": "scalar",
-      "value": 0,
-      "unit": "multiple of the real value",
-      "status": "gap",
-      "assumption": "The lowest allowed value of this tool field is 0 times the real value; the bound is a game rule, not a measurement.",
-      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
-      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
-    },
-    "limit.socialHousing.unitsStarted.upperFactor": {
-      "kind": "scalar",
-      "value": 2,
-      "unit": "multiple of the real value",
-      "status": "gap",
-      "assumption": "The highest allowed value of this tool field is 2 times the real value; the bound is a game rule, not a measurement.",
-      "source": { "citation": "game default (.kiro/steering/simulation.md, policy tool limits)", "url": ".kiro/steering/simulation.md" },
-      "estimated": { "method": "Game default: 0 for each lowerFactor, 2 for each upperFactor. Data that would replace it: legal or administrative limits on the size of the program." }
-    },
     "migration.commuteCostPerMinute": {
       "kind": "scalar",
       "value": 30.602311,

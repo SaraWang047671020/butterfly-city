@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { applyAdjustment, checkEditRange } from '../../src/game/core/checks.ts';
+import { affordableValue, applyAdjustment, checkEditRange, checkEditSync } from '../../src/game/core/checks.ts';
 import type { EditRequest } from '../../src/game/core/checks.ts';
 import { newSession } from '../../src/game/core/session.ts';
 import type { GameSession } from '../../src/game/core/session.ts';
@@ -36,6 +36,22 @@ function unchanged(before: GameSession, after: GameSession): void {
   expect(after.timeline).toEqual(before.timeline);
 }
 
+describe('no Documented_Limit (housing-tools Requirement 2.2)', () => {
+  it('a field without a max has no upper limit; the budget decides', () => {
+    expect(limits(build()).upper).toBe(Number.POSITIVE_INFINITY);
+  });
+
+  it('the slider ends at the largest value the budget of the year allows', () => {
+    const s = build();
+    const end = affordableValue(s, TARGET, true);
+    expect(Number.isInteger(end)).toBe(true);
+    const at = checkEditSync(s, { target: TARGET, kind: 'value', text: String(end) });
+    const over = checkEditSync(s, { target: TARGET, kind: 'value', text: String(end + 1) });
+    expect(['pending-range', 'unchanged']).toContain(at.status);
+    expect(over.status).toBe('budget');
+  });
+});
+
 describe('rejected edits leave diffs and Timeline_Entries unchanged (19.2, 9.2, 9.3, 9.5)', () => {
   it('below the lower limit', () => {
     const s = build();
@@ -49,9 +65,12 @@ describe('rejected edits leave diffs and Timeline_Entries unchanged (19.2, 9.2, 
     unchanged(s, session);
   });
 
-  it('above the upper limit', () => {
-    const s = build();
+  it('above a Documented_Limit (housing-tools: an area and year specific max)', () => {
+    const s0 = build();
+    const max: ScalarParameter = { kind: 'scalar', value: 50_000, unit: 'households', source: { citation: 'Test limit', url: '' }, status: 'verified' };
+    const s: GameSession = { ...s0, params: { ...s0.params, 'limit.rentSubsidy.households.max.Taipei.2015': max } };
     const { upper } = limits(s);
+    expect(upper).toBe(50_000);
     const req: EditRequest = { target: TARGET, kind: 'value', text: String(Math.ceil(upper) + 1) };
     const { check, session } = applyAdjustment(s, req);
     expect(check.status).toBe('limit');
@@ -63,7 +82,6 @@ describe('rejected edits leave diffs and Timeline_Entries unchanged (19.2, 9.2, 
 
   it('over the budget (tool ceiling forced below the real charge)', () => {
     const s0 = build();
-    const { upper } = limits(s0);
     const ceiling: ScalarParameter = {
       kind: 'scalar',
       value: 1,
@@ -72,7 +90,7 @@ describe('rejected edits leave diffs and Timeline_Entries unchanged (19.2, 9.2, 
       status: 'verified',
     };
     const s: GameSession = { ...s0, params: { ...s0.params, 'budget.ceiling.rentSubsidy.2015': ceiling } };
-    const req: EditRequest = { target: TARGET, kind: 'value', text: String(Math.floor(upper)) };
+    const req: EditRequest = { target: TARGET, kind: 'value', text: '1000' };
     const check = checkEditRange(s, req);
     expect(check.status).toBe('budget');
     if (check.status !== 'budget') return;

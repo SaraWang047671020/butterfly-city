@@ -101,6 +101,7 @@ describe('readFixedType3Params', () => {
     const out = readFixedType3Params();
     expect(Object.keys(out).sort()).toEqual([...FIXED_TYPE3_IDS].sort());
     expect(out['ghost.size']?.value).toBe(1000);
-    expect(out['limit.rentSubsidy.amount.upperFactor']?.value).toBe(2);
+    // housing-tools: the default range of 0 to 2 times the real value is gone (simulation.md "Policy tool limits").
+    expect(Object.keys(out).some((id) => id.endsWith('Factor'))).toBe(false);
   });
 });

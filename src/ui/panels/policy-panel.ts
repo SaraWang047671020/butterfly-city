@@ -226,11 +226,15 @@ export function createPolicyPanel(doc: Document, actions: UiActions): Component<
     setText(parts.lag, `${P.lag}: ${formatAmount(f.lag.value)} · ${P.citation}: ${parameterSourceText(f.lag)}`);
     setText(
       parts.lower,
-      `${P.lowerLimit}: ${formatAmount(f.limits.lower)} ${unitLabel(f.unit)} · ${P.citation}: ${parameterSourceText(f.limits.lowerRef)}`,
+      f.limits.lowerRef === null && f.limits.lower === 0
+        ? P.lowerZero
+        : `${P.lowerLimit}: ${formatAmount(f.limits.lower)} ${unitLabel(f.unit)} · ${P.citation}: ${parameterSourceText(f.limits.lowerRef)}`,
     );
     setText(
       parts.upper,
-      `${P.upperLimit}: ${formatAmount(f.limits.upper)} ${unitLabel(f.unit)} · ${P.citation}: ${parameterSourceText(f.limits.upperRef)}`,
+      Number.isFinite(f.limits.upper)
+        ? `${P.upperLimit}: ${formatAmount(f.limits.upper)} ${unitLabel(f.unit)} · ${P.citation}: ${parameterSourceText(f.limits.upperRef)}`
+        : P.noUpperLimit,
     );
     setText(parts.ceiling, `${fillTemplate(P.remainingCeiling, { year })}: ${formatAmount(f.remainingCeiling)}`);
     const showCityYear = f.limits.scope === 'city-year' && f.cityYearTotal !== null;

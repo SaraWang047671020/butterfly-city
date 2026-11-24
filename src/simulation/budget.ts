@@ -348,6 +348,12 @@ function citationOf(params: ParameterTable, id: string | null): Citation | null 
   return params[id]?.source ?? null;
 }
 
+/** The area of a limit id: the city for a city-year limit, else the area itself. */
+function limitArea(area: AreaKey, scope: 'quarter' | 'city-year', ctx: RuleContext): string {
+  if (scope === 'quarter') return area;
+  return ctx.baseline.districts.find((d) => d.code === area)?.city ?? area;
+}
+
 /** The real value of the period: the quarter value, or the real city-year total (Decision D6). */
 function realValue(
   ledger: BudgetLedger,
@@ -398,10 +404,14 @@ export function checkLimit(
   const v = realValue(ledger, tool, field, area, quarter, scope, ctx);
   const base = `limit.${tool}.${field}`;
 
+  // Documented_Limits only (housing-tools Requirement 2, simulation.md "Policy tool limits"). The factor ids are
+  // kept for older parameter tables and test stubs; without any lower parameter the lower limit is 0.
   const minId = `${base}.min`;
   const minValue = optionalScalar(params, minId);
-  const lowerParameterId = minValue === undefined ? `${base}.lowerFactor` : minId;
-  const lower = minValue ?? scalar(params, lowerParameterId) * v;
+  const lowerFactorId = `${base}.lowerFactor`;
+  const lowerFactor = optionalScalar(params, lowerFactorId);
+  const lowerParameterId = minValue !== undefined ? minId : lowerFactor !== undefined ? lowerFactorId : null;
+  const lower = minValue ?? (lowerFactor === undefined ? 0 : lowerFactor * v);
 
   let upper: number;
   let upperParameterId: string | null;
@@ -409,17 +419,22 @@ export function checkLimit(
     upperParameterId = expandId('commuterPass.price.<city>.<quarter>', { city: area, quarter });
     upper = optionalScalar(params, upperParameterId) ?? 0;
   } else {
-    const maxId = `${base}.max`;
-    const maxValue = optionalScalar(params, maxId);
-    if (maxValue !== undefined) {
+    // The most specific documented maximum: area and year, then area, then the field.
+    const year = quarterYear(quarter);
+    const maxIds = [`${base}.max.${limitArea(area, scope, ctx)}.${year}`, `${base}.max.${limitArea(area, scope, ctx)}`, `${base}.max`];
+    const maxId = maxIds.find((id) => optionalScalar(params, id) !== undefined);
+    const upperFactorId = `${base}.upperFactor`;
+    const upperFactor = optionalScalar(params, upperFactorId);
+    if (maxId !== undefined) {
       upperParameterId = maxId;
-      upper = maxValue;
+      upper = optionalScalar(params, maxId) ?? Number.POSITIVE_INFINITY;
+    } else if (upperFactor !== undefined) {
+      upperParameterId = upperFactorId;
+      upper = Math.max(upperFactor * v, optionalScalar(params, `${base}.upperMin`) ?? 0);
     } else {
-      upperParameterId = `${base}.upperFactor`;
-      upper = Math.max(
-        scalar(params, upperParameterId) * v,
-        optionalScalar(params, `${base}.upperMin`) ?? 0,
-      );
+      // No Documented_Limit: only the Annual_Budget limits the field.
+      upperParameterId = null;
+      upper = Number.POSITIVE_INFINITY;
     }
   }
 

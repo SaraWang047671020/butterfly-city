@@ -65,8 +65,8 @@ fileMatchPattern: 'src/simulation/**'
 
 ## Policy tool limits
 
-- The player adjusts each of the 5 tools relative to its real value. Every tool has a **lower and an upper limit** for each year. The default range is **0 to 2 times the real value** of that year. A tool uses a different range only when a documented reason requires it (for example a statutory range such as the house tax rates in the House Tax Act, or a physical limit such as the number of buildable sites).
-- Spending is also limited by the **real municipal budget**. The total over the 5 tools in a year never exceeds the real total for that year, and each tool has a ceiling taken from real city budget figures where they exist.
+- The player sets each tool freely within its **Documented_Limits** only: a statutory range (for example the house tax rates of the House Tax Act), a programme capacity (for example the rent subsidy applications of the year) or a physical capacity (for example the social housing a city can start in a year), each with its source. There is no default range: where no documented limit exists, the budget alone limits the field (housing-tools spec, user decision 2026-11-24, replacing the earlier default of 0 to 2 times the real value).
+- Spending is limited by the **real municipal budget**: the total over the tools in a year never exceeds the real total for that year plus the holding-tax revenue above real history of the year before; each tool has a ceiling taken from real city budget figures where they exist. The budget is the constraint that forces choices between tools.
 - Every limit and ceiling is a row in the parameter table with `value`, `unit` and `source`. Where no real figure exists for a tool and year, the row is marked `estimated` with its method, as in the data pipeline.
 - The interface and the engine both enforce the limits. An adjustment outside a limit is rejected, not clipped silently, and the player sees which limit applies and why.
 

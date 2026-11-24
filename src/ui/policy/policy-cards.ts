@@ -222,7 +222,7 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
     setText(parts.unit, unit);
     (parts.root.querySelector('label') as HTMLLabelElement).textContent = `${name} · ${areaName}`;
     setText(parts.lower, fillTemplate(D.lowerEnd, { value: formatAmount(f.limits.lower) }));
-    setText(parts.upper, fillTemplate(D.upperEnd, { value: formatAmount(f.sliderUpper) }));
+    setText(parts.upper, fillTemplate(Number.isFinite(f.limits.upper) ? D.upperEnd : D.budgetEnd, { value: formatAmount(f.sliderUpper) }));
     parts.real.hidden = f.real === null;
     setText(parts.real, f.real === null ? '' : fillTemplate(D.realMark, { value: formatAmount(f.real.value) }));
 
@@ -265,8 +265,12 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
       realValueText(f, props.planning),
       f.unitCost === null ? '' : `${P.unitCost}: ${formatAmount(f.unitCost.value)} · ${P.citation}: ${parameterSourceText(f.unitCost)}`,
       `${P.lag}: ${formatAmount(f.lag.value)} · ${P.citation}: ${parameterSourceText(f.lag)}`,
-      `${P.lowerLimit}: ${formatAmount(f.limits.lower)} ${unit} · ${P.citation}: ${parameterSourceText(f.limits.lowerRef)}`,
-      `${P.upperLimit}: ${formatAmount(f.limits.upper)} ${unit} · ${P.citation}: ${parameterSourceText(f.limits.upperRef)}`,
+      f.limits.lowerRef === null && f.limits.lower === 0
+        ? P.lowerZero
+        : `${P.lowerLimit}: ${formatAmount(f.limits.lower)} ${unit} · ${P.citation}: ${parameterSourceText(f.limits.lowerRef)}`,
+      Number.isFinite(f.limits.upper)
+        ? `${P.upperLimit}: ${formatAmount(f.limits.upper)} ${unit} · ${P.citation}: ${parameterSourceText(f.limits.upperRef)}`
+        : P.noUpperLimit,
       `${fillTemplate(P.remainingCeiling, { year })}: ${formatAmount(f.remainingCeiling)}`,
       f.limits.scope === 'city-year' && f.cityYearTotal !== null ? `${fillTemplate(P.cityYearTotal, { year })}: ${formatAmount(f.cityYearTotal)} ${unit}` : '',
     ].filter((t) => t !== '');

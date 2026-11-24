@@ -104,8 +104,8 @@ export function checkParameterEntry(
 // Reuses the engine's pure stage 0 functions (`checkSpecs`, `collectParameterSpecs`); no copy, so no
 // parity test is needed (Decision D33). `src/data` may import `src/simulation`; the reverse is forbidden.
 
-/** Expected number of ids per Parameter_Source_Type (Requirement 20, 8 + 54 + 19 = 81). */
-export const EXPECTED_SOURCE_TYPE_COUNTS: Readonly<Record<1 | 2 | 3, number>> = { 1: 8, 2: 54, 3: 19 };
+/** Expected number of ids per Parameter_Source_Type (Requirement 20, 8 + 54 + 12 = 74; housing-tools removed the 7 factor limits). */
+export const EXPECTED_SOURCE_TYPE_COUNTS: Readonly<Record<1 | 2 | 3, number>> = { 1: 8, 2: 54, 3: 12 };
 
 const GHOST_SIZE_ID = 'ghost.size';
 const SHARE_BOTH_ID = 'ghost.shareBoth';

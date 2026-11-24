@@ -6,16 +6,12 @@ import { collectParameterSpecs, RULE_REGISTRY } from '../../../src/simulation/re
 import { DISTRICTS } from '../../lib/districts.ts';
 
 /** Ids that the engine reads but no rule declares (the 41 `commute.jobShare.<code>` ids are added in `engineIdSet`). */
-export const ENGINE_EXTRA_IDS: readonly string[] = [
-  'limit.commuterPass.subsidy.lowerFactor',
-  'limit.rentSubsidy.households.lowerFactor',
-  'limit.rentSubsidy.households.upperFactor',
-  'limit.rentSubsidy.amount.lowerFactor',
-  'limit.rentSubsidy.amount.upperFactor',
-];
+export const ENGINE_EXTRA_IDS: readonly string[] = [];
 
-/** The five fixed Omitted_Optional_Ids; every `budget.ceiling.` id is also omitted, by prefix. */
+/** The fixed Omitted_Optional_Ids; every `budget.ceiling.` id is also omitted, by prefix. */
 export const OMITTED_OPTIONAL_IDS: readonly string[] = [
+  'limit.socialHousing.unitsStarted.lowerFactor',
+  'limit.socialHousing.unitsStarted.upperFactor',
   'limit.socialHousing.unitsStarted.upperMin',
   'limit.socialHousing.unitsStarted.min',
   'limit.socialHousing.unitsStarted.max',

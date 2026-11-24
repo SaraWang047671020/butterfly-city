@@ -1,6 +1,6 @@
 // Property tests for the Params_File validator (Properties 38 and 39) in the data-pipeline spec.
 //
-// Oracle for Property 38: the valid file is the committed public/data/params.json (81 ids, real district
+// Oracle for Property 38: the valid file is the committed public/data/params.json (74 ids, real district
 // codes). Each case injects one typed defect into a deep copy and names the JSON path at which
 // `validateParamsFile` must report it. The undamaged file must produce no error.
 

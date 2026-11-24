@@ -35,13 +35,6 @@ export const FIXED_TYPE3_IDS: readonly string[] = [
   'commuterPass.lag',
   'commuterPass.unitCost',
   'rentSubsidy.unitCost',
-  'limit.socialHousing.unitsStarted.lowerFactor',
-  'limit.socialHousing.unitsStarted.upperFactor',
-  'limit.commuterPass.subsidy.lowerFactor',
-  'limit.rentSubsidy.households.lowerFactor',
-  'limit.rentSubsidy.households.upperFactor',
-  'limit.rentSubsidy.amount.lowerFactor',
-  'limit.rentSubsidy.amount.upperFactor',
 ];
 
 export type FixedType1Params = Readonly<Record<string, ScalarParameter>>;
