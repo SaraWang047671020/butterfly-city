@@ -3,6 +3,9 @@
 import { LIFE_EVENT_IDS, type EventRule, type LifeEventId } from '../game/life/events.ts';
 import { placeholdersOf } from '../narrative/fill.ts';
 import type { LocalText, Result } from './character-loader.ts';
+import type { ApplicationSupply } from '../game/life/applications.ts';
+import { STORY_KEYS } from '../game/life/story.ts';
+import { validateApplicationSupply } from './life-story-loader.ts';
 
 type Obj = Record<string, unknown>;
 const isObj = (x: unknown): x is Obj => typeof x === 'object' && x !== null && !Array.isArray(x);
@@ -126,4 +129,41 @@ export function validateLifeStoryFile(x: unknown, keys: readonly string[]): Resu
 export function isApproved(x: unknown): boolean {
   if (!isObj(x) || !isObj(x['status'])) return false;
   return x['status']['en'] === 'approved' && x['status']['zh-Hant'] === 'approved';
+}
+
+// ---------------------------------------------------------------- loading (life-story task 4.1)
+
+
+/** The raw parts of the Application_Supply_File the Ending reads: source titles and the sourced gender shares. */
+export interface SupplyNotes {
+  readonly sources: Readonly<Record<string, { readonly title: string }>>;
+  readonly gender: Readonly<
+    Record<string, { readonly share?: number; readonly women?: number; readonly men?: number; readonly scope: LocalText; readonly source: string }>
+  >;
+}
+
+export interface LifeStoryFiles {
+  readonly supply: ApplicationSupply;
+  readonly notes: SupplyNotes;
+  readonly events: LifeEventFile;
+  readonly texts: TextTree;
+}
+
+/** Loads and validates the three life-story files; an error result never blocks the game (the Character has no story). */
+export async function loadLifeStoryFiles(fetchText: (url: string) => Promise<string>, baseUrl: string): Promise<Result<LifeStoryFiles>> {
+  try {
+    const get = async (name: string): Promise<unknown> => JSON.parse(await fetchText(`${baseUrl}data/${name}`)) as unknown;
+    const [supplyRaw, eventsRaw, textsRaw] = await Promise.all([get('application-supply.json'), get('life-events.json'), get('life-story.json')]);
+    const supply = validateApplicationSupply(supplyRaw);
+    if (!supply.ok) return supply;
+    const events = validateLifeEventFile(eventsRaw);
+    if (!events.ok) return events;
+    const texts = validateLifeStoryFile(textsRaw, STORY_KEYS);
+    if (!texts.ok) return texts;
+    const raw = supplyRaw as Obj;
+    if (!isObj(raw['gender'])) return { ok: false, error: 'application-supply.json: gender missing' };
+    return { ok: true, value: { supply: supply.value, notes: raw as unknown as SupplyNotes, events: events.value, texts: texts.value } };
+  } catch (e) {
+    return { ok: false, error: `life story files: ${(e as Error).message}` };
+  }
 }

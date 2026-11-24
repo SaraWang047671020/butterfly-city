@@ -296,3 +296,27 @@ describe('Ending (Requirement 6)', () => {
     expect(endingPart('Yu', decadeSummary(rows(0, { ...start, tenure: 'family' }))!, F).key).toBe('ending.versions.family');
   });
 });
+
+describe('neutrality and copies (life-story task 6.1, Requirement 8.1)', () => {
+  it('the two text files contain no banned term in either language', async () => {
+    const { BANNED_TERMS_EXEMPT_FILE, BANNED_TERMS_FILE, checkBannedTerms, parseTermList } = await import('../../scripts/pipeline/banned-terms.ts');
+    const terms = parseTermList(readFileSync(resolve(ROOT, BANNED_TERMS_FILE), 'utf8'));
+    const exempt = parseTermList(readFileSync(resolve(ROOT, BANNED_TERMS_EXEMPT_FILE), 'utf8'));
+    const texts: string[] = [];
+    const walk = (n: unknown): void => {
+      if (typeof n === 'object' && n !== null && 'en' in n) texts.push(String((n as { en: unknown }).en), String((n as { 'zh-Hant'?: unknown })['zh-Hant'] ?? ''));
+      else if (Array.isArray(n)) n.forEach(walk);
+      else if (typeof n === 'object' && n !== null) Object.values(n).forEach(walk);
+    };
+    walk(eventsRaw);
+    walk(storyRaw);
+    expect(texts.length).toBeGreaterThan(200);
+    expect(texts.flatMap((t) => checkBannedTerms(t, terms, exempt).map((h) => h.term))).toEqual([]);
+  });
+
+  it('public/data holds exact copies of the three life-story files', () => {
+    for (const name of ['life-events.json', 'life-story.json', 'application-supply.json']) {
+      expect(readFileSync(resolve(ROOT, 'public/data', name), 'utf8'), name).toBe(readFileSync(resolve(ROOT, 'data/config', name), 'utf8'));
+    }
+  });
+});

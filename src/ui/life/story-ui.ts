@@ -63,6 +63,13 @@ function el<K extends keyof HTMLElementTagNameMap>(doc: Document, tag: K, classN
 }
 
 const money = (n: number): string => `NT$${formatNumber(Math.round(n), 0)}`;
+
+/** An occupation inside an English sentence: "a cram school teacher" (the names are written as titles). */
+export function occupationInSentence(name: string): string {
+  if (LOCALE !== 'en' || name === '') return name;
+  const lower = name.charAt(0).toLowerCase() + name.slice(1);
+  return `${/^[aeiou]/i.test(lower) ? 'an' : 'a'} ${lower}`;
+}
 const pct = (n: number): string => formatNumber(n, 1);
 
 /** Formats Story_Line values in the language of the App. */
@@ -78,7 +85,7 @@ export function storyFormat(d: StoryUiDeps, events: () => readonly { readonly id
     district: (c) => names.get(c) ?? c,
     city: (c) => (UI_STRINGS.cityNames as Readonly<Record<string, string>>)[c] ?? c,
     quarter: quarterLabel,
-    occupation: (id) => d.pick(d.occupations.find((o) => o.id === id)?.name),
+    occupation: (id) => occupationInSentence(d.pick(d.occupations.find((o) => o.id === id)?.name)),
     option: (e, o) => d.pick(events().find((x) => x.id === e)?.options.find((x) => x.id === o)?.title).replace(/[…]$|\.\.\.$/, ''),
     rule: (e) => ruleText(e),
   };
@@ -278,7 +285,7 @@ function eventValues(d: StoryUiDeps, v: CharacterView, p: PendingEvent): Record<
     limit: f.limit === null ? '—' : money(f.limit),
     years: f.years === null ? '—' : formatNumber(f.years, 0),
     amount: f.subsidyAmount === null ? '—' : money(f.subsidyAmount),
-    offerOccupation: f.offer === null ? '' : occ(f.offer.occupation),
+    offerOccupation: f.offer === null ? '' : occupationInSentence(occ(f.offer.occupation)),
     offerDistrict: f.offer === null ? '' : (names.get(f.offer.workCode) ?? f.offer.workCode),
     offerWage: (() => {
       const w = f.offer === null ? null : d.wageOf(f.offer.occupation, Number(p.quarter.slice(0, 4)));

@@ -46,7 +46,8 @@ butterflycity/
 │   │   └── explain.ts         # cause breakdown for "Why?" views
 │   ├── game/                  # turn flow, fast-forward stops, policy timeline
 │   │   ├── core/              # session, turns, edit checks, display conversions, view building
-│   │   ├── life/              # the player's Character: Life_State, life decisions, Character_Numbers (play-loop)
+│   │   ├── life/              # the player's Character: Life_State, life decisions, Character_Numbers (play-loop); Applications,
+│   │   │                      #   the two tracks, Personal_Ledger, Life_Events, Story_Lines, story model (life-story)
 │   │   └── brief.ts           # Quarter_Brief rule (play-loop)
 │   ├── narrative/             # fixed text templates for citizen updates
 │   ├── save/                  # localStorage, save code export/import, validation; Character_Store (outside the Save)
@@ -59,7 +60,7 @@ butterflycity/
 │   │   ├── brief/             # Quarter_Brief (play-loop)
 │   │   ├── report/            # City report with its tabs (play-loop)
 │   │   ├── character/         # Character_Creation and the character chip (play-loop)
-│   │   ├── life/              # "My life" dialog (play-loop)
+│   │   ├── life/              # "My life" dialog (play-loop); Life_Event dialog, story brief, My_Story, Ending (life-story)
 │   │   ├── guide/             # First_Play_Guide (play-loop)
 │   │   ├── story/             # citizen story panel, model limitations dialog (story-layer)
 │   │   ├── strings/           # UI_Strings: en.ts and zh-Hant.ts with one key set; locale choice

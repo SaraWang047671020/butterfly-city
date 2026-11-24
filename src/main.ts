@@ -8,9 +8,7 @@ import { loadDataFiles } from './data/loader.ts';
 import type { LoadedData } from './data/convert.ts';
 import { loadStoryFiles, type StoryFiles } from './data/story-loader.ts';
 import { homePremiumOf, loadCharacterFiles } from './data/character-loader.ts';
-import { validateApplicationSupply } from './data/life-story-loader.ts';
-import { textAt, validateLifeEventFile, validateLifeStoryFile, type LifeEventFile, type TextTree } from './data/life-text-loader.ts';
-import { STORY_KEYS } from './game/life/story.ts';
+import { loadLifeStoryFiles, textAt, type LifeEventFile, type TextTree } from './data/life-text-loader.ts';
 import { briefStory, createEnding, createLifeEventDialog, createMyStory, storyFormat, type StoryUiDeps } from './ui/life/story-ui.ts';
 import type { StoryDeps } from './game/life/controller.ts';
 import { LifeController } from './game/life/controller.ts';
@@ -546,7 +544,18 @@ async function start(): Promise<void> {
         },
       });
       // A Life_Event or the Ending opens when nothing else is in the way: no brief, no game dialog, no creation, no guide.
+      // It runs after the other subscribers of this publish (the App closes the brief and gives focus back first), so
+      // that the focus of the new dialog is not taken away again.
+      let storyQueued = false;
       const renderStory = (): void => {
+        if (storyQueued) return;
+        storyQueued = true;
+        window.setTimeout(() => {
+          storyQueued = false;
+          renderStoryNow();
+        }, 0);
+      };
+      const renderStoryNow = (): void => {
         const screen = ctl.screen();
         const free =
           screen.kind === 'game' &&
@@ -562,7 +571,7 @@ async function start(): Promise<void> {
       lifeCtl.subscribe(renderStory);
       ctl.subscribe(renderStory);
       storyUi = true;
-      renderStory();
+      renderStoryNow();
     }
   }
   app.attach(ctl);
@@ -578,56 +587,44 @@ interface StoryLoad {
   readonly genderLines: readonly { readonly key: string; readonly values: Record<string, string>; readonly scope: { en: string; 'zh-Hant': string } }[];
 }
 
-/** The life-story files and the real social housing series; null on any error (the Character then has no story). */
+/** The life-story files (loaded by src/data) and the real social housing series; null on any error (no story then). */
 async function loadStoryDeps(indicators: LoadedData['history']['indicators']): Promise<StoryLoad | null> {
-  const get = async (name: string): Promise<unknown> => {
-    const r = await fetch(`${BASE_URL}data/${name}`);
-    if (!r.ok) throw new Error(`${name}: HTTP ${r.status}`);
-    return (await r.json()) as unknown;
-  };
-  try {
-    const [supplyRaw, eventsRaw, textsRaw] = await Promise.all([get('application-supply.json'), get('life-events.json'), get('life-story.json')]);
-    const supply = validateApplicationSupply(supplyRaw);
-    const events = validateLifeEventFile(eventsRaw);
-    const texts = validateLifeStoryFile(textsRaw, STORY_KEYS);
-    if (!supply.ok) throw new Error(supply.error);
-    if (!events.ok) throw new Error(events.error);
-    if (!texts.ok) throw new Error(texts.error);
-    const series = (id: string) => {
-      const ind = indicators.find((i) => i.id === id);
-      return ind === undefined || ind.level !== 'district' ? null : ind.series;
-    };
-    const completions = series('socialHousingCompletions');
-    const stock = series('socialHousingStock');
-    const raw = supplyRaw as {
-      sources: Record<string, { title: string }>;
-      gender: Record<string, { share?: number; women?: number; men?: number; scope: { en: string; 'zh-Hant': string }; source: string }>;
-    };
-    const genderLines = Object.entries(raw.gender).map(([key, g]) => ({
-      key,
-      scope: g.scope,
-      values: {
-        share: g.share === undefined ? '' : String(g.share),
-        women: g.women === undefined ? '' : String(g.women),
-        men: g.men === undefined ? '' : String(g.men),
-        source: raw.sources[g.source]?.title ?? g.source,
-      },
-    }));
-    return {
-      deps: {
-        supply: supply.value,
-        events: events.value,
-        historySocial: (code, qi) => ({
-          completions: completions?.[code]?.[qi]?.value ?? null,
-          stock: stock?.[code]?.[qi]?.value ?? null,
-        }),
-      },
-      events: events.value,
-      texts: texts.value,
-      genderLines,
-    };
-  } catch (e) {
-    console.warn(`life story: ${(e as Error).message}`);
+  const files = await loadLifeStoryFiles(
+    (url) => fetch(url).then((r) => (r.ok ? r.text() : Promise.reject(new Error(`${url}: HTTP ${r.status}`)))),
+    BASE_URL,
+  );
+  if (!files.ok) {
+    console.warn(`life story: ${files.error}`);
     return null;
   }
+  const { supply, notes, events, texts } = files.value;
+  const series = (id: string) => {
+    const ind = indicators.find((i) => i.id === id);
+    return ind === undefined || ind.level !== 'district' ? null : ind.series;
+  };
+  const completions = series('socialHousingCompletions');
+  const stock = series('socialHousingStock');
+  const genderLines = Object.entries(notes.gender).map(([key, g]) => ({
+    key,
+    scope: g.scope,
+    values: {
+      share: g.share === undefined ? '' : String(g.share),
+      women: g.women === undefined ? '' : String(g.women),
+      men: g.men === undefined ? '' : String(g.men),
+      source: notes.sources[g.source]?.title ?? g.source,
+    },
+  }));
+  return {
+    deps: {
+      supply,
+      events,
+      historySocial: (code, qi) => ({
+        completions: completions?.[code]?.[qi]?.value ?? null,
+        stock: stock?.[code]?.[qi]?.value ?? null,
+      }),
+    },
+    events,
+    texts,
+    genderLines,
+  };
 }

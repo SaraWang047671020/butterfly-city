@@ -35,7 +35,7 @@ Claude Code implements this spec (recorded in `KIRO-LOG.md`). Requirements appro
   - [x] 5.4 Ending page: both versions, the rent burden chart with a word legend, the sourced gender lines. Deviation from Requirement 6.4: the gender lines of all three tools are shown, not only of the tools the player used
   - [x] 5.5 UI strings in both languages (`UI_STRINGS.lifeStory`, play-loop Requirement 12)
 
-- [ ] 6. Finish
-  - [ ] 6.1 Neutrality review of every new text in both languages, recorded in `KIRO-LOG.md`
-  - [ ] 6.2 Browser checks: 360, 768, 1280 and 1920 px; keyboard only; reduced motion; English and Traditional Chinese; a full game with Fast-forward
-  - [ ] 6.3 `product.md` and `structure.md` updated
+- [x] 6. Finish
+  - [x] 6.1 Neutrality review of every new text in both languages, recorded in `KIRO-LOG.md`; a test checks the two text files against the Banned_Term_List and that `public/data` holds exact copies
+  - [x] 6.2 Browser checks: 360, 768, 1280 and 1920 px; keyboard only; reduced motion; English and Traditional Chinese; a full game with Fast-forward
+  - [x] 6.3 `product.md` and `structure.md` updated
