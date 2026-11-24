@@ -121,7 +121,7 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
   el(doc, 'summary', '', disclosure, D.details);
   const construction = createConstructionRows(doc);
   disclosure.appendChild(construction.root);
-  const done = el(doc, 'button', 'dialog__button dialog__button--primary', undefined, D.done);
+  const done = el(doc, 'button', 'dialog__button dialog__button--primary ui-policy-done', undefined, D.done);
   done.type = 'button';
   done.addEventListener('click', () => closeDialog());
 

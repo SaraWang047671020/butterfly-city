@@ -122,7 +122,7 @@ export function createQuarterBrief(doc: Document, actions: UiActions, goThere: (
 
   const next = doc.createElement('button');
   next.type = 'button';
-  next.className = 'dialog__button dialog__button--primary';
+  next.className = 'dialog__button dialog__button--primary ui-brief-continue';
   next.textContent = B.continue;
   next.addEventListener('click', () => {
     close();

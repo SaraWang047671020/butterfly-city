@@ -65,8 +65,8 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
   - [x] 10.2 `src/ui/district-card.ts` and City_View `project(code)`; the card is placed between the Turn_Bar and the Policy_Cards
   - [x] 10.3 Main screen reduced to Turn_Bar, Policy_Cards, city tools, District_Card, Illustration_Note and disclosure; `layout.css` and `hud.css` updated. The small district map of the Policy_Dialog (task 8.2) stays a list: the District_Card and the report list cover district choice
 
-- [ ] 11. First_Play_Guide (Requirement 8)
-  - [ ] 11.1 `src/ui/guide/first-play.ts`; replay from the City_Report
+- [x] 11. First_Play_Guide (Requirement 8)
+  - [x] 11.1 `src/ui/guide/first-play.ts` (a manual popover, raised above each modal dialog it points into); replay from the City_Report tools row; static test that it never acts for the player
 
 - [ ] 11A. Translation of the existing text (Requirement 12.4, 12.5, 12.7, 12.8)
   - [ ] 11A.1 Chinese part of the Banned_Term_List

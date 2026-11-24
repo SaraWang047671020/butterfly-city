@@ -13,6 +13,7 @@ import { readCharacter, writeCharacter } from './save/character-store.ts';
 import { createCharacterCreation, pick, type CreationFiles } from './ui/character/creation.ts';
 import { createCharacterChip } from './ui/character/chip.ts';
 import { createLifeDialog, type LifeFiles } from './ui/life/life-dialog.ts';
+import { createFirstPlayGuide } from './ui/guide/first-play.ts';
 import { GameController, type DemoPort } from './game/controller.ts';
 import { describeDemo, readDemo } from './game/demo.ts';
 import { buildStoryFacts } from './game/story-facts.ts';
@@ -412,9 +413,26 @@ async function start(): Promise<void> {
       renderLifeList(v?.timeline ?? []);
       if (ctl.screen().kind === 'game' && !lifeCtl.hasCharacter() && !creation.isOpen()) creation.open();
     };
+    // First_Play_Guide (play-loop task 11): after the first Character, until finished or skipped; replay from the report.
+    const guide = createFirstPlayGuide(
+      document,
+      files.characters.guide.map((t) => pick(t)),
+      () => lifeCtl.setGuideDone(),
+    );
+    host.appendChild(guide.root);
+    app.addMapControl(UI_STRINGS.guide.replay, () => {
+      app.closeReport();
+      guide.start();
+    });
+    const maybeGuide = (): void => {
+      if (ctl.screen().kind === 'game' && lifeCtl.hasCharacter() && !lifeCtl.guideDone() && !creation.isOpen() && !guide.running()) guide.start();
+    };
     lifeCtl.subscribe(renderLife);
     ctl.subscribe(renderLife);
+    lifeCtl.subscribe(maybeGuide);
+    ctl.subscribe(maybeGuide);
     renderLife();
+    maybeGuide();
   }
   app.attach(ctl);
 }

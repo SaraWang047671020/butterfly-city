@@ -470,6 +470,15 @@ export const EN = {
     lifeEntry: '{quarter} · {decision}',
   },
 
+  // First_Play_Guide (play-loop Requirement 8); the step texts come from the Character_File.
+  guide: {
+    step: 'Guide {n} of {total}',
+    next: 'Next',
+    done: 'Done',
+    skip: 'Skip guide',
+    replay: 'Replay the first-play guide',
+  },
+
   /** City names (play-loop Requirement 12.5). */
   cityNames: {
     Taipei: 'Taipei',

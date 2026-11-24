@@ -448,6 +448,14 @@ export const ZH: UiStrings = {
     lifeEntry: '{quarter} · {decision}',
   },
 
+  guide: {
+    step: '新手引導 {n} / {total}',
+    next: '下一步',
+    done: '完成',
+    skip: '跳過引導',
+    replay: '重看新手引導',
+  },
+
   cityNames: {
     Taipei: '臺北市',
     'New Taipei': '新北市',

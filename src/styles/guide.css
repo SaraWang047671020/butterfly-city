@@ -1,0 +1,94 @@
+/* First_Play_Guide (play-loop Requirement 8, approved design 2026-11-23). Tokens only. The App sets --guide-x,
+ * --guide-y and --guide-arrow each frame. */
+.ui-guide {
+  position: fixed;
+  inset: auto;
+  left: var(--guide-x, 50%);
+  top: var(--guide-y, 50%);
+  width: min(20rem, calc(100vw - 2 * var(--space-2)));
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  box-sizing: border-box;
+  color: var(--color-accent-ink);
+  background: var(--color-accent);
+  border: 0;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  font: var(--font-size-sm) / var(--line-height-normal) var(--font-sans);
+  overflow: visible;
+}
+
+.ui-guide.is-floating {
+  left: 50%;
+  top: auto;
+  bottom: var(--space-6);
+  transform: translateX(-50%);
+}
+
+.ui-guide::after {
+  content: '';
+  position: absolute;
+  left: var(--guide-arrow, 50%);
+  bottom: calc(-1 * var(--space-2));
+  width: var(--space-4);
+  height: var(--space-4);
+  margin-left: calc(-1 * var(--space-2));
+  background: var(--color-accent);
+  transform: rotate(45deg);
+}
+
+.ui-guide.is-below::after {
+  bottom: auto;
+  top: calc(-1 * var(--space-2));
+}
+
+.ui-guide.is-floating::after {
+  display: none;
+}
+
+.ui-guide__count {
+  margin: 0 0 var(--space-1);
+  font-weight: var(--font-weight-bold);
+}
+
+.ui-guide__text {
+  margin: 0;
+}
+
+.ui-guide__row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.ui-guide__skip,
+.ui-guide__next {
+  min-height: var(--target-min);
+  padding: 0 var(--space-3);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-accent-ink);
+  background: none;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.ui-guide__next {
+  color: var(--color-accent);
+  background: var(--color-accent-ink);
+  border-color: var(--color-accent-ink);
+}
+
+.ui-guide__skip:focus-visible,
+.ui-guide__next:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* The control the guide points at. */
+.ui-guide-target {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}

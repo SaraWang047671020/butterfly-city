@@ -379,8 +379,9 @@ export function createCharacterCreation(doc: Document, deps: CreationDeps): Char
       showStep(step + 1);
       return;
     }
-    deps.onConfirm({ name: state.name.trim(), origin: state.origin, start: start() });
+    // Close first, so that whatever reacts to the new Character (the First_Play_Guide) sees no open screen.
     dialog.close();
+    deps.onConfirm({ name: state.name.trim(), origin: state.origin, start: start() });
   });
   back.addEventListener('click', () => showStep(Math.max(1, step - 1)));
   random.addEventListener('click', () => {

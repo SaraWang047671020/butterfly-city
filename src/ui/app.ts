@@ -75,6 +75,8 @@ export interface App {
   addHeaderButton(label: string, onClick: (button: HTMLButtonElement) => void): HTMLButtonElement;
   /** The host of a City_Report tab (to add a section), or null. */
   reportTab(name: string): HTMLElement | null;
+  /** Closes the City_Report when it is open. */
+  closeReport(): void;
   /** Adds a City_Report tab whose content is built when it is shown (play-loop Requirement 7.2). */
   addReportTab(name: string, title: string, onShow: (host: HTMLElement) => void): HTMLElement;
   /** Renders `controller.screen()` now and after every publish. Returns a detach function. */
@@ -182,7 +184,7 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   const mapHost = report.addTab('map', R.map);
   const leftHost = mapHost;
   const timelineHost = report.addTab('timeline', R.timeline);
-  const reportButton = button(doc, 'ui-report-open', R.open, () => report.open(null, reportButton), headerHost);
+  const reportButton = button(doc, 'ui-report-open ui-report-button', R.open, () => report.open(null, reportButton), headerHost);
 
   // Placeholder: actions are bound in `attach`; components keep a stable reference to this proxy.
   let current: UiActions | null = null;
@@ -397,6 +399,9 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
       return b;
     },
     reportTab: (name) => report.host(name),
+    closeReport: () => {
+      if (report.isOpen()) report.close();
+    },
     addReportTab: (name, title, onShow) => report.addTab(name, title, onShow),
     addMapControl(label, onClick) {
       const b = doc.createElement('button');
