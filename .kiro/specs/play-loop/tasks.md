@@ -74,7 +74,7 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
   - [x] 11A.3 User approval of the Traditional Chinese text, recorded in `KIRO-LOG.md`
 
 - [x] 12. Finish
-  - [x] 12.1 Strings review of Requirement 10.1 recorded in `KIRO-LOG.md` (random names moved into the UI_Strings; singular card texts; the Traditional Chinese UI_Strings and the Chinese Character_File text still wait for the user's review)
+  - [x] 12.1 Strings review of Requirement 10.1 recorded in `KIRO-LOG.md` (random names moved into the UI_Strings; singular card texts; the Traditional Chinese UI_Strings and the Chinese Character_File text approved by the user on 2026-11-24)
   - [x] 12.2 Module boundary and static checks (Requirement 11.5): the play-loop modules are listed in `tests/static/boundaries.test.ts`
   - [x] 12.3 Manual checks: keyboard only, reduced motion, WebGL disabled, 360 / 768 / 1280 / 1920 px, real pointer clicks on every dialog; recorded in `KIRO-LOG.md`. Fixed on the way: dialog focus trap, focus order of the Turn_Bar row and the District_Card, the narrow-screen top stack and Walk_Mode, walk actions without WebGL, the city-year slider end (`sliderUpper`)
   - [x] 12.4 Update `product.md` (player character in place of the fixed Persona choice) and `structure.md` (new folders)

@@ -1,6 +1,6 @@
 // Traditional Chinese UI strings (play-loop Requirement 12.3). Same keys and Placeholders as en.ts; the type checker
 // rejects a missing or extra key, and tests/ui/strings.test.ts rejects a Placeholder that differs.
-// Draft by Claude Code, 2026-11-23, for the product owner to review (play-loop Requirement 12.8).
+// Drafted by Claude Code on 2026-11-23 and approved by the product owner on 2026-11-24 (play-loop Requirement 12.8).
 // Text authored by the user is marked TODO(user text) and is a short placeholder until supplied.
 import type { EngineErrorCode } from '../../types/simulation.ts';
 import type { UiStrings } from './en.ts';
@@ -191,7 +191,7 @@ export const ZH: UiStrings = {
       twdPerPassMonth: '元／張／月',
     },
     effects: {
-      // TODO(user text): review the wording of the effect statements (Chinese draft).
+      // Chinese wording approved by the product owner on 2026-11-24 with the rest of this file.
       socialHousing: {
         benefits: [
           '社宅完工所在區的租屋者：經過此工具顯示的延遲後，房租負擔可能下降。',

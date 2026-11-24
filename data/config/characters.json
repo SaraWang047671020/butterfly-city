@@ -2,9 +2,9 @@
   "schemaVersion": 2,
   "status": {
     "en": "approved",
-    "zh-Hant": "draft"
+    "zh-Hant": "approved"
   },
-  "notes": "English drafted by Claude Code and approved by the product owner on 2026-11-23; Traditional Chinese drafted by Claude Code on 2026-11-24 for the product owner to review (play-loop Requirements 10.4, 12.8). Every displayed text is { \"en\", \"zh-Hant\" }. Placeholders in braces are filled by the game. Industry codes are the DGBAS earnings industries of data.gov.tw 9663 (scripts/story/wages.ts). The Quarter_Brief sentences moved to the UI_Strings_Module in task 9.",
+  "notes": "English drafted by Claude Code and approved by the product owner on 2026-11-23; Traditional Chinese drafted by Claude Code on 2026-11-24 and approved by the product owner on 2026-11-24 (play-loop Requirements 10.4, 12.8). Every displayed text is { \"en\", \"zh-Hant\" }. Placeholders in braces are filled by the game. Industry codes are the DGBAS earnings industries of data.gov.tw 9663 (scripts/story/wages.ts). The Quarter_Brief sentences moved to the UI_Strings_Module in task 9.",
   "origins": [
     {
       "id": "taipei",
