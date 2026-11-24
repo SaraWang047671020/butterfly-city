@@ -10,6 +10,13 @@ import { RULE_REGISTRY } from '../../src/simulation/registry.ts';
 import type { ScalarParameter } from '../../src/types/simulation.ts';
 import { readFixture } from '../data/fixtures/index.ts';
 
+/** The fixture session without the Documented_Limits of the target field. */
+function buildNoMax(): GameSession {
+  const s = build();
+  const params = Object.fromEntries(Object.entries(s.params).filter(([id]) => !id.startsWith('limit.rentSubsidy.households.max')));
+  return { ...s, params };
+}
+
 function build(): GameSession {
   const data = convert({
     districts: readFixture('districts.json'),
@@ -38,11 +45,11 @@ function unchanged(before: GameSession, after: GameSession): void {
 
 describe('no Documented_Limit (housing-tools Requirement 2.2)', () => {
   it('a field without a max has no upper limit; the budget decides', () => {
-    expect(limits(build()).upper).toBe(Number.POSITIVE_INFINITY);
+    expect(limits(buildNoMax()).upper).toBe(Number.POSITIVE_INFINITY);
   });
 
   it('the slider ends at the largest value the budget of the year allows', () => {
-    const s = build();
+    const s = buildNoMax();
     const end = affordableValue(s, TARGET, true);
     expect(Number.isInteger(end)).toBe(true);
     const at = checkEditSync(s, { target: TARGET, kind: 'value', text: String(end) });
@@ -68,7 +75,7 @@ describe('rejected edits leave diffs and Timeline_Entries unchanged (19.2, 9.2, 
   it('above a Documented_Limit (housing-tools: an area and year specific max)', () => {
     const s0 = build();
     const max: ScalarParameter = { kind: 'scalar', value: 50_000, unit: 'households', source: { citation: 'Test limit', url: '' }, status: 'verified' };
-    const s: GameSession = { ...s0, params: { ...s0.params, 'limit.rentSubsidy.households.max.Taipei.2015': max } };
+    const s: GameSession = { ...s0, params: { ...buildNoMax().params, 'limit.rentSubsidy.households.max.Taipei.2015': max } };
     const { upper } = limits(s);
     expect(upper).toBe(50_000);
     const req: EditRequest = { target: TARGET, kind: 'value', text: String(Math.ceil(upper) + 1) };

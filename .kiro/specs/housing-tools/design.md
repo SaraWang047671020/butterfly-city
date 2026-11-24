@@ -66,7 +66,7 @@ Full notes with sources S1 to S26: `data/research/housing-tools-2026-11-24.md`.
 
 | Item | Found | Proposed use |
 |---|---|---|
-| Social housing capacity | Central plan, revision 2 (2022-04): Taipei 26,000 and New Taipei 33,000 units over 2017–2024. No per-year start series published for either city. | `limit.socialHousing.unitsStarted.max.<city>` = allocation ÷ 8 years: Taipei 3,250, New Taipei 4,125 per year, status `secondary`, method stated |
+| Social housing capacity | Central plan, revision 2 (2022-04): Taipei 26,000 and New Taipei 33,000 units over 2017–2024. No per-year start series published for either city. | `limit.socialHousing.unitsStarted.max.<city>.<year>` = the allocation in force ÷ 8 years: 1st revision (Taipei 34,000, New Taipei 40,000 → 4,250 and 5,000) through 2021, 2nd revision (26,000 and 33,000 → 3,250 and 4,125) from 2022, because real Taipei starts of 2018 (3,289) and 2019 (3,453) are above 3,250; status `secondary`, method stated |
 | Rent subsidy maximum per household per month | 2015–2021 central programme: Taipei 5,000, New Taipei 4,000. From 2022-07 (300億 programme) with multipliers: Taipei 14,400, New Taipei 9,000 | `limit.rentSubsidy.amount.max.<city>.<year>` by period |
 | Rent subsidy households | Applications per city and year (life-story research, data.gov.tw 132047, 122939) | `limit.rentSubsidy.households.max.<city>.<year>` |
 | Sublease cost | Phase 5 management fees per month: Taipei 3,000 (包租) / 1,700 (代管), New Taipei 2,600 / 1,500; programme budgeting average about 2,200 per month; insurance 3,500 per year | `sublease.unitCost` central about NT$55,000 per unit per year, range from the fee table |

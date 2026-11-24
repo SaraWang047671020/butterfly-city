@@ -4,9 +4,11 @@
  */
 import { collectParameterSpecs, RULE_REGISTRY } from '../../../src/simulation/registry.ts';
 import { DISTRICTS } from '../../lib/districts.ts';
+import { limitIds } from './limits.ts';
 
 /** Ids that the engine reads but no rule declares (the 41 `commute.jobShare.<code>` ids are added in `engineIdSet`). */
-export const ENGINE_EXTRA_IDS: readonly string[] = [];
+/** The Documented_Limits by city and year (housing-tools), read optionally by `checkLimit`. */
+export const ENGINE_EXTRA_IDS: readonly string[] = limitIds();
 
 /** The fixed Omitted_Optional_Ids; every `budget.ceiling.` id is also omitted, by prefix. */
 export const OMITTED_OPTIONAL_IDS: readonly string[] = [

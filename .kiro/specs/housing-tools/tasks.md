@@ -5,10 +5,10 @@ Claude Code implements this spec (recorded in `KIRO-LOG.md`). Requirements and d
 ## Tasks
 
 - [x] 1. Approvals: requirements, design, `simulation.md`
-- [ ] 2. Limits
+- [x] 2. Limits
   - [x] 2.1 `checkLimit`: area and year specific `.max` ids, no upper limit without one; remove the factor parameters; `.min` 0
-  - [ ] 2.2 Documented_Limits in `params.json` (via the pipeline config) with sources: rent subsidy households (applications), rent subsidy amount (programme maximum), social housing starts (city capacity)
-  - [ ] 2.3 UI line (done with 2.1: "no upper limit" line, slider ends where the budget runs out via `affordableValue`; texts in both languages await the user's approval) "no upper limit: the budget decides"; tests; backtest
+  - [x] 2.2 Documented_Limits in `params.json` (via the pipeline config) with sources: rent subsidy households (applications), rent subsidy amount (programme maximum), social housing starts (city capacity)
+  - [x] 2.3 UI line (done with 2.1: "no upper limit" line, slider ends where the budget runs out via `affordableValue`; texts approved 2026-11-24) "no upper limit: the budget decides"; tests; backtest
 - [ ] 3. Budget on screen (after the Design_Proposal): Budget_Bar, cost and trade-off lines in the Policy_Dialog
 - [ ] 4. Sublease_Tool: rule, parameters with sources, Policy_Card and dialog, life-story Application
 - [ ] 5. Holding_Tax_Tool: rule, revenue into the next year's budget (`BudgetLedger.extra`), Policy_Card and dialog

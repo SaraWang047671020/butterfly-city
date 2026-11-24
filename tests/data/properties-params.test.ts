@@ -1,9 +1,10 @@
 // Property tests for the Params_File validator (Properties 38 and 39) in the data-pipeline spec.
 //
-// Oracle for Property 38: the valid file is the committed public/data/params.json (74 ids, real district
+// Oracle for Property 38: the valid file is the committed public/data/params.json (140 ids, real district
 // codes). Each case injects one typed defect into a deep copy and names the JSON path at which
 // `validateParamsFile` must report it. The undamaged file must produce no error.
 
+import { limitSourceType } from '../../scripts/pipeline/params/limits.ts';
 import fs from 'node:fs';
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
@@ -28,7 +29,7 @@ const realIds: string[] = Object.keys(real.parameters);
 const districtCodes = realIds.filter((id) => id.startsWith(JOB_PREFIX)).map((id) => id.slice(JOB_PREFIX.length));
 const type3 = new Set<string>([...FIXED_TYPE3_IDS, MIGRATION_EXIT_SHARE_ID, MIGRATION_SHARE_ID, MIGRATION_THRESHOLD_ID, SHARE_BOTH_ID, COST_SCHEDULE_ID]);
 const sourceTypes: Record<string, 1 | 2 | 3> = {};
-for (const id of realIds) sourceTypes[id] = FIXED_TYPE1_IDS.includes(id) ? 1 : type3.has(id) ? 3 : 2;
+for (const id of realIds) sourceTypes[id] = limitSourceType(id) ?? (FIXED_TYPE1_IDS.includes(id) ? 1 : type3.has(id) ? 3 : 2);
 
 const ctx: ValidationContext = {
   districtCodes,

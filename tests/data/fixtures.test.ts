@@ -18,10 +18,10 @@ describe('fixture Data_Files', () => {
     expect(f.indicators.map((i: { id: string }) => i.id)).toContain('medianTotalPrice');
   });
   it('policy-track.json validates', () => expect(validatePolicyTrackFile(readFixture('policy-track.json'), ctx)).toEqual([]));
-  it('params.json validates with 74 ids', () => {
+  it('params.json validates with 140 ids', () => {
     const f = readFixture('params.json');
     expect(validateParamsFile(f, ctx)).toEqual([]);
-    expect(Object.keys(f.parameters)).toHaveLength(74);
+    expect(Object.keys(f.parameters)).toHaveLength(140);
   });
   it('commute-matrix.json validates', () => expect(validateCommuteMatrix(readFixture('commute-matrix.json'), ctx)).toEqual([]));
   it('events.json has at least one major event', () => {

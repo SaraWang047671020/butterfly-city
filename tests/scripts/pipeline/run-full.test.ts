@@ -1,3 +1,4 @@
+import { limitSourceType } from '../../../scripts/pipeline/params/limits.ts';
 import { describe, expect, it } from 'vitest';
 import { createContext, memoryLogger } from '../../../scripts/pipeline/context.ts';
 import { summarizeHistory } from '../../../scripts/pipeline/history-file.ts';
@@ -48,7 +49,7 @@ function validParams(): { file: ParamsFile; sourceTypes: Map<string, 1 | 2 | 3> 
   const sorted = Object.fromEntries(Object.entries(parameters).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
   const type3 = new Set([...FIXED_TYPE3_IDS, MIGRATION_EXIT_SHARE_ID, MIGRATION_SHARE_ID, MIGRATION_THRESHOLD_ID, SHARE_BOTH_ID, COST_SCHEDULE_ID]);
   const sourceTypes = new Map<string, 1 | 2 | 3>();
-  for (const id of Object.keys(sorted)) sourceTypes.set(id, FIXED_TYPE1_IDS.includes(id) ? 1 : type3.has(id) ? 3 : 2);
+  for (const id of Object.keys(sorted)) sourceTypes.set(id, limitSourceType(id) ?? (FIXED_TYPE1_IDS.includes(id) ? 1 : type3.has(id) ? 3 : 2));
   return { file: { schemaVersion: 1, parameters: sorted } as ParamsFile, sourceTypes };
 }
 

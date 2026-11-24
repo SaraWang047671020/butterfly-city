@@ -17,6 +17,7 @@ import { COST_SCHEDULE_ID, SHARE_BOTH_ID, deriveCostSchedule, deriveShareBoth } 
 import { engineIdSet, idSetDiff } from './engine-ids.ts';
 import { FIXED_TYPE1_IDS, FIXED_TYPE3_IDS, readFixedType3Params } from './fixed-table.ts';
 import { dwellingSizeId } from './housing.ts';
+import { limitParams, type LimitParams } from './limits.ts';
 import {
   MIGRATION_EXIT_SHARE_ID,
   MIGRATION_SHARE_ID,
@@ -89,6 +90,8 @@ export interface ParamsInputs {
   readonly part1: ReadonlyMap<string, ScalarParameter>;
   readonly fixedType3: Readonly<Record<string, ScalarParameter>>;
   readonly anchors: Readonly<Record<string, ScalarParameter>>;
+  /** Documented_Limits (housing-tools); absent in older fixtures. */
+  readonly limits?: LimitParams;
 }
 
 /** Merges, derives, rounds and sorts; runs the Id_Set_Check. Pure. */
@@ -103,6 +106,8 @@ export function assembleParams(inputs: ParamsInputs, engine: ReadonlySet<string>
   for (const [id, e] of inputs.part1) add(id, e, FIXED_TYPE1_IDS.includes(id) ? 1 : 2);
   for (const [id, e] of Object.entries(inputs.fixedType3)) add(id, e, 3);
   for (const [id, e] of Object.entries(inputs.anchors)) add(id, e, 3);
+  for (const [id, e] of Object.entries(inputs.limits?.type1 ?? {})) add(id, e, 1);
+  for (const [id, e] of Object.entries(inputs.limits?.type2 ?? {})) add(id, e, 2);
 
   const scalars = new Map<string, ScalarParameter>();
   for (const [id, e] of merged) if (e.kind === 'scalar') scalars.set(id, e);
@@ -145,6 +150,13 @@ export function paramsStep(readCommitted: CommittedReader = fsCommittedReader): 
       const dwelling = part1.entries.get(dwellingSizeId);
       if (dwelling === undefined) throw new DataError('missing-step-output', dwellingSizeId, ['not in the part 1 entries']);
 
+      const track = need(state.policyTrackFile, 'policy-track.json', 'policy-file');
+      const districts = need(state.districtsFile, 'districts.json', 'districts');
+      const limits = limitParams(
+        track,
+        (city) => districts.districts.filter((d) => d.city === city).map((d) => d.code),
+        readCommitted,
+      );
       const exits = readExitTotals(ctx.reader, ctx.quarters);
       const anchors = migrationAnchorParams(moveOut, population, ctx.quarters, exits);
       const inputs: ParamsInputs = {
@@ -155,6 +167,7 @@ export function paramsStep(readCommitted: CommittedReader = fsCommittedReader): 
           [MIGRATION_EXIT_SHARE_ID]: anchors.exitShare,
           [MIGRATION_THRESHOLD_ID]: migrationThresholdParam(rent, householdIncome, ctx.quarters, dwelling.value),
         },
+        limits,
       };
       state.params = assembleParams(inputs, engineIdSet());
     },

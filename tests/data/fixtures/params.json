@@ -633,6 +633,864 @@
       },
       "status": "verified"
     },
+    "limit.rentSubsidy.amount.max.New Taipei.2015": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2016": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2017": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2018": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2019": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2020": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2021": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2022": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables)",
+        "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2023": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables)",
+        "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2024": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables)",
+        "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2025": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables)",
+        "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2015": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2016": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2017": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2018": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2019": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2020": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2021": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)",
+        "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2022": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables); Commercial Times 2025-11-25 (maximum 1.8 x 8,000)",
+        "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2023": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables); Commercial Times 2025-11-25 (maximum 1.8 x 8,000)",
+        "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2024": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables); Commercial Times 2025-11-25 (maximum 1.8 x 8,000)",
+        "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2025": {
+      "kind": "scalar",
+      "value": 1000000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": {
+        "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables); Commercial Times 2025-11-25 (maximum 1.8 x 8,000)",
+        "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2015": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)",
+        "url": "https://data.gov.tw/dataset/122939"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2016": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)",
+        "url": "https://data.gov.tw/dataset/122939"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2017": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)",
+        "url": "https://data.gov.tw/dataset/122939"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2018": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)",
+        "url": "https://data.gov.tw/dataset/122939"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2019": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)",
+        "url": "https://data.gov.tw/dataset/122939"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2020": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)",
+        "url": "https://data.gov.tw/dataset/122939"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2021": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)",
+        "url": "https://data.gov.tw/dataset/122939"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2022": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)",
+        "url": "https://data.gov.tw/dataset/122939"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2023": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)",
+        "url": "https://data.gov.tw/dataset/122939"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2024": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)",
+        "url": "https://data.gov.tw/dataset/122939"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2025": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)",
+        "url": "https://data.gov.tw/dataset/122939"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2015": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)",
+        "url": "https://data.gov.tw/en/datasets/132047"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2016": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)",
+        "url": "https://data.gov.tw/en/datasets/132047"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2017": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)",
+        "url": "https://data.gov.tw/en/datasets/132047"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2018": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)",
+        "url": "https://data.gov.tw/en/datasets/132047"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2019": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)",
+        "url": "https://data.gov.tw/en/datasets/132047"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2020": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)",
+        "url": "https://data.gov.tw/en/datasets/132047"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2021": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)",
+        "url": "https://data.gov.tw/en/datasets/132047"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2022": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)",
+        "url": "https://data.gov.tw/en/datasets/132047"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2023": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)",
+        "url": "https://data.gov.tw/en/datasets/132047"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2024": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)",
+        "url": "https://data.gov.tw/en/datasets/132047"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2025": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "households",
+      "status": "secondary",
+      "source": {
+        "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)",
+        "url": "https://data.gov.tw/en/datasets/132047"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2015": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2016": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2017": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2018": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2019": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2020": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2021": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2022": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2023": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2024": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2025": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2015": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2016": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2017": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2018": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2019": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2020": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2021": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2022": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2023": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2024": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2025": {
+      "kind": "scalar",
+      "value": 10000000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": {
+        "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)",
+        "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf"
+      },
+      "estimated": {
+        "method": "Test fixture: set far above the synthetic real values of the fixture policy track, so the fixture real track stays feasible."
+      }
+    },
     "migration.commuteCostPerMinute": {
       "kind": "scalar",
       "value": 10,

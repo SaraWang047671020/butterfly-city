@@ -479,6 +479,534 @@
       "status": "verified",
       "estimated": { "method": "Renting households (129267) ÷ ordinary households living in housing units (933940) of Taipei, 2020 census table 34 (November 2020). The renter rate is a single-year value (census of November 2020) and is used as a constant for all quarters." }
     },
+    "limit.rentSubsidy.amount.max.New Taipei.2015": {
+      "kind": "scalar",
+      "value": 4000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Central flat amount for New Taipei; no city top-up found. Confirmed for 2015-2019; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2016": {
+      "kind": "scalar",
+      "value": 4000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Central flat amount for New Taipei; no city top-up found. Confirmed for 2015-2019; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2017": {
+      "kind": "scalar",
+      "value": 4000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Central flat amount for New Taipei; no city top-up found. Confirmed for 2015-2019; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2018": {
+      "kind": "scalar",
+      "value": 4000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Central flat amount for New Taipei; no city top-up found. Confirmed for 2015-2019; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2019": {
+      "kind": "scalar",
+      "value": 4000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Central flat amount for New Taipei; no city top-up found. Confirmed for 2015-2019; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2020": {
+      "kind": "scalar",
+      "value": 4000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Central flat amount for New Taipei; no city top-up found. Confirmed for 2015-2019; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2021": {
+      "kind": "scalar",
+      "value": 4000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1 and 5: central amount 4,000 per household per month for New Taipei", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Central flat amount for New Taipei; no city top-up found. Confirmed for 2015-2019; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2022": {
+      "kind": "scalar",
+      "value": 9000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables)", "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf" },
+      "estimated": { "method": "Base amount of level 1 in the 18 urban districts (5,000) times the largest multiplier (1.8) = 9,000, from 2022-07. 2022 uses this value from the start of the year." }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2023": {
+      "kind": "scalar",
+      "value": 9000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables)", "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf" },
+      "estimated": { "method": "Base amount of level 1 in the 18 urban districts (5,000) times the largest multiplier (1.8) = 9,000, from 2022-07. 2022 uses this value from the start of the year." }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2024": {
+      "kind": "scalar",
+      "value": 9000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables)", "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf" },
+      "estimated": { "method": "Base amount of level 1 in the 18 urban districts (5,000) times the largest multiplier (1.8) = 9,000, from 2022-07. 2022 uses this value from the start of the year." }
+    },
+    "limit.rentSubsidy.amount.max.New Taipei.2025": {
+      "kind": "scalar",
+      "value": 9000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables)", "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf" },
+      "estimated": { "method": "Base amount of level 1 in the 18 urban districts (5,000) times the largest multiplier (1.8) = 9,000, from 2022-07. 2022 uses this value from the start of the year." }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2015": {
+      "kind": "scalar",
+      "value": 11000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Largest monthly amount any household could receive: Taipei's own graded scheme (11,000) is above the central amount (5,000). The 2019 table is the only version seen; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2016": {
+      "kind": "scalar",
+      "value": 11000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Largest monthly amount any household could receive: Taipei's own graded scheme (11,000) is above the central amount (5,000). The 2019 table is the only version seen; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2017": {
+      "kind": "scalar",
+      "value": 11000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Largest monthly amount any household could receive: Taipei's own graded scheme (11,000) is above the central amount (5,000). The 2019 table is the only version seen; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2018": {
+      "kind": "scalar",
+      "value": 11000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Largest monthly amount any household could receive: Taipei's own graded scheme (11,000) is above the central amount (5,000). The 2019 table is the only version seen; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2019": {
+      "kind": "scalar",
+      "value": 11000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Largest monthly amount any household could receive: Taipei's own graded scheme (11,000) is above the central amount (5,000). The 2019 table is the only version seen; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2020": {
+      "kind": "scalar",
+      "value": 11000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Largest monthly amount any household could receive: Taipei's own graded scheme (11,000) is above the central amount (5,000). The 2019 table is the only version seen; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2021": {
+      "kind": "scalar",
+      "value": 11000,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, research report on graded rent subsidies (2019), tables 1, 3 and 5: central amount 5,000; Taipei graded scheme up to 11,000 (4 or more persons, income tier 1)", "url": "https://www.rde.ntpc.gov.tw/userfiles/1160700/files/07新北市住宅租金補貼分級制度評估與分析.pdf" },
+      "estimated": { "method": "Largest monthly amount any household could receive: Taipei's own graded scheme (11,000) is above the central amount (5,000). The 2019 table is the only version seen; 2020 and 2021 not verified." }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2022": {
+      "kind": "scalar",
+      "value": 14400,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables); Commercial Times 2025-11-25 (maximum 1.8 x 8,000)", "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf" },
+      "estimated": { "method": "Base amount of level 1 in Taipei (8,000) times the largest multiplier (1.8, three or more children) = 14,400, from 2022-07; Taipei's top-up fills the gap up to 11,000 only, so it never raises the maximum. 2022 uses this value from the start of the year." }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2023": {
+      "kind": "scalar",
+      "value": 14400,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables); Commercial Times 2025-11-25 (maximum 1.8 x 8,000)", "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf" },
+      "estimated": { "method": "Base amount of level 1 in Taipei (8,000) times the largest multiplier (1.8, three or more children) = 14,400, from 2022-07; Taipei's top-up fills the gap up to 11,000 only, so it never raises the maximum. 2022 uses this value from the start of the year." }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2024": {
+      "kind": "scalar",
+      "value": 14400,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables); Commercial Times 2025-11-25 (maximum 1.8 x 8,000)", "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf" },
+      "estimated": { "method": "Base amount of level 1 in Taipei (8,000) times the largest multiplier (1.8, three or more children) = 14,400, from 2022-07; Taipei's top-up fills the gap up to 11,000 only, so it never raises the maximum. 2022 uses this value from the start of the year." }
+    },
+    "limit.rentSubsidy.amount.max.Taipei.2025": {
+      "kind": "scalar",
+      "value": 14400,
+      "unit": "TWD per household per month",
+      "status": "secondary",
+      "source": { "citation": "New Taipei UDD, application form of the central expanded rent subsidy (amount and multiplier tables); Commercial Times 2025-11-25 (maximum 1.8 x 8,000)", "url": "https://www.planning.ntpc.gov.tw/userfiles/1090400/files/115年度租金補貼申請書.pdf" },
+      "estimated": { "method": "Base amount of level 1 in Taipei (8,000) times the largest multiplier (1.8, three or more children) = 14,400, from 2022-07; Taipei's top-up fills the gap up to 11,000 only, so it never raises the maximum. 2022 uses this value from the start of the year." }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2015": {
+      "kind": "scalar",
+      "value": 6145,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)", "url": "https://data.gov.tw/dataset/122939" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2015 (4839, policy track) divided by the approval rate of the year (0.7875, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2016": {
+      "kind": "scalar",
+      "value": 11809,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)", "url": "https://data.gov.tw/dataset/122939" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2016 (10107, policy track) divided by the approval rate of the year (0.8559, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2017": {
+      "kind": "scalar",
+      "value": 14583,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)", "url": "https://data.gov.tw/dataset/122939" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2017 (12296, policy track) divided by the approval rate of the year (0.8432, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2018": {
+      "kind": "scalar",
+      "value": 15895,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)", "url": "https://data.gov.tw/dataset/122939" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2018 (12480, policy track) divided by the approval rate of the year (0.7852, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2019": {
+      "kind": "scalar",
+      "value": 14837,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)", "url": "https://data.gov.tw/dataset/122939" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2019 (12141, policy track) divided by the approval rate of the year (0.8183, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2020": {
+      "kind": "scalar",
+      "value": 17346,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)", "url": "https://data.gov.tw/dataset/122939" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2020 (13578, policy track) divided by the approval rate of the year (0.7828, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2021": {
+      "kind": "scalar",
+      "value": 26304,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)", "url": "https://data.gov.tw/dataset/122939" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2021 (20677, policy track) divided by the approval rate of the year (0.7861, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2022": {
+      "kind": "scalar",
+      "value": 48500,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)", "url": "https://data.gov.tw/dataset/122939" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2022 (41040, policy track) divided by the approval rate of the year (0.8462, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2023": {
+      "kind": "scalar",
+      "value": 63982,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)", "url": "https://data.gov.tw/dataset/122939" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2023 (51531, policy track) divided by the approval rate of the year (0.8054, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2024": {
+      "kind": "scalar",
+      "value": 121169,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)", "url": "https://data.gov.tw/dataset/122939" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2024 (88526, policy track) divided by the approval rate of the year (0.7306, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.New Taipei.2025": {
+      "kind": "scalar",
+      "value": 112316,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939)", "url": "https://data.gov.tw/dataset/122939" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2025 (96333, policy track) divided by the approval rate of the year (0.8577, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2015": {
+      "kind": "scalar",
+      "value": 3761,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)", "url": "https://data.gov.tw/en/datasets/132047" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2015 (3332, policy track) divided by the approval rate of the year (0.886, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2016": {
+      "kind": "scalar",
+      "value": 8434,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)", "url": "https://data.gov.tw/en/datasets/132047" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2016 (7615, policy track) divided by the approval rate of the year (0.903, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2017": {
+      "kind": "scalar",
+      "value": 9304,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)", "url": "https://data.gov.tw/en/datasets/132047" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2017 (8392, policy track) divided by the approval rate of the year (0.902, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2018": {
+      "kind": "scalar",
+      "value": 9906,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)", "url": "https://data.gov.tw/en/datasets/132047" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2018 (8865, policy track) divided by the approval rate of the year (0.895, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2019": {
+      "kind": "scalar",
+      "value": 11088,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)", "url": "https://data.gov.tw/en/datasets/132047" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2019 (9912, policy track) divided by the approval rate of the year (0.894, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2020": {
+      "kind": "scalar",
+      "value": 13034,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)", "url": "https://data.gov.tw/en/datasets/132047" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2020 (10531, policy track) divided by the approval rate of the year (0.808, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2021": {
+      "kind": "scalar",
+      "value": 19929,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)", "url": "https://data.gov.tw/en/datasets/132047" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2021 (15325, policy track) divided by the approval rate of the year (0.769, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2022": {
+      "kind": "scalar",
+      "value": 34928,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)", "url": "https://data.gov.tw/en/datasets/132047" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2022 (28955, policy track) divided by the approval rate of the year (0.829, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2023": {
+      "kind": "scalar",
+      "value": 38951,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)", "url": "https://data.gov.tw/en/datasets/132047" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2023 (32524, policy track) divided by the approval rate of the year (0.835, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2024": {
+      "kind": "scalar",
+      "value": 66841,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)", "url": "https://data.gov.tw/en/datasets/132047" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2024 (55812, policy track) divided by the approval rate of the year (0.835, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.rentSubsidy.households.max.Taipei.2025": {
+      "kind": "scalar",
+      "value": 77401,
+      "unit": "households",
+      "status": "secondary",
+      "source": { "citation": "臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047)", "url": "https://data.gov.tw/en/datasets/132047" },
+      "estimated": { "method": "Applications of the year: the largest quarterly number of subsidised households of 2025 (70202, policy track) divided by the approval rate of the year (0.907, the city's rent subsidy statistics). Only households that applied can receive the subsidy." }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2015": {
+      "kind": "scalar",
+      "value": 5000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (40,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2016": {
+      "kind": "scalar",
+      "value": 5000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (40,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2017": {
+      "kind": "scalar",
+      "value": 5000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (40,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2018": {
+      "kind": "scalar",
+      "value": 5000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (40,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2019": {
+      "kind": "scalar",
+      "value": 5000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (40,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2020": {
+      "kind": "scalar",
+      "value": 5000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (40,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2021": {
+      "kind": "scalar",
+      "value": 5000,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (40,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2022": {
+      "kind": "scalar",
+      "value": 4125,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan after the 2nd revision (33,000 units over 8 years) divided by 8; used from 2022. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2023": {
+      "kind": "scalar",
+      "value": 4125,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan after the 2nd revision (33,000 units over 8 years) divided by 8; used from 2022. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2024": {
+      "kind": "scalar",
+      "value": 4125,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan after the 2nd revision (33,000 units over 8 years) divided by 8; used from 2022. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.New Taipei.2025": {
+      "kind": "scalar",
+      "value": 4125,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan after the 2nd revision (33,000 units over 8 years) divided by 8; used from 2022. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2015": {
+      "kind": "scalar",
+      "value": 4250,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (34,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2016": {
+      "kind": "scalar",
+      "value": 4250,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (34,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2017": {
+      "kind": "scalar",
+      "value": 4250,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (34,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2018": {
+      "kind": "scalar",
+      "value": 4250,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (34,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2019": {
+      "kind": "scalar",
+      "value": 4250,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (34,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2020": {
+      "kind": "scalar",
+      "value": 4250,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (34,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2021": {
+      "kind": "scalar",
+      "value": 4250,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 1st revision (Executive Yuan 2021-01-20)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan (34,000 units over the 8 years 2017-2024) divided by 8; used for 2015-2021, before the 2nd revision. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2022": {
+      "kind": "scalar",
+      "value": 3250,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan after the 2nd revision (26,000 units over 8 years) divided by 8; used from 2022. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2023": {
+      "kind": "scalar",
+      "value": 3250,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan after the 2nd revision (26,000 units over 8 years) divided by 8; used from 2022. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2024": {
+      "kind": "scalar",
+      "value": 3250,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan after the 2nd revision (26,000 units over 8 years) divided by 8; used from 2022. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
+    "limit.socialHousing.unitsStarted.max.Taipei.2025": {
+      "kind": "scalar",
+      "value": 3250,
+      "unit": "units started per city and year",
+      "status": "secondary",
+      "source": { "citation": "Taichung City UDD, report on central and city social housing in Taichung (2024-03-08), table 1: central social housing plan 2017-2024, direct-construction allocation, 2nd revision (Executive Yuan 2022-04-07)", "url": "https://www.rdec.taichung.gov.tw/media/1031650/1130308-1-中央與市政府於臺中市境內興建社會住宅執行情形專案報告-都發.pdf" },
+      "estimated": { "method": "Allocation of the city in the central plan after the 2nd revision (26,000 units over 8 years) divided by 8; used from 2022. The allocation counts contract awards, not construction starts. No per-year series of starts is published." }
+    },
     "migration.commuteCostPerMinute": {
       "kind": "scalar",
       "value": 30.602311,
