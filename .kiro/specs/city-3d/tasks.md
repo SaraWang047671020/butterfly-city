@@ -33,10 +33,10 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-18, to save Kiro cre
   - [x] 5.4 `camera.ts`, `picking.ts`, keyboard focus and live region (Requirement 5)
   - [x] 5.5 `index.ts`: `mountCityView`, subscriptions, reduced motion, pause control, Quality_Level, fallback, lifecycle (Requirements 10, 12). The DOM buttons for pause and quality are placed in task 6.1; `mountCityView` exposes `setPaused` and `setQuality`.
 
-- [ ] 6. Overlay layout and wiring (after game-ui tasks 16 and 17)
+- [x] 6. Overlay layout and wiring (after game-ui tasks 16 and 17). The panel layout of 6.1 was later replaced by the City_Report (play-loop Requirement 7) and the game menu (play-loop Requirement 13).
   - [x] 6.1 City and UI layers; panel containers at ≥ 1024 px; bottom sheets below (Requirement 9). `src/styles/layout.css` and the panel structure in `src/ui/app.ts` (2026-11-23): compact Turn_Bar top centre, Policies and Map panels left, District right, Timeline as a panel that starts hidden below 1600 px; below 64rem a tab row opens one panel as a sheet above the Turn_Bar at the bottom. Checked by hand at 1280 × 800 and 360 × 740.
   - [x] 6.2 Illustration_Note in the Map panel next to the legend, at every width (on narrow screens behind the Map tab) (Requirement 11)
-  - [ ] 6.3 Manual checks of Requirement 13.5, recorded in `KIRO-LOG.md`
+  - [x] 6.3 Manual checks of Requirement 13.5, recorded in `KIRO-LOG.md` (Claude Code 2026-11-24, on the game-menu layout)
 
 ## Phase 2: Landmarks
 

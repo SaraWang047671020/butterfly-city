@@ -49,7 +49,7 @@ Loads, fills and displays the citizen stories and the model limitations page. Te
   - Run each file once; on failure try at most 2 fixes, then report file, test, expected and received.
   - _Requirements: 2.10, 3.5, 7.1, 7.2, 7.3, 7.4, 8.3, 8.4_
 
-- [ ] 8. Wiring and neutrality record
+- [x] 8. Wiring and neutrality record (Claude Code 2026-11-24: the Story_Panel and the model limits are tabs of the City_Report (play-loop Requirement 7), wired in `src/main.ts`; with `citizens.json` answering HTTP 500 the game runs, Next quarter computes and the People tab shows the load error; the 10 `story.*` strings reviewed in both languages and recorded in `KIRO-LOG.md`; `npm run typecheck` clean)
   - Wire the Story_Panel, picker and Limits_Dialog into `src/main.ts` and the Game_Screen; confirm that a Story_File error leaves the game running.
   - Record the neutrality review of the new UI strings in `KIRO-LOG.md` (game-ui Requirement 15.7).
   - Run `npm run typecheck` once.
