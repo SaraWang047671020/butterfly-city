@@ -35,6 +35,7 @@ export function createCharacterChip(doc: Document): Component<ChipProps> & { rea
   bodyShape.setAttribute('rx', '8');
   svg.append(head, bodyShape);
   const words = doc.createElement('div');
+  words.className = 'ui-character-chip__words';
   const name = doc.createElement('p');
   name.className = 'ui-character-chip__name';
   const where = doc.createElement('p');
@@ -64,14 +65,13 @@ export function createCharacterChip(doc: Document): Component<ChipProps> & { rea
       root.setAttribute('aria-label', fillTemplate(U.chipLabel, { name: view.character.name }));
       bodyShape.setAttribute('class', `ui-look--${me?.look.colour ?? 'teal'}`);
       setText(name, view.character.name);
-      setText(
-        where,
-        fillTemplate(U.chipWhere, {
-          occupation: occupationName(me?.occupation ?? null),
-          tenure: view.life.tenure === 'family' ? U.family : U.renting,
-          district: districtName(view.life.home),
-        }),
-      );
+      const whereText = fillTemplate(U.chipWhere, {
+        occupation: occupationName(me?.occupation ?? null),
+        tenure: view.life.tenure === 'family' ? U.family : U.renting,
+        district: districtName(view.life.home),
+      });
+      setText(where, whereText);
+      where.title = whereText; // the line can be cut with an ellipsis; the full text shows on hover
       const n = view.numbers.player;
       setText(rent.v, n.rentBurden === null ? U.noValue : `${formatNumber(n.rentBurden, 1)}%`);
       setText(commute.v, n.commuteMinutes === null ? '—' : `${formatNumber(n.commuteMinutes, 0)}′`);

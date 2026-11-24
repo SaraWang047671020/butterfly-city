@@ -73,8 +73,8 @@
   background: color-mix(in srgb, var(--color-bg-panel) 88%, transparent);
   backdrop-filter: blur(10px);
   border-color: color-mix(in srgb, var(--color-line) 40%, transparent);
-  border-radius: var(--radius-pill);
-  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-4);
+  border-radius: var(--radius-lg); /* not a pill: the bar wraps to two or three rows on narrower wide screens */
+  padding: var(--space-2) var(--space-3);
   column-gap: var(--space-3);
 }
 

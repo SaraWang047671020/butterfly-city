@@ -68,10 +68,10 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
 - [x] 11. First_Play_Guide (Requirement 8)
   - [x] 11.1 `src/ui/guide/first-play.ts` (a manual popover, raised above each modal dialog it points into); replay from the City_Report tools row; static test that it never acts for the player
 
-- [ ] 11A. Translation of the existing text (Requirement 12.4, 12.5, 12.7, 12.8)
+- [x] 11A. Translation of the existing text (Requirement 12.4, 12.5, 12.7, 12.8)
   - [x] 11A.1 Chinese part of the Banned_Term_List (loaded wording, market wording; the party and person names were already listed); checked on the UI_Strings, the Character_File, the story files and the event cards in both languages
   - [x] 11A.2 Bilingual fields and validators for `citizens.json`, `model-limits.json` (schema 2, every text `{ en, zh-Hant }` with the same Placeholders), `model-facts.json` (`backtestResult`) and `events.json` (card key `zh` with title and description); the policy effect texts were already in the UI_Strings; draft translations
-  - [ ] 11A.3 User approval of the Traditional Chinese text, recorded in `KIRO-LOG.md`
+  - [x] 11A.3 User approval of the Traditional Chinese text, recorded in `KIRO-LOG.md`
 
 - [ ] 12. Finish
   - [ ] 12.1 Strings review of Requirement 10.1 recorded in `KIRO-LOG.md`

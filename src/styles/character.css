@@ -285,6 +285,19 @@
   flex: 0 0 auto;
 }
 
+/* The words shrink (with an ellipsis) so the two numbers always fit inside the chip. */
+.ui-character-chip__words {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ui-character-chip__name,
+.ui-character-chip__where {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .ui-character-chip__name {
   margin: 0;
   font-weight: var(--font-weight-semibold);
@@ -297,6 +310,7 @@
 }
 
 .ui-character-chip__stat {
+  flex: 0 0 auto;
   margin: 0;
   display: flex;
   flex-direction: column;
