@@ -20,11 +20,11 @@
     "odds": {
       "socialHousing": {
         "en": "In your city {supplyPlayer} social housing units were let in {city} this quarter; in real history {supplyReal}. The chance was {oddsPlayer} % in your city and {oddsReal} % in real history.",
-        "zh-Hant": "這一季{cityZh}在你的城市出租了 {supplyPlayer} 戶社會住宅，真實歷史是 {supplyReal} 戶。機會在你的城市是 {oddsPlayer}%，在真實歷史是 {oddsReal}%。"
+        "zh-Hant": "這一季{city}在你的城市出租了 {supplyPlayer} 戶社會住宅，真實歷史是 {supplyReal} 戶。機會在你的城市是 {oddsPlayer}%，在真實歷史是 {oddsReal}%。"
       },
       "rentSubsidy": {
         "en": "In your city {supplyPlayer} households in {city} receive the rent subsidy; in real history {supplyReal}. The chance was {oddsPlayer} % in your city and {oddsReal} % in real history.",
-        "zh-Hant": "在你的城市，{cityZh}有 {supplyPlayer} 戶領租金補貼，真實歷史是 {supplyReal} 戶。機會在你的城市是 {oddsPlayer}%，在真實歷史是 {oddsReal}%。"
+        "zh-Hant": "在你的城市，{city}有 {supplyPlayer} 戶領租金補貼，真實歷史是 {supplyReal} 戶。機會在你的城市是 {oddsPlayer}%，在真實歷史是 {oddsReal}%。"
       }
     },
     "draw": {

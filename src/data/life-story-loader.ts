@@ -1,6 +1,7 @@
 // Life-story data files: the Application_Supply_File, the Life_Event_File and the Life_Story_File (life-story design,
-// "Data"). Validation of the Application_Supply_File; it is turned into the shape the game reads. Implemented by
-// Claude Code. A load error never blocks the game: the caller shows the Character without the story.
+// "Data"). Validation of the Application_Supply_File, turned into the shape the game reads; the two text files are
+// validated in life-text-loader.ts. Implemented by Claude Code. A load error never blocks the game: the caller shows
+// the Character without the story.
 import { parseQuarter } from '../simulation/quarter.ts';
 import type { ApplicationSupply, ByYear, City } from '../game/life/applications.ts';
 import type { Result } from './character-loader.ts';

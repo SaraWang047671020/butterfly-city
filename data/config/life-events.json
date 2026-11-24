@@ -40,7 +40,7 @@
       },
       "options": [
         { "id": "stop", "effect": { "kind": "none" }, "title": { "en": "Do not apply again", "zh-Hant": "不再申請" }, "text": { "en": "From next quarter {name} pays the full rent.", "zh-Hant": "從下一季起，{name}付全額房租。" } },
-        { "id": "apply", "effect": { "kind": "apply", "benefit": "rentSubsidy" }, "title": { "en": "Apply again", "zh-Hant": "再申請一次" }, "text": { "en": "Both versions apply and draw the same number. The result comes with the brief.", "zh-Hant": "兩個{name}都會申請，抽到同一個號碼，結果在季報公布。" } }
+        { "id": "apply", "effect": { "kind": "apply", "benefit": "rentSubsidy" }, "title": { "en": "Apply again", "zh-Hant": "再申請一次" }, "text": { "en": "Both versions of {name} apply and draw the same number. The result comes with the brief.", "zh-Hant": "兩個{name}都會申請，抽到同一個號碼，結果在季報公布。" } }
       ]
     },
     {
@@ -64,10 +64,10 @@
       "id": "socialHousingRound",
       "priority": 80,
       "cooldownQuarters": 4,
-      "title": { "en": "{city} social housing is taking applications", "zh-Hant": "{cityZh}社會住宅開放申請" },
+      "title": { "en": "{city} social housing is taking applications", "zh-Hant": "{city}社會住宅開放申請" },
       "text": {
         "en": "{city} is letting social housing units this quarter. {name}'s household income ({income} a year) is below the city's limit of {limit}.",
-        "zh-Hant": "{cityZh}這一季有社會住宅出租。{name}的家庭年所得（{income}）低於市府的門檻 {limit}。"
+        "zh-Hant": "{city}這一季有社會住宅出租。{name}的家庭年所得（{income}）低於市府的門檻 {limit}。"
       },
       "options": [
         { "id": "notNow", "effect": { "kind": "none" }, "title": { "en": "Not now", "zh-Hant": "先不要" }, "text": { "en": "Keep renting in {district}.", "zh-Hant": "繼續在{district}租屋。" } },
@@ -81,11 +81,11 @@
       "title": { "en": "Rent subsidy applications are open", "zh-Hant": "租金補貼開放申請" },
       "text": {
         "en": "Households renting in {city} can apply for this year's rent subsidy. {name}'s income per person ({incomePerPerson} a month) is below the limit of {limit}.",
-        "zh-Hant": "在{cityZh}租屋的家庭可以申請今年的租金補貼。{name}家每人每月所得（{incomePerPerson}）低於門檻 {limit}。"
+        "zh-Hant": "在{city}租屋的家庭可以申請今年的租金補貼。{name}家每人每月所得（{incomePerPerson}）低於門檻 {limit}。"
       },
       "options": [
         { "id": "notNow", "effect": { "kind": "none" }, "title": { "en": "Not now", "zh-Hant": "先不要" }, "text": { "en": "Pay the full rent.", "zh-Hant": "付全額房租。" } },
-        { "id": "apply", "effect": { "kind": "apply", "benefit": "rentSubsidy" }, "title": { "en": "Apply", "zh-Hant": "申請" }, "text": { "en": "Both versions apply and draw the same number. The result comes with the brief.", "zh-Hant": "兩個{name}都會申請，抽到同一個號碼，結果在季報公布。" } }
+        { "id": "apply", "effect": { "kind": "apply", "benefit": "rentSubsidy" }, "title": { "en": "Apply", "zh-Hant": "申請" }, "text": { "en": "Both versions of {name} apply and draw the same number. The result comes with the brief.", "zh-Hant": "兩個{name}都會申請，抽到同一個號碼，結果在季報公布。" } }
       ]
     },
     {
@@ -95,7 +95,7 @@
       "title": { "en": "A NT$1,280 monthly pass goes on sale", "zh-Hant": "1,280 元月票開賣" },
       "text": {
         "en": "From 16 April 2018 one monthly pass covers the MRT and buses of Taipei and New Taipei. {name} works in {work}. In 2016 about {share} % of commuters in {city} used public transport.",
-        "zh-Hant": "2018 年 4 月 16 日起，一張月票就能搭雙北的捷運和公車。{name}在{work}上班。2016 年{cityZh}約有 {share}% 的通勤者搭大眾運輸。"
+        "zh-Hant": "2018 年 4 月 16 日起，一張月票就能搭雙北的捷運和公車。{name}在{work}上班。2016 年{city}約有 {share}% 的通勤者搭大眾運輸。"
       },
       "options": [
         { "id": "keep", "effect": { "kind": "none" }, "title": { "en": "Keep commuting as before", "zh-Hant": "照原本的方式通勤" }, "text": { "en": "No transport line in the ledger (single fares and scooter costs are not modelled).", "zh-Hant": "帳本裡不列交通費（單程票和機車的花費不在模型裡）。" } },

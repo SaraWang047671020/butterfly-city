@@ -12,15 +12,15 @@ Claude Code implements this spec (recorded in `KIRO-LOG.md`). Requirements appro
 - [ ] 2. Data files
   - [x] 2.1 `data/config/application-supply.json`: real odds per benefit, city and year; income limits; minimum living expense; tenancy; rent shares; subsidy multipliers; each value with its source or `gap` and an assumption (design, "Research results")
   - [ ] 2.2 `data/config/life-events.json` and `data/config/life-story.json` (drafts), copied to `public/data/` by `npm run story-files`; `data/SOURCES.md` lists the new sources (Requirement 8.2)
-  - [ ] 2.3 Loader and validation (`src/data/life-story-loader.ts`; the Application_Supply_File is validated and tested, the Life_Event_File and Life_Story_File validators and the language and placeholder tests are still open); tests of both languages, placeholders and sources (Requirement 9.4)
+  - [x] 2.3 Loader and validation: `src/data/life-story-loader.ts` (Application_Supply_File), `src/data/life-text-loader.ts` (Life_Event_File, Life_Story_File, `textAt`); tests of both languages, placeholders and the story keys (Requirement 9.4). Loading into the App is part of task 4.1
 
 - [ ] 3. Pure game modules (`src/game/life/`)
   - [x] 3.1 `life-state.ts`: tenure `social`, `subsidy`, the decisions `apply`, `buyPass`, `leave`
   - [x] 3.2 `applications.ts`: eligibility, odds per track, Shared_Draw, effects, tenancy and subsidy periods; property tests of Requirement 9.3
   - [x] 3.3 `tracks.ts`: the Life_State of each track per quarter
   - [x] 3.4 `ledger.ts`: the Personal_Ledger per track; property test of Requirement 9.2 (equal versions when the policy equals real history)
-  - [ ] 3.5 `events.ts`: triggers, priority, cooldowns, the pick; tests of each trigger and of Requirement 9.5 (triggers read only the Player_Version)
-  - [ ] 3.6 `story.ts` and `ending.ts`: Story_Line selection and filling, the Ending; determinism test (Requirement 9.1)
+  - [x] 3.5 `events.ts`: triggers, priority, cooldowns, the pick; tests of each trigger and of Requirement 9.5 (triggers read only the Player_Version)
+  - [x] 3.6 `story.ts` (with the Ending; no separate `ending.ts`): Story_Line selection and filling, the Ending; determinism test (Requirement 9.1)
   - [x] 3.7 Boundary test lists the new modules (play-loop 11.5); the seeded random numbers moved from `src/ui/city/random.ts` to `src/game/random.ts` (re-exported) so that `src/game` imports nothing from `src/ui`
 
 - [ ] 4. Controllers and storage

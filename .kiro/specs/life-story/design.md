@@ -78,7 +78,7 @@ Templates with a selection condition, in both languages, with `status`. Template
 
 ## Life_Events and triggers
 
-At the start of each Decide_Step `pickEvent(state)` evaluates the triggers in priority order on the Player_Version of the Displayed_Quarter (Requirement 2.2) and returns the first one that is due, or none. Global rule: at most one per quarter; at least 3 quarters after the previous Life_Event, except the forced events (marked *), which come when due.
+At the start of each Decide_Step `pickEvent(state)` evaluates the triggers in priority order on the Player_Version of the Displayed_Quarter (Requirement 2.2) and returns the first one that is due, or none. Global rule: at most one per quarter; at least 4 quarters after the previous Life_Event (`MIN_GAP`; 3 in the first draft gave a Life_Event almost every 3 quarters, because the partner and child triggers hold most of the time), except the forced events (marked *), which come when due.
 
 | Priority | Id | Trigger (Player_Version) | Options (→ effect) |
 |---|---|---|---|
@@ -110,7 +110,8 @@ For an `apply` entry of benefit `b` in quarter `q`, city `c` (the city of the Ch
   `odds_t = min(1, oddsReal(b, c, year) × supply_t ÷ supplyReal)`
 
   and `odds_t = oddsReal` WHEN the two supplies are equal (Requirement 9.2). WHEN `supplyReal` is 0 (no round in real history that quarter), `odds_Real = 0` and `odds_Player = min(1, oddsReal × supply_Player ÷ meanSupplyReal(c))`, with the mean quarterly real supply of the city over the game.
-  - Social housing supply = units let in the quarter in the city: completions of the quarter (the Engine's social housing stock change on the Player_Version, `history.json` completions on the Real_Version) plus turnover `stock ÷ 24` (a 6-year tenancy, "Research results").
+  - Social housing supply = units let in the quarter in the city: the completions of the previous quarter (the Engine's social housing stock change on the Player_Version, `history.json` completions on the Real_Version) plus turnover `stock ÷ 24` of the previous quarter (a 6-year tenancy, "Research results"). The previous quarter, so that the odds are known when the Life_Event is asked (the Design_Proposal shows them in the dialog); changed during implementation from the completions of the quarter itself.
+  - The rent subsidy odds shown in the dialog use the policy value of the Planning_Quarter at that moment; the result uses the value the quarter is computed with.
   - Rent subsidy supply = the rent subsidy households of the city in `q` (the player's policy timeline, or the Real_Policy_Track).
 - **Shared_Draw**: `mulberry32(hashSeed(seed + ':' + b + ':' + q))()`; success on track `t` WHEN the draw is below `odds_t`. More supply never lowers the odds, and a success at lower odds is a success at higher odds (Requirement 9.3).
 - **Effect** from `q + 1` on that track:
