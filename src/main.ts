@@ -12,7 +12,7 @@ import { LifeController } from './game/life/controller.ts';
 import { readCharacter, writeCharacter } from './save/character-store.ts';
 import { createCharacterCreation, pick, type CreationFiles } from './ui/character/creation.ts';
 import { createCharacterChip } from './ui/character/chip.ts';
-import { keepTopStack } from './ui/top-stack.ts';
+import { mainFocusTarget } from './ui/menu/menu.ts';
 import { createLifeDialog, type LifeFiles } from './ui/life/life-dialog.ts';
 import { createFirstPlayGuide } from './ui/guide/first-play.ts';
 import { GameController, type DemoPort } from './game/controller.ts';
@@ -258,6 +258,25 @@ async function start(): Promise<void> {
     citizens: story.ok ? citizensOf(data, story.value, () => controller) : [],
   });
   const cityView = city;
+  // Menu (☰, approved design 2026-11-24): "Walk the streets" goes to "You and the city", the view toggles to "View"
+  // (they keep the menu open). A remounted City_View replaces the buttons of the previous one.
+  for (const old of document.querySelectorAll('[data-city-tool]')) old.remove();
+  const toolBar = cityView.root.querySelector('.city-tools');
+  if (toolBar !== null) {
+    const [walkButton, ...viewButtons] = Array.from(toolBar.querySelectorAll('button'));
+    if (walkButton !== undefined) {
+      walkButton.setAttribute('data-city-tool', '');
+      app.menuSection('city').append(walkButton);
+    }
+    for (const b of viewButtons) {
+      b.setAttribute('data-city-tool', '');
+      b.setAttribute('data-menu-stay', '');
+      app.menuSection('view').append(b);
+    }
+    toolBar.remove();
+  }
+  // Walk_Mode on a wide screen: "Back to overview" next to the quarter (user decision B, 2026-11-24).
+  if (document.querySelector('.ui-walk-back') === null) app.addTurnButton(C.overview, 'ui-walk-back', () => city?.setMode('overview'));
   goThere = (place) => cityView.walkTo(place);
   projectDistrict = (code) => cityView.project(code);
   cityView.update(ctl.view().map);
@@ -393,13 +412,11 @@ async function start(): Promise<void> {
       },
       preview: (start) => lifeCtl.previewStart(start),
       onConfirm: (c) => lifeCtl.createCharacter(c),
-      fallbackFocus: () => document.querySelector<HTMLElement>('.turn-bar__button'),
+      fallbackFocus: () => mainFocusTarget(document),
     });
     host.appendChild(creation.root);
     const chip = createCharacterChip(document);
     app.addMainBlock(chip.root);
-    // Narrow screens: the chip and the Walk_Mode prompts are stacked under the city tools by their measured heights.
-    keepTopStack(document, '.city-tools', ['.ui-character-chip', '.city-metro-prompt', '.city-talk-prompt'], 8);
     // "My life" (play-loop task 7): the Life dialog from the Turn_Bar row.
     const lifeDialog = createLifeDialog(document, {
       files: files as unknown as LifeFiles,
@@ -407,7 +424,7 @@ async function start(): Promise<void> {
       view: () => lifeCtl.view(),
       preview: (d) => lifeCtl.previewLife(d),
       apply: (d) => lifeCtl.applyLife(d),
-      fallbackFocus: () => document.querySelector<HTMLElement>('.turn-bar__button'),
+      fallbackFocus: () => mainFocusTarget(document),
     });
     host.appendChild(lifeDialog.root);
     const lifeButton = app.addHeaderButton(UI_STRINGS.characterUi.myLife, (b) => lifeDialog.open(b));

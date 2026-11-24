@@ -119,6 +119,7 @@ const PLAY_LOOP_MODULES = [
   'src/ui/district-card.ts',
   'src/ui/guide/first-play.ts',
   'src/ui/life/life-dialog.ts',
+  'src/ui/menu/menu.ts',
   'src/ui/policy/policy-cards.ts',
   'src/ui/policy/preview.ts',
   'src/ui/report/city-report.ts',

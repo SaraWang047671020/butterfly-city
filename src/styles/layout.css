@@ -50,9 +50,9 @@
   padding: var(--space-1) var(--space-3);
 }
 
-/* ---- Main screen (play-loop Requirement 7.1, approved design 2026-11-23) -----------------------------------------
- * Only the Turn_Bar, the Policy_Cards, the city tools, the District_Card and the Illustration_Note stay on the city;
- * every other block is in the City_Report. */
+/* ---- Main screen (menu design, approved 2026-11-24: docs/design-proposal/menu-proposal.html) ---------------------
+ * On the city: the character chip and the Turn_Bar block (wide screens), ☰ with the quarter, the District_Card when
+ * a district is selected, the Walk_Mode prompts and the disclosure line. Everything else is in the menu (menu.css). */
 .ui-illustration-note {
   margin: 0;
   color: var(--color-text-muted);
@@ -61,10 +61,6 @@
 
 .ui-main-note {
   margin: 0;
-  max-width: 18rem;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--color-bg-panel) 80%, transparent);
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
   line-height: var(--line-height-normal);
@@ -88,6 +84,40 @@
   outline-offset: var(--focus-ring-offset);
 }
 
+/* The disclosure line (game-ui 15.1): on screen at every width, at the bottom. */
+.ui-app .ui-disclosure-line {
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-bg-panel) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border: 1px solid color-mix(in srgb, var(--color-line) 40%, transparent);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  text-align: center;
+}
+
+/* "Back to overview" next to the quarter: only in Walk_Mode on a wide screen (user decision B, 2026-11-24). */
+.ui-turn-button {
+  display: none;
+  min-height: var(--target-comfortable);
+  padding: 0 var(--space-4);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  background: color-mix(in srgb, var(--color-bg-panel) 88%, transparent);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.ui-turn-button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
 /* ---- Wide screens --------------------------------------------------------------------------------------------- */
 @media (min-width: 64rem) {
   .ui-app .ui-block--turn-bar {
@@ -100,8 +130,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
-    width: min(52rem, calc(100% - 2 * 20rem));
-    container-type: inline-size;
+    width: min(44rem, calc(100% - 2 * 20rem));
   }
 
   .ui-app .ui-block--turn-bar .turn-bar {
@@ -110,8 +139,13 @@
     order: 1;
   }
 
-  .ui-app .ui-block--turn-bar .ui-report-open {
+  .ui-app .ui-block--turn-bar .ui-turn-button {
     order: 2;
+  }
+
+  .ui-app:has(.city-view.is-walking) .ui-block--turn-bar .ui-walk-back {
+    display: inline-flex;
+    align-items: center;
   }
 
   .ui-app .ui-block--turn-bar .ui-turn-steps {
@@ -127,34 +161,23 @@
     color: var(--color-text-secondary);
   }
 
-  /* City tools: a column at the bottom right, clear of the Policy_Cards. */
-  .city-tools {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  /* Policy_Cards: a row at the bottom centre with the budget line above. */
-  .ui-policy-cards {
+  .ui-app .ui-disclosure-line {
     position: absolute;
     left: 50%;
     bottom: var(--space-3);
     transform: translateX(-50%);
-    align-items: center;
+    max-width: calc(100% - 2 * var(--space-3));
   }
 
-  .ui-policy-cards__budget {
-    align-self: center;
+  /* The open menu panel takes the right edge: the disclosure stays centred in the rest, and the quarter sits
+     between the character chip (up to 18rem plus the gutter) and the panel. */
+  .ui-app .ui-game.is-menu-open .ui-disclosure-line {
+    left: calc((100% - var(--menu-width)) / 2);
   }
 
-  .ui-policy-cards .ui-policy-card {
-    width: 13rem;
-  }
-
-  .ui-main-note {
-    position: absolute;
-    left: var(--space-3);
-    bottom: var(--space-3);
-    max-width: 15rem;
+  .ui-app .ui-game.is-menu-open .ui-block--turn-bar {
+    left: calc((20rem + 100% - var(--menu-width)) / 2);
+    width: min(44rem, calc(100% - var(--menu-width) - 20rem - 2 * var(--space-3)));
   }
 
   /* Character chip (play-loop Requirement 7.1): top left. */
@@ -164,7 +187,6 @@
     left: var(--space-3);
     max-width: 18rem;
   }
-
 
   /* District_Card near the selected district; the App sets --card-x and --card-y each frame. */
   .ui-district-card {
@@ -180,28 +202,7 @@
   }
 }
 
-/* When the Turn_Bar block is narrow, "My life" and "City report" go under the bar instead of squeezing it. */
-@container (max-width: 46rem) {
-  .ui-app .ui-block--turn-bar .turn-bar {
-    flex-basis: 100%;
-  }
-}
-
-/* Wide but not very wide (64rem to 80rem): the bottom row only has room for the Policy_Cards, so the city tools
- * go to the top right and the Illustration_Note under the character chip. */
-@media (min-width: 64rem) and (max-width: 79.99rem) {
-  .city-tools {
-    top: var(--space-3);
-    bottom: auto;
-  }
-
-  .ui-main-note {
-    top: calc(var(--target-comfortable) + 3 * var(--space-3));
-    bottom: auto;
-  }
-}
-
-/* ---- Narrow screens: Turn_Bar at the bottom, the cards and the District_Card above it -------------------------- */
+/* ---- Narrow screens: only ☰ with the quarter, the District_Card and the disclosure line on the city ------------ */
 @media (max-width: 63.99rem) {
   .ui-app .ui-game {
     display: flex;
@@ -212,123 +213,18 @@
   .ui-district-card {
     order: 1;
     margin: 0 var(--space-2) var(--space-2);
-    /* Opened by the player, so drawn above the character chip when the two meet. */
-    position: relative;
-    z-index: 1;
   }
 
-  .ui-policy-cards {
+  .ui-app .ui-disclosure-line {
     order: 2;
     margin: 0 var(--space-2) var(--space-2);
+    border-radius: var(--radius-md);
   }
 
-  /* Walk_Mode on a narrow screen: the street, the metro and talk prompts and the Turn_Bar need the height, so the
-     Policy_Cards and the District_Card step aside until "Back to overview" (play-loop task 12.3, 360 x 740). */
-  .ui-app:has(.city-view.is-walking) .ui-policy-cards,
+  /* Walk_Mode: the street and the metro and talk prompts need the height, so the District_Card steps aside
+     until "Back to overview" (play-loop task 12.3). */
   .ui-app:has(.city-view.is-walking) .ui-district-card {
     display: none;
-  }
-
-  .ui-policy-cards .ui-policy-card {
-    flex: 1 1 0;
-    grid-template-columns: 1fr;
-    grid-template-areas: 'icon' 'name' 'status';
-    justify-items: center;
-    padding: var(--space-2);
-    text-align: center;
-  }
-
-  .ui-policy-cards__budget {
-    display: none;
-  }
-
-  .ui-policy-cards .ui-policy-card__icon {
-    width: var(--space-6);
-    height: var(--space-6);
-    font-size: var(--font-size-md);
-  }
-
-  /* The full name stays as the accessible name, visually hidden; the short name is shown. */
-  .ui-policy-cards .ui-policy-card__name {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .ui-policy-cards .ui-policy-card__short {
-    display: block;
-    grid-area: name;
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .ui-app .ui-block--turn-bar {
-    order: 3;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-1) var(--space-2);
-    padding: var(--space-1) var(--space-2) var(--space-2);
-    background: var(--color-bg-panel);
-  }
-
-  .ui-app .ui-block--turn-bar .turn-bar {
-    flex: 1 1 100%;
-    border-radius: 0;
-  }
-
-  .ui-app .ui-block--turn-bar .ui-report-open {
-    order: 2;
-    min-height: var(--target-min);
-    padding: var(--space-1) var(--space-3);
-  }
-
-  .ui-app .ui-block--turn-bar .ui-turn-steps {
-    order: 3;
-  }
-
-  /* Walk_Mode: the Turn_Bar block can be collapsed to the Displayed_Quarter and the disclosure (app.ts). */
-  .ui-app:has(.city-view.is-walking) .ui-turn-collapse {
-    display: inline-flex;
-    order: 4;
-    margin-left: auto;
-  }
-
-  .ui-app:has(.city-view.is-walking) .ui-block--turn-bar.is-collapsed :is(.turn-bar__controls, .turn-bar__save, .turn-bar__planning, .turn-bar__busy, .ui-report-open, .ui-turn-steps) {
-    display: none;
-  }
-
-  .ui-main-note {
-    display: none;
-  }
-
-  /* The character chip and the Walk_Mode prompts sit under the city tools, which take the top of a narrow screen
-     in two or three rows (by width and language); src/ui/top-stack.ts sets --stack-top from the measured heights. */
-  .ui-character-chip {
-    position: absolute;
-    top: var(--stack-top, calc(2 * var(--target-comfortable) + 3 * var(--space-2)));
-    left: var(--space-2);
-  }
-
-  .ui-character-chip__where {
-    display: none;
-  }
-
-  /* The city tools move to the top on narrow screens, clear of the bottom dock. */
-  .city-tools {
-    top: var(--space-2);
-    bottom: auto;
-  }
-
-  .city-metro-prompt {
-    top: var(--stack-top, calc(var(--target-comfortable) + 2 * var(--space-3)));
-    bottom: auto;
-  }
-
-  .city-talk-prompt {
-    top: var(--stack-top, calc(2 * var(--target-comfortable) + 3 * var(--space-3)));
   }
 
   .city-joystick {
@@ -651,26 +547,4 @@
    (play-loop task 12.3; city-3d 12.3). */
 .ui-app:has(.city-fallback) .ui-walk-action {
   display: none;
-}
-
-/* ---- Turn_Bar collapse control ------------------------------------------------------------------------------- */
-/* Shown only in Walk_Mode on a narrow screen (see the narrow-screen section). */
-.ui-turn-collapse {
-  display: none;
-  align-items: center;
-  min-height: var(--target-min);
-  padding: var(--space-1) var(--space-3);
-  font: inherit;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-primary);
-  background: transparent;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-.ui-turn-collapse:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: var(--focus-ring-offset);
 }

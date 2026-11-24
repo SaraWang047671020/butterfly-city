@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menu Proposal</title>
+<style>
+  :root {
+    --bg: #0a1020; --panel: #111a2e; --raised: #1a2540; --line: #7183a8; --line-subtle: #2c3a5c;
+    --text: #eaf0fb; --text2: #b4c0d9; --muted: #98a6c4; --accent: #55c1ff; --accent-ink: #06121f;
+    --focus: #ffd23f; --ok: #62e0a0; --warn: #ffb454; --rose: #e07a9a; --skin: #f1c9a5;
+    --glass: rgba(17, 26, 46, 0.88);
+    --font: system-ui, "Segoe UI", "Microsoft JhengHei", "PingFang TC", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--font); }
+  main { max-width: 1120px; margin: 0 auto; padding: 32px 16px 80px; }
+  h1 { font-size: 30px; margin: 0 0 4px; }
+  h2 { font-size: 22px; margin: 48px 0 6px; border-top: 1px solid var(--line-subtle); padding-top: 24px; }
+  h3 { font-size: 16px; margin: 22px 0 6px; color: var(--accent); }
+  p, li { color: var(--text2); }
+  .lead { font-size: 17px; color: var(--text); }
+  .muted { color: var(--muted); font-size: 14px; }
+  .note { background: var(--raised); border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 6px; margin: 12px 0; color: var(--text); }
+  .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  td, th { border-bottom: 1px solid var(--line-subtle); padding: 7px 8px; text-align: left; vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  .cap { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
+
+  /* ---------- frames ---------- */
+  .stage { width: 100%; max-width: 1088px; }
+  .fit { position: relative; width: 100%; aspect-ratio: 1280 / 800; overflow: hidden; border: 1px solid var(--line-subtle); border-radius: 10px; }
+  .screen { position: absolute; left: 0; top: 0; width: 1280px; height: 800px; transform-origin: 0 0; background: #0a1020 center / cover no-repeat; font-size: 14px; }
+  .screen.overview { background-image: url("menu/overview-1280.png"); }
+  .screen.walk { background-image: url("menu/walk-1280.png"); }
+  .phone { position: relative; width: 360px; height: 740px; overflow: hidden; border: 1px solid var(--line-subtle); border-radius: 18px; background: #0a1020 center / cover no-repeat; font-size: 14px; flex: 0 0 auto; }
+  .phone.overview { background-image: url("menu/overview-360.png"); }
+  .phone.walk { background-image: url("menu/walk-360.png"); }
+  .phone-col { display: flex; flex-direction: column; }
+
+  /* ---------- game UI ---------- */
+  .glass { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(113, 131, 168, 0.4); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--text); font: 600 14px var(--font); white-space: nowrap; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .ham { position: absolute; top: 14px; right: 14px; width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; }
+  .ham span { display: block; width: 20px; height: 2px; background: var(--text); border-radius: 2px; box-shadow: 0 6px 0 var(--text), 0 -6px 0 var(--text); }
+  .ham.open { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .ham.open span { background: transparent; box-shadow: none; position: relative; }
+  .ham.open span::before, .ham.open span::after { content: ""; position: absolute; left: 0; width: 20px; height: 2px; background: var(--text); border-radius: 2px; }
+  .ham.open span::before { transform: rotate(45deg); } .ham.open span::after { transform: rotate(-45deg); }
+
+  .chip { position: absolute; top: 14px; left: 14px; display: flex; align-items: center; gap: 12px; padding: 5px 16px 5px 6px; border-radius: 999px; }
+  .av { width: 36px; height: 36px; border-radius: 50%; background: var(--raised); position: relative; overflow: hidden; }
+  .av::before { content: ""; position: absolute; left: 11px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--skin); }
+  .av::after { content: ""; position: absolute; left: 7px; top: 20px; width: 22px; height: 20px; border-radius: 9px; background: var(--rose); }
+  .chip .nm { font-weight: 700; }
+  .chip .k { font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+  .chip .v { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .turn { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 16px; padding: 6px 6px 6px 22px; border-radius: 999px; }
+  .turn .q { font-size: 20px; font-weight: 700; }
+  .turn .t { font-size: 12px; color: var(--muted); line-height: 1.25; }
+  .steps { display: flex; gap: 4px; margin-top: 3px; } .steps i { width: 22px; height: 4px; border-radius: 2px; background: var(--line-subtle); } .steps i.on { background: var(--accent); }
+
+  .disc { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); padding: 6px 14px; border-radius: 999px; font-size: 13px; color: var(--text2); white-space: nowrap; }
+  .phone .disc { left: 10px; right: 10px; transform: none; white-space: normal; border-radius: 12px; font-size: 12px; text-align: center; }
+
+  .prompt { position: absolute; display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 14px; border-radius: 12px; font-size: 14px; }
+
+  /* drawer (desktop) */
+  .drawer { position: absolute; top: 0; right: 0; bottom: 0; width: 380px; padding: 76px 18px 18px; border-radius: 0; border-width: 0 0 0 1px; overflow: hidden; display: flex; flex-direction: column; gap: 14px; }
+  .sec { border-top: 1px solid var(--line-subtle); padding-top: 10px; }
+  .sec:first-child { border-top: 0; padding-top: 0; }
+  .sec h4 { margin: 0 0 6px; font-size: 11px; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+  .item { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 4px 10px; border-radius: 10px; color: var(--text); }
+  .item:hover, .item.hl { background: var(--raised); }
+  .item .ic { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--raised); color: var(--accent); font-size: 15px; flex: 0 0 auto; }
+  .item .s { margin-left: auto; font-size: 12px; color: var(--muted); }
+  .item .s.ch { color: var(--warn); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .pill { display: flex; align-items: center; justify-content: center; min-height: 40px; border: 1px solid var(--line-subtle); border-radius: 10px; font-size: 13px; color: var(--text2); text-align: center; padding: 0 6px; }
+  .budget { font-size: 12px; color: var(--muted); padding: 0 10px; }
+
+  /* sheet (phone) */
+  .sheet { position: absolute; inset: 0; background: rgba(10, 16, 32, 0.97); padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+  .sheet .hd { display: flex; align-items: center; gap: 10px; }
+  .sheet .hd .q { font-size: 18px; font-weight: 700; }
+  .sheet .hd .t { font-size: 12px; color: var(--muted); }
+  .sheet .x { margin-left: auto; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; border: 1px solid var(--line); font-size: 20px; }
+  .me { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 12px; background: var(--raised); }
+
+  .legend { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; }
+  .k1 { color: var(--accent); font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+  <h1>收放式選單（☰）設計稿</h1>
+  <p class="muted">Butterfly City · play-loop 後續 · 2026-11-24 · 給產品負責人核准（<code>product.md</code> UI design approval gate）</p>
+
+  <p class="lead">目標：畫面只留必要的東西，其餘全部收進右上角的 ☰ 選單。電腦版保留季度、「下一季」和左上角的角色資訊；手機版全部收起來。</p>
+
+  <div class="note">
+    <b>不變的規則</b>：「初始資料與事件來自真實的開放資料。政策結果是模擬，不是預測。」這句說明在所有寬度都要直接留在畫面上（game-ui Requirement 15.1），所以手機版收起全部時，它仍留在畫面最下方一行。<br>
+    對話框（政策、城市快報、城市報告、我的人生、事件卡、捷運、和市民說話）的樣式不變，只是改從選單打開。
+  </div>
+
+  <!-- ================= Desktop ================= -->
+  <h2>1. 電腦版（1280 × 800）</h2>
+
+  <h3>1A. 選單關閉：空中視角</h3>
+  <div class="stage"><div class="fit"><div class="screen overview" data-fit>
+    <div class="chip glass"><div class="av"></div><div><div class="nm">Rin</div><div class="k">軟體工程師 · 大安</div></div><div><div class="k">房租</div><div class="v">18.4%</div></div><div><div class="k">通勤</div><div class="v">—</div></div></div>
+    <div class="turn glass"><div><div class="q">2015 年第 1 季</div><div class="t">第 1 / 44 回合 · 第 1 / 3 步：下決策</div><div class="steps"><i class="on"></i><i></i><i></i></div></div><span class="btn primary">下一季</span></div>
+    <div class="ham glass"><span></span></div>
+    <div class="disc glass">初始資料與事件來自真實的開放資料。政策結果是模擬，不是預測。</div>
+  </div></div></div>
+  <p class="cap">畫面上只剩：左上角色小卡、上方中間的季度與「下一季」、右上角 ☰、最下方的說明一行。政策卡、城市工具、存檔按鈕、我的人生、城市報告、插圖說明都收進選單。</p>
+
+  <h3>1B. 選單打開：右側面板</h3>
+  <div class="stage"><div class="fit"><div class="screen overview" data-fit>
+    <div class="chip glass"><div class="av"></div><div><div class="nm">Rin</div><div class="k">軟體工程師 · 大安</div></div><div><div class="k">房租</div><div class="v">18.4%</div></div><div><div class="k">通勤</div><div class="v">—</div></div></div>
+    <div class="turn glass" style="left: calc(50% - 190px)"><div><div class="q">2015 年第 1 季</div><div class="t">第 1 / 44 回合 · 第 1 / 3 步：下決策</div><div class="steps"><i class="on"></i><i></i><i></i></div></div><span class="btn primary">下一季</span></div>
+    <div class="drawer glass">
+      <div class="sec"><h4>政策</h4>
+        <div class="item hl"><span class="ic">⌂</span>社會住宅興建<span class="s ch">1 個區與真實不同</span></div>
+        <div class="item"><span class="ic">$</span>租金補貼<span class="s">與真實相同</span></div>
+        <div class="item"><span class="ic">⇆</span>通勤月票補助<span class="s">這一季還沒有月票</span></div>
+        <div class="budget">2015 年剩餘 651,716,415 元</div>
+      </div>
+      <div class="sec"><h4>回合</h4>
+        <div class="item"><span class="ic">»</span>快轉一年</div>
+      </div>
+      <div class="sec"><h4>我與城市</h4>
+        <div class="item"><span class="ic">♥</span>我的人生</div>
+        <div class="item"><span class="ic">▤</span>城市報告<span class="s">各區・地圖顏色・時間軸・市民・模型限制</span></div>
+        <div class="item"><span class="ic">🚶</span>走上街頭</div>
+      </div>
+      <div class="sec"><h4>畫面</h4>
+        <div class="grid2"><div class="pill">暫停城市動態</div><div class="pill">畫質：高</div><div class="pill" style="grid-column: 1 / -1">顏色：與真實歷史的差距</div></div>
+      </div>
+      <div class="sec"><h4>存檔與設定</h4>
+        <div class="grid2"><div class="pill">匯出存檔代碼</div><div class="pill">匯入</div><div class="pill">English</div><div class="pill">重看新手引導</div></div>
+      </div>
+      <p class="muted" style="margin: auto 0 0; font-size: 12px">建築、街道、車輛與行人是示意。數量依人口，高度依每平方公尺售價。地標為簡化模型。</p>
+    </div>
+    <div class="ham glass open" style="z-index: 2"><span></span></div>
+    <div class="disc glass" style="left: calc(50% - 190px)">初始資料與事件來自真實的開放資料。政策結果是模擬，不是預測。</div>
+  </div></div></div>
+  <p class="cap">面板從右側滑出（寬 380px），城市仍可看、可點；季度和「下一季」往左讓開。點政策列會開原本的政策對話框，點完面板自動關上。按 Esc、再按 ☰ 或點城市都會關閉，焦點回到 ☰。</p>
+
+  <h3>1C. 走路模式</h3>
+  <div class="stage"><div class="fit"><div class="screen walk" data-fit>
+    <div class="chip glass"><div class="av"></div><div><div class="nm">Rin</div><div class="k">軟體工程師 · 大安</div></div><div><div class="k">房租</div><div class="v">18.4%</div></div><div><div class="k">通勤</div><div class="v">—</div></div></div>
+    <div class="turn glass"><div><div class="q">2015 年第 1 季</div><div class="t">第 1 / 44 回合 · 走路中</div></div><span class="btn">回到空中視角</span><span class="btn primary">下一季</span></div>
+    <div class="ham glass"><span></span></div>
+    <div class="prompt glass" style="left: 50%; transform: translateX(-50%); bottom: 120px">科技大樓站。按 E 或<span class="btn" style="min-height: 38px">搭捷運</span></div>
+    <div class="prompt glass" style="left: 50%; transform: translateX(-50%); bottom: 64px">小美在這裡。按 E 或<span class="btn" style="min-height: 38px">交談</span></div>
+    <div class="disc glass">初始資料與事件來自真實的開放資料。政策結果是模擬，不是預測。</div>
+  </div></div></div>
+  <p class="cap">走路時「回到空中視角」放在季度旁邊（離開走路模式是最常用的動作）；搭捷運、交談的提示照舊出現在下方。選單內容與空中視角相同，「走上街頭」那一列變成「回到空中視角」。</p>
+
+  <!-- ================= Phone ================= -->
+  <h2>2. 手機版（360 × 740）</h2>
+  <div class="row">
+    <div class="phone-col">
+      <div class="phone overview">
+        <div class="ham glass"><span></span></div>
+        <div class="disc glass">初始資料與事件來自真實的開放資料。政策結果是模擬，不是預測。</div>
+      </div>
+      <p class="cap">2A. 關閉：只剩 ☰ 和說明一行，整個畫面都是城市。</p>
+    </div>
+    <div class="phone-col">
+      <div class="phone overview">
+        <div class="sheet">
+          <div class="hd"><div><div class="q">2015 年第 1 季</div><div class="t">第 1 / 44 回合 · 第 1 / 3 步：下決策</div></div><div class="x">×</div></div>
+          <span class="btn primary" style="width: 100%">下一季</span>
+          <div class="me"><div class="av"></div><div style="flex: 1"><b>Rin</b><div class="muted" style="font-size: 12px">軟體工程師 · 租屋 · 大安</div></div><div style="text-align: right"><div class="muted" style="font-size: 11px">房租／通勤</div><b>18.4% · —</b></div></div>
+          <div class="sec"><h4>政策</h4>
+            <div class="item"><span class="ic">⌂</span>社會住宅興建<span class="s ch">1 區不同</span></div>
+            <div class="item"><span class="ic">$</span>租金補貼<span class="s">與真實相同</span></div>
+            <div class="item"><span class="ic">⇆</span>通勤月票補助<span class="s">尚無月票</span></div>
+          </div>
+          <div class="grid2"><div class="pill">快轉一年</div><div class="pill">我的人生</div><div class="pill">城市報告</div><div class="pill">走上街頭</div></div>
+          <div class="grid2"><div class="pill">暫停動態</div><div class="pill">畫質：低</div><div class="pill" style="grid-column: 1 / -1">顏色：與真實歷史的差距</div></div>
+          <div class="grid2"><div class="pill">匯出存檔</div><div class="pill">匯入</div><div class="pill">English</div><div class="pill">新手引導</div></div>
+        </div>
+      </div>
+      <p class="cap">2B. 打開：全螢幕選單。最上面是季度和「下一季」，接著是你的角色、政策，其餘是按鈕格。內容太長時可往下捲。</p>
+    </div>
+    <div class="phone-col">
+      <div class="phone walk">
+        <div class="ham glass"><span></span></div>
+        <div class="prompt glass" style="left: 10px; right: 10px; bottom: 132px">科技大樓站。按 E 或<span class="btn" style="min-height: 38px; margin-left: auto">搭捷運</span></div>
+        <div class="prompt glass" style="left: 10px; right: 10px; bottom: 76px">小美在這裡。按 E 或<span class="btn" style="min-height: 38px; margin-left: auto">交談</span></div>
+        <div class="disc glass">初始資料與事件來自真實的開放資料。政策結果是模擬，不是預測。</div>
+      </div>
+      <p class="cap">2C. 走路模式：只有 ☰、搭捷運／交談提示和說明一行，加上原本的搖桿。選單裡的「走上街頭」變成「回到空中視角」。</p>
+    </div>
+  </div>
+
+  <!-- ================= Contents ================= -->
+  <h2>3. 每個東西放在哪</h2>
+  <table>
+    <tr><th>項目</th><th>電腦版</th><th>手機版</th></tr>
+    <tr><td>季度、回合、三步驟</td><td>畫面上方中間</td><td>選單最上方</td></tr>
+    <tr><td>下一季</td><td>畫面上方中間</td><td>選單最上方（大按鈕）</td></tr>
+    <tr><td>角色小卡（名字、房租、通勤）</td><td>畫面左上</td><td>選單內「你」一列</td></tr>
+    <tr><td>「政策結果是模擬」說明</td><td>畫面最下方一行</td><td>畫面最下方一行</td></tr>
+    <tr><td>三個政策（含今年剩餘預算）</td><td>選單「政策」</td><td>選單「政策」</td></tr>
+    <tr><td>快轉一年</td><td>選單「回合」</td><td>選單</td></tr>
+    <tr><td>我的人生、城市報告</td><td>選單</td><td>選單</td></tr>
+    <tr><td>走上街頭／回到空中視角</td><td>選單；走路時「回到空中視角」也在季度旁</td><td>選單</td></tr>
+    <tr><td>暫停城市動態、畫質、顏色模式</td><td>選單「畫面」</td><td>選單</td></tr>
+    <tr><td>匯出、匯入存檔、語言、新手引導</td><td>選單「存檔與設定」</td><td>選單</td></tr>
+    <tr><td>插圖說明（建築與行人是示意）</td><td>選單底部</td><td>選單底部</td></tr>
+    <tr><td>區域小卡（點選行政區時）</td><td colspan="2">照舊在點選後出現，可關閉；不放進選單</td></tr>
+    <tr><td>城市快報、事件卡、各對話框、搭捷運／交談提示</td><td colspan="2">照舊，依遊戲進行自動出現</td></tr>
+  </table>
+
+  <!-- ================= Behaviour ================= -->
+  <h2>4. 操作與無障礙</h2>
+  <ul>
+    <li>☰ 是一個按鈕，名稱「選單」，有 <code>aria-expanded</code>；打開後焦點移到選單第一項，Esc 或 × 關閉，焦點回到 ☰。</li>
+    <li>電腦版是右側面板（不擋城市）；手機版是全螢幕，焦點留在選單內，和其他對話框相同。</li>
+    <li>選單裡任何一項打開對話框時，選單先關上，對話框關閉後焦點回到 ☰。</li>
+    <li>政策列旁邊的狀態文字照舊（與真實相同／幾個區不同／需要處理），需要處理時 ☰ 上出現一個小點和文字提示「有一項政策需要處理」，不只靠顏色。</li>
+    <li>新手引導改成：第 1 步指向 ☰（「政策都在這裡」），第 2 步指向選單裡的政策，之後照舊。</li>
+    <li>減少動態時，面板直接出現，沒有滑動。觸控目標至少 44px。</li>
+  </ul>
+
+  <h2>5. 決定（2026-11-24 核准）</h2>
+  <p class="note">產品負責人核准本設計稿：「核准，A 留季度，B 可以」。A：手機版收起時在 ☰ 旁留季度。B：電腦版走路時「回到空中視角」放在季度旁邊。</p>
+  <div class="legend">
+    <span class="k1">A.</span><span>手機版關閉時，要不要在 ☰ 旁邊留一個小小的季度（例如「2015 Q1」）？不留就是完全照你說的全部收起來；留的話不用打開選單就知道現在第幾季。</span>
+    <span class="k1">B.</span><span>電腦版走路時，「回到空中視角」放在季度旁邊（1C）可以嗎？或也收進選單。</span>
+  </div>
+  <p class="muted">核准後我會更新 play-loop 規格（需求、設計、任務），再改程式，並用真實點擊在四種寬度與中英文檢查。</p>
+</main>
+<script>
+  // Scale the 1280 × 800 screens to the frame width.
+  function fit() { for (const s of document.querySelectorAll('[data-fit]')) s.style.transform = `scale(${s.parentElement.clientWidth / 1280})`; }
+  addEventListener('resize', fit); fit();
+</script>
+</body>
+</html>

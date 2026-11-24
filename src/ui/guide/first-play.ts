@@ -9,18 +9,21 @@ import '../../styles/guide.css';
 
 const G = UI_STRINGS.guide;
 
-/** One step: where it points (the first visible match wins) and which clicks move it on. */
+/**
+ * One step: where it points (the first visible match wins) and which clicks move it on. A target inside the closed
+ * menu is hidden, so the step points at ☰ until the player opens the menu (menu design, 2026-11-24).
+ */
 interface Step {
   readonly targets: readonly string[];
   readonly advanceOn: string;
 }
 
 export const GUIDE_STEPS: readonly Step[] = [
-  { targets: ['.ui-policy-card'], advanceOn: '.ui-policy-card' },
+  { targets: ['.ui-policy-card', '.ui-menu-button'], advanceOn: '.ui-policy-card' },
   { targets: ['.ui-policy-dialog__slider', '.ui-policy-dialog__select', '.ui-policy-card'], advanceOn: '.ui-policy-dialog__buttons .dialog__button--primary, .ui-policy-done' },
-  { targets: ['.ui-block--turn-bar .turn-bar__button'], advanceOn: '.ui-block--turn-bar .turn-bar__controls .turn-bar__button' },
+  { targets: ['.ui-block--turn-bar .turn-bar__button', '.ui-menu-button'], advanceOn: '.ui-block--turn-bar .turn-bar__controls .turn-bar__button' },
   { targets: ['.ui-brief__go', '.ui-brief-continue'], advanceOn: '.ui-brief__go, .ui-brief-continue' },
-  { targets: ['.ui-report-button'], advanceOn: '.ui-report-button' },
+  { targets: ['.ui-report-button', '.ui-menu-button'], advanceOn: '.ui-report-button' },
 ];
 
 export interface FirstPlayGuide {

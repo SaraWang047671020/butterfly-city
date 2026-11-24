@@ -1,0 +1,323 @@
+/*
+ * Game menu (☰), approved design docs/design-proposal/menu-proposal.html (2026-11-24). Wide screens: a side panel
+ * at the right edge that leaves the city usable. Narrow screens: the whole screen. Tokens only; no motion, so the
+ * menu appears in its end state with or without reduced motion.
+ */
+.ui-app {
+  --menu-width: 24rem;
+}
+
+/* ---- ☰ and the quarter -------------------------------------------------------------------------------------- */
+.ui-menu-anchor {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ui-menu-quarter {
+  display: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-bg-panel) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-line) 40%, transparent);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.ui-menu-quarter:empty {
+  display: none;
+}
+
+.ui-menu-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--target-comfortable);
+  height: var(--target-comfortable);
+  padding: 0;
+  color: var(--color-text-primary);
+  background: color-mix(in srgb, var(--color-bg-panel) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border: 1px solid color-mix(in srgb, var(--color-line) 60%, transparent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+}
+
+.ui-menu-button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Three lines; an × while the menu is open. */
+.ui-menu-button__icon,
+.ui-menu-button__icon::before,
+.ui-menu-button__icon::after {
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.ui-menu-button__icon {
+  position: relative;
+}
+
+.ui-menu-button__icon::before,
+.ui-menu-button__icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+}
+
+.ui-menu-button__icon::before {
+  top: -6px;
+}
+
+.ui-menu-button__icon::after {
+  top: 6px;
+}
+
+.ui-menu-button[aria-expanded='true'] .ui-menu-button__icon {
+  background: transparent;
+}
+
+.ui-menu-button[aria-expanded='true'] .ui-menu-button__icon::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.ui-menu-button[aria-expanded='true'] .ui-menu-button__icon::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+/* A policy needs attention: a dot on ☰ (the accessible name and the title say it in words). */
+.ui-menu-button__dot {
+  display: none;
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: 50%;
+  background: var(--color-warn);
+}
+
+.ui-menu-button.has-attention .ui-menu-button__dot {
+  display: block;
+}
+
+/* ---- Panel ---------------------------------------------------------------------------------------------------- */
+.ui-menu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: var(--menu-width);
+  max-width: 100%;
+  padding: calc(var(--target-comfortable) + 2 * var(--space-3)) var(--space-4) var(--space-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: var(--color-text-primary);
+  background: color-mix(in srgb, var(--color-bg-panel) 96%, transparent);
+  backdrop-filter: blur(12px);
+  border-left: 1px solid color-mix(in srgb, var(--color-line) 40%, transparent);
+  box-shadow: var(--shadow-md);
+}
+
+.ui-menu[hidden] {
+  display: none;
+}
+
+/* On a wide screen ☰ (now an ×) closes the panel; the close row is for the full-screen menu. */
+.ui-menu__head {
+  display: none;
+}
+
+.ui-menu__close {
+  width: var(--target-comfortable);
+  height: var(--target-comfortable);
+  margin-left: auto;
+  font: inherit;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+  background: none;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+/* A rule above each group after the policy tools (the turn and "me" sections are only filled on narrow screens). */
+.ui-menu__section--me,
+.ui-menu__section--policy,
+.ui-menu__section--round,
+.ui-menu__section--city,
+.ui-menu__section--view,
+.ui-menu__section--settings,
+.ui-menu__section--note {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-line-subtle);
+}
+
+.ui-menu:not(.is-full) .ui-menu__section--policy {
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* A section with nothing in it (no WebGL: no city tools) is not shown, and neither is its rule. */
+.ui-menu__section:has(> .ui-menu__body:empty) {
+  display: none;
+}
+
+.ui-menu__heading {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.ui-menu__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.ui-menu__section--view .ui-menu__body,
+.ui-menu__section--settings .ui-menu__body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.ui-menu__section--settings .turn-bar__save {
+  display: contents;
+}
+
+/* The colour mode has the longest label: a whole row. */
+.ui-menu__section--view .ui-menu__body > button:last-child {
+  grid-column: 1 / -1;
+}
+
+/* Every menu item has the same row look, whatever component it came from. */
+.ui-menu .ui-menu__body > button,
+.ui-menu .ui-menu__section--settings .turn-bar__save > button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: var(--target-comfortable);
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-align: left;
+  color: var(--color-text-primary);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.ui-menu .ui-menu__section--view .ui-menu__body > button,
+.ui-menu .ui-menu__section--settings .ui-menu__body button {
+  justify-content: center;
+  text-align: center;
+  font-weight: var(--font-weight-regular);
+}
+
+.ui-menu .ui-menu__body > button:disabled {
+  cursor: default;
+  color: var(--color-text-muted);
+}
+
+.ui-menu button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Policy tools as rows (the Policy_Cards component, unchanged). */
+.ui-menu .ui-policy-cards__list {
+  flex-direction: column;
+}
+
+.ui-menu .ui-policy-card {
+  width: 100%;
+}
+
+.ui-menu .ui-policy-cards__budget {
+  align-self: stretch;
+  background: none;
+  padding: 0 var(--space-1);
+}
+
+/* ---- Narrow screens: the menu fills the screen; the quarter shows next to ☰ (user decision A) ------------------ */
+@media (max-width: 63.99rem) {
+  .ui-menu-anchor {
+    top: var(--space-2);
+    right: var(--space-2);
+  }
+
+  .ui-menu-quarter {
+    display: inline-block;
+  }
+}
+
+.ui-menu.is-full {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  width: auto;
+  padding: var(--space-3);
+  border-left: 0;
+}
+
+.ui-menu.is-full .ui-menu__head {
+  display: flex;
+}
+
+/* The Turn_Bar block inside the full-screen menu: quarter, Next quarter as the wide primary action, the steps. */
+.ui-menu .ui-block--turn-bar {
+  position: static;
+  transform: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: auto;
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+
+.ui-menu .ui-block--turn-bar .turn-bar {
+  border-radius: var(--radius-md);
+}
+
+.ui-menu .ui-block--turn-bar .turn-bar__controls {
+  flex-basis: 100%;
+}
+
+.ui-menu .ui-block--turn-bar .turn-bar__controls .turn-bar__button {
+  width: 100%;
+  justify-content: center;
+}
+
+.ui-menu .ui-character-chip {
+  position: static;
+  max-width: none;
+}

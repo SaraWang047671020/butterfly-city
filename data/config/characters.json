@@ -533,8 +533,8 @@
   },
   "guide": [
     {
-      "en": "These cards are your policy tools. Open one to see what it costs and what it changes.",
-      "zh-Hant": "這些卡片是你的政策工具。打開一張，看看它要花多少錢、會改變什麼。"
+      "en": "Your policy tools are in the menu ☰. Open one to see what it costs and what it changes.",
+      "zh-Hant": "你的政策工具在選單 ☰ 裡。打開一個，看看它要花多少錢、會改變什麼。"
     },
     {
       "en": "Move the slider, read the preview, then apply. Nothing changes until you apply.",
@@ -549,8 +549,8 @@
       "zh-Hant": "城市快報會列出這一季的變化。按「走過去看」，到街上親眼看看。"
     },
     {
-      "en": "All the numbers, the timeline and the model limits are in the City report.",
-      "zh-Hant": "所有數字、時間軸和模型限制，都在「城市報告」裡。"
+      "en": "All the numbers, the timeline and the model limits are in the City report, in the menu ☰.",
+      "zh-Hant": "所有數字、時間軸和模型限制，都在選單 ☰ 的「城市報告」裡。"
     }
   ],
   "pronouns": {

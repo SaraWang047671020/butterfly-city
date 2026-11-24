@@ -78,3 +78,9 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
   - [x] 12.2 Module boundary and static checks (Requirement 11.5): the play-loop modules are listed in `tests/static/boundaries.test.ts`
   - [x] 12.3 Manual checks: keyboard only, reduced motion, WebGL disabled, 360 / 768 / 1280 / 1920 px, real pointer clicks on every dialog; recorded in `KIRO-LOG.md`. Fixed on the way: dialog focus trap, focus order of the Turn_Bar row and the District_Card, the narrow-screen top stack and Walk_Mode, walk actions without WebGL, the city-year slider end (`sliderUpper`)
   - [x] 12.4 Update `product.md` (player character in place of the fixed Persona choice) and `structure.md` (new folders)
+
+- [x] 13. Game menu (Requirement 13; design approved 2026-11-24 with decisions A and B)
+  - [x] 13.1 `src/ui/menu/menu.ts`, `src/styles/menu.css`, strings `menu.*` in both languages; the App and `main.ts` move the controls into the menu; the Disclosure_Text line; "Back to overview" in the Turn_Bar block in Walk_Mode on wide screens
+  - [x] 13.2 Remove what the menu replaces: the Turn_Bar collapse control and `src/ui/top-stack.ts`
+  - [x] 13.3 First_Play_Guide: ☰ as the fallback target of steps 1, 3 and 5; step 1 and 5 texts mention the menu (drafts for the user)
+  - [x] 13.4 Boundary test lists `src/ui/menu/menu.ts`; checked in the browser with real keys and clicks at 360, 768, 1024, 1280 and 1920 px, in English and Traditional Chinese, and without WebGL; recorded in `KIRO-LOG.md`

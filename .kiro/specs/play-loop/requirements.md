@@ -238,6 +238,22 @@ Claude Code implements this spec, not Kiro, to save Kiro credits (recorded in `K
 7. THE Banned_Term_List SHALL have a Traditional Chinese part, and every Traditional Chinese text SHALL pass it and the `neutrality.md` review check.
 8. Claude Code SHALL draft every translation; the user SHALL approve the Traditional Chinese text before it is marked final, recorded in `KIRO-LOG.md`.
 
+### Requirement 13: Game menu (☰)
+
+**User Story:** As a player, I want the screen to show only what I need every moment, with everything else in one menu, so that I can see the city. (User request and approved design `docs/design-proposal/menu-proposal.html`, 2026-11-24.)
+
+#### Acceptance Criteria
+
+1. THE Game_Screen SHALL show a menu control (☰) at the top right with an accessible name and `aria-expanded`.
+2. WHILE the viewport is at least 64rem wide, THE Game_Screen SHALL show the character chip, the Displayed_Quarter with the Next_Quarter_Action and the turn steps, ☰ and the Disclosure_Text, and SHALL place the Policy_Cards, Fast-forward, My life, the City_Report, the city tools, save and import, the language control, the guide replay and the Illustration_Note in the menu.
+3. WHILE the viewport is narrower than 64rem, THE Game_Screen SHALL show only ☰ with the Displayed_Quarter next to it (user decision A) and the Disclosure_Text, and the menu SHALL also hold the Turn_Bar block and the character chip.
+4. THE Disclosure_Text SHALL stay on the Game_Screen at every width (game-ui Requirement 15.1).
+5. On a wide screen the menu SHALL be a side panel that leaves the city usable; on a narrow screen it SHALL fill the screen, make the rest of the page inert and keep the keyboard focus inside.
+6. WHEN the player activates a menu item that opens a dialog or changes the screen, THE menu SHALL close, and WHEN that dialog closes the focus SHALL return to ☰. The view toggles (pause, quality, colour mode) SHALL keep the menu open. Escape SHALL close the menu and return the focus to ☰.
+7. WHILE Walk_Mode is on and the viewport is at least 64rem wide, THE Game_Screen SHALL show "Back to overview" next to the Displayed_Quarter (user decision B).
+8. WHEN a policy needs attention, ☰ SHALL show it as a mark and in its accessible name and title, not by colour only.
+9. THE First_Play_Guide SHALL point at ☰ while its target is in the closed menu, and at the target once the menu is open.
+
 ## Open questions
 
 1. Home ownership (buying with a mortgage from the sale price data): phase 3 or not at all.

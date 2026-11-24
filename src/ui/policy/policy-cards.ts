@@ -20,6 +20,7 @@ import {
 import { cityLabel, fillTemplate, quarterLabel, UI_STRINGS, unitLabel } from '../strings.ts';
 import { cardStatus, quickPreview, sliderValue } from './preview.ts';
 import '../../styles/policy.css';
+import { mainFocusTarget } from '../menu/menu.ts';
 
 const P = UI_STRINGS.policy;
 const C = UI_STRINGS.policyCards;
@@ -86,7 +87,8 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
   const cardsHost = el(doc, 'div', 'ui-policy-cards__list', root);
   const cardEls = new Map<string, HTMLButtonElement>();
 
-  const dialog = createDialogManager(doc, () => root.querySelector('button'), UI_STRINGS.dialogs.close);
+  // The cards live in the menu (☰); when it is closed, focus goes back to ☰ or Next quarter.
+  const dialog = createDialogManager(doc, () => mainFocusTarget(doc), UI_STRINGS.dialogs.close);
   let openTool: string | null = null;
   let last: PolicyCardsProps | null = null;
 

@@ -189,6 +189,14 @@ A small card positioned at the screen projection of the district centre (a CSS2D
 
 A non-modal callout with an arrow that points at a target element by selector, five steps from the Character_File `guide` texts. It listens for the player's own actions (opening a Policy_Card, applying, Next quarter, Go there, opening the report) to move on, and never calls an action itself.
 
+## Game menu (Requirement 13)
+
+`src/ui/menu/menu.ts` (`createGameMenu`, `mainFocusTarget`) and `src/styles/menu.css`. The menu is a panel with `role="dialog"`, not a `<dialog>`: the one dialog manager opens only modal dialogs (Requirement 9), and on a wide screen the menu must leave the city usable. On a narrow screen (`NARROW_QUERY`, below 64rem) it is `aria-modal`, the city layer and the other game blocks are `inert`, and Tab wraps inside.
+
+The App moves existing nodes into the menu sections instead of building new controls, so every component keeps its own update path: the Policy_Cards (section "Policy"), the Fast-forward button ("Turn"), My life, the City_Report button and the walk button of the City_View ("You and the city"), pause, quality and colour mode ("View", marked `data-menu-stay`), the save buttons, the language control and the guide replay ("Save and settings"), and the Illustration_Note. The Disclosure_Text leaves the Turn_Bar for its own line at the bottom. On a narrow screen `placeBlocks` moves the Turn_Bar block and the character chip into the sections "turn" and "me", and back on a wide screen.
+
+Focus: `focusIfConnected` skips a hidden opener, and every dialog falls back to `mainFocusTarget`, which returns ☰ after a dialog opened from the menu, else the Next quarter button when it is shown, else ☰.
+
 ## Testing
 
 - Validators of both files (unit) and a committed-file check like `model-facts.test.ts`.

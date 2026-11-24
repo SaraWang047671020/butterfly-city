@@ -65,7 +65,7 @@ butterflycity/
 │   │   ├── strings/           # UI_Strings: en.ts and zh-Hant.ts with one key set; locale choice
 │   │   ├── explain/           # "Why?" breakdown views
 │   │   ├── district-card.ts   # District_Card (play-loop)
-│   │   ├── top-stack.ts       # narrow screens: stacks the chip and Walk_Mode prompts under the city tools
+│   │   ├── menu/              # game menu (☰): side panel on wide screens, full screen on narrow ones (play-loop)
 │   │   ├── ending/            # (planned) your city vs. real city comparison
 │   │   └── effects/           # (planned) risk escalation visuals, reduced-motion fallbacks
 │   └── styles/

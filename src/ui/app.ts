@@ -33,6 +33,7 @@ import { createDistrictCard } from './district-card.ts';
 import { createTimelineView } from './timeline/timeline-view.ts';
 import { createTurnBar } from './turn-bar/turn-bar.ts';
 import { createLiveRegion } from './a11y/live-region.ts';
+import { createGameMenu, mainFocusTarget, NARROW_QUERY, type MenuSection } from './menu/menu.ts';
 import { mountComponent, setText } from './component.ts';
 import { buildEngineErrorText, fillTemplate, UI_STRINGS, LOCALE, type Locale, quarterLabel } from './strings.ts';
 import '../styles/app.css';
@@ -65,13 +66,17 @@ export interface App {
   readonly cityLayer: HTMLElement;
   showLoading(loaded: number): void;
   showLoadError(failures: readonly { readonly file: string; readonly message: string }[]): void;
-  /** Adds a button to the tools row of the City_Report (the language control). */
+  /** Adds a button to the "Save and settings" section of the menu (the language control, the guide replay). */
   addMapControl(label: string, onClick: (button: HTMLButtonElement) => void): HTMLButtonElement;
+  /** A section of the menu (☰), for controls the caller moves there (the city tools). */
+  menuSection(name: MenuSection): HTMLElement;
+  /** Adds a button to the Turn_Bar block, after the quarter (Walk_Mode: "Back to overview"). */
+  addTurnButton(label: string, className: string, onClick: () => void): HTMLButtonElement;
   /** Adds a City_Report tab and returns its host (story-layer Story_Panel). `collapsed` is no longer used. */
   addPanel(name: string, title: string, collapsed: boolean): HTMLElement;
-  /** Places a block on the main game screen (the character chip). */
+  /** Places a block on the main game screen (the character chip); on a narrow screen it moves into the menu. */
   addMainBlock(block: HTMLElement): void;
-  /** Adds a button to the Turn_Bar row, next to the City_Report button ("My life"). */
+  /** Adds a button to the menu's "You and the city" section, before the City_Report button ("My life"). */
   addHeaderButton(label: string, onClick: (button: HTMLButtonElement) => void): HTMLButtonElement;
   /** The host of a City_Report tab (to add a section), or null. */
   reportTab(name: string): HTMLElement | null;
@@ -175,16 +180,14 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
 
   // City_Report (play-loop Requirement 7): the detail that left the main screen, in tabs of a full-screen dialog.
   const R = UI_STRINGS.report;
-  const report = createCityReport(doc, { title: R.title, close: UI_STRINGS.dialogs.close, tabsLabel: R.tabsLabel }, () =>
-    headerHost.querySelector<HTMLElement>('.turn-bar__button'),
-  );
+  const report = createCityReport(doc, { title: R.title, close: UI_STRINGS.dialogs.close, tabsLabel: R.tabsLabel }, () => mainFocusTarget(doc));
   const districtsHost = report.addTab('districts', R.districts);
   const districtListHost = el(doc, 'div', 'ui-report__list', districtsHost);
   const rightHost = el(doc, 'div', 'ui-report__detail', districtsHost);
   const mapHost = report.addTab('map', R.map);
   const leftHost = mapHost;
   const timelineHost = report.addTab('timeline', R.timeline);
-  // Mounted after the Turn_Bar below, so the focus order follows the visual order (game-ui 17.2).
+  // In the menu's "You and the city" section (approved menu design, 2026-11-24).
   const reportButton = button(doc, 'ui-report-open ui-report-button', R.open, () => report.open(null, reportButton));
 
   // Placeholder: actions are bound in `attach`; components keep a stable reference to this proxy.
@@ -210,24 +213,42 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   const timeline = createTimelineView(doc, actions);
 
   mountComponent(headerHost, turnBar);
-  headerHost.appendChild(reportButton);
-  // Walk_Mode on a narrow screen: the Turn_Bar block can be collapsed to the Displayed_Quarter and the disclosure,
-  // so the street is visible (user request 2026-11-24). Shown and applied only there (layout.css); the choice is kept
-  // for the next walk, and Overview_Mode always shows the whole block.
-  const collapseButton = button(doc, 'ui-turn-collapse', UI_STRINGS.turnBar.collapse, () => {
-    const collapsed = !headerHost.classList.contains('is-collapsed');
-    headerHost.classList.toggle('is-collapsed', collapsed);
-    collapseButton.setAttribute('aria-expanded', String(!collapsed));
-    collapseButton.textContent = collapsed ? UI_STRINGS.turnBar.expand : UI_STRINGS.turnBar.collapse;
-  });
-  collapseButton.setAttribute('aria-expanded', 'true');
+
+  // ---- Menu (☰), approved design docs/design-proposal/menu-proposal.html (2026-11-24) -------------------------
+  // On screen: the character chip, the quarter with Next quarter (wide screens), ☰ and the disclosure line.
+  // Everything else is in the menu; on a narrow screen the Turn_Bar block and the chip move into it too.
+  const menu = createGameMenu(
+    doc,
+    () => [cityLayer, ...Array.from(gameScreen.children).filter((e): e is HTMLElement => e instanceof HTMLElement && e !== menu.panel)],
+    (open) => gameScreen.classList.toggle('is-menu-open', open),
+  );
+  gameScreen.append(menu.button, menu.panel);
+  // The disclosure leaves the Turn_Bar for its own line at the bottom, on screen at every width (game-ui 15.1).
+  const disclosureLine = headerHost.querySelector<HTMLElement>('.turn-bar__disclosure')!;
+  disclosureLine.classList.add('ui-disclosure-line');
+  gameScreen.appendChild(disclosureLine);
+  menu.section('round').append(headerHost.querySelector('.turn-bar__button--secondary')!);
+  menu.section('settings').append(headerHost.querySelector('.turn-bar__save')!);
+  menu.section('city').append(reportButton);
+  const mainBlocks: HTMLElement[] = [];
+  const narrowQuery = doc.defaultView?.matchMedia(NARROW_QUERY) ?? null;
+  const placeBlocks = (): void => {
+    if (narrowQuery?.matches === true) {
+      menu.section('turn').append(headerHost);
+      for (const b of mainBlocks) menu.section('me').append(b);
+    } else {
+      gameScreen.insertBefore(headerHost, menu.button);
+      for (const b of mainBlocks) gameScreen.insertBefore(b, headerHost);
+    }
+  };
+  narrowQuery?.addEventListener('change', placeBlocks);
+  placeBlocks();
   // Turn steps (play-loop Requirement 4.2): decide, compute, what changed.
   const steps = el(doc, 'p', 'ui-turn-steps', headerHost);
   const stepBars = el(doc, 'span', 'ui-turn-steps__bars', steps);
   stepBars.setAttribute('aria-hidden', 'true');
   const bars = [0, 1, 2].map(() => el(doc, 'span', '', stepBars));
   const stepText = el(doc, 'span', 'ui-turn-steps__text', steps);
-  headerHost.appendChild(collapseButton); // last in the block, after the steps
   const renderSteps = (g: GameView): void => {
     const n = g.turnBar.busy ? 2 : g.brief !== null ? 3 : 1;
     bars.forEach((b, i) => b.classList.toggle('is-on', i < n));
@@ -240,7 +261,7 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   mountComponent(block(leftHost, 'map-controls'), priceLabel);
   mountComponent(block(districtListHost, 'district-list'), districtList);
   mountComponent(block(rightHost, 'district-panel'), districtPanel);
-  mountComponent(gameScreen, policyCards);
+  mountComponent(menu.section('policy'), policyCards);
   gameScreen.appendChild(policyCards.dialogRoot);
   mountComponent(block(timelineHost, 'timeline'), timeline);
   gameScreen.appendChild(report.root);
@@ -248,15 +269,15 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
   // (city-3d Requirement 11.1, play-loop Requirement 7.3).
   el(doc, 'p', 'ui-illustration-note', mapHost, UI_STRINGS.city.figuresNote);
   el(doc, 'p', 'ui-illustration-note', mapHost, UI_STRINGS.city.illustrationNote);
-  el(doc, 'p', 'ui-main-note', gameScreen, UI_STRINGS.city.illustrationNote);
+  el(doc, 'p', 'ui-main-note', menu.section('note'), UI_STRINGS.city.illustrationNote);
 
   // District_Card (play-loop Requirement 7.4): near the selected district on wide screens, docked on narrow ones.
   const districtCard = createDistrictCard(doc, actions, {
     walk: (code) => options.onGoThere?.({ district: code, kind: 'station' }),
     report: (opener) => report.open('districts', opener),
   });
-  // Before the Policy_Cards in the DOM: the card is shown above them, so focus reaches it first (game-ui 17.2).
-  gameScreen.insertBefore(districtCard.root, policyCards.root);
+  // Before the disclosure line in the DOM: the card is shown above it (game-ui 17.2).
+  gameScreen.insertBefore(districtCard.root, disclosureLine);
   const placeCard = (): void => {
     const code = districtCard.shown();
     const win = doc.defaultView;
@@ -269,10 +290,12 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
         card.classList.remove('is-docked');
         const w = card.offsetWidth;
         const h = card.offsetHeight;
-        const x = Math.min(Math.max(p.x - w / 2, 16), win.innerWidth - w - 16);
-        // Below the Turn_Bar and above the Policy_Cards.
+        // Clear of the menu panel when it is open.
+        const right = menu.isOpen() ? menu.panel.getBoundingClientRect().left : win.innerWidth;
+        const x = Math.min(Math.max(p.x - w / 2, 16), right - w - 16);
+        // Below the Turn_Bar and above the disclosure line.
         const top = headerHost.getBoundingClientRect().bottom + 12;
-        const bottom = policyCards.root.getBoundingClientRect().top - 12;
+        const bottom = disclosureLine.getBoundingClientRect().top - 12;
         const y = Math.min(Math.max(p.y - h - 24, top), Math.max(top, bottom - h));
         card.style.setProperty('--card-x', `${Math.round(x)}px`);
         card.style.setProperty('--card-y', `${Math.round(y)}px`);
@@ -284,10 +307,10 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
 
   // ---- Dialogs and live regions (available on every screen) ----------------------------------------------------
   const dialogs = createDialogs(doc, actions, {
-    getFallbackFocus: () => headerHost.querySelector<HTMLElement>('.turn-bar__button') ?? startButtons.querySelector('button'),
+    getFallbackFocus: () => mainFocusTarget(doc) ?? startButtons.querySelector('button'),
   });
   mountComponent(overlay, dialogs);
-  const quarterBrief = createQuarterBrief(doc, actions, (place) => options.onGoThere?.(place), () => headerHost.querySelector<HTMLElement>('.turn-bar__button'));
+  const quarterBrief = createQuarterBrief(doc, actions, (place) => options.onGoThere?.(place), () => mainFocusTarget(doc));
   overlay.appendChild(quarterBrief.root);
   const live = createLiveRegion(doc, announcementText);
   mountComponent(overlay, live);
@@ -369,6 +392,9 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
       briefOpen: g.brief !== null,
     });
     timeline.update({ quarters: g.timeline, areaNames: names });
+    const q = g.turnBar.displayed ?? g.turnBar.planning;
+    menu.setQuarter(q === null ? '' : quarterLabel(q));
+    menu.setAttention(policyCards.root.querySelector('.is-warning') !== null);
     districtCard.update({ panel: g.districtPanel, construction: g.policyPanel.construction });
   };
 
@@ -401,7 +427,8 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
     cityLayer,
     addPanel: (name, title) => report.addTab(name, title),
     addMainBlock: (block) => {
-      gameScreen.appendChild(block);
+      mainBlocks.push(block);
+      placeBlocks();
     },
     addHeaderButton(label, onClick) {
       const b = doc.createElement('button');
@@ -409,7 +436,13 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
       b.className = 'ui-report-open';
       b.textContent = label;
       b.addEventListener('click', () => onClick(b));
-      headerHost.insertBefore(b, reportButton);
+      menu.section('city').insertBefore(b, reportButton);
+      return b;
+    },
+    menuSection: (name) => menu.section(name),
+    addTurnButton(label, className, onClick) {
+      const b = button(doc, `ui-turn-button ${className}`, label, onClick);
+      headerHost.insertBefore(b, headerHost.querySelector('.ui-turn-steps'));
       return b;
     },
     reportTab: (name) => report.host(name),
@@ -423,7 +456,7 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
       b.className = 'dialog__button ui-map-control';
       b.textContent = label;
       b.addEventListener('click', () => onClick(b));
-      report.tools.appendChild(b);
+      menu.section('settings').appendChild(b);
       return b;
     },
     showLoading,

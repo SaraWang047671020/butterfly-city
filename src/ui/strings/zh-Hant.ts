@@ -57,8 +57,6 @@ export const ZH: UiStrings = {
     exportSaveCode: '匯出存檔代碼',
     importSaveCode: '匯入',
     realData2015Q1: '真實資料，2015 年第 1 季',
-    collapse: '收合回合控制',
-    expand: '展開回合控制',
   },
 
   range: {
@@ -453,6 +451,16 @@ export const ZH: UiStrings = {
     randomNames: ['小雨', '阿哲', '佳穎', '承恩', '子晴', '冠廷'],
   },
 
+  menu: {
+    label: '選單',
+    close: '關閉選單',
+    attention: '有一項政策需要處理',
+    policy: '政策',
+    round: '回合',
+    city: '我與城市',
+    view: '畫面',
+    settings: '存檔與設定',
+  },
   guide: {
     step: '新手引導 {n} / {total}',
     next: '下一步',

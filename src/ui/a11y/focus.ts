@@ -22,9 +22,12 @@ export function focusableIn(root: Element): HTMLElement[] {
   );
 }
 
-/** Moves focus to `target` if it is still in the document. Returns whether focus moved. */
+/**
+ * Moves focus to `target` if it is still in the document and shown. Returns whether focus moved. A control inside
+ * the closed menu (☰) is connected but hidden, so the caller's fallback is used instead.
+ */
 export function focusIfConnected(target: HTMLElement | null | undefined): boolean {
-  if (target === null || target === undefined || !target.isConnected) return false;
+  if (target === null || target === undefined || !target.isConnected || target.getClientRects().length === 0) return false;
   target.focus();
   return true;
 }
