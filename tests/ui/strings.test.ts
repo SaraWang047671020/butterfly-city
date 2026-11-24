@@ -30,12 +30,12 @@ describe('UI_STRINGS', () => {
     expect(ALL.length).toBeGreaterThan(100);
   });
 
-  it('contains no banned term (15.4)', () => {
+  it('contains no banned term in either language (15.4, play-loop 12.7)', () => {
     const terms = parseTermList(readFileSync(BANNED_TERMS_FILE, 'utf8'));
     const exempt = parseTermList(readFileSync(BANNED_TERMS_EXEMPT_FILE, 'utf8'));
     expect(terms.length).toBeGreaterThan(0);
     const found: string[] = [];
-    for (const [key, text] of ALL) {
+    for (const [key, text] of [...flatten(EN, '', []), ...flatten(ZH, 'zh-Hant', [])]) {
       for (const hit of checkBannedTerms(text, terms, exempt)) found.push(`${key}: "${hit.term}"`);
     }
     expect(found).toEqual([]);

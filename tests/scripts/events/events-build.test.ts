@@ -21,6 +21,7 @@ function row(over: Partial<TableRow> = {}): TableRow {
     type: 'interest-rate',
     title: 'Central Bank lowers the discount rate',
     description: 'On 20 March 2020 the Central Bank lowered its discount rate.',
+    zh: { title: '中央銀行調降重貼現率', description: '2020 年 3 月 20 日，中央銀行調降重貼現率。' },
     role: 'narrative',
     sources: [SRC],
     verification: { kind: 'cbc-discount-rate', change: 'cut', rateAfter: 1.125 },

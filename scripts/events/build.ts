@@ -13,7 +13,7 @@ import { nodeFs, writeAll, type WriteFs } from '../pipeline/write.ts';
 import { deriveCard, RateMismatchError, sortCards } from './derive.ts';
 import { DISCOUNT_RATE_FILE, parseDiscountRateCsv, type RateRow } from './discount-rate.ts';
 import { checkTable, ROWS_FILE, TABLE_FILE, type EventsTable, type SourceRowsFile } from './table.ts';
-import { checkCardText, EVENT_BANNED_TERMS_FILE } from './text-checks.ts';
+import { checkCardText, checkCardTextZh, EVENT_BANNED_TERMS_FILE } from './text-checks.ts';
 
 export const EVENTS_OUT = 'public/data/events.json';
 export const EVENT_SOURCES_OUT = 'data/EVENT-SOURCES.md';
@@ -123,7 +123,7 @@ export function buildEvents(read: ReadText): BuildResult {
   const terms = termsText.flatMap((t) => parseTermList(t as string));
   const exempt = parseTermList(exemptText);
   for (const c of cards) {
-    for (const issue of checkCardText(c, terms, exempt)) errors.push(`${c.id} ${issue.field}: ${issue.message}`);
+    for (const issue of [...checkCardText(c, terms, exempt), ...checkCardTextZh(c.zh, terms, exempt)]) errors.push(`${c.id} ${issue.field}: ${issue.message}`);
   }
 
   const file: EventsFile = { schemaVersion: 1, events: cards };

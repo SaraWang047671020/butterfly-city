@@ -16,6 +16,24 @@ export interface TextIssue {
   readonly message: string;
 }
 
+/** The Traditional Chinese title and description: length and the banned terms (play-loop Requirement 12.7). */
+export function checkCardTextZh(
+  zh: { readonly title: string; readonly description: string },
+  terms: readonly string[],
+  exempt: readonly string[],
+): TextIssue[] {
+  const issues: TextIssue[] = [];
+  const fields = [
+    ['title', zh.title, TITLE_MAX],
+    ['description', zh.description, DESCRIPTION_MAX],
+  ] as const;
+  for (const [field, text, max] of fields) {
+    if (text.length < 1 || text.length > max) issues.push({ field, message: `zh length ${text.length}, allowed 1 to ${max}` });
+    for (const hit of checkBannedTerms(text, terms, exempt)) issues.push({ field, message: `zh banned term "${hit.term}"` });
+  }
+  return issues;
+}
+
 export function checkCardText(
   card: { readonly title: string; readonly description: string },
   terms: readonly string[],

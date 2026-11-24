@@ -30,11 +30,18 @@ export interface EventCard {
   readonly type: EventType;
   readonly title: string;
   readonly description: string;
+  /** The title and description in Traditional Chinese (play-loop Requirement 12.4). */
+  readonly zh: EventTextZh;
   readonly role: EventRole;
   readonly major: boolean;
   readonly verified: boolean;
   readonly verificationNote: string;
   readonly sources: readonly SourceLink[];
+}
+
+export interface EventTextZh {
+  readonly title: string;
+  readonly description: string;
 }
 
 export interface EventsFile {
@@ -44,7 +51,7 @@ export interface EventsFile {
 
 export type DatePrecision = EventCard['datePrecision'];
 
-/** The 13 card keys in output order (event-library Requirement 1.2). The list is closed (Requirement 1.9). */
+/** The 14 card keys in output order (event-library Requirement 1.2, plus `zh` of play-loop Requirement 12.4). The list is closed (Requirement 1.9). */
 export const EVENT_CARD_KEYS = [
   'id',
   'date',
@@ -54,6 +61,7 @@ export const EVENT_CARD_KEYS = [
   'type',
   'title',
   'description',
+  'zh',
   'role',
   'major',
   'verified',

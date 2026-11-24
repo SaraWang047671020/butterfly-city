@@ -1,253 +1,514 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "notes": [
     "Draft content for the model limitations page (story-layer spec). English, neutral wording (neutrality.md).",
     "Every item describes a decision recorded in the specs or in data/SOURCES.md. Values that the build computes are placeholders in braces, filled from SOURCES.md or BACKTEST.md, never typed here.",
     "When a limitation is removed or a new one is decided, update this file in the same commit."
   ],
   "page": {
-    "title": "What this model can and cannot tell you",
-    "intro": "Butterfly City starts from real open data for 41 districts of Taipei and New Taipei, 2015 to 2025. What happens after you change a policy is simulated with a simple model. This page lists where the model is simplified, where data is missing and what we assumed instead, so that you can judge the results yourself.",
-    "disclosure": "Initial data and events come from real open data. Policy outcomes are simulated, not predicted.",
-    "sourcesLink": "Every number, source and method is listed in data/SOURCES.md in the project repository."
+    "title": {
+      "en": "What this model can and cannot tell you",
+      "zh-Hant": "這個模型能告訴你什麼、不能告訴你什麼"
+    },
+    "intro": {
+      "en": "Butterfly City starts from real open data for 41 districts of Taipei and New Taipei, 2015 to 2025. What happens after you change a policy is simulated with a simple model. This page lists where the model is simplified, where data is missing and what we assumed instead, so that you can judge the results yourself.",
+      "zh-Hant": "蝴蝶城市從臺北市與新北市 41 個行政區 2015 到 2025 年的真實開放資料出發。你改變政策之後發生的事，是用一個簡化的模型模擬出來的。這一頁列出模型在哪裡做了簡化、哪裡缺資料、我們用什麼假設代替，讓你自己判斷結果。"
+    },
+    "disclosure": {
+      "en": "Initial data and events come from real open data. Policy outcomes are simulated, not predicted.",
+      "zh-Hant": "初始資料與事件來自真實的開放資料。政策結果是模擬，不是預測。"
+    },
+    "sourcesLink": {
+      "en": "Every number, source and method is listed in data/SOURCES.md in the project repository.",
+      "zh-Hant": "每個數字、來源和方法，都列在專案儲存庫的 data/SOURCES.md。"
+    }
   },
   "sections": [
     {
       "id": "basics",
-      "title": "How to read the results",
+      "title": {
+        "en": "How to read the results",
+        "zh-Hant": "如何解讀結果"
+      },
       "items": [
         {
           "id": "simulation-not-prediction",
-          "title": "A simulation, not a forecast",
-          "text": "If you change nothing, every number equals real history. When you change a policy, the model estimates the difference from history. It cannot say what would really have happened; it shows what follows from the assumptions listed here."
+          "title": {
+            "en": "A simulation, not a forecast",
+            "zh-Hant": "是模擬，不是預測"
+          },
+          "text": {
+            "en": "If you change nothing, every number equals real history. When you change a policy, the model estimates the difference from history. It cannot say what would really have happened; it shows what follows from the assumptions listed here.",
+            "zh-Hant": "如果你什麼都不改，每個數字都等於真實歷史。你改變政策時，模型估計的是和歷史的差距。它無法說出真正會發生什麼，只能呈現這裡列出的假設會帶來什麼結果。"
+          }
         },
         {
           "id": "ranges",
-          "title": "Ranges come from disagreeing studies",
-          "text": "Some parameters have no single accepted value. The model runs with the lowest, middle and highest values found in studies and shows the range of results. The range is not a statistical confidence interval, and the real outcome could lie outside it."
+          "title": {
+            "en": "Ranges come from disagreeing studies",
+            "zh-Hant": "範圍來自看法不同的研究"
+          },
+          "text": {
+            "en": "Some parameters have no single accepted value. The model runs with the lowest, middle and highest values found in studies and shows the range of results. The range is not a statistical confidence interval, and the real outcome could lie outside it.",
+            "zh-Hant": "有些參數沒有公認的單一數值。模型分別用研究中找到的最低、中間和最高值計算，並顯示結果的範圍。這個範圍不是統計上的信賴區間，真實結果也可能落在範圍之外。"
+          }
         },
         {
           "id": "events-not-added",
-          "title": "Events are shown, not added",
-          "text": "Real events such as interest rate changes, COVID-19 or credit controls are already in the real data. The model never adds their effect a second time. It also does not model how an event would change the effect of your policies."
+          "title": {
+            "en": "Events are shown, not added",
+            "zh-Hant": "事件只顯示，不另外加入"
+          },
+          "text": {
+            "en": "Real events such as interest rate changes, COVID-19 or credit controls are already in the real data. The model never adds their effect a second time. It also does not model how an event would change the effect of your policies.",
+            "zh-Hant": "利率調整、COVID-19、信用管制等真實事件，已經反映在真實資料裡。模型不會再加一次它們的影響，也不模擬事件會怎麼改變你的政策效果。"
+          }
         },
         {
           "id": "five-tools",
-          "title": "Only five policy tools",
-          "text": "The game covers five housing and commuting tools. Many other forces that shape rents and commutes, such as interest rates, wages, construction by private developers and jobs moving between districts, follow real history and cannot be changed."
+          "title": {
+            "en": "Only five policy tools",
+            "zh-Hant": "只有五種政策工具"
+          },
+          "text": {
+            "en": "The game covers five housing and commuting tools. Many other forces that shape rents and commutes, such as interest rates, wages, construction by private developers and jobs moving between districts, follow real history and cannot be changed.",
+            "zh-Hant": "遊戲涵蓋五種住宅與通勤工具。其他許多影響房租和通勤的因素，例如利率、薪資、民間建商的興建量、工作機會在行政區之間的移動，都依照真實歷史，不能改變。"
+          }
         }
       ]
     },
     {
       "id": "tools",
-      "title": "Policy tools",
+      "title": {
+        "en": "Policy tools",
+        "zh-Hant": "政策工具"
+      },
       "items": [
         {
           "id": "tools-not-yet-modelled",
-          "title": "Two tools are not yet in the model",
-          "text": "Sublease and rental management and the holding tax are shown with their real history, but changing them has no effect in this version. They are marked 'Coming soon'."
+          "title": {
+            "en": "Two tools are not yet in the model",
+            "zh-Hant": "有兩種工具還沒納入模型"
+          },
+          "text": {
+            "en": "Sublease and rental management and the holding tax are shown with their real history, but changing them has no effect in this version. They are marked 'Coming soon'.",
+            "zh-Hant": "包租代管和房屋持有稅會顯示真實歷史，但在這個版本中改變它們沒有效果，並標示為「即將推出」。"
+          }
         },
         {
           "id": "social-housing-spillover",
-          "title": "Effect of social housing on nearby rents",
-          "text": "The study used measured home prices near new subsidised housing in the United States, within about 0.1 mile of each project. The model assumes rents move like prices and spreads the effect over the whole district. Evidence for Taiwan is limited."
+          "title": {
+            "en": "Effect of social housing on nearby rents",
+            "zh-Hant": "社會住宅對周邊房租的影響"
+          },
+          "text": {
+            "en": "The study used measured home prices near new subsidised housing in the United States, within about 0.1 mile of each project. The model assumes rents move like prices and spreads the effect over the whole district. Evidence for Taiwan is limited.",
+            "zh-Hant": "這項研究測量的是美國新建補貼住宅附近、每個案子周圍約 0.1 英里內的房價。模型假設房租和房價同方向變動，並把影響分攤到整個行政區。臺灣的相關證據有限。"
+          }
         },
         {
           "id": "social-housing-costs",
-          "title": "Social housing cost and construction time",
-          "text": "The cost per home comes from three Taipei projects. The construction time is the median time from start to completion in the national social housing records. Real projects vary widely in both."
+          "title": {
+            "en": "Social housing cost and construction time",
+            "zh-Hant": "社會住宅的成本與工期"
+          },
+          "text": {
+            "en": "The cost per home comes from three Taipei projects. The construction time is the median time from start to completion in the national social housing records. Real projects vary widely in both.",
+            "zh-Hant": "每戶成本來自臺北市三個社會住宅案。工期是全國社會住宅紀錄中從開工到完工時間的中位數。實際案子在這兩方面的差異都很大。"
+          }
         },
         {
           "id": "rent-subsidy-others",
-          "title": "Rent subsidy and other tenants",
-          "text": "Part of a rent subsidy may end up as higher rent. The model applies this only to households that receive the subsidy. A possible effect on the rents of other tenants is not modelled."
+          "title": {
+            "en": "Rent subsidy and other tenants",
+            "zh-Hant": "租金補貼與其他租屋者"
+          },
+          "text": {
+            "en": "Part of a rent subsidy may end up as higher rent. The model applies this only to households that receive the subsidy. A possible effect on the rents of other tenants is not modelled.",
+            "zh-Hant": "租金補貼可能有一部分會變成較高的房租。模型只把這個效果套用在領補貼的家戶上，沒有模擬對其他租屋者房租可能的影響。"
+          }
         },
         {
           "id": "rent-subsidy-amount",
-          "title": "Average subsidy per household",
-          "text": "Only one year of the average subsidy per household was published, so that average is used for every quarter."
+          "title": {
+            "en": "Average subsidy per household",
+            "zh-Hant": "每戶平均補貼金額"
+          },
+          "text": {
+            "en": "Only one year of the average subsidy per household was published, so that average is used for every quarter.",
+            "zh-Hant": "每戶平均補貼只公布了一年的數字，所以每一季都使用這個平均值。"
+          }
         },
         {
           "id": "admin-costs",
-          "title": "No administration costs",
-          "text": "Each dollar of rent subsidy or commuter pass subsidy is counted as one dollar of budget. Administration costs are not included because no sourced figure was found."
+          "title": {
+            "en": "No administration costs",
+            "zh-Hant": "不計行政成本"
+          },
+          "text": {
+            "en": "Each dollar of rent subsidy or commuter pass subsidy is counted as one dollar of budget. Administration costs are not included because no sourced figure was found.",
+            "zh-Hant": "租金補貼或通勤月票補貼的每一元，都算作一元預算。因為找不到有出處的數字，沒有計入行政成本。"
+          }
         },
         {
           "id": "commuter-pass-sales",
-          "title": "Commuter pass sales",
-          "text": "Monthly pass sales were not published as a full series. The number of passes is estimated from one published sales figure, so pass-related budget figures are approximate."
+          "title": {
+            "en": "Commuter pass sales",
+            "zh-Hant": "通勤月票銷售量"
+          },
+          "text": {
+            "en": "Monthly pass sales were not published as a full series. The number of passes is estimated from one published sales figure, so pass-related budget figures are approximate.",
+            "zh-Hant": "月票的每月銷售量沒有完整公布。月票張數是從一個公布過的銷售數字估算的，所以和月票有關的預算數字是近似值。"
+          }
         }
       ]
     },
     {
       "id": "housing-data",
-      "title": "Rent and income data",
+      "title": {
+        "en": "Rent and income data",
+        "zh-Hant": "房租與所得資料"
+      },
       "items": [
         {
           "id": "registered-leases",
-          "title": "Only registered leases",
-          "text": "Rents come from leases registered in the government actual price registration system. Many leases are not registered, so the data may not represent every renter."
+          "title": {
+            "en": "Only registered leases",
+            "zh-Hant": "只有登錄的租約"
+          },
+          "text": {
+            "en": "Rents come from leases registered in the government actual price registration system. Many leases are not registered, so the data may not represent every renter.",
+            "zh-Hant": "房租來自政府實價登錄系統中登錄的租約。很多租約沒有登錄，所以這些資料不一定能代表每一位租屋者。"
+          }
         },
         {
           "id": "thin-districts",
-          "title": "Districts with few rental records",
-          "text": "Three rural districts had no rental records. Their rents are estimated from a nearby reference district, for example Pinglin from Xindian. These values are marked as estimated."
+          "title": {
+            "en": "Districts with few rental records",
+            "zh-Hant": "租屋紀錄很少的行政區"
+          },
+          "text": {
+            "en": "Three rural districts had no rental records. Their rents are estimated from a nearby reference district, for example Pinglin from Xindian. These values are marked as estimated.",
+            "zh-Hant": "有三個鄉間行政區沒有租屋紀錄，它們的房租用鄰近的參考行政區估計，例如坪林區用新店區。這些數值會標示為估計值。"
+          }
         },
         {
           "id": "small-homes",
-          "title": "Small homes",
-          "text": "Rent is calculated from the district median rent per square metre. Small studios usually cost more per square metre, so the rent burden of people in small homes, including some of the citizens you can follow, may be underestimated."
+          "title": {
+            "en": "Small homes",
+            "zh-Hant": "小坪數住宅"
+          },
+          "text": {
+            "en": "Rent is calculated from the district median rent per square metre. Small studios usually cost more per square metre, so the rent burden of people in small homes, including some of the citizens you can follow, may be underestimated.",
+            "zh-Hant": "房租是用行政區每平方公尺租金的中位數計算。小套房每平方公尺的租金通常比較高，所以住在小坪數住宅的人（包括你可以追蹤的部分市民）的房租負擔可能被低估。"
+          }
         },
         {
           "id": "income-estimates",
-          "title": "Household income is estimated",
-          "text": "District income combines tax records with the national household survey. Tax records leave out transfer income such as pensions and benefits. The latest observed tax year is 2023; 2024 and 2025 are extrapolated. The tax series changes method between 2018 and 2019, and values are not compared across that break."
+          "title": {
+            "en": "Household income is estimated",
+            "zh-Hant": "家庭所得是估計值"
+          },
+          "text": {
+            "en": "District income combines tax records with the national household survey. Tax records leave out transfer income such as pensions and benefits. The latest observed tax year is 2023; 2024 and 2025 are extrapolated. The tax series changes method between 2018 and 2019, and values are not compared across that break.",
+            "zh-Hant": "行政區所得結合了稅務資料和全國家庭收支調查。稅務資料不包含退休金、津貼等移轉收入。最新的實際稅務年度是 2023 年，2024 和 2025 年是外推值。稅務資料在 2018 到 2019 年間改變了方法，跨過這個斷點的數值不互相比較。"
+          }
         },
         {
           "id": "income-distribution",
-          "title": "Income distribution",
-          "text": "To count people above the rent line, the model assumes incomes in each district follow a log-normal distribution with the spread seen in tax data, and that renters have the same income distribution as all households."
+          "title": {
+            "en": "Income distribution",
+            "zh-Hant": "所得分布"
+          },
+          "text": {
+            "en": "To count people above the rent line, the model assumes incomes in each district follow a log-normal distribution with the spread seen in tax data, and that renters have the same income distribution as all households.",
+            "zh-Hant": "為了計算超過房租界線的人數，模型假設每個行政區的所得呈對數常態分布，分散程度和稅務資料相同，並假設租屋者的所得分布和所有家戶相同。"
+          }
         },
         {
           "id": "price-to-income",
-          "title": "Price-to-income ratio by district",
-          "text": "The district ratio is the median sale price divided by estimated household income. It is an estimate made for this game, not an official statistic."
+          "title": {
+            "en": "Price-to-income ratio by district",
+            "zh-Hant": "各行政區的房價所得比"
+          },
+          "text": {
+            "en": "The district ratio is the median sale price divided by estimated household income. It is an estimate made for this game, not an official statistic.",
+            "zh-Hant": "行政區的房價所得比，是買賣價格的中位數除以估計的家庭所得。這是為這個遊戲做的估計，不是官方統計。"
+          }
         }
       ]
     },
     {
       "id": "commute",
-      "title": "Commute times",
+      "title": {
+        "en": "Commute times",
+        "zh-Hant": "通勤時間"
+      },
       "items": [
         {
           "id": "one-network",
-          "title": "One rail network for all years",
-          "text": "Commute times come from the rail network at the end of 2025 and are used for every quarter. Before lines opened between 2018 and 2023, real trips in some districts were longer than shown."
+          "title": {
+            "en": "One rail network for all years",
+            "zh-Hant": "所有年份都用同一個軌道路網"
+          },
+          "text": {
+            "en": "Commute times come from the rail network at the end of 2025 and are used for every quarter. Before lines opened between 2018 and 2023, real trips in some districts were longer than shown.",
+            "zh-Hant": "通勤時間用的是 2025 年底的軌道路網，套用到每一季。2018 到 2023 年間有路線通車，在這之前，部分行政區的實際通勤時間比顯示的長。"
+          }
         },
         {
           "id": "estimated-trips",
-          "title": "Estimated, not measured, trips",
-          "text": "Each district is represented by its population-weighted centre, computed from village populations. A trip is the trip to the nearest station (walking, or by road when that is faster, for people who live far from a station), the rail time, transfers, and the trip from the station at the other end; or a road trip, whichever is shorter. Distances are straight lines multiplied by a detour factor from a United States study. Buses are not modelled as a separate mode."
+          "title": {
+            "en": "Estimated, not measured, trips",
+            "zh-Hant": "通勤時間是估算的，不是實測的"
+          },
+          "text": {
+            "en": "Each district is represented by its population-weighted centre, computed from village populations. A trip is the trip to the nearest station (walking, or by road when that is faster, for people who live far from a station), the rail time, transfers, and the trip from the station at the other end; or a road trip, whichever is shorter. Distances are straight lines multiplied by a detour factor from a United States study. Buses are not modelled as a separate mode.",
+            "zh-Hant": "每個行政區用依村里人口加權的人口中心代表。一趟通勤包括：到最近車站的路程（走路；離車站很遠的人，如果走道路比較快就走道路）、軌道行車時間、轉乘，以及從另一端車站出發的路程；或是全程走道路，取比較短的那一個。距離是直線距離乘上一個來自美國研究的繞路係數。公車沒有被當作獨立的交通方式來模擬。"
+          }
         },
         {
           "id": "excluded-lines",
-          "title": "Lines not included",
-          "text": "The Taoyuan Airport MRT and the Sanying Line are not in the network. Linkou has no station in the model: its residents reach the network by road at Huilong station on the Zhonghe-Xinlu Line, about 7.6 km from the centre of Linkou, and for some destinations the road alone is faster. Because road speed is an assumption, Linkou commute times may be too long. The Danhai LRT is also left out; it lies entirely within Tamsui and affects only trips inside that district."
+          "title": {
+            "en": "Lines not included",
+            "zh-Hant": "沒有納入的路線"
+          },
+          "text": {
+            "en": "The Taoyuan Airport MRT and the Sanying Line are not in the network. Linkou has no station in the model: its residents reach the network by road at Huilong station on the Zhonghe-Xinlu Line, about 7.6 km from the centre of Linkou, and for some destinations the road alone is faster. Because road speed is an assumption, Linkou commute times may be too long. The Danhai LRT is also left out; it lies entirely within Tamsui and affects only trips inside that district.",
+            "zh-Hant": "桃園機場捷運和三鶯線不在路網中。林口在模型中沒有車站：居民經由道路到中和新蘆線的迴龍站進入路網，距離林口中心約 7.6 公里；到某些目的地，全程走道路反而比較快。因為道路速度是假設值，林口的通勤時間可能偏長。淡海輕軌也沒有納入；它全線位於淡水區內，只影響淡水區內部的通勤。"
+          }
         },
         {
           "id": "constants",
-          "title": "Walking speed, road speed and waiting time",
-          "text": "Walking speed and the detour factor come from foreign studies. Road speed for Taipei comes from a published traffic index and is assumed to be the same in New Taipei, where suburban roads are often faster. Waiting time is half the morning peak interval between trains; the Wenhu Line had no timetable data and uses the median of the other lines."
+          "title": {
+            "en": "Walking speed, road speed and waiting time",
+            "zh-Hant": "步行速度、道路速度與等車時間"
+          },
+          "text": {
+            "en": "Walking speed and the detour factor come from foreign studies. Road speed for Taipei comes from a published traffic index and is assumed to be the same in New Taipei, where suburban roads are often faster. Waiting time is half the morning peak interval between trains; the Wenhu Line had no timetable data and uses the median of the other lines.",
+            "zh-Hant": "步行速度和繞路係數來自國外研究。臺北市的道路速度來自一份公開的交通指數，並假設新北市相同，但新北市郊區的道路通常比較快。等車時間是早上尖峰班距的一半；文湖線沒有時刻表資料，使用其他路線的中位數。"
+          }
         },
         {
           "id": "jobs-by-district",
-          "title": "Where jobs are",
-          "text": "The number of jobs in each district comes from the 2021 Industry and Service Census, which does not count government offices, schools or the military. Districts with many public employers, such as Zhongzheng, have more jobs than shown."
+          "title": {
+            "en": "Where jobs are",
+            "zh-Hant": "工作機會在哪裡"
+          },
+          "text": {
+            "en": "The number of jobs in each district comes from the 2021 Industry and Service Census, which does not count government offices, schools or the military. Districts with many public employers, such as Zhongzheng, have more jobs than shown.",
+            "zh-Hant": "各行政區的工作機會數量來自 2021 年工業及服務業普查，普查不包括政府機關、學校和軍隊。像中正區這樣公部門雇主多的行政區，實際工作機會比顯示的多。"
+          }
         },
         {
           "id": "census-workplaces",
-          "title": "Who works where",
-          "text": "The 2020 census tells where residents work only as same district, other district in the same city, or another city. The model spreads the last two groups over districts by number of jobs, and counts everyone working outside Taipei and New Taipei as working in the other city. People who commute to Taoyuan or Keelung therefore appear to have shorter trips, and the number of long commutes may be too low."
+          "title": {
+            "en": "Who works where",
+            "zh-Hant": "誰在哪裡上班"
+          },
+          "text": {
+            "en": "The 2020 census tells where residents work only as same district, other district in the same city, or another city. The model spreads the last two groups over districts by number of jobs, and counts everyone working outside Taipei and New Taipei as working in the other city. People who commute to Taoyuan or Keelung therefore appear to have shorter trips, and the number of long commutes may be too low.",
+            "zh-Hant": "2020 年人口普查只說明居民是在同一行政區、同一城市的其他行政區，還是在其他城市工作。模型依工作機會數量，把後兩組分配到各行政區，並把在臺北市和新北市以外工作的人都算成在另一個城市工作。因此通勤到桃園或基隆的人看起來通勤時間較短，長途通勤的人數也可能偏少。"
+          }
         },
         {
           "id": "survey-check",
-          "title": "Check against a survey",
-          "text": "The modelled average trip from New Taipei to Taipei is {commuteModelled} minutes. A Ministry of Transportation and Communications survey reported about {commuteSurvey} minutes. The model was not adjusted to match it."
+          "title": {
+            "en": "Check against a survey",
+            "zh-Hant": "和調查結果比對"
+          },
+          "text": {
+            "en": "The modelled average trip from New Taipei to Taipei is {commuteModelled} minutes. A Ministry of Transportation and Communications survey reported about {commuteSurvey} minutes. The model was not adjusted to match it.",
+            "zh-Hant": "模型算出的新北市到臺北市平均通勤時間是 {commuteModelled} 分鐘。交通部的一份調查結果約為 {commuteSurvey} 分鐘。模型沒有為了吻合調查而調整。"
+          }
         }
       ]
     },
     {
       "id": "moving",
-      "title": "Moving between districts",
+      "title": {
+        "en": "Moving between districts",
+        "zh-Hant": "在行政區之間搬家"
+      },
       "items": [
         {
           "id": "migration-assumed",
-          "title": "Moving choices are assumed",
-          "text": "No data on moves between districts of Taipei and New Taipei was found. How strongly rent, commute time and commuting cost affect where people move is an assumption, marked as a gap in the sources."
+          "title": {
+            "en": "Moving choices are assumed",
+            "zh-Hant": "搬家的選擇是假設的"
+          },
+          "text": {
+            "en": "No data on moves between districts of Taipei and New Taipei was found. How strongly rent, commute time and commuting cost affect where people move is an assumption, marked as a gap in the sources.",
+            "zh-Hant": "沒有找到臺北市和新北市行政區之間搬遷的資料。房租、通勤時間和通勤費用對人們搬到哪裡的影響有多大，是一個假設，並在資料來源中標示為缺口。"
+          }
         },
         {
           "id": "pass-and-moving",
-          "title": "Commuter pass and moving",
-          "text": "The cost of commuting uses the Taipei Metro fare per minute. Fares stop rising at the maximum fare, so long trips may be given too high a cost. The commuter pass check against real data covers MRT trips only, not moves."
+          "title": {
+            "en": "Commuter pass and moving",
+            "zh-Hant": "通勤月票與搬家"
+          },
+          "text": {
+            "en": "The cost of commuting uses the Taipei Metro fare per minute. Fares stop rising at the maximum fare, so long trips may be given too high a cost. The commuter pass check against real data covers MRT trips only, not moves.",
+            "zh-Hant": "通勤費用使用臺北捷運每分鐘的票價。票價到最高票價就不再增加，所以長途通勤的費用可能被高估。月票和真實資料的比對只涵蓋捷運搭乘，不包括搬家。"
+          }
         }
       ]
     },
     {
       "id": "ghosts",
-      "title": "Ghosts",
+      "title": {
+        "en": "Ghosts",
+        "zh-Hant": "幽靈"
+      },
       "items": [
         {
           "id": "ghost-lines",
-          "title": "Where the lines are drawn",
-          "text": "A resident counts as at risk above 30% of income spent on rent and as a ghost above 50%, the cost-burden lines used by housing agencies in the United States. For commutes, 45 minutes comes from a Taiwan survey of what commuters accept; 60 minutes is a line set by this project, with no study behind it. Other lines would give other counts."
+          "title": {
+            "en": "Where the lines are drawn",
+            "zh-Hant": "界線畫在哪裡"
+          },
+          "text": {
+            "en": "A resident counts as at risk above 30% of income spent on rent and as a ghost above 50%, the cost-burden lines used by housing agencies in the United States. For commutes, 45 minutes comes from a Taiwan survey of what commuters accept; 60 minutes is a line set by this project, with no study behind it. Other lines would give other counts.",
+            "zh-Hant": "房租超過收入 30% 的居民算作「有風險」，超過 50% 算作幽靈，這是美國住宅機構使用的居住負擔界線。通勤方面，45 分鐘來自臺灣一份關於通勤者能接受多久的調查；60 分鐘是本專案自訂的界線，沒有研究依據。換成其他界線，會得到不同的人數。"
+          }
         },
         {
           "id": "reference-dwelling",
-          "title": "Which homes the district count uses",
-          "text": "The district ghost count compares household income with the median rent of a whole home, the kind of lease a household rents. People renting studios or rooms pay less but often earn less, and their burden may differ. Before 2023 the lease records do not say whether a home is whole or a room, so some rooms may be included."
+          "title": {
+            "en": "Which homes the district count uses",
+            "zh-Hant": "行政區人數用的是哪種住宅"
+          },
+          "text": {
+            "en": "The district ghost count compares household income with the median rent of a whole home, the kind of lease a household rents. People renting studios or rooms pay less but often earn less, and their burden may differ. Before 2023 the lease records do not say whether a home is whole or a room, so some rooms may be included.",
+            "zh-Hant": "行政區的幽靈人數，是拿家庭所得和整層住家的房租中位數比較，也就是一般家戶會租的那種租約。租套房或雅房的人付得比較少，但收入常常也比較低，他們的負擔可能不同。2023 年以前的租約紀錄沒有區分整層住家和雅房，所以可能混入部分雅房。"
+          }
         },
         {
           "id": "ghost-overlap",
-          "title": "People with both problems",
-          "text": "Data on people with both a high rent burden and a long commute does not exist. The model assumes the two are independent when it removes double counting."
+          "title": {
+            "en": "People with both problems",
+            "zh-Hant": "兩個問題都有的人"
+          },
+          "text": {
+            "en": "Data on people with both a high rent burden and a long commute does not exist. The model assumes the two are independent when it removes double counting.",
+            "zh-Hant": "沒有同時有高房租負擔和長通勤的人的資料。模型在扣除重複計算時，假設兩者互相獨立。"
+          }
         },
         {
           "id": "ghost-size",
-          "title": "One ghost, many people",
-          "text": "In the district panel, each ghost stands for 1,000 people; this is a display scale. Policies change these counts by tens to a few hundred people, so the figures above the districts show the change from real history instead: each ghost is about 10 more people above a line, and each butterfly about 10 fewer. The exact ghost count is always shown in the district panel."
+          "title": {
+            "en": "One ghost, many people",
+            "zh-Hant": "一個幽靈代表很多人"
+          },
+          "text": {
+            "en": "In the district panel, each ghost stands for 1,000 people; this is a display scale. Policies change these counts by tens to a few hundred people, so the figures above the districts show the change from real history instead: each ghost is about 10 more people above a line, and each butterfly about 10 fewer. The exact ghost count is always shown in the district panel.",
+            "zh-Hant": "在行政區資料中，每個幽靈代表 1,000 人，這是顯示用的比例。政策改變的人數通常是幾十到幾百人，所以行政區上方的圖示顯示的是和真實歷史的差距：每個幽靈大約代表多 10 人超過界線，每隻蝴蝶大約代表少 10 人。確切的幽靈人數一定會顯示在行政區資料中。"
+          }
         }
       ]
     },
     {
       "id": "citizens",
-      "title": "Citizens you can follow",
+      "title": {
+        "en": "Citizens you can follow",
+        "zh-Hant": "可以追蹤的市民"
+      },
       "items": [
         {
           "id": "illustrative",
-          "title": "Illustrative households",
-          "text": "The six citizens are invented households, not real people. Their numbers are calculated from the district results at a chosen point of the income distribution, so they move with your policies, but a real household in the same district could be very different."
+          "title": {
+            "en": "Illustrative households",
+            "zh-Hant": "示意用的家戶"
+          },
+          "text": {
+            "en": "The six citizens are invented households, not real people. Their numbers are calculated from the district results at a chosen point of the income distribution, so they move with your policies, but a real household in the same district could be very different.",
+            "zh-Hant": "這六位市民是虛構的家戶，不是真實人物。他們的數字是用行政區結果、在所得分布的某一個位置計算出來的，所以會隨你的政策變動，但同一行政區的真實家戶可能非常不同。"
+          }
         },
         {
           "id": "citizen-simplifications",
-          "title": "Simplifications",
-          "text": "Each citizen has one commute, even in households where two people work. The model does not decide whether an individual citizen moves away; moving is calculated for districts as a whole."
+          "title": {
+            "en": "Simplifications",
+            "zh-Hant": "簡化之處"
+          },
+          "text": {
+            "en": "Each citizen has one commute, even in households where two people work. The model does not decide whether an individual citizen moves away; moving is calculated for districts as a whole.",
+            "zh-Hant": "每位市民只有一段通勤，即使家裡有兩個人在工作也一樣。模型不會決定某一位市民要不要搬走；搬家是以整個行政區計算的。"
+          }
         }
       ]
     },
     {
       "id": "character",
-      "title": "Your character",
+      "title": {
+        "en": "Your character",
+        "zh-Hant": "你的角色"
+      },
       "items": [
         {
           "id": "character-wages",
-          "title": "Wages are industry means",
-          "text": "Your character earns the mean regular monthly earnings of the industry of their job, as published by DGBAS for each year. It is not the pay of one person: it excludes bonuses and overtime, includes every job in the industry, and is above the median pay of most industries. The survey does not cover schools, so a teacher is a cram school teacher; the education and health figures change level in 2019 because the survey started to cover more of those industries."
+          "title": {
+            "en": "Wages are industry means",
+            "zh-Hant": "薪資是產業平均"
+          },
+          "text": {
+            "en": "Your character earns the mean regular monthly earnings of the industry of their job, as published by DGBAS for each year. It is not the pay of one person: it excludes bonuses and overtime, includes every job in the industry, and is above the median pay of most industries. The survey does not cover schools, so a teacher is a cram school teacher; the education and health figures change level in 2019 because the survey started to cover more of those industries.",
+            "zh-Hant": "你的角色領的是其職業所屬產業的平均經常性薪資，由主計總處逐年公布。這不是某一個人的薪水：它不含獎金和加班費，涵蓋產業中的所有工作，而且高於大多數產業的薪資中位數。這項調查不包括學校，所以老師是補習班老師；教育業和醫療業的數字在 2019 年有一次落差，因為調查從那年起涵蓋更多這兩個產業的單位。"
+          }
         },
         {
           "id": "character-homes",
-          "title": "Home sizes and their rent",
-          "text": "Home sizes are assumptions of the game: about 20 m² for one person up to 80 m² for five, including shared areas. Small homes rent for more per square metre than the district median, so your character's rent uses the ratio between the rent per square metre of homes of that size and of all homes in the district, measured on the registered leases of 2015 to 2025. Districts with few leases of a size use the ratio of their city."
+          "title": {
+            "en": "Home sizes and their rent",
+            "zh-Hant": "住宅大小與房租"
+          },
+          "text": {
+            "en": "Home sizes are assumptions of the game: about 20 m² for one person up to 80 m² for five, including shared areas. Small homes rent for more per square metre than the district median, so your character's rent uses the ratio between the rent per square metre of homes of that size and of all homes in the district, measured on the registered leases of 2015 to 2025. Districts with few leases of a size use the ratio of their city.",
+            "zh-Hant": "住宅大小是遊戲的假設：一個人約 20 平方公尺，五個人到 80 平方公尺，含公共設施。小坪數住宅每平方公尺的租金比行政區中位數高，所以你角色的房租會乘上一個比例：這個大小的住宅每平方公尺租金，和該行政區所有住宅每平方公尺租金的比，用 2015 到 2025 年登錄的租約計算。某個大小租約太少的行政區，改用所屬城市的比例。"
+          }
         }
       ]
     },
     {
       "id": "validation",
-      "title": "How the model was checked",
+      "title": {
+        "en": "How the model was checked",
+        "zh-Hant": "模型怎麼檢驗"
+      },
       "items": [
         {
           "id": "zero-delta",
-          "title": "No change means real history",
-          "text": "Automated tests check that the model returns real history exactly when no policy is changed, for many generated inputs."
+          "title": {
+            "en": "No change means real history",
+            "zh-Hant": "不改變就是真實歷史"
+          },
+          "text": {
+            "en": "Automated tests check that the model returns real history exactly when no policy is changed, for many generated inputs.",
+            "zh-Hant": "自動化測試會用大量產生的輸入檢查：沒有改變任何政策時，模型會完全回到真實歷史。"
+          }
         },
         {
           "id": "backtest",
-          "title": "Check against a real policy change",
-          "text": "The commuter pass part of the model was compared with the real change in Taipei Metro entries after TPASS started in July 2023, with tolerances fixed before the result was computed. Result: {backtestResult} Only Taipei Metro stations with data in every month of 2019 and 2023 are compared; New Taipei Metro lines have no station data. The first half of 2023 was still a recovery period after COVID-19, so part of the change may come from the recovery and not from the pass. The other tools could not be checked this way."
+          "title": {
+            "en": "Check against a real policy change",
+            "zh-Hant": "和一次真實政策改變比對"
+          },
+          "text": {
+            "en": "The commuter pass part of the model was compared with the real change in Taipei Metro entries after TPASS started in July 2023, with tolerances fixed before the result was computed. Result: {backtestResult} Only Taipei Metro stations with data in every month of 2019 and 2023 are compared; New Taipei Metro lines have no station data. The first half of 2023 was still a recovery period after COVID-19, so part of the change may come from the recovery and not from the pass. The other tools could not be checked this way.",
+            "zh-Hant": "模型的通勤月票部分，和 2023 年 7 月 TPASS 上路後臺北捷運進站人次的實際變化做了比對，容許範圍在算出結果之前就已訂好。結果：{backtestResult}只比較 2019 年和 2023 年每個月都有資料的臺北捷運車站；新北捷運的路線沒有車站資料。2023 年上半年仍是 COVID-19 之後的恢復期，所以部分變化可能來自疫情後的恢復，而不是月票。其他工具無法用這種方式檢驗。"
+          }
         },
         {
           "id": "low-use-housing",
-          "title": "Low-use housing",
-          "text": "The map can show the share of homes with very low electricity use, an indicator of empty homes, for the periods in which it was published. No policy in this version changes it."
+          "title": {
+            "en": "Low-use housing",
+            "zh-Hant": "低度使用住宅"
+          },
+          "text": {
+            "en": "The map can show the share of homes with very low electricity use, an indicator of empty homes, for the periods in which it was published. No policy in this version changes it.",
+            "zh-Hant": "地圖可以顯示用電量非常低的住宅比例（空屋的一種指標），只限有公布資料的期間。這個版本中沒有政策會改變它。"
+          }
         }
       ]
     }
@@ -256,18 +517,39 @@
     "backtestResult": {
       "notes": "Filled from the computed values in docs/BACKTEST.md (main result). ratio is simulated central divided by observed. Pick one sentence per check.",
       "direction": {
-        "met": "The modelled change went in the same direction as the real change.",
-        "notMet": "The modelled change went in the opposite direction to the real change."
+        "met": {
+          "en": "The modelled change went in the same direction as the real change.",
+          "zh-Hant": "模型的變化方向和真實變化相同。"
+        },
+        "notMet": {
+          "en": "The modelled change went in the opposite direction to the real change.",
+          "zh-Hant": "模型的變化方向和真實變化相反。"
+        }
       },
       "ratio": {
-        "met": "The modelled change was {ratio} times the real change, inside the range of {toleranceLow} to {toleranceHigh} set in advance.",
-        "notMet": "The modelled change was {ratio} times the real change, outside the range of {toleranceLow} to {toleranceHigh} set in advance."
+        "met": {
+          "en": "The modelled change was {ratio} times the real change, inside the range of {toleranceLow} to {toleranceHigh} set in advance.",
+          "zh-Hant": "模型的變化是真實變化的 {ratio} 倍，在事先訂好的 {toleranceLow} 到 {toleranceHigh} 範圍內。"
+        },
+        "notMet": {
+          "en": "The modelled change was {ratio} times the real change, outside the range of {toleranceLow} to {toleranceHigh} set in advance.",
+          "zh-Hant": "模型的變化是真實變化的 {ratio} 倍，在事先訂好的 {toleranceLow} 到 {toleranceHigh} 範圍外。"
+        }
       },
       "range": {
-        "met": "The real change lies within the range of model results.",
-        "notMet": "The real change lies outside the range of model results."
+        "met": {
+          "en": "The real change lies within the range of model results.",
+          "zh-Hant": "真實變化落在模型結果的範圍內。"
+        },
+        "notMet": {
+          "en": "The real change lies outside the range of model results.",
+          "zh-Hant": "真實變化落在模型結果的範圍外。"
+        }
       },
-      "join": "{direction} {ratio} {range}"
+      "join": {
+        "en": "{direction} {ratio} {range}",
+        "zh-Hant": "{direction}{ratio}{range}"
+      }
     }
   }
 }

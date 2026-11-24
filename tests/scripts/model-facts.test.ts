@@ -23,8 +23,8 @@ describe('model-facts.json', () => {
   it('a writer changes only its own keys and stops on a missing value', () => {
     const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'facts-')), 'model-facts.json');
     updateModelFacts({ commuteModelled: 54.2, commuteSurvey: 57 }, file);
-    updateModelFacts({ backtestResult: 'text' }, file);
-    expect(parseModelFacts(fs.readFileSync(file, 'utf8'))).toEqual({ schemaVersion: 1, backtestResult: 'text', commuteModelled: 54.2, commuteSurvey: 57 });
+    updateModelFacts({ backtestResult: { en: 'text', 'zh-Hant': '文字' } }, file);
+    expect(parseModelFacts(fs.readFileSync(file, 'utf8'))).toEqual({ schemaVersion: 1, backtestResult: { en: 'text', 'zh-Hant': '文字' }, commuteModelled: 54.2, commuteSurvey: 57 });
     expect(() => updateModelFacts({ commuteModelled: Number.NaN }, file)).toThrow(/commuteModelled/);
   });
 
@@ -37,9 +37,12 @@ describe('model-facts.json', () => {
       toleranceLow: 0.5,
       toleranceHigh: 2,
     });
-    expect(t).toContain('same direction');
-    expect(t).toContain('2.500 times');
-    expect(t).toContain('outside the range of 0.500 to 2.000');
-    expect(t).not.toMatch(/\{[A-Za-z]+\}/);
+    expect(t['zh-Hant']).toContain('2.500 倍');
+    expect(t['zh-Hant']).toContain('範圍外');
+    expect(t['zh-Hant']).not.toMatch(/{[A-Za-z]+}/);
+    expect(t.en).toContain('same direction');
+    expect(t.en).toContain('2.500 times');
+    expect(t.en).toContain('outside the range of 0.500 to 2.000');
+    expect(t.en).not.toMatch(/\{[A-Za-z]+\}/);
   });
 });

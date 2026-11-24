@@ -13,9 +13,16 @@ export interface ModelFacts {
   readonly commuteModelled?: number;
   /** Survey figure, minutes. */
   readonly commuteSurvey?: number;
-  /** The filled backtest sentences of the tpass-2023 case. */
-  readonly backtestResult?: string;
+  /** The filled backtest sentences of the tpass-2023 case, in both languages (play-loop Requirement 12.4). */
+  readonly backtestResult?: BilingualText;
 }
+
+export interface BilingualText {
+  readonly en: string;
+  readonly 'zh-Hant': string;
+}
+
+const LANGS = ['en', 'zh-Hant'] as const;
 
 export const MODEL_FACTS_FILE = path.join(ROOT, 'public', 'data', 'model-facts.json');
 
@@ -35,8 +42,9 @@ export function parseModelFacts(text: string): ModelFacts {
       throw new Error(`model-facts.json: ${k} must be a positive number`);
     }
   }
-  if (v['backtestResult'] !== undefined && !(typeof v['backtestResult'] === 'string' && v['backtestResult'] !== '')) {
-    throw new Error('model-facts.json: backtestResult must be text');
+  const b = v['backtestResult'] as Record<string, unknown> | undefined;
+  if (b !== undefined && !(typeof b === 'object' && b !== null && LANGS.every((l) => typeof b[l] === 'string' && b[l] !== ''))) {
+    throw new Error('model-facts.json: backtestResult must be text in English and Traditional Chinese');
   }
   return v as unknown as ModelFacts;
 }
@@ -61,15 +69,18 @@ export interface BacktestSentenceInput {
   readonly toleranceHigh: number;
 }
 
-type Sentences = { readonly met: string; readonly notMet: string };
+type Sentences = { readonly met: BilingualText; readonly notMet: BilingualText };
+export type BacktestTemplates = { readonly direction: Sentences; readonly ratio: Sentences; readonly range: Sentences; readonly join: BilingualText };
 
-/** The backtestResult text from templates.backtestResult of model-limits.json; throws on a missing sentence or a leftover placeholder. */
-export function backtestSentence(
-  templates: { readonly direction: Sentences; readonly ratio: Sentences; readonly range: Sentences; readonly join: string },
-  x: BacktestSentenceInput,
-): string {
+/** The backtestResult text in both languages from templates.backtestResult of model-limits.json. */
+export function backtestSentence(templates: BacktestTemplates, x: BacktestSentenceInput): BilingualText {
+  return { en: backtestSentenceIn('en', templates, x), 'zh-Hant': backtestSentenceIn('zh-Hant', templates, x) };
+}
+
+/** One language; throws on a missing sentence or a leftover placeholder. */
+function backtestSentenceIn(lang: (typeof LANGS)[number], templates: BacktestTemplates, x: BacktestSentenceInput): string {
   const pick = (s: Sentences | undefined, ok: boolean, name: string): string => {
-    const t = s?.[ok ? 'met' : 'notMet'];
+    const t = s?.[ok ? 'met' : 'notMet']?.[lang];
     if (typeof t !== 'string' || t === '') throw new Error(`model facts: templates.backtestResult.${name} has no ${ok ? 'met' : 'notMet'} sentence`);
     return t;
   };
@@ -78,7 +89,7 @@ export function backtestSentence(
       .replaceAll('{ratio}', x.ratio.toFixed(3))
       .replaceAll('{toleranceLow}', x.toleranceLow.toFixed(3))
       .replaceAll('{toleranceHigh}', x.toleranceHigh.toFixed(3));
-  const text = templates.join
+  const text = (templates.join?.[lang] ?? '')
     .replace('{direction}', fill(pick(templates.direction, x.direction, 'direction')))
     .replace('{ratio}', fill(pick(templates.ratio, x.ratioMet, 'ratio')))
     .replace('{range}', fill(pick(templates.range, x.range, 'range')));

@@ -1,6 +1,11 @@
 // Story_Files: types, validation and loading (story-layer Requirement 1, task 1). Implemented by Claude Code.
 // A story load error never blocks the game: the caller shows the error in the story parts only (Requirement 1.4).
 // Unknown extra fields (notes, household, age, model-limits templates) are ignored.
+// Every displayed text is in both languages (play-loop Requirement 12.4): the validators reject a text missing in one
+// language or with different Placeholders, and return the file in the language of the App.
+import { localTextProblem, type LocalText } from './character-loader.ts';
+
+export type Lang = 'en' | 'zh-Hant';
 
 export interface Persona {
   readonly id: string;
@@ -57,8 +62,20 @@ const fail = (error: string): { ok: false; error: string } => ({ ok: false, erro
 const num = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x);
 const str = (x: unknown): x is string => typeof x === 'string' && x.length > 0;
 
-export function validateCitizenFile(x: unknown, districtCodes: ReadonlySet<string>): Result<CitizenFile> {
-  if (!isObj(x) || x['schemaVersion'] !== 1) return fail('citizens.json: schemaVersion must be 1');
+/** The first problem of the LocalText fields `keys` of `o` (optional ones may be absent), or null. */
+function textsProblem(o: Record<string, unknown>, keys: readonly string[], at: string, optional: readonly string[] = []): string | null {
+  for (const k of keys) {
+    if (optional.includes(k) && o[k] === undefined) continue;
+    const p = localTextProblem(o[k]);
+    if (p !== null) return `${at}.${k}: ${p}`;
+  }
+  return null;
+}
+
+const textIn = (x: unknown, lang: Lang): string => (x as LocalText)[lang];
+
+export function validateCitizenFile(x: unknown, districtCodes: ReadonlySet<string>, lang: Lang = 'en'): Result<CitizenFile> {
+  if (!isObj(x) || x['schemaVersion'] !== 2) return fail('citizens.json: schemaVersion must be 2');
   const th = x['thresholds'];
   if (!isObj(th) || !isObj(th['rentRisk']) || !num(th['rentRisk']['value'])) return fail('citizens.json: thresholds.rentRisk.value missing');
   const cm = th['commuteMonth'];
@@ -69,7 +86,9 @@ export function validateCitizenFile(x: unknown, districtCodes: ReadonlySet<strin
   for (const [i, p] of ps.entries()) {
     const at = `citizens.json: personas[${i}]`;
     if (!isObj(p)) return fail(`${at} is not an object`);
-    for (const k of ['id', 'name', 'homeDistrict', 'homeCode', 'intro', 'picker']) if (!str(p[k])) return fail(`${at}.${k} missing`);
+    for (const k of ['id', 'homeDistrict', 'homeCode']) if (!str(p[k])) return fail(`${at}.${k} missing`);
+    const tp = textsProblem(p, ['name', 'intro', 'picker', 'household'], at, ['household']);
+    if (tp !== null) return fail(tp);
     if (ids.has(p['id'] as string)) return fail(`${at}.id is a duplicate`);
     ids.add(p['id'] as string);
     if (!districtCodes.has(p['homeCode'] as string)) return fail(`${at}.homeCode is not a district code`);
@@ -82,9 +101,22 @@ export function validateCitizenFile(x: unknown, districtCodes: ReadonlySet<strin
   if (!isObj(t)) return fail('citizens.json: templates missing');
   for (const [group, states] of Object.entries(t)) {
     if (!isObj(states)) return fail(`citizens.json: templates.${group} is not an object`);
-    for (const [state, text] of Object.entries(states)) if (!str(text)) return fail(`citizens.json: templates.${group}.${state} is not text`);
+    for (const [state, text] of Object.entries(states)) {
+      const tp = localTextProblem(text);
+      if (tp !== null) return fail(`citizens.json: templates.${group}.${state}: ${tp}`);
+    }
   }
-  return { ok: true, value: x as unknown as CitizenFile };
+  const personas = (ps as Record<string, unknown>[]).map((p) => ({
+    ...p,
+    name: textIn(p['name'], lang),
+    intro: textIn(p['intro'], lang),
+    picker: textIn(p['picker'], lang),
+    ...(p['household'] === undefined ? {} : { household: textIn(p['household'], lang) }),
+  }));
+  const templates = Object.fromEntries(
+    Object.entries(t).map(([g, states]) => [g, Object.fromEntries(Object.entries(states as Record<string, unknown>).map(([k, v]) => [k, textIn(v, lang)]))]),
+  );
+  return { ok: true, value: { ...x, schemaVersion: 1, personas, templates } as unknown as CitizenFile };
 }
 
 export function validateIncomeSpread(x: unknown, districtCodes: ReadonlySet<string>): Result<IncomeSpread> {
@@ -103,29 +135,43 @@ export function validateIncomeSpread(x: unknown, districtCodes: ReadonlySet<stri
   return { ok: true, value: x as unknown as IncomeSpread };
 }
 
-export function validateLimitsFile(x: unknown): Result<LimitsFile> {
-  if (!isObj(x) || x['schemaVersion'] !== 1) return fail('model-limits.json: schemaVersion must be 1');
+export function validateLimitsFile(x: unknown, lang: Lang = 'en'): Result<LimitsFile> {
+  if (!isObj(x) || x['schemaVersion'] !== 2) return fail('model-limits.json: schemaVersion must be 2');
   const p = x['page'];
-  if (!isObj(p) || !['title', 'intro', 'disclosure', 'sourcesLink'].every((k) => str(p[k]))) return fail('model-limits.json: page fields missing');
+  if (!isObj(p)) return fail('model-limits.json: page fields missing');
+  const pageKeys = ['title', 'intro', 'disclosure', 'sourcesLink'];
+  const pp = textsProblem(p, pageKeys, 'model-limits.json: page');
+  if (pp !== null) return fail(pp);
   const ss = x['sections'];
   if (!Array.isArray(ss) || ss.length === 0) return fail('model-limits.json: sections missing');
   for (const [i, s] of ss.entries()) {
-    if (!isObj(s) || !str(s['id']) || !str(s['title']) || !Array.isArray(s['items'])) return fail(`model-limits.json: sections[${i}] incomplete`);
+    if (!isObj(s) || !str(s['id']) || !Array.isArray(s['items'])) return fail(`model-limits.json: sections[${i}] incomplete`);
+    const sp = textsProblem(s, ['title'], `model-limits.json: sections[${i}]`);
+    if (sp !== null) return fail(sp);
     for (const [k, it] of (s['items'] as unknown[]).entries()) {
-      if (!isObj(it) || !str(it['id']) || !str(it['title']) || !str(it['text'])) return fail(`model-limits.json: sections[${i}].items[${k}] incomplete`);
+      if (!isObj(it) || !str(it['id'])) return fail(`model-limits.json: sections[${i}].items[${k}] incomplete`);
+      const ip = textsProblem(it, ['title', 'text'], `model-limits.json: sections[${i}].items[${k}]`);
+      if (ip !== null) return fail(ip);
     }
   }
-  return { ok: true, value: x as unknown as LimitsFile };
+  const page = Object.fromEntries(pageKeys.map((k) => [k, textIn(p[k], lang)]));
+  const sections = (ss as Record<string, unknown>[]).map((sec) => ({
+    id: sec['id'],
+    title: textIn(sec['title'], lang),
+    items: (sec['items'] as Record<string, unknown>[]).map((it) => ({ id: it['id'], title: textIn(it['title'], lang), text: textIn(it['text'], lang) })),
+  }));
+  return { ok: true, value: { schemaVersion: 1, page, sections } as unknown as LimitsFile };
 }
 
-export function validateModelFacts(x: unknown): Result<ModelFacts> {
+export function validateModelFacts(x: unknown, lang: Lang = 'en'): Result<ModelFacts> {
   if (!isObj(x) || x['schemaVersion'] !== 1) return fail('model-facts.json: schemaVersion must be 1');
   for (const k of ['commuteModelled', 'commuteSurvey']) {
     const v = x[k];
     if (!num(v) || v <= 0) return fail(`model-facts.json: ${k} must be a positive number`);
   }
-  if (!str(x['backtestResult'])) return fail('model-facts.json: backtestResult missing');
-  return { ok: true, value: x as unknown as ModelFacts };
+  const bp = localTextProblem(x['backtestResult']);
+  if (bp !== null) return fail(`model-facts.json: backtestResult: ${bp}`);
+  return { ok: true, value: { ...x, backtestResult: textIn(x['backtestResult'], lang) } as unknown as ModelFacts };
 }
 
 export interface StoryFiles {
@@ -140,18 +186,19 @@ export async function loadStoryFiles(
   fetchText: (url: string) => Promise<string>,
   baseUrl: string,
   districtCodes: ReadonlySet<string>,
+  lang: Lang = 'en',
 ): Promise<Result<StoryFiles>> {
   try {
     const [c, s, l, f] = await Promise.all(
       ['citizens.json', 'income-spread.json', 'model-limits.json', 'model-facts.json'].map((n) => fetchText(`${baseUrl}data/${n}`)),
     ) as [string, string, string, string];
-    const citizens = validateCitizenFile(JSON.parse(c), districtCodes);
+    const citizens = validateCitizenFile(JSON.parse(c), districtCodes, lang);
     if (!citizens.ok) return citizens;
     const spread = validateIncomeSpread(JSON.parse(s), districtCodes);
     if (!spread.ok) return spread;
-    const limits = validateLimitsFile(JSON.parse(l));
+    const limits = validateLimitsFile(JSON.parse(l), lang);
     if (!limits.ok) return limits;
-    const facts = validateModelFacts(JSON.parse(f));
+    const facts = validateModelFacts(JSON.parse(f), lang);
     if (!facts.ok) return facts;
     return { ok: true, value: { citizens: citizens.value, spread: spread.value, limits: limits.value, facts: facts.value } };
   } catch (e) {

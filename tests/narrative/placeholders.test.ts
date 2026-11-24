@@ -9,14 +9,20 @@ import { FillError, fillTemplate, placeholdersOf } from '../../src/narrative/fil
 import { PLACEHOLDER_REGISTRY } from '../../src/narrative/registry.ts';
 
 const read = (p: string) => JSON.parse(fs.readFileSync(p, 'utf8')) as unknown;
-const citizens = read('data/config/citizens.json') as { templates: Record<string, Record<string, string>> };
-const limits = read('data/config/model-limits.json') as { sections: { items: { id: string; text: string }[] }[] };
+type LocalText = { en: string; 'zh-Hant': string };
+const citizens = read('data/config/citizens.json') as { templates: Record<string, Record<string, LocalText>> };
+const limits = read('data/config/model-limits.json') as { sections: { items: { id: string; text: LocalText }[] }[] };
+/** Both languages of one Template (play-loop Requirement 12.4). */
+const both = (id: string, t: LocalText): [string, string][] => [
+  [`${id}`, t.en],
+  [`${id} (zh-Hant)`, t['zh-Hant']],
+];
 const codes = new Set((read('public/data/districts.json') as { districts: { code: string }[] }).districts.map((d) => d.code));
 
 /** Every Template with its Template_Id (not the templates.backtestResult block of model-limits.json). */
 const templates: [string, string][] = [
-  ...Object.entries(citizens.templates).flatMap(([g, states]) => Object.entries(states).map(([s, t]) => [`${g}.${s}`, t] as [string, string])),
-  ...limits.sections.flatMap((s) => s.items.map((it) => [`limits.${it.id}`, it.text] as [string, string])),
+  ...Object.entries(citizens.templates).flatMap(([g, states]) => Object.entries(states).flatMap(([s, t]) => both(`${g}.${s}`, t))),
+  ...limits.sections.flatMap((s) => s.items.flatMap((it) => both(`limits.${it.id}`, it.text))),
 ];
 const fixture = Object.fromEntries(Object.keys(PLACEHOLDER_REGISTRY).map((k) => [k, `<${k}>`]));
 

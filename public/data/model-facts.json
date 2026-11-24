@@ -1,6 +1,9 @@
 {
   "schemaVersion": 1,
-  "backtestResult": "The modelled change went in the same direction as the real change. The modelled change was 0.883 times the real change, inside the range of 0.500 to 2.000 set in advance. The real change lies within the range of model results.",
+  "backtestResult": {
+    "en": "The modelled change went in the same direction as the real change. The modelled change was 0.883 times the real change, inside the range of 0.500 to 2.000 set in advance. The real change lies within the range of model results.",
+    "zh-Hant": "模型的變化方向和真實變化相同。模型的變化是真實變化的 0.883 倍，在事先訂好的 0.500 到 2.000 範圍內。真實變化落在模型結果的範圍內。"
+  },
   "commuteModelled": 54.01092505925197,
   "commuteSurvey": 57
 }

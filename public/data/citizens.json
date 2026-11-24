@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "notes": [
     "Draft content for the story-layer spec. Personas are illustrative households, not real people.",
     "A persona's numbers are never typed here. Each quarter they are computed from simulation output for the persona's districts: rent = district median rent per m2 x dwellingSize; income = the incomePercentile point of the district household income distribution used by the ghost rule; commute = commute matrix minutes from homeDistrict to workDistrict.",
@@ -29,9 +29,15 @@
   "personas": [
     {
       "id": "ting-zhonghe",
-      "name": "Ting",
+      "name": {
+        "en": "Ting",
+        "zh-Hant": "小婷"
+      },
       "age": 25,
-      "household": "single, renting a studio",
+      "household": {
+        "en": "single, renting a studio",
+        "zh-Hant": "單身，租套房"
+      },
       "homeDistrict": "Zhonghe",
       "homeCode": "65000030",
       "workDistrict": "Xinyi",
@@ -39,14 +45,26 @@
       "tenure": "renter",
       "dwellingSize": 13,
       "incomePercentile": 30,
-      "intro": "Ting is 25 and works at an office in Xinyi. She rents a 13 m2 studio in Zhonghe, where rents are lower, and rides the MRT across the river each morning.",
-      "picker": "25, renter in Zhonghe, works in Xinyi"
+      "intro": {
+        "en": "Ting is 25 and works at an office in Xinyi. She rents a 13 m2 studio in Zhonghe, where rents are lower, and rides the MRT across the river each morning.",
+        "zh-Hant": "小婷 25 歲，在信義區的辦公室上班。她在房租較低的中和區租一間 13 平方公尺的套房，每天早上搭捷運過河上班。"
+      },
+      "picker": {
+        "en": "25, renter in Zhonghe, works in Xinyi",
+        "zh-Hant": "25 歲，中和區租屋，在信義區上班"
+      }
     },
     {
       "id": "lin-wanhua",
-      "name": "Mrs. Lin",
+      "name": {
+        "en": "Mrs. Lin",
+        "zh-Hant": "林奶奶"
+      },
       "age": 72,
-      "household": "lives alone, renting",
+      "household": {
+        "en": "lives alone, renting",
+        "zh-Hant": "獨居，租屋"
+      },
       "homeDistrict": "Wanhua",
       "homeCode": "63000070",
       "workDistrict": null,
@@ -54,14 +72,26 @@
       "tenure": "renter",
       "dwellingSize": 26,
       "incomePercentile": 10,
-      "intro": "Mrs. Lin is 72 and lives alone in a small rented flat in Wanhua, near the market she has used for forty years. Her income is a pension. She does not commute, so rent is the number that matters to her.",
-      "picker": "72, lives alone, renter in Wanhua"
+      "intro": {
+        "en": "Mrs. Lin is 72 and lives alone in a small rented flat in Wanhua, near the market she has used for forty years. Her income is a pension. She does not commute, so rent is the number that matters to her.",
+        "zh-Hant": "林奶奶 72 歲，獨自住在萬華區一間租來的小公寓，離她去了四十年的市場不遠。她的收入是退休金。她不用通勤，所以房租是對她最重要的數字。"
+      },
+      "picker": {
+        "en": "72, lives alone, renter in Wanhua",
+        "zh-Hant": "72 歲，獨居，萬華區租屋"
+      }
     },
     {
       "id": "huang-banqiao",
-      "name": "The Huangs",
+      "name": {
+        "en": "The Huangs",
+        "zh-Hant": "黃家"
+      },
       "age": 38,
-      "household": "couple with two children, renting",
+      "household": {
+        "en": "couple with two children, renting",
+        "zh-Hant": "夫妻和兩個小孩，租屋"
+      },
       "homeDistrict": "Banqiao",
       "homeCode": "65000010",
       "workDistrict": "Zhongshan",
@@ -69,14 +99,26 @@
       "tenure": "renter",
       "dwellingSize": 66,
       "incomePercentile": 60,
-      "intro": "The Huangs both work, one in Banqiao and one in Zhongshan. With two children they need a three-room flat, which they rent in Banqiao. They are saving for a home of their own.",
-      "picker": "Dual-income family of four, renters in Banqiao"
+      "intro": {
+        "en": "The Huangs both work, one in Banqiao and one in Zhongshan. With two children they need a three-room flat, which they rent in Banqiao. They are saving for a home of their own.",
+        "zh-Hant": "黃家夫妻都有工作，一位在板橋區，一位在中山區。家裡有兩個小孩，需要三房的公寓，他們在板橋區租屋，也在存錢買自己的房子。"
+      },
+      "picker": {
+        "en": "Dual-income family of four, renters in Banqiao",
+        "zh-Hant": "雙薪四口之家，板橋區租屋"
+      }
     },
     {
       "id": "kai-tamsui",
-      "name": "Kai",
+      "name": {
+        "en": "Kai",
+        "zh-Hant": "阿凱"
+      },
       "age": 31,
-      "household": "couple, renting",
+      "household": {
+        "en": "couple, renting",
+        "zh-Hant": "和伴侶同住，租屋"
+      },
       "homeDistrict": "Tamsui",
       "homeCode": "65000100",
       "workDistrict": "Neihu",
@@ -84,14 +126,26 @@
       "tenure": "renter",
       "dwellingSize": 40,
       "incomePercentile": 50,
-      "intro": "Kai and his partner rent a flat in Tamsui, which has more space for the money. Kai works in Neihu, at the other end of the MRT network.",
-      "picker": "31, renter in Tamsui, works in Neihu"
+      "intro": {
+        "en": "Kai and his partner rent a flat in Tamsui, which has more space for the money. Kai works in Neihu, at the other end of the MRT network.",
+        "zh-Hant": "阿凱和伴侶在淡水區租了一間公寓，同樣的錢在那裡能租到比較大的空間。阿凱在內湖區上班，在捷運路網的另一端。"
+      },
+      "picker": {
+        "en": "31, renter in Tamsui, works in Neihu",
+        "zh-Hant": "31 歲，淡水區租屋，在內湖區上班"
+      }
     },
     {
       "id": "mei-daan",
-      "name": "Mei",
+      "name": {
+        "en": "Mei",
+        "zh-Hant": "小美"
+      },
       "age": 34,
-      "household": "single, renting a room",
+      "household": {
+        "en": "single, renting a room",
+        "zh-Hant": "單身，租雅房"
+      },
       "homeDistrict": "Da'an",
       "homeCode": "63000030",
       "workDistrict": "Da'an",
@@ -99,14 +153,26 @@
       "tenure": "renter",
       "dwellingSize": 13,
       "incomePercentile": 25,
-      "intro": "Mei works at a restaurant in Da'an and rents a room a few streets away. She walks to work. Living close costs more each month than living farther out.",
-      "picker": "34, renter in Da'an, works in Da'an"
+      "intro": {
+        "en": "Mei works at a restaurant in Da'an and rents a room a few streets away. She walks to work. Living close costs more each month than living farther out.",
+        "zh-Hant": "小美在大安區的餐廳工作，在幾條街外租了一個房間，走路上班。住得近，每個月的花費比住得遠多。"
+      },
+      "picker": {
+        "en": "34, renter in Da'an, works in Da'an",
+        "zh-Hant": "34 歲，大安區租屋，在大安區上班"
+      }
     },
     {
       "id": "hao-sanchong",
-      "name": "Hao",
+      "name": {
+        "en": "Hao",
+        "zh-Hant": "阿豪"
+      },
       "age": 41,
-      "household": "single parent with one child, renting",
+      "household": {
+        "en": "single parent with one child, renting",
+        "zh-Hant": "單親，帶一個小孩，租屋"
+      },
       "homeDistrict": "Sanchong",
       "homeCode": "65000020",
       "workDistrict": "Zhongzheng",
@@ -114,38 +180,98 @@
       "tenure": "renter",
       "dwellingSize": 40,
       "incomePercentile": 35,
-      "intro": "Hao is raising his daughter alone. They rent a two-room flat in Sanchong, and Hao works in Zhongzheng, one bridge and a few MRT stops away.",
-      "picker": "41, single parent, renter in Sanchong"
+      "intro": {
+        "en": "Hao is raising his daughter alone. They rent a two-room flat in Sanchong, and Hao works in Zhongzheng, one bridge and a few MRT stops away.",
+        "zh-Hant": "阿豪獨自撫養女兒。他們在三重區租了一間兩房的公寓，阿豪在中正區上班，過一座橋、再搭幾站捷運就到。"
+      },
+      "picker": {
+        "en": "41, single parent, renter in Sanchong",
+        "zh-Hant": "41 歲，單親，三重區租屋"
+      }
     }
   ],
   "templates": {
     "rent": {
-      "below": "{name} spends {rentBurden}% of household income on rent this quarter.",
-      "atRisk": "{name} spends {rentBurden}% of household income on rent this quarter, above the {rentRiskThreshold}% line that housing agencies use for a cost burden.",
-      "ghost": "{name} now spends {rentBurden}% of household income on rent, above {rentGhostThreshold}%. In the district average this does not show: {name} is one of the people the average hides."
+      "below": {
+        "en": "{name} spends {rentBurden}% of household income on rent this quarter.",
+        "zh-Hant": "{name}這一季把家庭收入的 {rentBurden}% 花在房租上。"
+      },
+      "atRisk": {
+        "en": "{name} spends {rentBurden}% of household income on rent this quarter, above the {rentRiskThreshold}% line that housing agencies use for a cost burden.",
+        "zh-Hant": "{name}這一季把家庭收入的 {rentBurden}% 花在房租上，超過住宅機構用來判斷居住負擔過重的 {rentRiskThreshold}% 界線。"
+      },
+      "ghost": {
+        "en": "{name} now spends {rentBurden}% of household income on rent, above {rentGhostThreshold}%. In the district average this does not show: {name} is one of the people the average hides.",
+        "zh-Hant": "{name}現在把家庭收入的 {rentBurden}% 花在房租上，超過 {rentGhostThreshold}%。在行政區平均裡看不出這件事：{name}是被平均數蓋過的人之一。"
+      }
     },
     "commute": {
-      "none": "{name} does not commute.",
-      "below": "{name}'s trip from {homeDistrict} to {workDistrict} takes about {commuteMinutes} minutes each way.",
-      "atRisk": "{name}'s trip from {homeDistrict} to {workDistrict} takes about {commuteMinutes} minutes each way, longer than the {commuteRiskThreshold} minutes most commuters say they accept.",
-      "ghost": "{name}'s trip from {homeDistrict} to {workDistrict} takes about {commuteMinutes} minutes each way, more than {commuteGhostThreshold} minutes. Over a working month that is about {commuteHoursMonth} hours on the way to and from work."
+      "none": {
+        "en": "{name} does not commute.",
+        "zh-Hant": "{name}不用通勤。"
+      },
+      "below": {
+        "en": "{name}'s trip from {homeDistrict} to {workDistrict} takes about {commuteMinutes} minutes each way.",
+        "zh-Hant": "{name}從{homeDistrict}到{workDistrict}，單程大約 {commuteMinutes} 分鐘。"
+      },
+      "atRisk": {
+        "en": "{name}'s trip from {homeDistrict} to {workDistrict} takes about {commuteMinutes} minutes each way, longer than the {commuteRiskThreshold} minutes most commuters say they accept.",
+        "zh-Hant": "{name}從{homeDistrict}到{workDistrict}，單程大約 {commuteMinutes} 分鐘，比大多數通勤者表示能接受的 {commuteRiskThreshold} 分鐘長。"
+      },
+      "ghost": {
+        "en": "{name}'s trip from {homeDistrict} to {workDistrict} takes about {commuteMinutes} minutes each way, more than {commuteGhostThreshold} minutes. Over a working month that is about {commuteHoursMonth} hours on the way to and from work.",
+        "zh-Hant": "{name}從{homeDistrict}到{workDistrict}，單程大約 {commuteMinutes} 分鐘，超過 {commuteGhostThreshold} 分鐘。一個月下來，上下班的路上大約要花 {commuteHoursMonth} 小時。"
+      }
     },
     "comparison": {
-      "same": "This is the same as in real history.",
-      "lower": "In real history the rent share was {rentBurdenReal}%. Under your policies it is {rentBurdenDiff} points lower.",
-      "higher": "In real history the rent share was {rentBurdenReal}%. Under your policies it is {rentBurdenDiff} points higher.",
-      "range": "Depending on the study used, the simulated value lies between {rentBurdenLow}% and {rentBurdenHigh}%."
+      "same": {
+        "en": "This is the same as in real history.",
+        "zh-Hant": "這和真實歷史相同。"
+      },
+      "lower": {
+        "en": "In real history the rent share was {rentBurdenReal}%. Under your policies it is {rentBurdenDiff} points lower.",
+        "zh-Hant": "在真實歷史中，房租占收入的比例是 {rentBurdenReal}%。在你的政策下，低了 {rentBurdenDiff} 個百分點。"
+      },
+      "higher": {
+        "en": "In real history the rent share was {rentBurdenReal}%. Under your policies it is {rentBurdenDiff} points higher.",
+        "zh-Hant": "在真實歷史中，房租占收入的比例是 {rentBurdenReal}%。在你的政策下，高了 {rentBurdenDiff} 個百分點。"
+      },
+      "range": {
+        "en": "Depending on the study used, the simulated value lies between {rentBurdenLow}% and {rentBurdenHigh}%.",
+        "zh-Hant": "依採用的研究不同，模擬值介於 {rentBurdenLow}% 到 {rentBurdenHigh}% 之間。"
+      }
     },
     "stateChange": {
-      "becameGhost": "This quarter {name} crossed the line. On the map, {name}'s district gains a ghost for every {ghostSize} people in the same situation.",
-      "leftGhost": "This quarter {name} moved back below the line.",
-      "becameGhostReal": "In real history {name} would have crossed the line in {realQuarter}."
+      "becameGhost": {
+        "en": "This quarter {name} crossed the line. On the map, {name}'s district gains a ghost for every {ghostSize} people in the same situation.",
+        "zh-Hant": "{name}這一季越過了界線。地圖上，{name}所在的行政區每有 {ghostSize} 位處境相同的人，就多一個幽靈。"
+      },
+      "leftGhost": {
+        "en": "This quarter {name} moved back below the line.",
+        "zh-Hant": "{name}這一季回到界線以下。"
+      },
+      "becameGhostReal": {
+        "en": "In real history {name} would have crossed the line in {realQuarter}.",
+        "zh-Hant": "在真實歷史中，{name}會在 {realQuarter} 越過界線。"
+      }
     },
     "ending": {
-      "summary": "From 2015 to 2025, {name} spent {quartersAtRisk} of 44 quarters above the {rentRiskThreshold}% rent line, compared with {quartersAtRiskReal} in real history.",
-      "commuteSummary": "{name}'s commute averaged {commuteAvg} minutes, compared with {commuteAvgReal} minutes in real history.",
-      "ghostSummary": "{name} was a ghost for {quartersGhost} quarters ({quartersGhostReal} in real history).",
-      "closing": "Other households in {homeDistrict} had different results. The district panel shows how many people were above the line in each quarter."
+      "summary": {
+        "en": "From 2015 to 2025, {name} spent {quartersAtRisk} of 44 quarters above the {rentRiskThreshold}% rent line, compared with {quartersAtRiskReal} in real history.",
+        "zh-Hant": "從 2015 到 2025 年的 44 季中，{name}有 {quartersAtRisk} 季的房租超過收入的 {rentRiskThreshold}%，真實歷史中是 {quartersAtRiskReal} 季。"
+      },
+      "commuteSummary": {
+        "en": "{name}'s commute averaged {commuteAvg} minutes, compared with {commuteAvgReal} minutes in real history.",
+        "zh-Hant": "{name}的平均通勤時間是 {commuteAvg} 分鐘，真實歷史中是 {commuteAvgReal} 分鐘。"
+      },
+      "ghostSummary": {
+        "en": "{name} was a ghost for {quartersGhost} quarters ({quartersGhostReal} in real history).",
+        "zh-Hant": "{name}當了 {quartersGhost} 季的幽靈（真實歷史中是 {quartersGhostReal} 季）。"
+      },
+      "closing": {
+        "en": "Other households in {homeDistrict} had different results. The district panel shows how many people were above the line in each quarter.",
+        "zh-Hant": "{homeDistrict}的其他家戶有不同的結果。行政區資料列出每一季有多少人超過界線。"
+      }
     }
   }
 }

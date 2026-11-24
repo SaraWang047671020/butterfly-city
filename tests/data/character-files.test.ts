@@ -33,12 +33,12 @@ describe('committed files', () => {
     expect(fs.readFileSync('public/data/characters.json', 'utf8')).toBe(fs.readFileSync('data/config/characters.json', 'utf8'));
   });
 
-  it('the English texts contain no banned term', () => {
+  it('the texts contain no banned term in either language (play-loop 12.7)', () => {
     const terms = parseTermList(fs.readFileSync(BANNED_TERMS_FILE, 'utf8'));
     const exempt = parseTermList(fs.readFileSync(BANNED_TERMS_EXEMPT_FILE, 'utf8'));
     const texts: string[] = [];
     const walk = (n: unknown): void => {
-      if (typeof n === 'object' && n !== null && 'en' in n) texts.push(String((n as { en: unknown }).en));
+      if (typeof n === 'object' && n !== null && 'en' in n) texts.push(String((n as { en: unknown }).en), String((n as { 'zh-Hant'?: unknown })['zh-Hant'] ?? ''));
       else if (Array.isArray(n)) n.forEach(walk);
       else if (typeof n === 'object' && n !== null) Object.values(n).forEach(walk);
     };

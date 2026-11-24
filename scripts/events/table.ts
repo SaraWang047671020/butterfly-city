@@ -3,7 +3,7 @@
  * with the table-level checks of event-library Requirements 2.2 to 2.4, 3.1, 6.1 and 7.3.
  */
 import { precisionOf } from '../../src/data/event-dates.ts';
-import type { EventRole, EventType, SourceLink } from '../../src/types/events-file.ts';
+import type { EventRole, EventTextZh, EventType, SourceLink } from '../../src/types/events-file.ts';
 
 export const TABLE_FILE = 'data/config/events.json';
 export const ROWS_FILE = 'data/config/event-source-rows.json';
@@ -28,6 +28,7 @@ export interface TableRow {
   readonly type: EventType;
   readonly title: string;
   readonly description: string;
+  readonly zh: EventTextZh;
   readonly role: EventRole;
   readonly sources: readonly SourceLink[];
   readonly verification: Verification;

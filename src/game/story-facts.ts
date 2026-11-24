@@ -20,6 +20,8 @@ export interface StoryInputs {
   /** Index of the Displayed_Quarter in `ranges`. */
   readonly displayed: number;
   readonly quarters: readonly QuarterKey[];
+  /** The display text of a quarter in the language of the App (play-loop Requirement 12.6); the key when absent. */
+  readonly quarterLabel?: (q: QuarterKey) => string;
   /** Number formatting of game-ui Requirement 6.10 (en-US, given decimals). */
   readonly format: (x: number, decimals: number) => string;
 }
@@ -111,7 +113,10 @@ export function buildStoryFacts(x: StoryInputs): StoryFacts | null {
       break;
     }
   }
-  if (realFirst !== null) values['realQuarter'] = x.quarters[realFirst] ?? '';
+  if (realFirst !== null) {
+    const q = x.quarters[realFirst];
+    values['realQuarter'] = q === undefined ? '' : (x.quarterLabel?.(q) ?? q);
+  }
 
   const centralNow = now?.central ?? null;
   const ghostNow = ghostAt(centralNow);

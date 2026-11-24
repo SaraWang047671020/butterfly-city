@@ -19,6 +19,10 @@
       "type": "interest-rate",
       "title": "Central Bank lowers the discount rate to 1.75%",
       "description": "On 25 September 2015 the Central Bank of the Republic of China (Taiwan) lowered its discount rate by 0.125 percentage points, from 1.875% to 1.75%.",
+      "zh": {
+        "title": "中央銀行調降重貼現率至 1.75%",
+        "description": "2015 年 9 月 25 日，中華民國（臺灣）中央銀行將重貼現率調降 0.125 個百分點，從 1.875% 降至 1.75%。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -39,6 +43,10 @@
       "type": "interest-rate",
       "title": "Central Bank lowers the discount rate to 1.625%",
       "description": "On 18 December 2015 the Central Bank of the Republic of China (Taiwan) lowered its discount rate by 0.125 percentage points, from 1.75% to 1.625%.",
+      "zh": {
+        "title": "中央銀行調降重貼現率至 1.625%",
+        "description": "2015 年 12 月 18 日，中華民國（臺灣）中央銀行將重貼現率調降 0.125 個百分點，從 1.75% 降至 1.625%。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -59,6 +67,10 @@
       "type": "interest-rate",
       "title": "Central Bank lowers the discount rate to 1.5%",
       "description": "On 25 March 2016 the Central Bank of the Republic of China (Taiwan) lowered its discount rate by 0.125 percentage points, from 1.625% to 1.5%.",
+      "zh": {
+        "title": "中央銀行調降重貼現率至 1.5%",
+        "description": "2016 年 3 月 25 日，中華民國（臺灣）中央銀行將重貼現率調降 0.125 個百分點，從 1.625% 降至 1.5%。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -79,6 +91,10 @@
       "type": "interest-rate",
       "title": "Central Bank lowers the discount rate to 1.375%",
       "description": "On 1 July 2016 the Central Bank of the Republic of China (Taiwan) lowered its discount rate by 0.125 percentage points, from 1.5% to 1.375%.",
+      "zh": {
+        "title": "中央銀行調降重貼現率至 1.375%",
+        "description": "2016 年 7 月 1 日，中華民國（臺灣）中央銀行將重貼現率調降 0.125 個百分點，從 1.5% 降至 1.375%。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -99,6 +115,10 @@
       "type": "interest-rate",
       "title": "Central Bank lowers the discount rate to 1.25%",
       "description": "On 20 March 2020, during the COVID-19 outbreak, the Central Bank of the Republic of China (Taiwan) lowered its discount rate by 0.125 percentage points, from 1.375% to 1.25%.",
+      "zh": {
+        "title": "中央銀行調降重貼現率至 1.25%",
+        "description": "2020 年 3 月 20 日，在 COVID-19 疫情爆發期間，中華民國（臺灣）中央銀行將重貼現率調降 0.125 個百分點，從 1.375% 降至 1.25%。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -119,6 +139,10 @@
       "type": "interest-rate",
       "title": "Central Bank raises the discount rate to 1.375%",
       "description": "On 18 March 2022 the Central Bank of the Republic of China (Taiwan) raised its discount rate by 0.125 percentage points, from 1.25% to 1.375%. It was the first increase since 2011.",
+      "zh": {
+        "title": "中央銀行調升重貼現率至 1.375%",
+        "description": "2022 年 3 月 18 日，中華民國（臺灣）中央銀行將重貼現率調升 0.125 個百分點，從 1.25% 升至 1.375%。這是 2011 年以來第一次調升。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -139,6 +163,10 @@
       "type": "interest-rate",
       "title": "Central Bank raises the discount rate to 1.5%",
       "description": "On 17 June 2022 the Central Bank of the Republic of China (Taiwan) raised its discount rate by 0.125 percentage points, from 1.375% to 1.5%.",
+      "zh": {
+        "title": "中央銀行調升重貼現率至 1.5%",
+        "description": "2022 年 6 月 17 日，中華民國（臺灣）中央銀行將重貼現率調升 0.125 個百分點，從 1.375% 升至 1.5%。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -159,6 +187,10 @@
       "type": "interest-rate",
       "title": "Central Bank raises the discount rate to 1.625%",
       "description": "On 23 September 2022 the Central Bank of the Republic of China (Taiwan) raised its discount rate by 0.125 percentage points, from 1.5% to 1.625%.",
+      "zh": {
+        "title": "中央銀行調升重貼現率至 1.625%",
+        "description": "2022 年 9 月 23 日，中華民國（臺灣）中央銀行將重貼現率調升 0.125 個百分點，從 1.5% 升至 1.625%。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -179,6 +211,10 @@
       "type": "interest-rate",
       "title": "Central Bank raises the discount rate to 1.75%",
       "description": "On 16 December 2022 the Central Bank of the Republic of China (Taiwan) raised its discount rate by 0.125 percentage points, from 1.625% to 1.75%.",
+      "zh": {
+        "title": "中央銀行調升重貼現率至 1.75%",
+        "description": "2022 年 12 月 16 日，中華民國（臺灣）中央銀行將重貼現率調升 0.125 個百分點，從 1.625% 升至 1.75%。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -199,6 +235,10 @@
       "type": "interest-rate",
       "title": "Central Bank raises the discount rate to 1.875%",
       "description": "On 24 March 2023 the Central Bank of the Republic of China (Taiwan) raised its discount rate by 0.125 percentage points, from 1.75% to 1.875%.",
+      "zh": {
+        "title": "中央銀行調升重貼現率至 1.875%",
+        "description": "2023 年 3 月 24 日，中華民國（臺灣）中央銀行將重貼現率調升 0.125 個百分點，從 1.75% 升至 1.875%。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -219,6 +259,10 @@
       "type": "interest-rate",
       "title": "Central Bank raises the discount rate to 2%",
       "description": "On 22 March 2024 the Central Bank of the Republic of China (Taiwan) raised its discount rate by 0.125 percentage points, from 1.875% to 2%.",
+      "zh": {
+        "title": "中央銀行調升重貼現率至 2%",
+        "description": "2024 年 3 月 22 日，中華民國（臺灣）中央銀行將重貼現率調升 0.125 個百分點，從 1.875% 升至 2%。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -239,6 +283,10 @@
       "type": "credit-control",
       "title": "Central Bank adds selective credit controls (wave 1)",
       "description": "On 7 December 2020 the Central Bank of the Republic of China (Taiwan) set loan-to-value limits of 60% for first and 50% for further home loans to corporate buyers, 60% for third and further homes, and 65% for land loans, effective 8 December.",
+      "zh": {
+        "title": "中央銀行實施選擇性信用管制（第 1 波）",
+        "description": "2020 年 12 月 7 日，中華民國（臺灣）中央銀行規定：公司法人購屋貸款的成數上限，第一戶為 6 成、第二戶以上為 5 成；第三戶以上購屋貸款為 6 成；土地抵押貸款為 6.5 成。自 12 月 8 日起生效。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -264,6 +312,10 @@
       "type": "credit-control",
       "title": "Central Bank revises selective credit controls (wave 2)",
       "description": "On 18 March 2021 the Central Bank of the Republic of China (Taiwan) lowered loan-to-value limits to 40% for corporate buyers, 55% for third homes, 50% for fourth and further homes, and 55% for high-value homes, effective 19 March.",
+      "zh": {
+        "title": "中央銀行修正選擇性信用管制（第 2 波）",
+        "description": "2021 年 3 月 18 日，中華民國（臺灣）中央銀行調降貸款成數上限：公司法人購屋為 4 成、第三戶購屋為 5.5 成、第四戶以上為 5 成、高價住宅為 5.5 成。自 3 月 19 日起生效。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -289,6 +341,10 @@
       "type": "credit-control",
       "title": "Central Bank revises selective credit controls (wave 3)",
       "description": "On 23 September 2021 the Central Bank of the Republic of China (Taiwan) removed the grace period on second-home loans in the six special municipalities and Hsinchu, and lowered the land loan limit to 60%, effective 24 September.",
+      "zh": {
+        "title": "中央銀行修正選擇性信用管制（第 3 波）",
+        "description": "2021 年 9 月 23 日，中華民國（臺灣）中央銀行取消六都及新竹第二戶購屋貸款的寬限期，並將土地抵押貸款成數上限降為 6 成。自 9 月 24 日起生效。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -314,6 +370,10 @@
       "type": "credit-control",
       "title": "Central Bank revises selective credit controls (wave 4)",
       "description": "On 16 December 2021 the Central Bank of the Republic of China (Taiwan) lowered loan-to-value limits to 40% for high-value and third and further homes, and to 50% for land loans, whose borrowers must commit to starting construction within a set period. Effective 17 December.",
+      "zh": {
+        "title": "中央銀行修正選擇性信用管制（第 4 波）",
+        "description": "2021 年 12 月 16 日，中華民國（臺灣）中央銀行將高價住宅及第三戶以上購屋貸款的成數上限降為 4 成，土地抵押貸款降為 5 成，借款人須承諾在一定期間內動工興建。自 12 月 17 日起生效。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -339,6 +399,10 @@
       "type": "credit-control",
       "title": "Central Bank revises selective credit controls (wave 5)",
       "description": "On 15 June 2023 the Central Bank of the Republic of China (Taiwan) set a maximum loan-to-value ratio of 70% for second-home loans in the six special municipalities and Hsinchu, effective the next day.",
+      "zh": {
+        "title": "中央銀行修正選擇性信用管制（第 5 波）",
+        "description": "2023 年 6 月 15 日，中華民國（臺灣）中央銀行規定六都及新竹第二戶購屋貸款的成數上限為 7 成，自次日起生效。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -357,6 +421,10 @@
       "type": "credit-control",
       "title": "Central Bank revises selective credit controls (wave 6)",
       "description": "On 13 June 2024 the Central Bank of the Republic of China (Taiwan) lowered the maximum loan-to-value ratio for second-home loans in the designated areas to 60%.",
+      "zh": {
+        "title": "中央銀行修正選擇性信用管制（第 6 波）",
+        "description": "2024 年 6 月 13 日，中華民國（臺灣）中央銀行將特定地區第二戶購屋貸款的成數上限降為 6 成。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -375,6 +443,10 @@
       "type": "credit-control",
       "title": "Central Bank revises selective credit controls (wave 7)",
       "description": "On 19 September 2024 the Central Bank of the Republic of China (Taiwan) set a 50% loan-to-value limit for second homes nationwide, removed the grace period on first loans for existing owners, and set 30% for corporate, high-value and third homes. Effective 20 September.",
+      "zh": {
+        "title": "中央銀行修正選擇性信用管制（第 7 波）",
+        "description": "2024 年 9 月 19 日，中華民國（臺灣）中央銀行將全國第二戶購屋貸款的成數上限定為 5 成，取消已有房屋者首筆購屋貸款的寬限期，並將公司法人、高價住宅及第三戶以上購屋貸款定為 3 成。自 9 月 20 日起生效。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -398,6 +470,10 @@
       "type": "tax",
       "title": "House and Land Consolidated Income Tax takes effect",
       "description": "On 1 January 2016 the House and Land Consolidated Income Tax took effect. Gains from selling houses and land acquired from 2016 onward are taxed on the actual gain, at rates set by the holding period. The tax is administered by the Ministry of Finance.",
+      "zh": {
+        "title": "房地合一所得稅開始實施",
+        "description": "2016 年 1 月 1 日，房地合一所得稅開始實施。2016 年起取得的房屋和土地，出售時依實際獲利課稅，稅率依持有期間而定。這項稅由財政部主管。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -423,6 +499,10 @@
       "type": "tax",
       "title": "House and Land Consolidated Income Tax 2.0 takes effect",
       "description": "On 1 July 2021 amendments to the House and Land Consolidated Income Tax took effect. They extended the holding periods that qualify for lower tax rates on gains from selling houses and land. The tax is administered by the Ministry of Finance.",
+      "zh": {
+        "title": "房地合一所得稅 2.0 開始實施",
+        "description": "2021 年 7 月 1 日，房地合一所得稅的修正條文開始實施，延長了出售房屋和土地時適用較低稅率所需的持有期間。這項稅由財政部主管。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -448,6 +528,10 @@
       "type": "housing-law",
       "title": "Equalization of Land Rights Act amendments take effect",
       "description": "On 1 July 2023 amendments to the Equalization of Land Rights Act took effect. They limit the resale of pre-sale housing contracts, require a permit for private legal persons buying housing, and set fines of up to NT$50 million.",
+      "zh": {
+        "title": "平均地權條例修正條文開始實施",
+        "description": "2023 年 7 月 1 日，平均地權條例修正條文開始實施：限制預售屋合約轉售、私法人購買住宅須經許可，並訂定最高新臺幣 5,000 萬元的罰鍰。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -471,6 +555,10 @@
       "type": "housing-law",
       "title": "House Tax Act amendments (holding tax 2.0) take effect",
       "description": "On 1 July 2024 House Tax Act amendments took effect. The rate range for non-owner-occupied homes rose from 1.5-3.6% to 2-4.8%, and holdings are counted nationwide instead of per city. The first bills under the new rules were issued in May 2025.",
+      "zh": {
+        "title": "房屋稅條例修正條文（持有稅 2.0）開始實施",
+        "description": "2024 年 7 月 1 日，房屋稅條例修正條文開始實施。非自住住家用房屋的稅率範圍從 1.5% 至 3.6% 提高為 2% 至 4.8%，持有戶數改為全國合併計算，而不是各縣市分別計算。依新規定開徵的第一批稅單在 2025 年 5 月發出。"
+      },
       "role": "baseline",
       "sources": [
         {
@@ -494,6 +582,10 @@
       "type": "housing-program",
       "title": "Executive Yuan approves the social housing sublease and management pilot",
       "description": "On 18 April 2017 the Executive Yuan approved a pilot of the social housing sublease and management program in the six special municipalities, with a target of 10,000 homes over three years. All six city governments had started the program by January 2018.",
+      "zh": {
+        "title": "行政院核定社會住宅包租代管試辦計畫",
+        "description": "2017 年 4 月 18 日，行政院核定在六都試辦社會住宅包租代管計畫，目標是三年 1 萬戶。到 2018 年 1 月，六個直轄市政府都已開辦。"
+      },
       "role": "baseline",
       "sources": [
         {
@@ -524,6 +616,10 @@
       "type": "transit",
       "title": "Taipei and New Taipei start a NT$1,280 30-day pass",
       "description": "On 16 April 2018 the Taipei and New Taipei city governments started a NT$1,280 30-day pass covering the MRT and city buses, with the first 30 minutes of each YouBike ride free.",
+      "zh": {
+        "title": "臺北市與新北市推出新臺幣 1,280 元 30 天定期票",
+        "description": "2018 年 4 月 16 日，臺北市和新北市政府推出新臺幣 1,280 元的 30 天定期票，可搭捷運和市區公車，YouBike 每次騎乘前 30 分鐘免費。"
+      },
       "role": "baseline",
       "sources": [
         {
@@ -547,6 +643,10 @@
       "type": "housing-program",
       "title": "Expanded central rent subsidy opens for applications",
       "description": "On 1 July 2022 applications opened for the Ministry of the Interior's NT$30 billion rent subsidy program, which aimed to reach 500,000 households, up from about 120,000. Amounts were higher for ages 20-35, newlyweds and families with children. First payments were made in October 2022.",
+      "zh": {
+        "title": "擴大的中央租金補貼開放申請",
+        "description": "2022 年 7 月 1 日，內政部新臺幣 300 億元的租金補貼專案開放申請，目標從約 12 萬戶擴大到 50 萬戶。20 到 35 歲、新婚和有小孩的家庭補貼金額較高。第一筆補貼在 2022 年 10 月撥付。"
+      },
       "role": "baseline",
       "sources": [
         {
@@ -570,6 +670,10 @@
       "type": "transit",
       "title": "TPASS regional pass starts in Keelung, Taipei, New Taipei and Taoyuan",
       "description": "On 1 July 2023 the TPASS regional pass for Keelung, Taipei, New Taipei and Taoyuan became usable at NT$1,200 for 30 days. Sales began on 15 June. The program is supported by the Ministry of Transportation and Communications.",
+      "zh": {
+        "title": "TPASS 基北北桃都會通開始使用",
+        "description": "2023 年 7 月 1 日，基隆、臺北、新北和桃園的 TPASS 都會通開始使用，30 天新臺幣 1,200 元，6 月 15 日開賣。這項計畫由交通部支持。"
+      },
       "role": "baseline",
       "sources": [
         {
@@ -588,6 +692,10 @@
       "type": "housing-program",
       "title": "New Youth Housing Loan program starts",
       "description": "On 1 August 2023 the New Youth Housing Loan program started: loans of up to NT$10 million over up to 40 years, a grace period of up to 5 years, and an interest rate of 1.775% after the government subsidy.",
+      "zh": {
+        "title": "新青年安心成家貸款開始實施",
+        "description": "2023 年 8 月 1 日，新青年安心成家貸款開始實施：額度最高新臺幣 1,000 萬元、期限最長 40 年、寬限期最長 5 年，政府補貼後的利率為 1.775%。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -611,6 +719,10 @@
       "type": "housing-program",
       "title": "Central Bank asks banks to manage total real-estate lending",
       "description": "In August 2024 the Central Bank of the Republic of China (Taiwan) asked banks to set their own targets for total real-estate lending, and several banks limited new mortgage lending. Real-estate loans were 37.61% of total bank lending at the end of June 2024.",
+      "zh": {
+        "title": "中央銀行要求銀行控管不動產放款總量",
+        "description": "2024 年 8 月，中華民國（臺灣）中央銀行要求銀行自訂不動產放款總量目標，多家銀行限制新增房貸。2024 年 6 月底，不動產放款占銀行總放款的 37.61%。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -642,6 +754,10 @@
       "type": "transit",
       "title": "Taoyuan Airport MRT opens",
       "description": "On 2 March 2017 the Taoyuan Airport MRT opened for passenger service. Its stations in New Taipei are in Sanchong, Xinzhuang, Taishan and Linkou. It is operated by Taoyuan Metro Corporation.",
+      "zh": {
+        "title": "桃園機場捷運通車",
+        "description": "2017 年 3 月 2 日，桃園機場捷運開始載客營運。它在新北市的車站位於三重、新莊、泰山和林口，由桃園大眾捷運公司營運。"
+      },
       "role": "baseline",
       "sources": [
         {
@@ -667,6 +783,10 @@
       "type": "transit",
       "title": "Danhai LRT first section opens",
       "description": "On 24 December 2018 the first section of the Danhai Light Rail opened in Tamsui District, New Taipei. It is operated by New Taipei Metro Corporation.",
+      "zh": {
+        "title": "淡海輕軌第一階段通車",
+        "description": "2018 年 12 月 24 日，淡海輕軌第一階段在新北市淡水區通車，由新北大眾捷運公司營運。"
+      },
       "role": "baseline",
       "sources": [
         {
@@ -697,6 +817,10 @@
       "type": "transit",
       "title": "MRT Circular Line first section opens",
       "description": "On 31 January 2020 the first section of the MRT Circular Line opened, from Dapinglin in Xindian through Zhonghe and Banqiao to New Taipei Industrial Park in Xinzhuang.",
+      "zh": {
+        "title": "捷運環狀線第一階段通車",
+        "description": "2020 年 1 月 31 日，捷運環狀線第一階段通車，從新店的大坪林經過中和、板橋，到新莊的新北產業園區。"
+      },
       "role": "baseline",
       "sources": [
         {
@@ -722,6 +846,10 @@
       "type": "public-health",
       "title": "First COVID-19 case confirmed in Taiwan",
       "description": "On 21 January 2020 Taiwan Centers for Disease Control confirmed the first case in Taiwan of the new coronavirus disease, later named COVID-19, in a traveller arriving from Wuhan.",
+      "zh": {
+        "title": "臺灣確診第一例 COVID-19",
+        "description": "2020 年 1 月 21 日，衛生福利部疾病管制署確認臺灣第一例新型冠狀病毒疾病（後來命名為 COVID-19）病例，是一位從武漢入境的旅客。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -748,6 +876,10 @@
       "type": "public-health",
       "title": "COVID-19 Level 3 alert in Taipei and New Taipei",
       "description": "On 15 May 2021 the Central Epidemic Command Center raised the COVID-19 alert to Level 3 in Taipei and New Taipei. The alert was extended nationwide on 19 May and lowered to Level 2 on 27 July 2021.",
+      "zh": {
+        "title": "臺北市與新北市進入 COVID-19 第三級警戒",
+        "description": "2021 年 5 月 15 日，中央流行疫情指揮中心將臺北市和新北市的 COVID-19 疫情警戒提升到第三級。5 月 19 日擴大到全國，2021 年 7 月 27 日降為第二級。"
+      },
       "role": "narrative",
       "sources": [
         {
@@ -783,6 +915,10 @@
       "type": "transit",
       "title": "Ankeng LRT opens",
       "description": "On 10 February 2023 the Ankeng Light Rail opened in Xindian District, New Taipei. It is operated by New Taipei Metro Corporation.",
+      "zh": {
+        "title": "安坑輕軌通車",
+        "description": "2023 年 2 月 10 日，安坑輕軌在新北市新店區通車，由新北大眾捷運公司營運。"
+      },
       "role": "baseline",
       "sources": [
         {
@@ -808,6 +944,10 @@
       "type": "disaster",
       "title": "Magnitude 7.1 earthquake in Hualien County",
       "description": "At 07:58 on 3 April 2024 a magnitude 7.1 earthquake occurred in Shoufeng Township, Hualien County, as reported by the Central Weather Administration. The maximum intensity recorded in Taipei and New Taipei was 5-.",
+      "zh": {
+        "title": "花蓮縣發生規模 7.1 地震",
+        "description": "根據中央氣象署，2024 年 4 月 3 日 07:58，花蓮縣壽豐鄉發生規模 7.1 地震。臺北市和新北市記錄到的最大震度為 5 弱。"
+      },
       "role": "narrative",
       "sources": [
         {

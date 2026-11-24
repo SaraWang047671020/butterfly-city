@@ -125,6 +125,7 @@ function citizensOf(data: LoadedData, story: StoryFiles, ctl: () => GameControll
               ranges,
               displayed: ranges.length - 1,
               quarters: data.history.quarters,
+      quarterLabel,
               format: (x, d) => formatNumber(x, d),
             });
       const lines = facts === null ? [] : storyLines(story.citizens.templates, facts.state, facts.values);
@@ -145,11 +146,16 @@ async function start(): Promise<void> {
     app.showLoadError(result.failures);
     return;
   }
-  // Traditional Chinese: district names from the boundary data's TOWNNAME (play-loop Requirement 12.5). Names are
-  // display text only; every rule and file matches districts by District_Code.
+  // Traditional Chinese: district names from the boundary data's TOWNNAME (play-loop Requirement 12.5) and the
+  // Event_Card texts in Chinese (Requirement 12.4). Names are display text only; every rule and file matches districts
+  // by District_Code and events by id.
   const data =
     LOCALE === 'zh-Hant'
-      ? { ...result.data, districts: result.data.districts.map((d) => ({ ...d, name: DISTRICT_NAMES_ZH[d.code] ?? d.name })) }
+      ? {
+          ...result.data,
+          districts: result.data.districts.map((d) => ({ ...d, name: DISTRICT_NAMES_ZH[d.code] ?? d.name })),
+          events: result.data.events.map((c) => ({ ...c, title: c.zh.title, description: c.zh.description })),
+        }
       : result.data;
   // The Save_Store is created only after a successful load (game-ui 2.6).
   controller = new GameController({
@@ -164,12 +170,31 @@ async function start(): Promise<void> {
   const ctl = controller;
 
   // Story files are a separate group: an error leaves the game running without citizens (story-layer 1.4).
-  const story = await loadStoryFiles(
+  const storyLoaded = await loadStoryFiles(
     (url) => fetch(url).then((r) => (r.ok ? r.text() : Promise.reject(new Error(`${url}: HTTP ${r.status}`)))),
     BASE_URL,
     new Set(data.districts.map((d) => d.code)),
+    LOCALE,
   );
-  if (!story.ok) console.warn(story.error);
+  if (!storyLoaded.ok) console.warn(storyLoaded.error);
+  // The Persona's district names follow the language of the App, like every other district name.
+  const districtNameOf = new Map(data.districts.map((d) => [d.code, d.name]));
+  const story: typeof storyLoaded = !storyLoaded.ok
+    ? storyLoaded
+    : {
+        ok: true,
+        value: {
+          ...storyLoaded.value,
+          citizens: {
+            ...storyLoaded.value.citizens,
+            personas: storyLoaded.value.citizens.personas.map((p) => ({
+              ...p,
+              homeDistrict: districtNameOf.get(p.homeCode) ?? p.homeDistrict,
+              workDistrict: p.workCode === null ? p.workDistrict : (districtNameOf.get(p.workCode) ?? p.workDistrict),
+            })),
+          },
+        },
+      };
 
   // The player's Character (play-loop tasks 3 to 5): its own files and store; an error leaves the game running.
   const characterFiles = await loadCharacterFiles(
@@ -295,6 +320,7 @@ async function start(): Promise<void> {
       ranges,
       displayed: ranges.length - 1,
       quarters: data.history.quarters,
+      quarterLabel,
       format: (x, d) => formatNumber(x, d),
     });
     const text = (l: { text: string } | { error: unknown }) => ('text' in l ? l.text : UI_STRINGS.story.noValue);

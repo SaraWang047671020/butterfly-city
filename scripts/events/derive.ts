@@ -64,6 +64,7 @@ export function deriveCard(row: TableRow, ctx: DeriveContext): EventCard {
     type: row.type,
     title: row.title,
     description: row.description,
+    zh: { title: row.zh.title, description: row.zh.description },
     role: row.role,
     major: ctx.majorIds.has(row.id),
     verified,

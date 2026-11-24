@@ -50,3 +50,25 @@ Hou You-yi
 蔣萬安
 朱立倫
 侯友宜
+
+# Loaded or judgmental wording (Traditional Chinese, play-loop Requirement 12.7). CJK terms match as substrings.
+失敗
+慘
+災難
+終於
+出色
+德政
+苛政
+打房
+炒房
+救市
+暴漲
+暴跌
+飆漲
+狂飆
+崩盤
+崩跌
+重挫
+泡沫
+打壓
+紓困

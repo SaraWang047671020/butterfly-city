@@ -110,6 +110,10 @@ export function validateEventsFile(x: unknown): ValidationError[] {
     }
     if (!nonEmpty(card['title'])) add(`${at}.title`, 'type', 'title must be a non-empty string');
     if (!nonEmpty(card['description'])) add(`${at}.description`, 'type', 'description must be a non-empty string');
+    const zh = card['zh'];
+    if (!isRecord(zh) || !nonEmpty(zh['title']) || !nonEmpty(zh['description'])) {
+      add(`${at}.zh`, 'type', 'zh must hold a non-empty Traditional Chinese title and description');
+    }
     if (typeof card['major'] !== 'boolean') add(`${at}.major`, 'type', 'major must be a boolean');
     if (typeof card['verified'] !== 'boolean') add(`${at}.verified`, 'type', 'verified must be a boolean');
 
