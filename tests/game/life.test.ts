@@ -98,7 +98,7 @@ describe('lifeStateAt', () => {
     fc.assert(
       fc.property(fc.array(decision, { maxLength: 12 }), (ds) => {
         const tl: LifeEntry[] = ds.map((d, i) => ({ quarter: `${2015 + Math.floor(i / 4)}Q${(i % 4) + 1}` as QuarterKey, decision: d }));
-        const folded = ds.reduce(applyDecision, character.start);
+        const folded = ds.reduce((st, d, i) => applyDecision(st, d, tl[i]!.quarter), character.start);
         expect(lifeStateAt(character, tl, '2025Q4')).toEqual(folded);
       }),
     );

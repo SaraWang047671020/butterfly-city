@@ -106,13 +106,18 @@ describe('module boundaries', () => {
 // really in the checked set (a moved or renamed file fails here instead of silently leaving the scan).
 const PLAY_LOOP_MODULES = [
   'src/data/character-loader.ts',
+  'src/data/life-story-loader.ts',
   'src/save/character-store.ts',
   'src/game/brief.ts',
   'src/game/core/change-bounds.ts',
+  'src/game/life/applications.ts',
   'src/game/life/availability.ts',
   'src/game/life/controller.ts',
+  'src/game/life/ledger.ts',
   'src/game/life/life-state.ts',
   'src/game/life/numbers.ts',
+  'src/game/life/tracks.ts',
+  'src/game/random.ts',
   'src/ui/brief/quarter-brief.ts',
   'src/ui/character/chip.ts',
   'src/ui/character/creation.ts',

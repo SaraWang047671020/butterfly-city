@@ -25,12 +25,24 @@ export interface Member {
 
 export interface LifeState {
   readonly home: string; // District_Code
-  readonly tenure: 'renting' | 'family';
+  /** `social`: living in social housing (life-story Requirement 3.4), on one track only. */
+  readonly tenure: 'renting' | 'family' | 'social';
   readonly members: readonly Member[];
   readonly married: boolean;
+  /** life-story: the quarter the household moved into social housing (tenure `social` only). */
+  readonly socialSince?: QuarterKey;
+  /** life-story: the household receives the rent subsidy up to and including this quarter. */
+  readonly subsidyUntil?: QuarterKey;
+  /** life-story: the quarter of the marriage (newlywed multiplier of the rent subsidy). */
+  readonly marriedIn?: QuarterKey;
+  /** life-story: the Character buys the monthly commuter pass. */
+  readonly pass?: boolean;
+  /** life-story: the quarter the Character left Taipei and New Taipei (the story ends). */
+  readonly leftIn?: QuarterKey;
 }
 
-export type LifeDecision =
+/** The decisions of the "My life" dialog (play-loop Requirement 3A.2). */
+export type MyLifeDecision =
   | { readonly kind: 'move'; readonly home: string; readonly tenure: 'renting' | 'family' }
   | { readonly kind: 'changeJob'; readonly occupation: string; readonly workCode: string }
   | { readonly kind: 'partnerIn'; readonly partner: Omit<Member, 'kind'> }
@@ -40,7 +52,24 @@ export type LifeDecision =
   | { readonly kind: 'parentJoins'; readonly look: Look; readonly pronouns: PronounId }
   | { readonly kind: 'parentLeaves' };
 
-export type LifeDecisionKind = LifeDecision['kind'];
+export type Benefit = 'socialHousing' | 'rentSubsidy';
+
+/**
+ * Decisions of the life-story spec. `apply`, `buyPass` and `leave` come from Life_Events and apply to both tracks;
+ * `apply` changes nothing by itself: its outcome is decided per track (applications.ts), and a success adds
+ * `enterSocial` or `subsidy` to that track's timeline from the next quarter (tracks.ts).
+ */
+export type StoryDecision =
+  | { readonly kind: 'apply'; readonly benefit: Benefit }
+  | { readonly kind: 'buyPass' }
+  | { readonly kind: 'leave' }
+  | { readonly kind: 'enterSocial'; readonly home: string }
+  | { readonly kind: 'subsidy'; readonly until: QuarterKey };
+
+export type LifeDecision = MyLifeDecision | StoryDecision;
+
+/** Kinds of the "My life" dialog. */
+export type LifeDecisionKind = MyLifeDecision['kind'];
 
 export interface LifeEntry {
   readonly quarter: QuarterKey;
@@ -56,11 +85,17 @@ export interface Character {
 
 const self = (s: LifeState): Member | undefined => s.members.find((m) => m.kind === 'self');
 
-/** The Life_State after one decision. A decision that does not apply (for example partnerOut without a partner) changes nothing. */
-export function applyDecision(s: LifeState, d: LifeDecision): LifeState {
+/** A move or leaving the cities ends social housing and the rent subsidy (life-story design, "Life_Events"). */
+function withoutBenefits(s: LifeState): LifeState {
+  const { socialSince: _social, subsidyUntil: _subsidy, ...rest } = s;
+  return rest;
+}
+
+/** The Life_State after one decision in `quarter`. A decision that does not apply (for example partnerOut without a partner) changes nothing. */
+export function applyDecision(s: LifeState, d: LifeDecision, quarter?: QuarterKey): LifeState {
   switch (d.kind) {
     case 'move':
-      return { ...s, home: d.home, tenure: d.tenure };
+      return { ...withoutBenefits(s), home: d.home, tenure: d.tenure };
     case 'changeJob': {
       const me = self(s);
       if (me === undefined) return s;
@@ -72,7 +107,8 @@ export function applyDecision(s: LifeState, d: LifeDecision): LifeState {
     case 'partnerOut':
       return { ...s, members: s.members.filter((m) => m.kind !== 'partner'), married: false };
     case 'marry':
-      return s.members.some((m) => m.kind === 'partner') ? { ...s, married: true } : s;
+      if (!s.members.some((m) => m.kind === 'partner')) return s;
+      return quarter === undefined ? { ...s, married: true } : { ...s, married: true, marriedIn: quarter };
     case 'childJoins':
       return { ...s, members: [...s.members, { kind: 'child', occupation: null, workCode: null, pronouns: d.pronouns, look: d.look }] };
     case 'parentJoins':
@@ -80,6 +116,17 @@ export function applyDecision(s: LifeState, d: LifeDecision): LifeState {
       return { ...s, members: [...s.members, { kind: 'parent', occupation: null, workCode: null, pronouns: d.pronouns, look: d.look }] };
     case 'parentLeaves':
       return { ...s, members: s.members.filter((m) => m.kind !== 'parent') };
+    case 'apply':
+      return s;
+    case 'buyPass':
+      return { ...s, pass: true };
+    case 'leave':
+      return quarter === undefined ? withoutBenefits(s) : { ...withoutBenefits(s), leftIn: quarter };
+    case 'enterSocial':
+      if (s.tenure === 'social') return s;
+      return { ...withoutBenefits(s), home: d.home, tenure: 'social', ...(quarter === undefined ? {} : { socialSince: quarter }) };
+    case 'subsidy':
+      return s.tenure === 'renting' ? { ...s, subsidyUntil: d.until } : s;
   }
 }
 
@@ -87,7 +134,7 @@ export function applyDecision(s: LifeState, d: LifeDecision): LifeState {
 export function lifeStateAt(character: Character, timeline: readonly LifeEntry[], quarter: QuarterKey): LifeState {
   const qi = quarterIndex(quarter);
   let s = character.start;
-  for (const e of timeline) if (quarterIndex(e.quarter) <= qi) s = applyDecision(s, e.decision);
+  for (const e of timeline) if (quarterIndex(e.quarter) <= qi) s = applyDecision(s, e.decision, e.quarter);
   return s;
 }
 

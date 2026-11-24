@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Life Story Proposal</title>
+<style>
+  :root {
+    --bg: #0a1020; --panel: #111a2e; --raised: #1a2540; --line: #7183a8; --line-subtle: #2c3a5c;
+    --text: #eaf0fb; --text2: #b4c0d9; --muted: #98a6c4; --accent: #55c1ff; --accent-ink: #06121f;
+    --focus: #ffd23f; --ok: #62e0a0; --warn: #ffb454; --you: #55c1ff; --real: #c9b8ff;
+    --glass: rgba(17, 26, 46, 0.94);
+    --font: system-ui, "Segoe UI", "Microsoft JhengHei", "PingFang TC", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--font); }
+  main { max-width: 1120px; margin: 0 auto; padding: 32px 16px 80px; }
+  h1 { font-size: 30px; margin: 0 0 4px; }
+  h2 { font-size: 22px; margin: 48px 0 6px; border-top: 1px solid var(--line-subtle); padding-top: 24px; }
+  h3 { font-size: 16px; margin: 22px 0 6px; color: var(--accent); }
+  p, li { color: var(--text2); }
+  .lead { font-size: 17px; color: var(--text); }
+  .muted { color: var(--muted); font-size: 14px; }
+  .note { background: var(--raised); border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 6px; margin: 12px 0; color: var(--text); }
+  .note.warn { border-left-color: var(--warn); }
+  code { font-size: 13px; color: var(--text); background: var(--raised); padding: 1px 5px; border-radius: 4px; }
+  .toolbar { position: sticky; top: 0; z-index: 5; display: flex; gap: 8px; align-items: center; padding: 10px 0; background: var(--bg); border-bottom: 1px solid var(--line-subtle); }
+  .toolbar button { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--text); font: 600 14px var(--font); cursor: pointer; }
+  .toolbar button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .row { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+
+  /* ---------- frames ---------- */
+  .fit { position: relative; width: 100%; max-width: 1088px; aspect-ratio: 1280 / 800; overflow: hidden; border: 1px solid var(--line-subtle); border-radius: 10px; container-type: inline-size; }
+  .screen { position: absolute; left: 0; top: 0; width: 1280px; height: 800px; transform-origin: 0 0; background: #0a1020 url("life-story/city-1280.png") center / cover no-repeat; font-size: 14px; }
+  .phone { position: relative; width: 360px; height: 740px; overflow: hidden; border: 1px solid var(--line-subtle); border-radius: 18px; background: #0a1020 url("life-story/city-360.png") center / cover no-repeat; font-size: 14px; flex: 0 0 auto; }
+  .dim::before { content: ""; position: absolute; inset: 0; background: rgba(5, 8, 18, 0.62); }
+  .cap { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
+
+  /* ---------- game UI ---------- */
+  .dlg { position: absolute; background: var(--glass); border: 1px solid rgba(113, 131, 168, 0.45); border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.5); display: flex; flex-direction: column; overflow: hidden; }
+  .dlg .hd { padding: 22px 24px 8px; position: relative; }
+  .dlg .eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+  .dlg .title { font-size: 26px; font-weight: 700; margin: 2px 0 0; line-height: 1.25; }
+  .dlg .x { position: absolute; top: 18px; right: 18px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; color: var(--text); }
+  .dlg .bd { padding: 6px 24px 16px; overflow: hidden; display: flex; flex-direction: column; gap: 12px; }
+  .dlg .ft { padding: 14px 24px; border-top: 1px solid var(--line-subtle); display: flex; justify-content: flex-end; gap: 10px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--text); font: 600 15px var(--font); white-space: nowrap; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .story { font-size: 16px; color: var(--text); line-height: 1.6; margin: 0; }
+  .src { font-size: 12px; color: var(--muted); }
+  .why { color: var(--accent); font-size: 12px; text-decoration: underline; text-underline-offset: 2px; }
+
+  /* option cards */
+  .opt { border: 1px solid var(--line-subtle); background: rgba(26, 37, 64, .7); border-radius: 12px; padding: 12px 14px; display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; align-items: center; }
+  .opt.focus { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .opt .name { font-weight: 700; font-size: 16px; }
+  .opt .desc { grid-column: 1; font-size: 13px; color: var(--text2); }
+  .opt .vs { grid-column: 2; grid-row: 1 / span 2; display: grid; grid-template-columns: auto auto; gap: 0 10px; font-size: 13px; text-align: right; }
+  .vs .k { color: var(--muted); text-align: left; }
+  .you { color: var(--you); font-weight: 700; }
+  .real { color: var(--real); font-weight: 700; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; }
+
+  /* odds bar */
+  .odds { display: grid; gap: 6px; }
+  .bar { position: relative; height: 26px; border-radius: 6px; background: var(--raised); overflow: visible; }
+  .bar .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; }
+  .bar.you .fill { background: rgba(85, 193, 255, .45); border-right: 2px solid var(--you); }
+  .bar.real .fill { background: rgba(201, 184, 255, .35); border-right: 2px solid var(--real); }
+  .bar .lbl { position: absolute; left: 8px; top: 3px; font-size: 13px; color: var(--text); }
+  .bar .draw { position: absolute; top: -5px; bottom: -5px; width: 2px; background: var(--focus); }
+  .bar .draw::after { content: "▼"; position: absolute; top: -14px; left: -5px; font-size: 10px; color: var(--focus); }
+  .legend { font-size: 12px; color: var(--muted); }
+
+  /* two me */
+  .twome { border: 1px solid var(--line-subtle); border-radius: 12px; overflow: hidden; }
+  .twome table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .twome th, .twome td { padding: 7px 10px; border-bottom: 1px solid var(--line-subtle); text-align: left; vertical-align: top; }
+  .twome tr:last-child td { border-bottom: 0; }
+  .twome thead th { font-size: 12px; color: var(--muted); font-weight: 600; background: rgba(26,37,64,.6); }
+  .twome thead th.you { color: var(--you); } .twome thead th.real { color: var(--real); }
+  .twome td.n { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .twome .d { font-size: 12px; color: var(--text2); }
+  .twome .d b { color: var(--ok); font-weight: 700; }
+  .twome .d i { color: var(--warn); font-style: normal; font-weight: 700; }
+
+  .result { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .res { border-radius: 12px; padding: 10px 12px; border: 1px solid var(--line-subtle); background: rgba(26,37,64,.6); }
+  .res .who { font-size: 12px; font-weight: 700; }
+  .res .out { font-size: 18px; font-weight: 700; margin-top: 2px; }
+
+  .items { display: grid; gap: 6px; }
+  .item { display: flex; gap: 10px; align-items: center; font-size: 14px; color: var(--text2); padding: 6px 10px; border-radius: 10px; background: rgba(26,37,64,.5); }
+  .item .go { margin-left: auto; font-size: 13px; color: var(--accent); border: 1px solid var(--line); border-radius: 999px; padding: 2px 12px; white-space: nowrap; }
+
+  /* page (my story, ending) */
+  .page { position: absolute; inset: 0; background: rgba(10, 16, 32, 0.98); display: flex; flex-direction: column; }
+  .page .top { display: flex; align-items: center; gap: 14px; padding: 18px 28px; border-bottom: 1px solid var(--line-subtle); }
+  .page .top .title { font-size: 24px; font-weight: 700; }
+  .page .top .x { margin-left: auto; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; }
+  .page .body { padding: 18px 28px; overflow: hidden; display: flex; gap: 24px; }
+  .tl { display: flex; flex-direction: column; gap: 0; flex: 1; }
+  .yr { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: .06em; margin: 10px 0 4px; }
+  .qe { display: grid; grid-template-columns: 74px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line-subtle); }
+  .qe .q { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text2); }
+  .qe p { margin: 0; color: var(--text); font-size: 15px; line-height: 1.55; }
+  .chip { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--raised); color: var(--text2); margin: 0 6px 4px 0; }
+  .side { width: 300px; flex: 0 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .card { border: 1px solid var(--line-subtle); border-radius: 12px; padding: 12px 14px; background: rgba(26,37,64,.45); }
+  .card h4 { margin: 0 0 6px; font-size: 13px; color: var(--muted); font-weight: 600; }
+  .end2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; flex: 1; }
+  .endcol { border-radius: 14px; padding: 14px 16px; border: 1px solid var(--line-subtle); background: rgba(26,37,64,.45); display: flex; flex-direction: column; gap: 8px; }
+  .endcol h3 { margin: 0; font-size: 15px; }
+  .endcol .story { font-size: 15px; }
+  .kv { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 14px; }
+  .kv span:nth-child(odd) { color: var(--muted); }
+  .kv span:nth-child(even) { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+
+  .phone .dlg { left: 0; right: 0; top: 0; bottom: 0; border-radius: 0; border: 0; }
+  .phone .dlg .title { font-size: 21px; }
+  .phone .dlg .hd { padding: 16px 16px 6px; }
+  .phone .dlg .bd { padding: 4px 16px 12px; gap: 10px; }
+  .phone .dlg .ft { padding: 10px 16px; }
+  .phone .opt { grid-template-columns: 1fr; }
+  .phone .opt .vs { grid-column: 1; grid-row: auto; text-align: left; }
+  .phone .story { font-size: 15px; }
+  .phone .twome th, .phone .twome td { padding: 6px 7px; font-size: 13px; }
+  .phone .page .top { padding: 14px 16px; }
+  .phone .page .top .title { font-size: 19px; }
+  .phone .page .body { padding: 6px 16px; flex-direction: column; }
+  .phone .qe { grid-template-columns: 1fr; gap: 2px; }
+  .illus { position: absolute; left: 10px; bottom: 10px; z-index: 3; font-size: 11px; color: var(--warn); background: rgba(10,16,32,.9); border: 1px solid var(--warn); border-radius: 999px; padding: 1px 10px; }
+  .phone .illus { left: auto; right: 70px; bottom: auto; top: 26px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>角色故事（life-story）畫面設計稿</h1>
+  <p class="muted">Butterfly City · life-story spec Requirement 1 · 2026-11-24 · Claude Code · 給產品負責人核准</p>
+
+  <div class="toolbar" role="group" aria-label="Language of the mock screens">
+    <span class="muted">畫面語言：</span>
+    <button type="button" data-lang="zh" aria-pressed="true">繁體中文</button>
+    <button type="button" data-lang="en" aria-pressed="false">English</button>
+  </div>
+
+  <p class="lead">四個新畫面：<b>人生事件視窗</b>、新的<b>季報</b>（故事＋兩個我）、<b>我的故事</b>、<b>結局</b>。風格沿用現在的對話框（深色面板、上方小標、大標題、右下角主要按鈕），背景是遊戲的真實截圖。</p>
+  <div class="note">示範角色：<b>小雨</b>，餐飲業，2015 年在萬華租屋、在中正上班、單身。畫面上的數字（房租、中籤機會、抽籤號碼）是<b>示意</b>，用來看版面；真的遊戲會用設計文件裡的資料和公式計算。兩個版本用固定的兩種顏色分辨（<span class="you">你的城市</span>：藍；<span class="real">真實歷史</span>：淡紫），但每個差異都同時用文字寫出來，不只靠顏色。</div>
+
+  <!-- ============ 1. Life event ============ -->
+  <h2>1. 人生事件視窗（季度開始時跳出）</h2>
+  <p>在「決定」步驟開始時、政策卡可以用之前出現。每個選項都直接列出它對<b>兩個我</b>的影響；一定有「維持現狀」，按 Escape 就是選它（並會說出來）。申請類事件會顯示兩邊的機會。</p>
+
+  <h3>1a. 社宅開放申請（電腦版）</h3>
+  <div class="fit"><div class="screen dim">
+    <span class="illus" data-en="Illustrative numbers">示意數字</span>
+    <div class="dlg" style="left: 300px; top: 70px; width: 680px;">
+      <div class="hd">
+        <div class="eyebrow" data-en="Life event · 2019 Q3">人生事件 · 2019 年第 3 季</div>
+        <div class="title" data-en="Taipei social housing is taking applications">臺北市社會住宅開放申請</div>
+        <div class="x" aria-hidden="true">×</div>
+      </div>
+      <div class="bd">
+        <p class="story" data-en="Yu rents a 26 m² room in Wanhua. Taipei is letting new social housing units this quarter. Yu's household income (NT$420,000 a year) is below the city's limit of NT$1,530,000.">小雨在萬華租一間 26 平方公尺的套房。臺北市這一季有新的社會住宅出租。小雨的家庭年所得（42 萬元）低於市府的門檻 153 萬元。</p>
+        <div class="odds" aria-label="Chance of being allocated">
+          <div class="bar you"><div class="fill" style="width: 46%"></div><span class="lbl" data-en="Your city: 1,240 units let · chance 11.2 %">你的城市：出租 1,240 戶 · 機會 11.2%</span></div>
+          <div class="bar real"><div class="fill" style="width: 16.4%"></div><span class="lbl" data-en="Real history: 310 units let · chance 4.0 %">真實歷史：出租 310 戶 · 機會 4.0%</span></div>
+          <div class="legend" data-en="Chance = real odds of Taipei rounds (4.0 % in 2019) × units let in your city ÷ units let in real history. Source: news quoting the Taipei Urban Development Department, 2019-04-23.">機會 = 臺北市 2019 年真實中籤率 4.0% × 你的城市出租戶數 ÷ 真實出租戶數。來源：都發局公布、TVBS 2019-04-23 報導。</div>
+        </div>
+        <div class="opt focus">
+          <div class="name" data-en="Apply">申請</div>
+          <div class="desc" data-en="Both versions of Yu apply and draw the same lottery number. The result comes with the brief.">兩個小雨都會申請，抽到同一個號碼，結果在季報公布。</div>
+          <div class="vs"><span class="k" data-en="Your city">你的城市</span><span class="you">11.2%</span><span class="k" data-en="Real history">真實歷史</span><span class="real">4.0%</span></div>
+        </div>
+        <div class="opt">
+          <div class="name" data-en="Not now">先不要</div>
+          <div class="desc" data-en="Keep renting in Wanhua.">繼續在萬華租屋（維持現狀）。</div>
+          <div class="vs"><span class="k" data-en="Rent">房租</span><span>NT$16,300</span></div>
+        </div>
+      </div>
+      <div class="ft"><span class="src" style="margin-right:auto" data-en="Escape chooses “Not now”.">按 Escape = 選「先不要」</span><span class="btn primary" data-en="Confirm">確定</span></div>
+    </div>
+  </div></div>
+  <p class="cap">藍色長條是你的城市、淡紫是真實歷史；長條長度就是機會。黃色箭頭（抽籤號碼）要到季報才出現。</p>
+
+  <h3>1b. 租約到期（電腦版，英文）與手機版</h3>
+  <div class="row">
+    <div class="fit" style="max-width: 700px;"><div class="screen dim">
+      <span class="illus" data-en="Illustrative numbers">示意數字</span>
+      <div class="dlg" style="left: 300px; top: 60px; width: 680px;">
+        <div class="hd">
+          <div class="eyebrow" data-en="Life event · 2017 Q1">人生事件 · 2017 年第 1 季</div>
+          <div class="title" data-en="Yu's lease ends next month">小雨的租約下個月到期</div>
+          <div class="x" aria-hidden="true">×</div>
+        </div>
+        <div class="bd">
+          <p class="story" data-en="The landlord offers a new lease at the current rent of the district. What does Yu do?">房東願意續約，租金照這一區現在的行情。小雨要怎麼做？</p>
+          <div class="opt focus">
+            <div class="name" data-en="Renew the lease">續約</div>
+            <div class="desc" data-en="Stay in Wanhua (keep things as they are).">留在萬華（維持現狀）</div>
+            <div class="vs"><span class="k" data-en="Your city">你的城市</span><span class="you">NT$15,900</span><span class="k" data-en="Real history">真實歷史</span><span class="real">NT$16,100</span></div>
+          </div>
+          <div class="opt">
+            <div class="name" data-en="Move to another district…">搬到別區…</div>
+            <div class="desc" data-en="Choose a district; rent and commute of each are shown for both versions.">選一個區，每一區的房租和通勤都會列出兩個版本。</div>
+            <div class="vs"><span class="k" data-en="From">最低</span><span>NT$11,400</span></div>
+          </div>
+          <div class="opt">
+            <div class="name" data-en="Move back in with family">搬回家住</div>
+            <div class="desc" data-en="Only for an origin in Taipei or New Taipei.">只有出身臺北或新北才有這個選項。</div>
+            <div class="vs"><span class="k" data-en="Rent">房租</span><span>NT$0</span></div>
+          </div>
+        </div>
+        <div class="ft"><span class="btn primary" data-en="Confirm">確定</span></div>
+      </div>
+    </div></div>
+    <div>
+      <div class="phone dim">
+        <span class="illus" data-en="Illustrative">示意</span>
+        <div class="dlg">
+          <div class="hd">
+            <div class="eyebrow" data-en="Life event · 2019 Q3">人生事件 · 2019 Q3</div>
+            <div class="title" data-en="Taipei social housing is taking applications">臺北市社會住宅開放申請</div>
+            <div class="x" aria-hidden="true">×</div>
+          </div>
+          <div class="bd">
+            <p class="story" data-en="Yu's household income (NT$420,000) is below the limit of NT$1,530,000.">小雨的家庭年所得（42 萬）低於門檻 153 萬元。</p>
+            <div class="odds">
+              <div class="bar you"><div class="fill" style="width: 46%"></div><span class="lbl" data-en="Your city 11.2 %">你的城市 11.2%</span></div>
+              <div class="bar real"><div class="fill" style="width: 16.4%"></div><span class="lbl" data-en="Real history 4.0 %">真實歷史 4.0%</span></div>
+              <span class="why" data-en="How is this computed?">這是怎麼算的？</span>
+            </div>
+            <div class="opt focus"><div class="name" data-en="Apply">申請</div><div class="desc" data-en="Same lottery number for both. Result in the brief.">兩個小雨抽同一個號碼，結果在季報公布。</div></div>
+            <div class="opt"><div class="name" data-en="Not now">先不要</div><div class="desc" data-en="Keep renting in Wanhua · NT$16,300">繼續在萬華租屋 · 房租 16,300</div></div>
+          </div>
+          <div class="ft" style="position:absolute;left:0;right:0;bottom:0"><span class="btn primary" style="width:100%" data-en="Confirm">確定</span></div>
+        </div>
+      </div>
+      <p class="cap">手機：全螢幕，確定按鈕固定在最下方。</p>
+    </div>
+  </div>
+
+  <!-- ============ 2. Brief ============ -->
+  <h2>2. 新的季報：故事＋兩個我</h2>
+  <p>按「下一季」算完之後的季報，順序是：<b>這一季的故事</b>（1 到 3 段）→ 若有申請，<b>抽籤結果</b> → <b>兩個我</b> → 原本的「城市裡有什麼改變」（最多 3 項，前往按鈕照舊）。</p>
+
+  <h3>2a. 電腦版</h3>
+  <div class="fit"><div class="screen dim">
+    <span class="illus" data-en="Illustrative numbers">示意數字</span>
+    <div class="dlg" style="left: 250px; top: 10px; width: 780px;">
+      <div class="hd">
+        <div class="eyebrow" data-en="What changed">這一季的改變</div>
+        <div class="title">2019 Q4</div>
+        <div class="x" aria-hidden="true">×</div>
+      </div>
+      <div class="bd">
+        <p class="story" data-en="Yu drew number 0.087 in the social housing lottery. In your city the chance was 11.2 %: Yu will move into social housing in Datong next quarter. In real history the chance was 4.0 %, and Yu stays in Wanhua.">小雨在社宅抽籤抽到 0.087。在你的城市，機會是 11.2%：小雨下一季會搬進大同區的社會住宅。在真實歷史裡，機會是 4.0%，小雨繼續住在萬華。</p>
+        <div class="odds">
+          <div class="bar you"><div class="fill" style="width: 46%"></div><div class="draw" style="left: 35.6%"></div><span class="lbl" data-en="Your city 11.2 % · allocated">你的城市 11.2% · 抽中</span></div>
+          <div class="bar real"><div class="fill" style="width: 16.4%"></div><div class="draw" style="left: 35.6%"></div><span class="lbl" data-en="Real history 4.0 % · not allocated">真實歷史 4.0% · 沒抽中</span></div>
+          <div class="legend" data-en="▼ the same lottery number 0.087 on both. It is below 11.2 % and above 4.0 %, so only the policy decides the difference.">▼ 兩邊是同一個號碼 0.087：低於 11.2%、高於 4.0%，所以兩邊結果不同，只是因為政策不同。</div>
+        </div>
+        <div class="twome">
+          <table>
+            <thead><tr><th data-en="2019 Q4">2019 Q4</th><th class="you" data-en="Yu in your city">你的城市裡的小雨</th><th class="real" data-en="Yu in real history">真實歷史裡的小雨</th><th data-en="Difference">差異</th></tr></thead>
+            <tbody>
+              <tr><td data-en="Home">住處</td><td data-en="Wanhua, renting (moves to Datong social housing next quarter)">萬華，租屋（下一季搬進大同社宅）</td><td data-en="Wanhua, renting">萬華，租屋</td><td class="d" data-en="same this quarter">這一季相同</td></tr>
+              <tr><td data-en="Rent">房租</td><td class="n">NT$15,800</td><td class="n">NT$16,300</td><td class="d"><b data-en="NT$500 less">少 500 元</b></td></tr>
+              <tr><td data-en="Rent burden">房租負擔</td><td class="n">43.9%</td><td class="n">45.3%</td><td class="d"><b data-en="1.4 points lower">低 1.4 個百分點</b></td></tr>
+              <tr><td data-en="Commute">通勤</td><td class="n" data-en="22 min">22 分鐘</td><td class="n" data-en="22 min">22 分鐘</td><td class="d" data-en="same">相同</td></tr>
+              <tr><td data-en="Monthly pass">月票</td><td class="n">NT$1,280</td><td class="n">NT$1,280</td><td class="d" data-en="same">相同</td></tr>
+              <tr><td data-en="Money left">剩下的錢</td><td class="n">NT$18,900</td><td class="n">NT$18,400</td><td class="d"><b data-en="NT$500 more">多 500 元</b> <span class="why" data-en="Why?">為什麼？</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="items">
+          <div class="item"><span data-en="Datong: 820 social housing units completed">大同區：820 戶社會住宅完工</span><span class="go" data-en="Go there">前往</span></div>
+          <div class="item"><span data-en="Wanhua: 140 fewer people above a rent line than in real history">萬華區：房租超過門檻的人比真實歷史少 140 人</span><span class="go" data-en="Go there">前往</span></div>
+        </div>
+      </div>
+      <div class="ft"><span class="btn" style="margin-right:auto" data-en="My story">我的故事</span><span class="btn primary" data-en="Continue">繼續</span></div>
+    </div>
+  </div></div>
+  <p class="cap">「為什麼？」打開原本的原因分解：哪個政策、哪一季造成差異（例：你在 2017–2019 年於大同、萬華多蓋的社宅，使萬華房租每平方公尺低 19 元）。</p>
+
+  <h3>2b. 手機版（往下捲）</h3>
+  <div class="row">
+    <div class="phone dim">
+      <span class="illus" data-en="Illustrative">示意</span>
+      <div class="dlg">
+        <div class="hd"><div class="eyebrow" data-en="What changed">這一季的改變</div><div class="title">2019 Q4</div><div class="x" aria-hidden="true">×</div></div>
+        <div class="bd">
+          <p class="story" data-en="Yu drew 0.087. In your city the chance was 11.2 %: Yu moves into social housing in Datong next quarter. In real history (4.0 %) Yu stays in Wanhua.">小雨抽到 0.087。在你的城市機會是 11.2%：下一季搬進大同區社宅。真實歷史（4.0%）裡，小雨繼續住萬華。</p>
+          <div class="result">
+            <div class="res"><div class="who you" data-en="Your city">你的城市</div><div class="out" data-en="Allocated">抽中</div><div class="src">11.2%</div></div>
+            <div class="res"><div class="who real" data-en="Real history">真實歷史</div><div class="out" data-en="Not allocated">沒抽中</div><div class="src">4.0%</div></div>
+          </div>
+          <div class="twome">
+            <table>
+              <thead><tr><th></th><th class="you" data-en="Your city">你的城市</th><th class="real" data-en="Real">真實</th></tr></thead>
+              <tbody>
+                <tr><td data-en="Rent">房租</td><td class="n">15,800</td><td class="n">16,300</td></tr>
+                <tr><td colspan="3" class="d"><b data-en="NT$500 less in your city">你的城市少 500 元</b></td></tr>
+                <tr><td data-en="Burden">負擔</td><td class="n">43.9%</td><td class="n">45.3%</td></tr>
+                <tr><td data-en="Commute">通勤</td><td class="n" data-en="22 min">22 分</td><td class="n" data-en="22 min">22 分</td></tr>
+                <tr><td data-en="Left">剩下</td><td class="n">18,900</td><td class="n">18,400</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="ft" style="position:absolute;left:0;right:0;bottom:0"><span class="btn primary" style="width:100%" data-en="Continue">繼續</span></div>
+      </div>
+    </div>
+    <div style="max-width: 520px">
+      <p>手機上：抽籤結果用兩張並排小卡（「抽中／沒抽中」用文字，不只靠顏色）；兩個我改成三欄的小表，每項差異寫在下一行；城市的改變在表格下方，往下捲可以看到。</p>
+    </div>
+  </div>
+
+  <!-- ============ 3. My story ============ -->
+  <h2>3. 我的故事（從選單打開）</h2>
+  <p>選單「我與城市」裡多一個「我的故事」。從 2015 年第 1 季讀到現在，每一季列出故事、人生事件和選擇、申請結果；右側是到目前為止的兩個我摘要。</p>
+  <div class="fit"><div class="screen">
+    <span class="illus" data-en="Illustrative numbers">示意數字</span>
+    <div class="page">
+      <div class="top"><div class="title" data-en="Yu's story">小雨的故事</div><span class="muted" data-en="2015 Q1 to 2019 Q4">2015 Q1 到 2019 Q4</span><div class="x" aria-hidden="true">×</div></div>
+      <div class="body">
+        <div class="tl">
+          <div class="yr">2015</div>
+          <div class="qe"><div class="q">Q1</div><div><p data-en="Yu starts the decade in a 26 m² room in Wanhua, working in a restaurant in Zhongzheng. The rent takes 41.2 % of Yu's income.">小雨在萬華一間 26 平方公尺的套房開始這十年，在中正區的餐廳工作。房租佔收入的 41.2%。</p></div></div>
+          <div class="yr">2017</div>
+          <div class="qe"><div class="q">Q1</div><div><span class="chip" data-en="Life event · lease ends → renewed">人生事件 · 租約到期 → 續約</span><p data-en="Yu renews the lease. In your city the rent is NT$200 lower than in real history.">小雨續約了。在你的城市，房租比真實歷史低 200 元。</p></div></div>
+          <div class="yr">2018</div>
+          <div class="qe"><div class="q">Q2</div><div><span class="chip" data-en="Life event · monthly pass → bought">人生事件 · 月票開賣 → 買了</span><p data-en="The NT$1,280 monthly pass goes on sale on 16 April. Yu buys one for the ride to Zhongzheng.">4 月 16 日 1,280 元月票開賣，小雨買了一張，搭車去中正上班。</p></div></div>
+          <div class="yr">2019</div>
+          <div class="qe"><div class="q">Q3</div><div><span class="chip" data-en="Life event · social housing → applied">人生事件 · 社宅申請 → 申請</span><p data-en="Yu applies for Taipei social housing.">小雨申請了臺北市的社會住宅。</p></div></div>
+          <div class="qe"><div class="q">Q4</div><div><span class="chip"><span class="you" data-en="Your city: allocated">你的城市：抽中</span> · <span class="real" data-en="Real history: not allocated">真實歷史：沒抽中</span></span><p data-en="Same number 0.087: below 11.2 % in your city, above 4.0 % in real history.">同一個號碼 0.087：在你的城市低於 11.2%，在真實歷史高於 4.0%。</p></div></div>
+        </div>
+        <div class="side">
+          <div class="card"><h4 data-en="So far (2015 Q1 to 2019 Q4)">到目前為止（2015 Q1–2019 Q4）</h4>
+            <div class="kv"><span data-en="Rent paid, your city">付的房租，你的城市</span><span class="you">NT$3.12M</span><span data-en="Rent paid, real history">付的房租，真實歷史</span><span class="real">NT$3.17M</span><span data-en="Difference">差異</span><span data-en="NT$50k less">少 5 萬元</span></div>
+          </div>
+          <div class="card"><h4 data-en="Applications">申請紀錄</h4><div class="kv"><span data-en="Social housing 2019 Q3">社宅 2019 Q3</span><span><span class="you" data-en="allocated">抽中</span> / <span class="real" data-en="not">沒抽中</span></span></div></div>
+          <span class="btn" data-en="Read in the brief of each quarter">回到目前的季報</span>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- ============ 4. Ending ============ -->
+  <h2>4. 結局</h2>
+  <p>2025 年第 4 季算完之後，或角色選擇「離開雙北」時出現。兩個版本各一段結局文字和十年的數字；下方是你用過的政策照顧到的人，女性和男性各佔多少（有來源才顯示）。結局可能不好，但只描述，不評斷。</p>
+  <div class="fit"><div class="screen">
+    <span class="illus" data-en="Illustrative numbers">示意數字</span>
+    <div class="page">
+      <div class="top"><div class="title" data-en="Yu's decade, 2015 to 2025">小雨的十年，2015–2025</div><div class="x" aria-hidden="true">×</div></div>
+      <div class="body" style="flex-direction: column; gap: 14px;">
+        <div class="end2">
+          <div class="endcol">
+            <h3 class="you" data-en="Yu in your city">你的城市裡的小雨</h3>
+            <p class="story" data-en="From 2020 Yu lives in social housing in Datong, and still does at the end of 2025; the six-year tenancy runs to early 2026.">小雨從 2020 年起住在大同區的社會住宅，到 2025 年底仍住在那裡；6 年的租期到 2026 年初。</p>
+            <div class="kv"><span data-en="Total rent">總房租</span><span>NT$6.04M</span><span data-en="Mean rent burden">平均房租負擔</span><span>34.8%</span><span data-en="Mean commute">平均通勤</span><span data-en="21 min">21 分</span><span data-en="Money left, total">剩下的錢合計</span><span>NT$2.71M</span></div>
+          </div>
+          <div class="endcol">
+            <h3 class="real" data-en="Yu in real history">真實歷史裡的小雨</h3>
+            <p class="story" data-en="Yu still rents in Wanhua in 2025. The rent takes 44 % of Yu's income, above the 30 % line for 36 of the 44 quarters.">2025 年小雨仍在萬華租屋，房租佔收入 44%；44 季裡有 36 季超過 30% 的線。</p>
+            <div class="kv"><span data-en="Total rent">總房租</span><span>NT$7.32M</span><span data-en="Mean rent burden">平均房租負擔</span><span>42.6%</span><span data-en="Mean commute">平均通勤</span><span data-en="22 min">22 分</span><span data-en="Money left, total">剩下的錢合計</span><span>NT$1.43M</span></div>
+          </div>
+        </div>
+        <div class="card"><h4 data-en="Rent burden, quarter by quarter (30 % line dashed)">房租負擔，每一季（虛線是 30% 的線）</h4>
+          <svg id="burden" viewBox="0 0 1180 150" width="100%" height="150" role="img" aria-label="Rent burden of both versions from 2015 to 2025"></svg>
+          <div class="legend"><span class="you" data-en="— your city">— 你的城市</span> · <span class="real" data-en="— real history">— 真實歷史</span> · <span data-en="the lines part in 2020 Q1, when Yu moves into social housing in your city">兩條線在 2020 Q1 分開：你的城市裡的小雨搬進了社宅</span></div>
+        </div>
+        <div class="card"><h4 data-en="Who the tools you used reach">你用過的政策照顧到的人</h4>
+          <p class="src" style="margin:0" data-en="Social housing tenant households: 55.9 % women (national, end of 2024, National Land Management Agency). Rent subsidy, approved households: 56.3 % women (Taipei 2023–2024, Urban Development Department).">社會住宅承租戶：女性 55.9%（全國，2024 年底，國土管理署）。租金補貼核定戶：女性 56.3%（臺北市 2023–2024，都發局）。</p>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:flex-end"><span class="btn" data-en="Read my story">讀我的故事</span><span class="btn primary" data-en="New game">開新遊戲</span></div>
+      </div>
+    </div>
+  </div></div>
+  <p class="cap">手機版：兩欄改成上下兩段（你的城市在上），其餘相同。</p>
+
+  <!-- ============ 5. Behaviour ============ -->
+  <h2>5. 操作與無障礙</h2>
+  <ul>
+    <li>人生事件視窗一定要選一個選項才能繼續；Escape 等於「維持現狀」，畫面會用一句話說出來（螢幕閱讀器也會讀）。</li>
+    <li>選項是單選按鈕群組：上下鍵移動、Enter 確定；焦點在選項上有黃色外框（同現有的焦點樣式）。</li>
+    <li>「快轉」遇到會跳出人生事件的季度會停下來。</li>
+    <li>兩個我的每個差異都用文字寫（「少 500 元」「低 1.4 個百分點」），顏色只是輔助。</li>
+    <li>抽籤長條附文字說明，螢幕閱讀器讀「你的城市機會 11.2%，抽中；真實歷史機會 4.0%，沒抽中；抽到的號碼 0.087」。</li>
+    <li>中英文用同一個版面；英文較長的地方（選項說明）會換行，不截斷。</li>
+  </ul>
+
+  <h2>6. 決定（2026-11-24 核准）</h2>
+  <p class="note">產品負責人核准本設計稿：「設計稿核准，A 可以，B1」。A：四個畫面的版面和配色（藍＝你的城市、淡紫＝真實歷史）。B1：抽籤長條上顯示同一個抽籤號碼。</p>
+  <h3>當時的選項</h3>
+  <div class="note warn">
+    <p style="margin:0 0 8px;color:var(--text)"><b>A. 整體樣式</b>：核准這四個畫面的版面和兩個版本的配色（藍＝你的城市、淡紫＝真實歷史）嗎？</p>
+    <p style="margin:0 0 8px;color:var(--text)"><b>B. 要不要顯示抽籤號碼</b>：</p>
+    <ul style="margin:0">
+      <li><b>B1（建議）顯示</b>：長條上標出同一個號碼，最能看出「結果不同只是因為政策」。</li>
+      <li><b>B2 不顯示</b>：只顯示機會和結果，畫面比較簡單。</li>
+    </ul>
+  </div>
+</main>
+<script>
+  // Language toggle of the mock screens: every element with data-en keeps its Chinese text in data-zh.
+  const els = [...document.querySelectorAll('[data-en]')];
+  for (const e of els) e.dataset.zh = e.textContent;
+  const set = (lang) => {
+    for (const e of els) e.textContent = lang === 'en' ? e.dataset.en : e.dataset.zh;
+    for (const b of document.querySelectorAll('.toolbar button')) b.setAttribute('aria-pressed', String(b.dataset.lang === lang));
+  };
+  for (const b of document.querySelectorAll('.toolbar button')) b.addEventListener('click', () => set(b.dataset.lang));
+  // Illustrative rent burden lines of the Ending mock (44 quarters).
+  (() => {
+    const svg = document.getElementById('burden');
+    const real = Array.from({ length: 44 }, (_, i) => 41 + i * 0.07 + Math.sin(i / 3) * 0.6);
+    const you = real.map((v, i) => (i < 20 ? v - 0.3 - i * 0.03 : 30.5 + Math.sin(i / 4) * 0.5));
+    const x = (i) => 40 + i * (1120 / 43), y = (v) => 140 - (v - 20) * 4.5;
+    const line = (vals, colour) => `<polyline fill="none" stroke="${colour}" stroke-width="3" points="${vals.map((v, i) => `${x(i)},${y(v)}`).join(' ')}"/>`;
+    const years = Array.from({ length: 11 }, (_, k) => `<text x="${x(k * 4)}" y="148" fill="#98a6c4" font-size="12">${2015 + k}</text>`).join('');
+    svg.innerHTML = `<line x1="40" x2="1160" y1="${y(30)}" y2="${y(30)}" stroke="#98a6c4" stroke-dasharray="6 6"/><text x="0" y="${y(30) + 4}" fill="#98a6c4" font-size="12">30%</text>` + line(real, '#c9b8ff') + line(you, '#55c1ff') + years;
+  })();
+  // Each 1280 × 800 mock screen is scaled to the width of its frame.
+  const fit = () => { for (const f of document.querySelectorAll('.fit')) f.querySelector('.screen').style.transform = `scale(${f.clientWidth / 1280})`; };
+  addEventListener('resize', fit);
+  fit();
+</script>
+</body>
+</html>
