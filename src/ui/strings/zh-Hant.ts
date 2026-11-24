@@ -57,6 +57,8 @@ export const ZH: UiStrings = {
     exportSaveCode: '匯出存檔代碼',
     importSaveCode: '匯入',
     realData2015Q1: '真實資料，2015 年第 1 季',
+    collapse: '收合回合控制',
+    expand: '展開回合控制',
   },
 
   range: {

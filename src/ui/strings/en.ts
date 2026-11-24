@@ -58,6 +58,8 @@ export const EN = {
     exportSaveCode: 'Export save code',
     importSaveCode: 'Import',
     realData2015Q1: 'Real data, 2015Q1',
+    collapse: 'Hide turn controls',
+    expand: 'Show turn controls',
   },
 
   range: {

@@ -289,6 +289,17 @@
     order: 3;
   }
 
+  /* Walk_Mode: the Turn_Bar block can be collapsed to the Displayed_Quarter and the disclosure (app.ts). */
+  .ui-app:has(.city-view.is-walking) .ui-turn-collapse {
+    display: inline-flex;
+    order: 4;
+    margin-left: auto;
+  }
+
+  .ui-app:has(.city-view.is-walking) .ui-block--turn-bar.is-collapsed :is(.turn-bar__controls, .turn-bar__save, .turn-bar__planning, .turn-bar__busy, .ui-report-open, .ui-turn-steps) {
+    display: none;
+  }
+
   .ui-main-note {
     display: none;
   }
@@ -640,4 +651,26 @@
    (play-loop task 12.3; city-3d 12.3). */
 .ui-app:has(.city-fallback) .ui-walk-action {
   display: none;
+}
+
+/* ---- Turn_Bar collapse control ------------------------------------------------------------------------------- */
+/* Shown only in Walk_Mode on a narrow screen (see the narrow-screen section). */
+.ui-turn-collapse {
+  display: none;
+  align-items: center;
+  min-height: var(--target-min);
+  padding: var(--space-1) var(--space-3);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  background: transparent;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.ui-turn-collapse:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }

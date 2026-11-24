@@ -211,12 +211,23 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
 
   mountComponent(headerHost, turnBar);
   headerHost.appendChild(reportButton);
+  // Walk_Mode on a narrow screen: the Turn_Bar block can be collapsed to the Displayed_Quarter and the disclosure,
+  // so the street is visible (user request 2026-11-24). Shown and applied only there (layout.css); the choice is kept
+  // for the next walk, and Overview_Mode always shows the whole block.
+  const collapseButton = button(doc, 'ui-turn-collapse', UI_STRINGS.turnBar.collapse, () => {
+    const collapsed = !headerHost.classList.contains('is-collapsed');
+    headerHost.classList.toggle('is-collapsed', collapsed);
+    collapseButton.setAttribute('aria-expanded', String(!collapsed));
+    collapseButton.textContent = collapsed ? UI_STRINGS.turnBar.expand : UI_STRINGS.turnBar.collapse;
+  });
+  collapseButton.setAttribute('aria-expanded', 'true');
   // Turn steps (play-loop Requirement 4.2): decide, compute, what changed.
   const steps = el(doc, 'p', 'ui-turn-steps', headerHost);
   const stepBars = el(doc, 'span', 'ui-turn-steps__bars', steps);
   stepBars.setAttribute('aria-hidden', 'true');
   const bars = [0, 1, 2].map(() => el(doc, 'span', '', stepBars));
   const stepText = el(doc, 'span', 'ui-turn-steps__text', steps);
+  headerHost.appendChild(collapseButton); // last in the block, after the steps
   const renderSteps = (g: GameView): void => {
     const n = g.turnBar.busy ? 2 : g.brief !== null ? 3 : 1;
     bars.forEach((b, i) => b.classList.toggle('is-on', i < n));
