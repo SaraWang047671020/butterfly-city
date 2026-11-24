@@ -136,6 +136,8 @@ function briefItems(input: { completions; majorEvents; changes: { district; indi
 
 ## Controller additions
 
+(As built: the Character actions live in `LifeController`, `src/game/life/controller.ts`, next to the Game_Controller; it reads the session and never writes it. `view.brief` and `dismissBrief` are on the Game_Controller.)
+
 - `view.character: CharacterView | null`: the Character, the Life_State of the Planning_Quarter, the Character_Numbers `{ player, real, previous }` for the Displayed_Quarter, the available Life_Decisions.
 - `view.brief: BriefView | null`: the Brief_Items of the last Computation_Run, cleared on the next edit or run.
 - `actions.createCharacter(c)`, `actions.previewLife(decision) → { with, without }`, `actions.applyLife(decision)`, `actions.dismissBrief()`, `actions.guideDone()`.

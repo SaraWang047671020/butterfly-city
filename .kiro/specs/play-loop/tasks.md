@@ -33,10 +33,10 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
   - [x] 4.4 Move `CHANGE_BOUNDS` to `src/game/core/change-bounds.ts`; `brief.ts` (`briefItems`)
   - [x] 4.5 Unit and property tests of Requirements 11.2, 11.2a and 11.3 (`tests/game/life.test.ts`, `tests/game/brief.test.ts`)
 
-- [ ] 5. Store and controller
-  - [ ] 5.1 `src/save/character-store.ts` (`butterflycity.character.v1`: Character, Life_Timeline, `guideDone`)
-  - [ ] 5.2 Controller: `view.character`, `view.brief`, `createCharacter`, `previewLife`, `applyLife`, `dismissBrief`, `guideDone`; Fixed_Quarter rejection
-  - [ ] 5.3 Tests: Character_Numbers of player and real run against a hand calculation; no Life_Decision changes an Engine result
+- [x] 5. Store and controller
+  - [x] 5.1 `src/save/character-store.ts` (`butterflycity.character.v1`: Character, Life_Timeline, `guideDone`)
+  - [x] 5.2 Controller: `view.brief` and `dismissBrief` on the Game_Controller (task 9); the Character in a separate `LifeController` (`src/game/life/controller.ts`: `view`, `createCharacter`, `previewLife`, `applyLife`, `setGuideDone`), so the game-ui controller and UiActions stay unchanged; created in `main.ts`
+  - [x] 5.3 Tests: Character_Numbers of player and real run against a hand calculation; no Life_Decision changes an Engine result
 
 - [ ] 6. Character_Creation (Requirement 2)
   - [ ] 6.1 `src/ui/character/creation.ts`: four steps, live SVG preview, sources, Random character

@@ -7,6 +7,9 @@ import './styles/city.css';
 import { loadDataFiles } from './data/loader.ts';
 import type { LoadedData } from './data/convert.ts';
 import { loadStoryFiles, type StoryFiles } from './data/story-loader.ts';
+import { loadCharacterFiles } from './data/character-loader.ts';
+import { LifeController } from './game/life/controller.ts';
+import { readCharacter, writeCharacter } from './save/character-store.ts';
 import { GameController, type DemoPort } from './game/controller.ts';
 import { describeDemo, readDemo } from './game/demo.ts';
 import { buildStoryFacts } from './game/story-facts.ts';
@@ -55,6 +58,8 @@ const app = createApp(document, host, {
 });
 let city: CityView | null = null;
 let controller: GameController | null = null;
+/** The player's Character next to the game (play-loop task 5); null when the character files did not load. */
+let life: LifeController | null = null;
 
 /** localStorage adapter, or null when access throws (private mode, blocked storage). */
 function storagePort(): StoragePort | null {
@@ -159,6 +164,30 @@ async function start(): Promise<void> {
     new Set(data.districts.map((d) => d.code)),
   );
   if (!story.ok) console.warn(story.error);
+
+  // The player's Character (play-loop tasks 3 to 5): its own files and store; an error leaves the game running.
+  const characterFiles = await loadCharacterFiles(
+    (url) => fetch(url).then((r) => (r.ok ? r.text() : Promise.reject(new Error(`${url}: HTTP ${r.status}`)))),
+    BASE_URL,
+    new Set(data.districts.map((d) => d.code)),
+  );
+  if (!characterFiles.ok) console.warn(characterFiles.error);
+  const lifePort = storagePort();
+  const rentSeries = data.history.indicators.find((i) => i.id === 'rent');
+  const cityByCode = new Map(data.districts.map((d) => [d.code, d.city as string]));
+  life = characterFiles.ok
+    ? new LifeController({
+        files: characterFiles.value,
+        session: () => ctl.storySession(),
+        subscribeGame: (fn) => ctl.subscribe(fn),
+        historyRent: (code, qi) => (rentSeries === undefined || rentSeries.level !== 'district' ? null : (rentSeries.series[code]?.[qi]?.value ?? null)),
+        cityOf: (code) => cityByCode.get(code) ?? null,
+        store: {
+          read: () => readCharacter(lifePort),
+          write: (r) => writeCharacter(lifePort, r),
+        },
+      })
+    : null;
 
   const C = UI_STRINGS.city;
   city?.dispose();
