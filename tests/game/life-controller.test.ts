@@ -111,8 +111,12 @@ describe('Character_Store', () => {
     const mem = new Map<string, string>();
     const port = { getItem: (k: string) => mem.get(k) ?? null, setItem: (k: string, v: string) => void mem.set(k, v) };
     const timeline: LifeEntry[] = [{ quarter: '2016Q1', decision: { kind: 'marry' } }];
-    expect(writeCharacter(port, { character, timeline, guideDone: true })).toBe(true);
-    expect(readCharacter(port)).toEqual({ schemaVersion: 1, character, timeline, guideDone: true });
+    const choices = [{ quarter: '2016Q1', event: 'marriage', option: 'marry' }];
+    expect(writeCharacter(port, { character, timeline, guideDone: true, seed: 42, choices })).toBe(true);
+    expect(readCharacter(port)).toEqual({ schemaVersion: 2, character, timeline, guideDone: true, seed: 42, choices });
+    // A version 1 record (play-loop) is read with no seed and no choices.
+    mem.set('butterflycity.character.v1', JSON.stringify({ schemaVersion: 1, character, timeline, guideDone: false }));
+    expect(readCharacter(port)).toEqual({ schemaVersion: 2, character, timeline, guideDone: false, seed: null, choices: [] });
     mem.set('butterflycity.character.v1', '{"schemaVersion":1,"character":null,"timeline":[]}');
     expect(readCharacter(port)).toBeNull();
     expect(readCharacter(null)).toBeNull();

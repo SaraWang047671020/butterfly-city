@@ -3,6 +3,7 @@
  * - copies data/config/citizens.json and data/config/model-limits.json to public/data/ (no transformation);
  * - writes public/data/income-spread.json from the FIA quartile file of income year 2023 in data/raw/income/;
  * - copies data/config/characters.json and writes public/data/wages.json from DGBAS data.gov.tw 9663 (play-loop task 3).
+ * - copies data/config/life-events.json, life-story.json and application-supply.json (life-story task 2.2).
  * Exits 1 on any error and writes nothing.
  */
 import fs from 'node:fs';
@@ -21,7 +22,7 @@ import { homeRentFileOf, serializeHomeRentFile } from './story/home-rent.ts';
 import { lvrPaths } from './pipeline/indicators/lvr-input.ts';
 import { dedupeById, filterLvr, parseLvrCsv } from './pipeline/parsers/lvr.ts';
 
-const COPIES = ['citizens.json', 'model-limits.json', 'characters.json'] as const;
+const COPIES = ['citizens.json', 'model-limits.json', 'characters.json', 'life-events.json', 'life-story.json', 'application-supply.json'] as const;
 
 try {
   const outputs = new Map<string, string>();

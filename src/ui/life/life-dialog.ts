@@ -4,7 +4,7 @@
 // with and without it; Confirm adds it to the Life_Timeline in the Planning_Quarter.
 import type { Availability } from '../../game/life/availability.ts';
 import type { CharacterView } from '../../game/life/controller.ts';
-import type { LifeDecision, LifeDecisionKind, Look, PronounId } from '../../game/life/life-state.ts';
+import type { LifeDecisionKind, Look, MyLifeDecision as LifeDecision, PronounId } from '../../game/life/life-state.ts';
 import type { CharacterNumbers } from '../../game/life/numbers.ts';
 import { createDialogManager } from '../a11y/dialog.ts';
 import { pick, type LocalText } from '../character/creation.ts';

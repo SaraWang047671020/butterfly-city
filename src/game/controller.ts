@@ -61,6 +61,8 @@ export interface GameControllerDeps {
   readonly demo: DemoPort;
   /** Called when a new game replaces the session (play-loop Requirement 2.1: the new game asks for a Character). */
   readonly onNewGame?: () => void;
+  /** life-story Requirement 7.3: whether a Life_Event is triggered for the Planning_Quarter of `session` (Fast-forward stops). */
+  readonly lifeEventAhead?: (session: GameSession) => boolean;
 }
 
 type Pending =
@@ -98,6 +100,7 @@ export class GameController {
   private readonly scheduler: Scheduler;
   private readonly demo: DemoPort;
   private readonly onNewGame: (() => void) | undefined;
+  private readonly lifeEventAhead: ((session: GameSession) => boolean) | undefined;
   private readonly listeners = new Set<(view: GameView) => void>();
 
   private session: GameSession | null = null;
@@ -128,6 +131,7 @@ export class GameController {
     this.scheduler = deps.scheduler;
     this.demo = deps.demo;
     this.onNewGame = deps.onNewGame;
+    this.lifeEventAhead = deps.lifeEventAhead;
     this.storedExists = false;
     this.readStoredAtStart();
     this.actions = this.makeActions();
@@ -397,7 +401,11 @@ export class GameController {
       const s = this.session;
       if (s === null) return;
       const out: TurnOutcome<GameSession> = fast
-        ? fastForward(s, (done) => this.persist(done))
+        ? fastForward(
+            s,
+            (done) => this.persist(done),
+            (done) => this.lifeEventAhead?.(done) === true,
+          )
         : computeNext(s);
       this.session = out.session;
       this.drafts = new Map();

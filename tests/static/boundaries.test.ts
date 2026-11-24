@@ -118,6 +118,7 @@ const PLAY_LOOP_MODULES = [
   'src/game/life/ledger.ts',
   'src/game/life/life-state.ts',
   'src/game/life/numbers.ts',
+  'src/game/life/story-model.ts',
   'src/game/life/story.ts',
   'src/game/life/tracks.ts',
   'src/game/random.ts',

@@ -22,7 +22,9 @@ export type StopReason =
   | 'complete'
   | 'major-event'
   | 'engine-error'
-  | 'carried-check';
+  | 'carried-check'
+  /** life-story Requirement 7.3: a Life_Event is triggered for the new Planning_Quarter. */
+  | 'life-event';
 
 /** The successful `runRange` result of the last computed quarter (Displayed_Quarter = its last state). */
 export type ComputedRun = Extract<RangeResult, { readonly ok: true }>;
@@ -201,6 +203,7 @@ function loop<S extends TurnSession>(
   limit: number,
   full: StopReason,
   afterQuarter?: (s: S) => void,
+  stopAfter?: (s: S) => boolean,
 ): TurnOutcome<S> {
   let session = start;
   const computed: QuarterKey[] = [];
@@ -227,6 +230,7 @@ function loop<S extends TurnSession>(
     if (majors.length > 0) return done('major-event');
     if (t === LAST_QUARTER) return done('complete');
     if (computed.length >= limit) return done(full);
+    if (stopAfter?.(session) === true) return done('life-event');
   }
 }
 
@@ -234,6 +238,10 @@ export function computeNext<S extends TurnSession>(session: S): TurnOutcome<S> {
   return loop(session, 1, 'one-quarter');
 }
 
-export function fastForward<S extends TurnSession>(session: S, afterQuarter?: (s: S) => void): TurnOutcome<S> {
-  return loop(session, 4, 'four-quarters', afterQuarter);
+/**
+ * Computes up to 4 quarters. `stopAfter` ends the run early after a computed quarter (life-story Requirement 7.3: a
+ * Life_Event is asked in its own Decide_Step).
+ */
+export function fastForward<S extends TurnSession>(session: S, afterQuarter?: (s: S) => void, stopAfter?: (s: S) => boolean): TurnOutcome<S> {
+  return loop(session, 4, 'four-quarters', afterQuarter, stopAfter);
 }

@@ -8,6 +8,9 @@ import { loadDataFiles } from './data/loader.ts';
 import type { LoadedData } from './data/convert.ts';
 import { loadStoryFiles, type StoryFiles } from './data/story-loader.ts';
 import { homePremiumOf, loadCharacterFiles } from './data/character-loader.ts';
+import { validateApplicationSupply } from './data/life-story-loader.ts';
+import { validateLifeEventFile } from './data/life-text-loader.ts';
+import type { StoryDeps } from './game/life/controller.ts';
 import { LifeController } from './game/life/controller.ts';
 import { readCharacter, writeCharacter } from './save/character-store.ts';
 import { createCharacterCreation, pick, type CreationFiles } from './ui/character/creation.ts';
@@ -167,6 +170,8 @@ async function start(): Promise<void> {
     demo: demoPort(data),
     // A new game asks for a new Character (play-loop Requirement 2.1).
     onNewGame: () => life?.clearCharacter(),
+    // Fast-forward stops before a quarter with a Life_Event (life-story Requirement 7.3): wired with the Life_Event
+    // dialog (task 5.1), so that a stop is never left unexplained.
   });
   const ctl = controller;
 
@@ -206,6 +211,8 @@ async function start(): Promise<void> {
   if (!characterFiles.ok) console.warn(characterFiles.error);
   const lifePort = storagePort();
   const rentSeries = data.history.indicators.find((i) => i.id === 'rent');
+  // The life story (life-story task 4.1): its three files; an error leaves the Character without Life_Events.
+  const storyDeps = await loadStoryDeps(data.history.indicators);
   const cityByCode = new Map(data.districts.map((d) => [d.code, d.city as string]));
   life = characterFiles.ok
     ? new LifeController({
@@ -218,6 +225,7 @@ async function start(): Promise<void> {
           read: () => readCharacter(lifePort),
           write: (r) => writeCharacter(lifePort, r),
         },
+        story: storyDeps,
       })
     : null;
 
@@ -484,3 +492,36 @@ async function start(): Promise<void> {
 }
 
 void start();
+
+/** The life-story files (Application_Supply_File, Life_Event_File) and the real social housing series; null on any error. */
+async function loadStoryDeps(indicators: LoadedData['history']['indicators']): Promise<StoryDeps | null> {
+  const get = async (name: string): Promise<unknown> => {
+    const r = await fetch(`${BASE_URL}data/${name}`);
+    if (!r.ok) throw new Error(`${name}: HTTP ${r.status}`);
+    return (await r.json()) as unknown;
+  };
+  try {
+    const [supplyRaw, eventsRaw] = await Promise.all([get('application-supply.json'), get('life-events.json')]);
+    const supply = validateApplicationSupply(supplyRaw);
+    const events = validateLifeEventFile(eventsRaw);
+    if (!supply.ok) throw new Error(supply.error);
+    if (!events.ok) throw new Error(events.error);
+    const series = (id: string) => {
+      const ind = indicators.find((i) => i.id === id);
+      return ind === undefined || ind.level !== 'district' ? null : ind.series;
+    };
+    const completions = series('socialHousingCompletions');
+    const stock = series('socialHousingStock');
+    return {
+      supply: supply.value,
+      events: events.value,
+      historySocial: (code, qi) => ({
+        completions: completions?.[code]?.[qi]?.value ?? null,
+        stock: stock?.[code]?.[qi]?.value ?? null,
+      }),
+    };
+  } catch (e) {
+    console.warn(`life story: ${(e as Error).message}`);
+    return null;
+  }
+}

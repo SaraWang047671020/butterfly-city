@@ -4,19 +4,58 @@
 // Deviation from the design (which put these actions on the Game_Controller): a separate controller keeps the
 // game-ui controller and its UiActions unchanged.
 import { homePremiumOf, type CharacterFiles } from '../../data/character-loader.ts';
+import type { LifeEventFile } from '../../data/life-text-loader.ts';
 import { quarterIndex } from '../../simulation/quarter.ts';
 import type { QuarterKey } from '../../types/data-files.ts';
+import type { AreaKey } from '../../types/simulation.ts';
+import { playerValue, realValue } from '../core/policy.ts';
 import type { GameSession } from '../core/session.ts';
+import { hashSeed } from '../random.ts';
+import type { ApplicationSupply, City, Track } from './applications.ts';
 import { availability, familyTenureAllowed, type Availability } from './availability.ts';
-import { applyDecision, lifeStateAt, type Character, type LifeDecision, type LifeEntry, type LifeState } from './life-state.ts';
+import type { LifeEventId } from './events.ts';
+import type { PersonalLedger } from './ledger.ts';
+import { applyDecision, lifeStateAt, type Character, type LifeDecision, type LifeEntry, type LifeState, type MyLifeDecision } from './life-state.ts';
 import { characterNumbers, type CharacterNumbers, type NumbersData } from './numbers.ts';
+import {
+  buildStoryModel,
+  decisionsOf,
+  previewDecisions,
+  type ChoicePayload,
+  type StoryChoice,
+  type StoryInputs,
+  type StoryModel,
+  type WorldPort,
+} from './story-model.ts';
 
 /** Persistence of the Character record (src/save/character-store.ts through main.ts). */
 export interface CharacterStorePort {
-  read(): { readonly character: unknown; readonly timeline: readonly unknown[]; readonly guideDone: boolean } | null;
+  read(): {
+    readonly character: unknown;
+    readonly timeline: readonly unknown[];
+    readonly guideDone: boolean;
+    readonly seed?: number | null;
+    readonly choices?: readonly unknown[];
+  } | null;
   /** `character` null forgets the Character and its Life_Timeline. */
-  write(record: { readonly character: Character | null; readonly timeline: readonly LifeEntry[]; readonly guideDone: boolean }): boolean;
+  write(record: {
+    readonly character: Character | null;
+    readonly timeline: readonly LifeEntry[];
+    readonly guideDone: boolean;
+    readonly seed: number | null;
+    readonly choices: readonly StoryChoice[];
+  }): boolean;
 }
+
+/** The life-story Data_Files and history (life-story task 4.1); null when they did not load: no Life_Events, no story. */
+export interface StoryDeps {
+  readonly supply: ApplicationSupply;
+  readonly events: LifeEventFile;
+  /** Real social housing completions and stock of a district in quarter index `qi` (history.json); null when missing. */
+  readonly historySocial: (code: string, qi: number) => { readonly completions: number | null; readonly stock: number | null };
+}
+
+export type ChooseResult = { readonly ok: true } | { readonly ok: false; readonly reason: 'no-event' | 'unavailable' | 'payload' };
 
 export interface LifeControllerDeps {
   readonly files: CharacterFiles;
@@ -27,6 +66,9 @@ export interface LifeControllerDeps {
   /** City of a district ("Taipei", "New Taipei"). */
   readonly cityOf: (code: string) => string | null;
   readonly store: CharacterStorePort;
+  readonly story?: StoryDeps | null;
+  /** A new seed for a new Character (tests pass a fixed one). */
+  readonly newSeed?: () => number;
 }
 
 export interface CharacterView {
@@ -43,6 +85,8 @@ export interface CharacterView {
   readonly available: readonly Availability[];
   readonly timeline: readonly LifeEntry[];
   readonly guideDone: boolean;
+  /** The life story (life-story spec); null without the story files. */
+  readonly story: StoryModel | null;
 }
 
 export type ApplyLifeResult = { readonly ok: true } | { readonly ok: false; readonly reason: 'no-character' | 'complete' | 'unavailable' | 'family-city' };
@@ -53,6 +97,8 @@ export class LifeController {
   private character: Character | null = null;
   private timeline: LifeEntry[] = [];
   private guide = false;
+  private seed: number | null = null;
+  private choices: StoryChoice[] = [];
   private readonly listeners = new Set<(view: CharacterView | null) => void>();
   private readonly data: Omit<NumbersData, 'commute'>;
   private readonly deps: LifeControllerDeps;
@@ -72,6 +118,8 @@ export class LifeController {
       this.character = stored.character as Character;
       this.timeline = [...(stored.timeline as LifeEntry[])];
       this.guide = stored.guideDone;
+      this.seed = stored.seed ?? null;
+      this.choices = [...((stored.choices ?? []) as StoryChoice[])];
     }
     deps.subscribeGame(() => this.publish());
   }
@@ -91,6 +139,8 @@ export class LifeController {
   createCharacter(c: Character): void {
     this.character = c;
     this.timeline = [];
+    this.choices = [];
+    this.seed = (this.deps.newSeed ?? (() => Math.floor(Math.random() * 2 ** 31)))();
     this.persist();
     this.publish();
   }
@@ -99,6 +149,8 @@ export class LifeController {
   clearCharacter(): void {
     this.character = null;
     this.timeline = [];
+    this.choices = [];
+    this.seed = null;
     this.persist();
     this.publish();
   }
@@ -129,7 +181,7 @@ export class LifeController {
   }
 
   /** Adds a Life_Decision in the Planning_Quarter (Requirement 3A.4). */
-  applyLife(decision: LifeDecision): ApplyLifeResult {
+  applyLife(decision: MyLifeDecision): ApplyLifeResult {
     const v = this.view();
     if (v === null || this.character === null) return { ok: false, reason: 'no-character' };
     if (v.planning === null) return { ok: false, reason: 'complete' };
@@ -177,6 +229,107 @@ export class LifeController {
       available: planning === null ? [] : availability(planningLife, planning, legal),
       timeline: [...this.timeline],
       guideDone: this.guide,
+      story: s === null ? null : this.storyModel(s),
+    };
+  }
+
+  /** The seed of the story: the stored one, or, for a record of version 1, one derived from the Character. */
+  private storySeed(): number {
+    return this.seed ?? hashSeed(JSON.stringify(this.character));
+  }
+
+  private storyInputs(s: Readonly<GameSession>): StoryInputs | null {
+    const story = this.deps.story;
+    const c = this.character;
+    if (story == null || c === null) return null;
+    return {
+      character: c,
+      timeline: this.timeline,
+      choices: this.choices,
+      seed: this.storySeed(),
+      supply: story.supply,
+      events: story.events.events,
+      world: this.world(s, story),
+    };
+  }
+
+  private storyModel(s: Readonly<GameSession>): StoryModel | null {
+    const i = this.storyInputs(s);
+    return i === null ? null : buildStoryModel(i);
+  }
+
+  /** Whether a Life_Event is triggered for the Planning_Quarter of `s` (Fast-forward stops, life-story 7.3). */
+  lifeEventAhead(s: Readonly<GameSession>): boolean {
+    if (this.character === null) return false;
+    return this.storyModel(s)?.pending != null;
+  }
+
+  /** Both versions in the Planning_Quarter with these decisions (the pickers of a Life_Event). */
+  previewChoice(decisions: readonly LifeDecision[]): Readonly<Record<Track, PersonalLedger>> | null {
+    const s = this.deps.session();
+    const i = s === null ? null : this.storyInputs(s);
+    return i === null ? null : previewDecisions(i, decisions);
+  }
+
+  /** Answers the pending Life_Event (life-story Requirement 2.6): its decisions and the choice are kept. */
+  choose(event: LifeEventId, option: string, payload: ChoicePayload = {}): ChooseResult {
+    const s = this.deps.session();
+    const model = s === null ? null : this.storyModel(s);
+    const pending = model?.pending ?? null;
+    if (pending === null || pending.event.id !== event) return { ok: false, reason: 'no-event' };
+    const o = pending.options.find((x) => x.id === option);
+    if (o === undefined || !o.available) return { ok: false, reason: 'unavailable' };
+    const state = lifeStateAt(this.character!, this.timeline, pending.quarter);
+    const decisions = decisionsOf(o.option, state, payload, pending.facts.offer);
+    if (decisions === null) return { ok: false, reason: 'payload' };
+    for (const decision of decisions) this.timeline.push({ quarter: pending.quarter, decision });
+    this.choices.push({ quarter: pending.quarter, event, option });
+    this.persist();
+    this.publish();
+    return { ok: true };
+  }
+
+  private world(s: Readonly<GameSession>, story: StoryDeps): WorldPort {
+    const computed = (s.computed?.central ?? []).map((c) => c.quarter);
+    const planning: QuarterKey | null = s.next === 'complete' ? null : s.next;
+    const last = computed[computed.length - 1] ?? null;
+    const rangesAt = (q: QuarterKey) => s.computed?.ranges.find((r) => r.quarter === q)?.ranges;
+    const playerStock = (code: string, qi: number): number | null => {
+      const q = computed[qi];
+      const v = q === undefined ? undefined : rangesAt(q)?.['socialHousingStock']?.[code]?.central;
+      return typeof v === 'number' ? v : null;
+    };
+    const cityByCode = new Map((s.baseline?.districts ?? []).map((d) => [d.code, d.city as City]));
+    const origin = this.deps.files.characters.origins.find((o) => o.id === this.character?.origin);
+    return {
+      computed,
+      planning,
+      numbers: (state, q, t) => {
+        const qq = computed.includes(q) || last === null ? q : last;
+        return this.numbersOf(state, Number(q.slice(0, 4)), this.rentAt(state.home, qq, t === 'player' && last !== null ? 'player' : 'real'));
+      },
+      social: (code, qi, t) => {
+        const real = story.historySocial(code, qi);
+        const realOut = { completions: real.completions ?? 0, stock: real.stock ?? 0 };
+        if (t === 'real' || qi >= computed.length) return realOut;
+        const now = playerStock(code, qi);
+        if (now === null) return realOut;
+        const before = qi === 0 ? (story.historySocial(code, -1).stock ?? now - realOut.completions) : playerStock(code, qi - 1);
+        return { completions: Math.max(0, now - (before ?? now)), stock: now };
+      },
+      districtsOf: (city) => (s.baseline?.districts ?? []).filter((d) => d.city === city).map((d) => d.code),
+      policy: (tool, field, city, q, t) => {
+        const target = { tool, field, area: city as AreaKey };
+        return t === 'player' ? playerValue(s.realTrack, s.diffs, target, q) : realValue(s.realTrack, target, q);
+      },
+      passPrice: (city, q) => {
+        const p = s.params?.[`commuterPass.price.${city}.${q}`];
+        return p !== undefined && p.kind === 'scalar' ? p.value : null;
+      },
+      cityOf: (code) => cityByCode.get(code) ?? (this.deps.cityOf(code) as City | null),
+      marriageAllowed: (state, q) => availability(state, q, this.deps.files.characters.legal).find((a) => a.kind === 'marry')?.ok === true,
+      familyCity: origin?.familyCity ?? null,
+      occupations: this.deps.files.characters.occupations.map((o) => ({ id: o.id, workCodes: o.workCodes })),
     };
   }
 
@@ -197,7 +350,13 @@ export class LifeController {
   }
 
   private persist(): void {
-    this.deps.store.write({ character: this.character, timeline: this.timeline, guideDone: this.guide });
+    this.deps.store.write({
+      character: this.character,
+      timeline: this.timeline,
+      guideDone: this.guide,
+      seed: this.character === null ? null : this.storySeed(),
+      choices: this.choices,
+    });
   }
 
   private publish(): void {

@@ -11,7 +11,7 @@ Claude Code implements this spec (recorded in `KIRO-LOG.md`). Requirements appro
 
 - [ ] 2. Data files
   - [x] 2.1 `data/config/application-supply.json`: real odds per benefit, city and year; income limits; minimum living expense; tenancy; rent shares; subsidy multipliers; each value with its source or `gap` and an assumption (design, "Research results")
-  - [ ] 2.2 `data/config/life-events.json` and `data/config/life-story.json` (drafts), copied to `public/data/` by `npm run story-files`; `data/SOURCES.md` lists the new sources (Requirement 8.2)
+  - [ ] 2.2 `data/config/life-events.json` and `data/config/life-story.json` (approved), copied to `public/data/` by `npm run story-files` with `application-supply.json` (done); `data/SOURCES.md` lists the new sources (Requirement 8.2; open)
   - [x] 2.3 Loader and validation: `src/data/life-story-loader.ts` (Application_Supply_File), `src/data/life-text-loader.ts` (Life_Event_File, Life_Story_File, `textAt`); tests of both languages, placeholders and the story keys (Requirement 9.4). Loading into the App is part of task 4.1
 
 - [ ] 3. Pure game modules (`src/game/life/`)
@@ -24,9 +24,9 @@ Claude Code implements this spec (recorded in `KIRO-LOG.md`). Requirements appro
   - [x] 3.7 Boundary test lists the new modules (play-loop 11.5); the seeded random numbers moved from `src/ui/city/random.ts` to `src/game/random.ts` (re-exported) so that `src/game` imports nothing from `src/ui`
 
 - [ ] 4. Controllers and storage
-  - [ ] 4.1 `LifeController`: pending Life_Event, `choose`, the two-version view, Story_Lines, Ending
-  - [ ] 4.2 Character_Store version 2 (`seed`, `choices`), reading version 1 records
-  - [ ] 4.3 Fast-forward stops before a quarter with a Life_Event (StopReason `life-event`, Requirement 7.3)
+  - [x] 4.1 `LifeController`: pending Life_Event, `choose`, `previewChoice`, `lifeEventAhead`, the story model in the view (`src/game/life/story-model.ts`: tracks, ledgers, the pending Life_Event with option previews and odds, the Story_Line inputs, the Ending); `main.ts` loads the files (`loadStoryDeps`)
+  - [x] 4.2 Character_Store version 2 (`seed`, `choices`), reading version 1 records
+  - [x] 4.3 Fast-forward stops before a quarter with a Life_Event (StopReason `life-event`, Requirement 7.3): `fastForward(…, stopAfter)` and the `lifeEventAhead` dependency of the GameController. Wired in `main.ts` together with the Life_Event dialog (task 5.1), so that a stop is never left unexplained
 
 - [ ] 5. Screens (approved Design_Proposal)
   - [ ] 5.1 Life_Event dialog (Dialog_Frame, radio group of options, both versions per option, odds bars, Escape chooses the "keep" option and says so)
