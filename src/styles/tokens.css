@@ -34,6 +34,11 @@
   /* Status (always paired with text or an icon, never color alone) */
   --color-ok: #62e0a0;
   --color-warn: #ffb454;
+  /* The two versions of the Character (life-story Design_Proposal, decision A): blue = your city, lavender = real
+     history. Always paired with words, never the only signal. */
+  --color-version-player: #55c1ff;
+  --color-version-real: #c9b8ff;
+  --color-draw: #ffd23f;
   --color-risk-text: #ffa3aa;
   --color-risk-bg: #3b0f1a;
   --color-risk-line: #ff7b86;

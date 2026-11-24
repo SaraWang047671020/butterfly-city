@@ -1,0 +1,381 @@
+/*
+ * The Character's life story (life-story task 5, approved Design_Proposal docs/design-proposal/life-story-proposal.html):
+ * the Life_Event dialog, the story part of the Quarter_Brief, My_Story and the Ending. Tokens only; no motion.
+ * The two versions use --color-version-player and --color-version-real, always next to words.
+ */
+.ls-you {
+  color: var(--color-version-player);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ls-real {
+  color: var(--color-version-real);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ls-story {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+}
+
+.ls-legend {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+}
+
+/* My_Story in the brief's action row: on the left, Continue on the right (Design_Proposal). */
+.ls-brief-mystory {
+  margin-right: auto;
+}
+
+/* ---- Odds bars with the Shared_Draw (decision B1) ---------------------------------------------------------------- */
+.ls-odds {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 var(--space-3);
+}
+
+.ls-bar {
+  position: relative;
+  min-height: var(--space-6);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-raised);
+}
+
+.ls-bar__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: var(--radius-sm);
+}
+
+.ls-bar--player .ls-bar__fill {
+  background: color-mix(in srgb, var(--color-version-player) 45%, transparent);
+  border-right: 2px solid var(--color-version-player);
+}
+
+.ls-bar--real .ls-bar__fill {
+  background: color-mix(in srgb, var(--color-version-real) 35%, transparent);
+  border-right: 2px solid var(--color-version-real);
+}
+
+.ls-bar__label {
+  position: relative;
+  display: block;
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.ls-bar__draw {
+  position: absolute;
+  top: calc(-1 * var(--space-1));
+  bottom: calc(-1 * var(--space-1));
+  width: 2px;
+  background: var(--color-draw);
+}
+
+.ls-bar__draw::after {
+  content: '▼';
+  position: absolute;
+  top: calc(-1 * var(--space-3));
+  left: calc(-1 * var(--space-1));
+  color: var(--color-draw);
+  font-size: var(--font-size-xs);
+}
+
+/* ---- Life_Event options -------------------------------------------------------------------------------------------- */
+.ls-options {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.ls-option {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-1) var(--space-3);
+  align-items: start;
+  padding: var(--space-3);
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-bg-raised) 70%, transparent);
+  cursor: pointer;
+}
+
+.ls-option:has(input:checked) {
+  border-color: var(--color-accent);
+}
+
+.ls-option:has(input:focus-visible) {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.ls-option.is-blocked {
+  cursor: default;
+  opacity: 0.75;
+}
+
+.ls-option__radio {
+  margin: var(--space-1) 0 0;
+  width: var(--space-4);
+  height: var(--space-4);
+  accent-color: var(--color-accent);
+}
+
+.ls-option__words {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.ls-option__name {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.ls-option__desc {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.ls-option__block {
+  color: var(--color-warn);
+  font-size: var(--font-size-sm);
+}
+
+.ls-option__vs {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 0 var(--space-2);
+  font-size: var(--font-size-sm);
+  text-align: right;
+}
+
+.ls-k {
+  color: var(--color-text-muted);
+  text-align: left;
+}
+
+.ls-option__picker {
+  grid-column: 2 / -1;
+}
+
+.ls-picker {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.ls-picker__field {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.ls-picker__field select {
+  min-height: var(--target-comfortable);
+  padding: 0 var(--space-2);
+  font: inherit;
+  color: var(--color-text-primary);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+.ls-picker__field select:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* ---- Two_Me_Panel -------------------------------------------------------------------------------------------------- */
+.ls-twome {
+  margin: var(--space-3) 0;
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+}
+
+.ls-twome table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.ls-twome th,
+.ls-twome td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-line-subtle);
+  text-align: left;
+  vertical-align: top;
+}
+
+.ls-twome tr:last-child th,
+.ls-twome tr:last-child td {
+  border-bottom: 0;
+}
+
+.ls-twome thead th {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  background: color-mix(in srgb, var(--color-bg-raised) 60%, transparent);
+}
+
+.ls-twome thead th.ls-you,
+.ls-twome thead th.ls-real {
+  font-size: var(--font-size-xs);
+}
+
+.ls-n {
+  font-variant-numeric: tabular-nums;
+}
+
+.ls-diff {
+  color: var(--color-text-secondary);
+}
+
+.ls-why summary {
+  color: var(--color-accent);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.ls-why summary:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.ls-why p {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+/* ---- My_Story and the Ending (full-size Dialog_Frame) ---------------------------------------------------------- */
+.ls-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18rem;
+  gap: var(--space-5);
+}
+
+.ls-year {
+  margin: var(--space-4) 0 var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.06em;
+}
+
+.ls-quarter {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-line-subtle);
+}
+
+.ls-quarter__q {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.ls-side {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+}
+
+.ls-card {
+  padding: var(--space-3);
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-bg-raised) 45%, transparent);
+}
+
+.ls-card h3 {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ls-kv {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-1) var(--space-3);
+  margin: var(--space-2) 0 0;
+  font-size: var(--font-size-sm);
+}
+
+.ls-kv dt {
+  color: var(--color-text-muted);
+}
+
+.ls-kv dd {
+  margin: 0;
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.ls-ending {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.ls-ending__cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.ls-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ls-chart__line30 {
+  stroke: var(--color-text-muted);
+  stroke-dasharray: 6 6;
+}
+
+.ls-chart__player,
+.ls-chart__real {
+  fill: none;
+  stroke-width: 3;
+}
+
+.ls-chart__player {
+  stroke: var(--color-version-player);
+}
+
+.ls-chart__real {
+  stroke: var(--color-version-real);
+}
+
+.ls-chart__year {
+  fill: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+@media (max-width: 63.99rem) {
+  .ls-page,
+  .ls-ending__cols {
+    grid-template-columns: 1fr;
+  }
+
+  .ls-option {
+    grid-template-columns: auto 1fr;
+  }
+
+  .ls-option__vs {
+    grid-column: 2;
+    text-align: left;
+  }
+}

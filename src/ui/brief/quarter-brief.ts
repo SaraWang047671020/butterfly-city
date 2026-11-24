@@ -1,6 +1,7 @@
 // Quarter_Brief (play-loop Requirement 6, approved design 2026-11-23): after a Computation_Run, and after any
 // Event_Cards, a dialog lists up to 3 Brief_Items, each with a Go_There_Action where it has a district. The items and
 // their order come from the Game_Controller (src/game/brief.ts); this block only words and shows them.
+import type { QuarterKey } from '../../types/data-files.ts';
 import type { BriefItemView, BriefView, UiActions } from '../../types/view.ts';
 import { createDialogManager } from '../a11y/dialog.ts';
 import type { Component } from '../component.ts';
@@ -21,8 +22,16 @@ export interface QuarterBriefProps {
   readonly blocked: boolean;
 }
 
+/** The Character's part of the brief (life-story Requirement 5.4): built for a quarter, shown above the Brief_Items. */
+export interface BriefStoryHook {
+  readonly build: (quarter: QuarterKey) => HTMLElement | null;
+  /** Extra buttons of the action row, before Continue (My_Story). */
+  readonly actions: () => readonly HTMLElement[];
+}
+
 export interface QuarterBrief extends Component<QuarterBriefProps> {
   readonly root: HTMLDialogElement;
+  setStory(hook: BriefStoryHook | null): void;
 }
 
 /** Text of one Brief_Item. Pure; exported for tests. */
@@ -58,6 +67,7 @@ export function createQuarterBrief(doc: Document, actions: UiActions, goThere: (
   const dialog = createDialogManager(doc, fallbackFocus, UI_STRINGS.dialogs.close);
   dialog.root.classList.add('ui-brief-dialog');
   let shownKey: string | null = null;
+  let story: BriefStoryHook | null = null;
 
   const close = (): void => {
     shownKey = null;
@@ -67,6 +77,8 @@ export function createQuarterBrief(doc: Document, actions: UiActions, goThere: (
   const build = (brief: BriefView): HTMLElement => {
     const body = doc.createElement('div');
     body.className = 'ui-brief';
+    const mine = story?.build(brief.quarter) ?? null;
+    if (mine !== null) body.append(mine);
     const list = doc.createElement('ul');
     list.className = 'ui-brief__items';
     if (brief.items.length === 0) {
@@ -131,6 +143,9 @@ export function createQuarterBrief(doc: Document, actions: UiActions, goThere: (
 
   return {
     root: dialog.root,
+    setStory(hook) {
+      story = hook;
+    },
     update({ brief, blocked }) {
       if (brief === null || blocked) {
         if (brief === null) close();
@@ -148,7 +163,7 @@ export function createQuarterBrief(doc: Document, actions: UiActions, goThere: (
         kicker: B.kicker,
         title: quarterLabel(brief.quarter),
         body: build(brief),
-        actions: [next],
+        actions: [...(story?.actions() ?? []), next],
         opener: null,
         onCancel: () => {
           close();

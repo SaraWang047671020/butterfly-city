@@ -1451,3 +1451,36 @@ No district is entirely without a published value.
 - `public/data/model-facts.json`:
   - `commuteModelled`, `commuteSurvey`: by `npm run story-files` with `surveyCheck` of `scripts/pipeline/commute/survey-check.ts` on the committed `commute-matrix.json`, the 2025 population of `history.json` and the `commute.jobShare.*` parameters of `params.json`; the survey figure is the one of that module.
   - `backtestResult`: by `npm run backtest`, the `templates.backtestResult` sentences of `model-limits.json` filled with the tpass-2023 result of `docs/BACKTEST.md`.
+
+## The Character's life story (life-story spec)
+
+- `public/data/application-supply.json`, `public/data/life-events.json`, `public/data/life-story.json`: copies of `data/config/`, made by `npm run story-files`. Texts approved by the user on 2026-11-24.
+- Research notes with every value, URL and access date (2026-11-24): `data/research/life-story-social-housing-2026-11-24.md`, `data/research/life-story-rent-subsidy-2026-11-24.md`.
+- Values that no source gives are marked in the file with an assumption: real social housing odds of years without a dated round (Taipei 6.5 %, New Taipei 11.5 %), income limits and minimum living expenses of missing years (interpolated), the 4-quarter rent subsidy period, the treatment of the Character as under 40, the largest-multiplier rule, and the lease interval of the `leaseEnd` Life_Event (8 quarters).
+- The `passLaunch` Life_Event text uses the 2016 public transport share of commuters (Taipei 47.6 %, New Taipei 34.0 %), MOTC 111年民眾日常使用運具狀況調查摘要分析, 附表6.
+
+| Id | Status | Title | URL |
+|---|---|---|---|
+| `tp-sh-2018` | secondary | 松山健康公宅中籤率4.73% 遭批抽籤有漏洞 (PTS, 2018-03-29) | https://news.pts.org.tw/article/389739 |
+| `tp-sh-2019` | secondary | 捷運、租金連年漲 行天宮公宅中籤率1.7% (TVBS, 2019-04-23): 5 sites, 167 units, 4,163 applications | https://news.tvbs.com.tw/life/1120567 |
+| `tp-sh-2021` | secondary | 北市瑞光社會住宅抽籤結束 整體中籤率約6.9％ (好房網, 2021-05-19) | https://news.housefun.com.tw/news/article/174372297745.html |
+| `tp-sh-2022` | secondary | 北市4社宅聯合招租中籤率僅5.8％ (中時, 2022-05-13) | https://www.chinatimes.com/realtimenews/20220513002507-260405 |
+| `tp-sh-2025` | secondary | 北市社宅抽籤…住都中心全說了：中籤率7.5% (台灣好新聞, 2025-05-06); historical average 5–8 % | https://www.taisounds.com/news/content/71/188881 |
+| `nt-sh-2020` | secondary | 7,400元入住7字頭央北 中籤率近三成 (自由時報, 2020-06-02): 926 drawn of 3,202 | https://estate.ltn.com.tw/article/9738 |
+| `nt-sh-2025` | secondary | 新北青年社宅抽籤完成！三峽國光二期中籤率逾3成 (工商時報, 2025-10-28) | https://www.ctee.com.tw/news/20251028701751-431401 |
+| `ngo-odds` | secondary | 台灣社會住宅中籤率一覽表 (社會住宅推動聯盟, NGO list without dates) | http://socialhousingtw.blogspot.com/2019/05/1085.html |
+| `tp-rules` | official | 臺北市社會住宅出租辦法 (2017 text; full revision 2023-10-27) | https://laws.gov.taipei/law/LawSearch/LawExport/FL071776?type=0 |
+| `nt-rules` | official | 新北市社會住宅承租辦法 (2021-10-13) | https://nthurc.org.tw/storage/legal-advocacy-social-housing-download-file/syNnSQeieTrAWlznJ6ynokzxv.pdf |
+| `tp-limits` | official | Taipei social housing income limits: 健康 notice 2018, 東明 FAQ 2019, 安心樂租網 2020, 莒光 FAQ 2022, 南港機廠 handbook 2025 | https://rent.thurc.org.taipei/news/detail/89 |
+| `nt-limits` | official | New Taipei youth social housing income limits: 三峽國光 notice 2021, 城鄉局 notice 2023, NTHURC 2024 and 2025 | https://www.nthurc.org.tw/news/426 |
+| `rent-share` | official | Taipei list rent 85 % of market (青年社會住宅租金分級機制之研究); New Taipei 80 % for general households | https://www.rde.ntpc.gov.tw/userfiles/1160700/files/10青年社會住宅租金分級機制之研究.pdf |
+| `tp-rs` | official | 臺北市歷年住宅補貼受理情形統計表 (data.gov.tw 132047) | https://data.gov.tw/en/datasets/132047 |
+| `nt-rs` | official | 新北市歷年住宅補貼受理情形統計表 (data.gov.tw 122939) | https://data.gov.tw/dataset/122939 |
+| `rs-rules` | official | 整合住宅補貼資源實施方案 (內政部, 110年4月 revision), §貳.五 | https://www.nlma.gov.tw/uploads/files/0afab4b2444d39f041633e9c638dcd65.pdf |
+| `rs-2022` | official | 減輕租客負擔 300億元中央擴大租金補貼上路 (行政院, 2022-06-30) | https://www.ey.gov.tw/Page/9277F759E41CCD91/e32d04b4-4c2c-42f6-94c0-ea68dd18ba68 |
+| `rs-taipei-2018` | official | 臺北市都發局 news release 2018-02-14: single applicants must be 40 or over | https://udd.gov.taipei/assets/38-10850/Documents/1070214%E5%88%86%E7%B4%9A%E7%A7%9F%E5%B1%8B%E8%A3%9C%E8%B2%BC%E6%96%B0%E8%81%9E%E7%A8%BF.pdf |
+| `mle` | official | 最低生活費 100–109年度 (衛福部); Taipei 2025 from 臺北輕鬆住 plan; 2022 and 2025 limits ÷ 3 | https://mohw.gov.tw/dl-56565-342d1532-05b6-4e52-8197-9f4123087def.html |
+| `rs-multipliers` | official | 300億元中央擴大租金補貼專案 (行政院, 2022-03-31) | https://www.ey.gov.tw/Page/448DE008087A1971/f655f525-71ad-45a8-838e-414d85a88dab |
+| `nlma-gender` | official | 本署居住權相關性平統計資料 (國土管理署, 2025-11) | https://www.nlma.gov.tw/uploads/files/b0367e31345c69c4685a21d9db796fa3.pdf |
+| `tp-rs-gender` | official | 臺北市住宅補貼辦理情形 10890-02-01 (113年) | https://udd.gov.taipei/assets/ryqFDkS5nf51tnVwRGM8JD/attachs/10890-02-01臺北市住宅補貼辦理情形.pdf |
+| `tp-transit-gender` | official | 臺北市政府主計處 市政統計週報 第1341號 (2025-07-16), citing MOTC | https://www-ws.gov.taipei/001/Upload/367/relfile/46908/9442607/0bbf97f1-faca-4f2c-b296-3013a137e3f0.pdf |

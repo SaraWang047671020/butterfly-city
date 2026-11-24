@@ -27,7 +27,7 @@ import { createIndicatorSwitch, createLegend, createIndicatorText, createPriceTo
 import { createDistrictList } from './panels/district-list.ts';
 import { createDistrictPanel } from './panels/district-panel.ts';
 import { createPolicyCards } from './policy/policy-cards.ts';
-import { createQuarterBrief, type GoThere } from './brief/quarter-brief.ts';
+import { createQuarterBrief, type BriefStoryHook, type GoThere } from './brief/quarter-brief.ts';
 import { createCityReport } from './report/city-report.ts';
 import { createDistrictCard } from './district-card.ts';
 import { createTimelineView } from './timeline/timeline-view.ts';
@@ -84,6 +84,8 @@ export interface App {
   closeReport(): void;
   /** Adds a City_Report tab whose content is built when it is shown (play-loop Requirement 7.2). */
   addReportTab(name: string, title: string, onShow: (host: HTMLElement) => void): HTMLElement;
+  /** The Character's part of the Quarter_Brief (life-story Requirement 5.4). */
+  setBriefStory(hook: BriefStoryHook | null): void;
   /** Renders `controller.screen()` now and after every publish. Returns a detach function. */
   attach(controller: AppController): () => void;
 }
@@ -440,6 +442,7 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
       return b;
     },
     menuSection: (name) => menu.section(name),
+    setBriefStory: (hook) => quarterBrief.setStory(hook),
     addTurnButton(label, className, onClick) {
       const b = button(doc, `ui-turn-button ${className}`, label, onClick);
       headerHost.insertBefore(b, headerHost.querySelector('.ui-turn-steps'));
