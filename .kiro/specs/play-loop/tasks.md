@@ -20,11 +20,11 @@ Implemented by Claude Code, not Kiro (user decision 2026-11-23, to save Kiro cre
   - [x] 2A.2 Key and Placeholder parity test; quarter format per language; unit and city names per language
   - [x] 2A.3 Chinese district, Landmark and station names from the boundary and TDX files (pipeline and `npm run stations`), with sources
 
-- [ ] 3. Data
-  - [ ] 3.1 `src/data/character-loader.ts`: fetch and validate the Character_File and the Wage_File (Requirement 2.3 to 2.5)
-  - [ ] 3.2 DGBAS earnings download in `scripts/download.ts`, `scripts/story/wages.ts`, `public/data/wages.json`, `data/SOURCES.md` row (Requirement 3.4); confirm the industry codes and the coverage of the education industry against the table
-  - [ ] 3.3 Copy the Character_File in `npm run story-files`; new item of `model-limits.json` on regular earnings and industry means (drafted for the user)
-  - [ ] 3.4 Validator tests and the committed-file check (Requirement 11.1)
+- [x] 3. Data
+  - [x] 3.1 `src/data/character-loader.ts`: fetch and validate the Character_File and the Wage_File (Requirement 2.3 to 2.5)
+  - [x] 3.2 DGBAS earnings download in `scripts/download.ts`, `scripts/story/wages.ts`, `public/data/wages.json`, `data/SOURCES.md` row (Requirement 3.4); confirm the industry codes and the coverage of the education industry against the table
+  - [x] 3.3 Copy the Character_File in `npm run story-files`; the Character_File is bilingual (schema 2, English approved, Chinese draft). The `model-limits.json` item on regular earnings and industry means moves to task 6, when the Character first appears on screen
+  - [x] 3.4 Validator tests and the committed-file check (Requirement 11.1)
 
 - [ ] 4. Pure logic (`src/game/life/`, `src/game/brief.ts`)
   - [ ] 4.1 `life-state.ts` (`lifeStateAt`)

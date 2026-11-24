@@ -1,124 +1,333 @@
 {
-  "schemaVersion": 1,
-  "status": "approved",
-  "notes": "Drafted by Claude Code and approved by the product owner on 2026-11-23 (play-loop Requirement 10.4). Placeholders in braces are filled by the game. Industry codes are DGBAS industry sections and are checked against the earnings table when the Wage_File download is added.",
+  "schemaVersion": 2,
+  "status": {
+    "en": "approved",
+    "zh-Hant": "draft"
+  },
+  "notes": "English drafted by Claude Code and approved by the product owner on 2026-11-23; Traditional Chinese drafted by Claude Code on 2026-11-24 for the product owner to review (play-loop Requirements 10.4, 12.8). Every displayed text is { \"en\", \"zh-Hant\" }. Placeholders in braces are filled by the game. Industry codes are the DGBAS earnings industries of data.gov.tw 9663 (scripts/story/wages.ts). The Quarter_Brief sentences moved to the UI_Strings_Module in task 9.",
   "origins": [
     {
       "id": "taipei",
-      "name": "Born in Taipei",
-      "text": "You grew up in Taipei City. Your family still lives there, so living with them is one option.",
+      "name": {
+        "en": "Born in Taipei",
+        "zh-Hant": "臺北出生"
+      },
+      "text": {
+        "en": "You grew up in Taipei City. Your family still lives there, so living with them is one option.",
+        "zh-Hant": "你在臺北市長大，家人還住在那裡，所以住家裡也是一個選項。"
+      },
       "familyCity": "Taipei"
     },
     {
       "id": "newtaipei",
-      "name": "Born in New Taipei",
-      "text": "You grew up in New Taipei City. Your family still lives there, so living with them is one option.",
+      "name": {
+        "en": "Born in New Taipei",
+        "zh-Hant": "新北出生"
+      },
+      "text": {
+        "en": "You grew up in New Taipei City. Your family still lives there, so living with them is one option.",
+        "zh-Hant": "你在新北市長大，家人還住在那裡，所以住家裡也是一個選項。"
+      },
       "familyCity": "New Taipei"
     },
     {
       "id": "elsewhere",
-      "name": "Moved from elsewhere in Taiwan",
-      "text": "You grew up outside the two cities and moved here for work. Your family lives far away, so you rent from the first day.",
+      "name": {
+        "en": "Moved from elsewhere in Taiwan",
+        "zh-Hant": "從外縣市來"
+      },
+      "text": {
+        "en": "You grew up outside the two cities and moved here for work. Your family lives far away, so you rent from the first day.",
+        "zh-Hant": "你在雙北以外長大，為了工作搬來這裡。家人住得遠，所以你從第一天就租屋。"
+      },
       "familyCity": null
     }
   ],
   "occupations": [
     {
       "id": "software",
-      "name": "Software engineer",
-      "text": "Builds apps and systems for a tech company.",
+      "name": {
+        "en": "Software engineer",
+        "zh-Hant": "軟體工程師"
+      },
+      "text": {
+        "en": "Builds apps and systems for a tech company.",
+        "zh-Hant": "在科技公司開發應用程式和系統。"
+      },
       "industry": "J",
-      "industryName": "Publishing, audiovisual production, information and communication",
-      "wageNote": "Industry mean of regular earnings; includes every job in the industry, not only engineers.",
-      "workCodes": ["63000100", "63000090", "63000020"]
+      "industryName": {
+        "en": "Publishing, audiovisual production, information and communication",
+        "zh-Hant": "出版影音及資通訊業"
+      },
+      "wageNote": {
+        "en": "Industry mean of regular earnings; includes every job in the industry, not only engineers.",
+        "zh-Hant": "整個產業經常性薪資的平均，包含產業裡的所有職位，不只工程師。"
+      },
+      "workCodes": [
+        "63000100",
+        "63000090",
+        "63000020"
+      ]
     },
     {
       "id": "bank",
-      "name": "Bank clerk",
-      "text": "Serves customers and handles accounts at a bank branch or head office.",
+      "name": {
+        "en": "Bank clerk",
+        "zh-Hant": "銀行行員"
+      },
+      "text": {
+        "en": "Serves customers and handles accounts at a bank branch or head office.",
+        "zh-Hant": "在銀行分行或總行服務客戶、處理帳戶。"
+      },
       "industry": "K",
-      "industryName": "Financial and insurance activities",
-      "wageNote": "Industry mean of regular earnings; includes managers and specialists.",
-      "workCodes": ["63000020", "63000040", "63000050"]
+      "industryName": {
+        "en": "Financial and insurance activities",
+        "zh-Hant": "金融及保險業"
+      },
+      "wageNote": {
+        "en": "Industry mean of regular earnings; includes managers and specialists.",
+        "zh-Hant": "整個產業經常性薪資的平均，包含主管和專業人員。"
+      },
+      "workCodes": [
+        "63000020",
+        "63000040",
+        "63000050"
+      ]
     },
     {
       "id": "nurse",
-      "name": "Nurse",
-      "text": "Works shifts on a hospital ward.",
+      "name": {
+        "en": "Nurse",
+        "zh-Hant": "護理師"
+      },
+      "text": {
+        "en": "Works shifts on a hospital ward.",
+        "zh-Hant": "在醫院病房輪班工作。"
+      },
       "industry": "Q",
-      "industryName": "Human health and social work activities",
-      "wageNote": "Industry mean of regular earnings; includes doctors, so it is above a typical nurse's pay.",
-      "workCodes": ["63000050", "63000120", "65000010", "65000170"]
+      "industryName": {
+        "en": "Human health and social work activities",
+        "zh-Hant": "醫療保健及社會工作服務業"
+      },
+      "wageNote": {
+        "en": "Industry mean of regular earnings; includes doctors, so it is above a typical nurse's pay.",
+        "zh-Hant": "整個產業經常性薪資的平均，包含醫師，所以會高於一般護理師的薪水。"
+      },
+      "workCodes": [
+        "63000050",
+        "63000120",
+        "65000010",
+        "65000170"
+      ]
     },
     {
       "id": "tutor",
-      "name": "Cram school teacher",
-      "text": "Teaches after-school classes at a private cram school.",
+      "name": {
+        "en": "Cram school teacher",
+        "zh-Hant": "補習班老師"
+      },
+      "text": {
+        "en": "Teaches after-school classes at a private cram school.",
+        "zh-Hant": "在私立補習班教課後課程。"
+      },
       "industry": "P",
-      "industryName": "Education",
-      "wageNote": "The earnings survey does not cover public or private schools, so this occupation is a cram school teacher, not a school teacher.",
-      "workCodes": ["63000030", "65000010", "65000030", "63000110"]
+      "industryName": {
+        "en": "Education",
+        "zh-Hant": "教育業"
+      },
+      "wageNote": {
+        "en": "The earnings survey does not cover public or private schools, so this occupation is a cram school teacher, not a school teacher.",
+        "zh-Hant": "薪資調查不包含公私立各級學校，所以這個職業是補習班老師，不是學校老師。"
+      },
+      "workCodes": [
+        "63000030",
+        "65000010",
+        "65000030",
+        "63000110"
+      ]
     },
     {
       "id": "factory",
-      "name": "Factory technician",
-      "text": "Runs and maintains machines on a production line.",
+      "name": {
+        "en": "Factory technician",
+        "zh-Hant": "工廠技術員"
+      },
+      "text": {
+        "en": "Runs and maintains machines on a production line.",
+        "zh-Hant": "操作和維護生產線上的機器。"
+      },
       "industry": "C",
-      "industryName": "Manufacturing",
-      "wageNote": "Industry mean of regular earnings.",
-      "workCodes": ["65000130", "65000150", "65000050", "65000070"]
+      "industryName": {
+        "en": "Manufacturing",
+        "zh-Hant": "製造業"
+      },
+      "wageNote": {
+        "en": "Industry mean of regular earnings.",
+        "zh-Hant": "整個產業經常性薪資的平均。"
+      },
+      "workCodes": [
+        "65000130",
+        "65000150",
+        "65000050",
+        "65000070"
+      ]
     },
     {
       "id": "retail",
-      "name": "Shop assistant",
-      "text": "Works at a department store or a chain shop.",
+      "name": {
+        "en": "Shop assistant",
+        "zh-Hant": "零售店員"
+      },
+      "text": {
+        "en": "Works at a department store or a chain shop.",
+        "zh-Hant": "在百貨公司或連鎖店工作。"
+      },
       "industry": "G",
-      "industryName": "Wholesale and retail trade",
-      "wageNote": "Industry mean of regular earnings; includes wholesale trade.",
-      "workCodes": ["65000010", "63000020", "63000040", "65000050"]
+      "industryName": {
+        "en": "Wholesale and retail trade",
+        "zh-Hant": "批發及零售業"
+      },
+      "wageNote": {
+        "en": "Industry mean of regular earnings; includes wholesale trade.",
+        "zh-Hant": "整個產業經常性薪資的平均，包含批發業。"
+      },
+      "workCodes": [
+        "65000010",
+        "63000020",
+        "63000040",
+        "65000050"
+      ]
     },
     {
       "id": "food",
-      "name": "Restaurant worker",
-      "text": "Cooks and serves at a restaurant.",
+      "name": {
+        "en": "Restaurant worker",
+        "zh-Hant": "餐飲業員工"
+      },
+      "text": {
+        "en": "Cooks and serves at a restaurant.",
+        "zh-Hant": "在餐廳烹調和服務。"
+      },
       "industry": "I",
-      "industryName": "Accommodation and food service activities",
-      "wageNote": "Industry mean of regular earnings; includes hotels.",
-      "workCodes": ["63000030", "63000040", "63000020", "65000010"]
+      "industryName": {
+        "en": "Accommodation and food service activities",
+        "zh-Hant": "住宿及餐飲業"
+      },
+      "wageNote": {
+        "en": "Industry mean of regular earnings; includes hotels.",
+        "zh-Hant": "整個產業經常性薪資的平均，包含旅館業。"
+      },
+      "workCodes": [
+        "63000030",
+        "63000040",
+        "63000020",
+        "65000010"
+      ]
     },
     {
       "id": "logistics",
-      "name": "Warehouse and delivery worker",
-      "text": "Sorts parcels at a logistics centre and drives delivery routes.",
+      "name": {
+        "en": "Warehouse and delivery worker",
+        "zh-Hant": "倉儲物流人員"
+      },
+      "text": {
+        "en": "Sorts parcels at a logistics centre and drives delivery routes.",
+        "zh-Hant": "在物流中心分揀包裹，也負責配送路線。"
+      },
       "industry": "H",
-      "industryName": "Transportation and storage",
-      "wageNote": "Industry mean of regular earnings; includes airline and shipping staff.",
-      "workCodes": ["65000170", "65000150", "65000070"]
+      "industryName": {
+        "en": "Transportation and storage",
+        "zh-Hant": "運輸及倉儲業"
+      },
+      "wageNote": {
+        "en": "Industry mean of regular earnings; includes airline and shipping staff.",
+        "zh-Hant": "整個產業經常性薪資的平均，包含航空和航運人員。"
+      },
+      "workCodes": [
+        "65000170",
+        "65000150",
+        "65000070"
+      ]
     }
   ],
   "dwellings": [
-    { "persons": 1, "size": 20, "status": "gap", "assumption": "About 6 ping: a studio or a small one-room flat." },
-    { "persons": 2, "size": 33, "status": "gap", "assumption": "About 10 ping: a one-bedroom flat." },
-    { "persons": 3, "size": 50, "status": "gap", "assumption": "About 15 ping: a two-bedroom flat." },
-    { "persons": 4, "size": 66, "status": "gap", "assumption": "About 20 ping: a three-bedroom flat." },
-    { "persons": 5, "size": 80, "status": "gap", "assumption": "About 24 ping: a three-bedroom flat with a larger living room." }
+    {
+      "persons": 1,
+      "size": 20,
+      "status": "gap",
+      "assumption": {
+        "en": "About 6 ping: a studio or a small one-room flat.",
+        "zh-Hant": "約 6 坪：套房或小型一房。"
+      }
+    },
+    {
+      "persons": 2,
+      "size": 33,
+      "status": "gap",
+      "assumption": {
+        "en": "About 10 ping: a one-bedroom flat.",
+        "zh-Hant": "約 10 坪：一房一廳。"
+      }
+    },
+    {
+      "persons": 3,
+      "size": 50,
+      "status": "gap",
+      "assumption": {
+        "en": "About 15 ping: a two-bedroom flat.",
+        "zh-Hant": "約 15 坪：兩房。"
+      }
+    },
+    {
+      "persons": 4,
+      "size": 66,
+      "status": "gap",
+      "assumption": {
+        "en": "About 20 ping: a three-bedroom flat.",
+        "zh-Hant": "約 20 坪：三房。"
+      }
+    },
+    {
+      "persons": 5,
+      "size": 80,
+      "status": "gap",
+      "assumption": {
+        "en": "About 24 ping: a three-bedroom flat with a larger living room.",
+        "zh-Hant": "約 24 坪：三房，客廳較大。"
+      }
+    }
   ],
   "appearance": {
-    "body": ["a", "b", "c"],
-    "hair": ["short", "medium", "long", "tied", "none"],
-    "colour": ["teal", "amber", "rose", "slate", "lime", "violet"]
-  },
-  "pronouns": {
-    "she": { "label": "she / her", "subject": "she", "object": "her", "possessive": "her" },
-    "he": { "label": "he / him", "subject": "he", "object": "him", "possessive": "his" },
-    "they": { "label": "they / them", "subject": "they", "object": "them", "possessive": "their" }
+    "body": [
+      "a",
+      "b",
+      "c"
+    ],
+    "hair": [
+      "short",
+      "medium",
+      "long",
+      "tied",
+      "none"
+    ],
+    "colour": [
+      "teal",
+      "amber",
+      "rose",
+      "slate",
+      "lime",
+      "violet"
+    ]
   },
   "legal": [
     {
       "id": "same-sex-marriage",
       "from": "2019Q2",
       "date": "2019-05-24",
-      "text": "Before 24 May 2019, the law of Taiwan did not allow two people of the same sex to register a marriage. From that date, the Act for Implementation of J.Y. Interpretation No. 748 allows it.",
+      "text": {
+        "en": "Before 24 May 2019, the law of Taiwan did not allow two people of the same sex to register a marriage. From that date, the Act for Implementation of J.Y. Interpretation No. 748 allows it.",
+        "zh-Hant": "2019 年 5 月 24 日以前，臺灣的法律不允許兩位同性別的人登記結婚。從那天起，《司法院釋字第七四八號解釋施行法》允許登記。"
+      },
       "source": {
         "citation": "Act for Implementation of J.Y. Interpretation No. 748, in force 2019-05-24 (Laws & Regulations Database of the Republic of China)",
         "url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=B0000008"
@@ -126,91 +335,278 @@
     }
   ],
   "creation": {
-    "title": "Who are you in 2015?",
-    "intro": "You govern Taipei and New Taipei, and you also live here. Decide who you are at the start of 2015. The big decisions of your life come later, one quarter at a time.",
-    "steps": {
-      "who": "Name and look",
-      "roots": "Where you come from",
-      "work": "Your first job",
-      "home": "Where you live"
+    "title": {
+      "en": "Who are you in 2015?",
+      "zh-Hant": "2015 年的你是誰？"
     },
-    "pronounNote": "Your pronouns and look change how you appear and how the game refers to you. They change no number.",
-    "wageLine": "Regular monthly earnings in {year}: TWD {wage} (industry mean, {source}).",
-    "homeLine": "Rent in {district}: TWD {rentPerM2} per m² per month. A {size} m² home costs TWD {rent} a month.",
-    "familyLine": "You live with your family in {district} and pay no rent.",
-    "summary": "In {quarter}, rent takes {rentBurden}% of your income and your trip to work takes {commuteMinutes} minutes.",
-    "summaryNoTrip": "In {quarter}, rent takes {rentBurden}% of your income. You work in the district where you live.",
-    "random": "Random character",
-    "confirm": "Start my life in 2015"
+    "intro": {
+      "en": "You govern Taipei and New Taipei, and you also live here. Decide who you are at the start of 2015. The big decisions of your life come later, one quarter at a time.",
+      "zh-Hant": "你治理臺北和新北，也住在這裡。先決定 2015 年初的你是誰，人生的重大決定之後會一季一季慢慢來。"
+    },
+    "steps": {
+      "who": {
+        "en": "Name and look",
+        "zh-Hant": "名字和外觀"
+      },
+      "roots": {
+        "en": "Where you come from",
+        "zh-Hant": "出身"
+      },
+      "work": {
+        "en": "Your first job",
+        "zh-Hant": "第一份工作"
+      },
+      "home": {
+        "en": "Where you live",
+        "zh-Hant": "住在哪裡"
+      }
+    },
+    "pronounNote": {
+      "en": "Your pronouns and look change how you appear and how the game refers to you. They change no number.",
+      "zh-Hant": "稱呼和外觀只改變你的樣子，以及遊戲怎麼稱呼你，不會改變任何數字。"
+    },
+    "wageLine": {
+      "en": "Regular monthly earnings in {year}: TWD {wage} (industry mean, {source}).",
+      "zh-Hant": "{year} 年每月經常性薪資：{wage} 元（產業平均，{source}）。"
+    },
+    "homeLine": {
+      "en": "Rent in {district}: TWD {rentPerM2} per m² per month. A {size} m² home costs TWD {rent} a month.",
+      "zh-Hant": "{district}的租金：每平方公尺每月 {rentPerM2} 元。{size} 平方公尺的住處每月 {rent} 元。"
+    },
+    "familyLine": {
+      "en": "You live with your family in {district} and pay no rent.",
+      "zh-Hant": "你和家人住在{district}，不用付房租。"
+    },
+    "summary": {
+      "en": "In {quarter}, rent takes {rentBurden}% of your income and your trip to work takes {commuteMinutes} minutes.",
+      "zh-Hant": "{quarter}，房租占你收入的 {rentBurden}%，上班單程 {commuteMinutes} 分鐘。"
+    },
+    "summaryNoTrip": {
+      "en": "In {quarter}, rent takes {rentBurden}% of your income. You work in the district where you live.",
+      "zh-Hant": "{quarter}，房租占你收入的 {rentBurden}%。你在住的那一區上班。"
+    },
+    "random": {
+      "en": "Random character",
+      "zh-Hant": "隨機角色"
+    },
+    "confirm": {
+      "en": "Start my life in 2015",
+      "zh-Hant": "從 2015 年開始我的人生"
+    }
   },
   "decisions": {
-    "title": "My life in {quarter}",
-    "intro": "Each decision takes effect this quarter and changes only your own numbers, not the city's.",
-    "compare": "With this decision: rent {rentBurdenWith}% of income, trip to work {commuteWith} minutes. Without it: {rentBurdenWithout}% and {commuteWithout} minutes.",
-    "confirm": "Confirm",
+    "title": {
+      "en": "My life in {quarter}",
+      "zh-Hant": "{quarter}的我"
+    },
+    "intro": {
+      "en": "Each decision takes effect this quarter and changes only your own numbers, not the city's.",
+      "zh-Hant": "每個決定從這一季生效，只改變你自己的數字，不會改變城市。"
+    },
+    "compare": {
+      "en": "With this decision: rent {rentBurdenWith}% of income, trip to work {commuteWith} minutes. Without it: {rentBurdenWithout}% and {commuteWithout} minutes.",
+      "zh-Hant": "做這個決定：房租占收入 {rentBurdenWith}%，上班 {commuteWith} 分鐘。不做：{rentBurdenWithout}% 和 {commuteWithout} 分鐘。"
+    },
+    "confirm": {
+      "en": "Confirm",
+      "zh-Hant": "確認"
+    },
     "move": {
-      "title": "Move home",
-      "text": "Choose a district and whether you rent or live with family."
+      "title": {
+        "en": "Move home",
+        "zh-Hant": "搬家"
+      },
+      "text": {
+        "en": "Choose a district and whether you rent or live with family.",
+        "zh-Hant": "選一個行政區，以及要租屋還是住家裡。"
+      }
     },
     "changeJob": {
-      "title": "Change job",
-      "text": "Choose a new occupation and where you work."
+      "title": {
+        "en": "Change job",
+        "zh-Hant": "換工作"
+      },
+      "text": {
+        "en": "Choose a new occupation and where you work.",
+        "zh-Hant": "選新的職業和上班地點。"
+      }
     },
     "partnerIn": {
-      "title": "A partner moves in",
-      "text": "Your partner joins your household. Choose their job, where they work, their pronouns and look.",
-      "sameSexQuestion": "Are you and your partner the same sex in law?",
-      "sameSexNote": "This answer only decides which marriage law of the time applies. It changes no number."
+      "title": {
+        "en": "A partner moves in",
+        "zh-Hant": "伴侶搬進來"
+      },
+      "text": {
+        "en": "Your partner joins your household. Choose their job, where they work, their pronouns and look.",
+        "zh-Hant": "伴侶加入你的家庭。選擇對方的工作、上班地點、稱呼和外觀。"
+      },
+      "sameSexQuestion": {
+        "en": "Are you and your partner the same sex in law?",
+        "zh-Hant": "你和伴侶在法律上是同性嗎？"
+      },
+      "sameSexNote": {
+        "en": "This answer only decides which marriage law of the time applies. It changes no number.",
+        "zh-Hant": "這個回答只用來決定適用當時哪一條婚姻法律，不會改變任何數字。"
+      }
     },
     "partnerOut": {
-      "title": "Your partner moves out",
-      "text": "Your partner leaves the household, and their income and space leave with them."
+      "title": {
+        "en": "Your partner moves out",
+        "zh-Hant": "伴侶搬出去"
+      },
+      "text": {
+        "en": "Your partner leaves the household, and their income and space leave with them.",
+        "zh-Hant": "伴侶離開這個家，對方的收入和需要的空間也跟著離開。"
+      }
     },
     "marry": {
-      "title": "Marry",
-      "text": "You and your partner register your marriage."
+      "title": {
+        "en": "Marry",
+        "zh-Hant": "結婚"
+      },
+      "text": {
+        "en": "You and your partner register your marriage.",
+        "zh-Hant": "你和伴侶登記結婚。"
+      }
     },
     "childJoins": {
-      "title": "A child joins the household",
-      "text": "Your household grows by one child, who needs space but has no income."
+      "title": {
+        "en": "A child joins the household",
+        "zh-Hant": "家裡多一個小孩"
+      },
+      "text": {
+        "en": "Your household grows by one child, who needs space but has no income.",
+        "zh-Hant": "家裡多了一個小孩，需要空間，但沒有收入。"
+      }
     },
     "parentJoins": {
-      "title": "A parent moves in",
-      "text": "One of your parents comes to live with you. They need space and have no earnings in this game."
+      "title": {
+        "en": "A parent moves in",
+        "zh-Hant": "長輩搬來同住"
+      },
+      "text": {
+        "en": "One of your parents comes to live with you. They need space and have no earnings in this game.",
+        "zh-Hant": "你的一位家長搬來和你住。需要空間，在這個遊戲裡沒有收入。"
+      }
     },
     "parentLeaves": {
-      "title": "Your parent moves out",
-      "text": "Your parent no longer lives with you."
+      "title": {
+        "en": "Your parent moves out",
+        "zh-Hant": "長輩搬出去"
+      },
+      "text": {
+        "en": "Your parent no longer lives with you.",
+        "zh-Hant": "家長不再和你同住。"
+      }
     },
     "unavailable": {
-      "fixedQuarter": "Computed quarters are fixed. Decisions apply from {quarter}.",
-      "noPartner": "You have no partner in your household.",
-      "hasPartner": "You already live with a partner.",
-      "married": "You are already married.",
-      "maxChildren": "This game allows up to 3 children in a household.",
-      "noParent": "No parent lives with you.",
-      "hasParent": "A parent already lives with you.",
+      "fixedQuarter": {
+        "en": "Computed quarters are fixed. Decisions apply from {quarter}.",
+        "zh-Hant": "已計算的季度不能更改，決定從{quarter}起生效。"
+      },
+      "noPartner": {
+        "en": "You have no partner in your household.",
+        "zh-Hant": "你的家裡沒有伴侶。"
+      },
+      "hasPartner": {
+        "en": "You already live with a partner.",
+        "zh-Hant": "你已經和伴侶同住。"
+      },
+      "married": {
+        "en": "You are already married.",
+        "zh-Hant": "你已經結婚了。"
+      },
+      "maxChildren": {
+        "en": "This game allows up to 3 children in a household.",
+        "zh-Hant": "這個遊戲裡一個家最多 3 個小孩。"
+      },
+      "noParent": {
+        "en": "No parent lives with you.",
+        "zh-Hant": "沒有長輩和你同住。"
+      },
+      "hasParent": {
+        "en": "A parent already lives with you.",
+        "zh-Hant": "已經有長輩和你同住。"
+      },
       "familyCity": "You can live with family only in the city where your family lives."
     }
   },
-  "brief": {
-    "title": "{quarter}: what changed",
-    "completion": "{units} more social homes than in real history are finished in {district}.",
-    "majorEvent": "{event}",
-    "indicatorUp": "{indicator} in {district} is now {value} {unit}, {diff} {unit} above real history.",
-    "indicatorDown": "{indicator} in {district} is now {value} {unit}, {diff} {unit} below real history.",
-    "none": "No district changed noticeably from real history this quarter.",
-    "goThere": "Go there",
-    "yourQuarter": "Your quarter",
-    "yourRent": "Rent takes {rentBurden}% of your income ({change} since last quarter; {realDiff} compared with real history).",
-    "yourCommute": "Your trip to work takes {commuteMinutes} minutes.",
-    "continue": "Continue"
-  },
   "guide": [
-    "These cards are your policy tools. Open one to see what it costs and what it changes.",
-    "Move the slider, read the preview, then apply. Nothing changes until you apply.",
-    "Press Next quarter. The city lives through three months with your policy.",
-    "The brief lists what changed. Go there to see it on the street.",
-    "All the numbers, the timeline and the model limits are in the City report."
-  ]
+    {
+      "en": "These cards are your policy tools. Open one to see what it costs and what it changes.",
+      "zh-Hant": "這些卡片是你的政策工具。打開一張，看看它要花多少錢、會改變什麼。"
+    },
+    {
+      "en": "Move the slider, read the preview, then apply. Nothing changes until you apply.",
+      "zh-Hant": "移動拉桿、看試算，再按套用。按下套用之前，什麼都不會改變。"
+    },
+    {
+      "en": "Press Next quarter. The city lives through three months with your policy.",
+      "zh-Hant": "按「下一季」，城市會帶著你的政策度過三個月。"
+    },
+    {
+      "en": "The brief lists what changed. Go there to see it on the street.",
+      "zh-Hant": "城市快報會列出這一季的變化。按「走過去看」，到街上親眼看看。"
+    },
+    {
+      "en": "All the numbers, the timeline and the model limits are in the City report.",
+      "zh-Hant": "所有數字、時間軸和模型限制，都在「城市報告」裡。"
+    }
+  ],
+  "pronouns": {
+    "she": {
+      "label": {
+        "en": "she / her",
+        "zh-Hant": "她"
+      },
+      "subject": {
+        "en": "she",
+        "zh-Hant": "她"
+      },
+      "object": {
+        "en": "her",
+        "zh-Hant": "她"
+      },
+      "possessive": {
+        "en": "her",
+        "zh-Hant": "她的"
+      }
+    },
+    "he": {
+      "label": {
+        "en": "he / him",
+        "zh-Hant": "他"
+      },
+      "subject": {
+        "en": "he",
+        "zh-Hant": "他"
+      },
+      "object": {
+        "en": "him",
+        "zh-Hant": "他"
+      },
+      "possessive": {
+        "en": "his",
+        "zh-Hant": "他的"
+      }
+    },
+    "they": {
+      "label": {
+        "en": "they / them",
+        "zh-Hant": "他們（不指定）"
+      },
+      "subject": {
+        "en": "they",
+        "zh-Hant": "他們"
+      },
+      "object": {
+        "en": "them",
+        "zh-Hant": "他們"
+      },
+      "possessive": {
+        "en": "their",
+        "zh-Hant": "他們的"
+      }
+    }
+  }
 }

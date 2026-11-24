@@ -1432,6 +1432,12 @@ No district is entirely without a published value.
 - Metro stations: `StationName.Zh_tw` of the TDX station files (section above). Line names: Taipei Rapid Transit Corporation (https://www.metro.taipei/), in `scripts/metro/build.ts`.
 - Landmarks: `src/ui/city/landmarks/names-zh.ts`, the Chinese Wikipedia title of each landmark whose coordinates `table.ts` cites (read 2026-11-23).
 
+## Wages of the player's Character (play-loop spec, Requirement 3.4)
+
+- `public/data/wages.json`: by `npm run story-files` (`scripts/story/wages.ts`) from DGBAS 歷年受僱員工每人每月經常性薪資 (regular monthly earnings per employee by industry), data.gov.tw 9663 (https://data.gov.tw/dataset/9663), XML, downloaded by `node scripts/download.ts wages` to `data/raw/wages/dgbas-9663-regular-earnings.xml` (2026-11-24), Open Government Data License 1.0.
+- Values: the annual figure of each year as DGBAS publishes it (the year record of the file), 2015 to 2025, for the 8 industries of the Character_File occupations (C, G, H, I, J, K, P, Q). The build stops when a year record is more than 0.5% from the mean of its 12 monthly records (measured: at most 0.13%).
+- Coverage, from the dataset notes: no agriculture, government, schools above primary level, religious or occupational organisations; education covered only supplementary and other education (cram schools and similar) until 2018 and pre-primary education from 2019; health covered only human health before 2018. The education and health series therefore change level in 2019.
+
 ## Story files (story-layer spec)
 
 - `public/data/citizens.json`, `public/data/model-limits.json`: copies of `data/config/`, made by `npm run story-files`.

@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "unit": "TWD per month",
+  "source": {
+    "citation": "DGBAS, 歷年受僱員工每人每月經常性薪資 (regular monthly earnings per employee by industry), data.gov.tw 9663",
+    "url": "https://data.gov.tw/dataset/9663",
+    "license": "Open Government Data License, version 1.0"
+  },
+  "method": "Annual regular monthly earnings per employee of the year as published by DGBAS (industry and service sector earnings survey; the year record of the file, checked against the mean of its 12 months). Regular earnings exclude bonuses and overtime pay. An industry mean is above the median of most industries.",
+  "coverage": "Not covered by the survey: agriculture, government, schools above primary level, religious and occupational organisations. Education covered only supplementary and other education (cram schools and similar) up to 2018; health covered only human health before 2018.",
+  "earnings": {
+    "C": {
+      "2015": 35903,
+      "2016": 36464,
+      "2017": 37282,
+      "2018": 38208,
+      "2019": 38994,
+      "2020": 39498,
+      "2021": 40700,
+      "2022": 42024,
+      "2023": 42995,
+      "2024": 44306,
+      "2025": 45850
+    },
+    "G": {
+      "2015": 37450,
+      "2016": 38244,
+      "2017": 39357,
+      "2018": 40485,
+      "2019": 41431,
+      "2020": 41704,
+      "2021": 41971,
+      "2022": 43080,
+      "2023": 44311,
+      "2024": 45838,
+      "2025": 47486
+    },
+    "H": {
+      "2015": 41060,
+      "2016": 41537,
+      "2017": 42394,
+      "2018": 43583,
+      "2019": 44546,
+      "2020": 44286,
+      "2021": 45064,
+      "2022": 46672,
+      "2023": 47988,
+      "2024": 49696,
+      "2025": 51213
+    },
+    "I": {
+      "2015": 28866,
+      "2016": 29081,
+      "2017": 29833,
+      "2018": 30735,
+      "2019": 31451,
+      "2020": 31867,
+      "2021": 32063,
+      "2022": 33226,
+      "2023": 33981,
+      "2024": 34332,
+      "2025": 34963
+    },
+    "J": {
+      "2015": 53790,
+      "2016": 54789,
+      "2017": 56247,
+      "2018": 57630,
+      "2019": 59075,
+      "2020": 61016,
+      "2021": 62393,
+      "2022": 64344,
+      "2023": 65786,
+      "2024": 67540,
+      "2025": 69601
+    },
+    "K": {
+      "2015": 59484,
+      "2016": 60297,
+      "2017": 60233,
+      "2018": 61627,
+      "2019": 63091,
+      "2020": 63710,
+      "2021": 65352,
+      "2022": 65437,
+      "2023": 66019,
+      "2024": 69606,
+      "2025": 70980
+    },
+    "P": {
+      "2015": 22930,
+      "2016": 23340,
+      "2017": 23793,
+      "2018": 24598,
+      "2019": 27628,
+      "2020": 27941,
+      "2021": 28191,
+      "2022": 29376,
+      "2023": 30021,
+      "2024": 30656,
+      "2025": 31663
+    },
+    "Q": {
+      "2015": 52823,
+      "2016": 53429,
+      "2017": 53604,
+      "2018": 54458,
+      "2019": 51049,
+      "2020": 51433,
+      "2021": 51652,
+      "2022": 53220,
+      "2023": 54034,
+      "2024": 54293,
+      "2025": 56209
+    }
+  }
+}
