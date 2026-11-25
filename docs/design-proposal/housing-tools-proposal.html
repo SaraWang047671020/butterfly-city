@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="zh-Hant" data-lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Budget And Tools Proposal</title>
+<style>
+  :root {
+    --bg: #0a1020; --panel: #111a2e; --raised: #1a2540; --line: #7183a8; --line-subtle: #2c3a5c;
+    --text: #eaf0fb; --text2: #b4c0d9; --muted: #98a6c4; --accent: #55c1ff; --accent-ink: #06121f;
+    --focus: #ffd23f; --ok: #62e0a0; --warn: #ffb454; --risk-text: #ffa3aa; --risk-bg: #3b0f1a; --risk-line: #ff7b86;
+    --seg-sh: #3a70ba; --seg-rs: #2a98b0; --seg-cp: #4dbb8c; --seg-sl: #b5d866; --seg-ht: #f1d35a;
+    --glass: rgba(17, 26, 46, 0.95);
+    --font: system-ui, "Segoe UI", "Microsoft JhengHei", "PingFang TC", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html[data-lang="zh"] .en, html[data-lang="en"] .zh { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--font); }
+  main { max-width: 1120px; margin: 0 auto; padding: 32px 16px 80px; }
+  h1 { font-size: 30px; margin: 0 0 4px; }
+  h2 { font-size: 22px; margin: 48px 0 6px; border-top: 1px solid var(--line-subtle); padding-top: 24px; }
+  h3 { font-size: 16px; margin: 22px 0 6px; color: var(--accent); }
+  p, li { color: var(--text2); }
+  .lead { font-size: 17px; color: var(--text); }
+  .muted { color: var(--muted); font-size: 14px; }
+  .note { background: var(--raised); border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 6px; margin: 12px 0; color: var(--text); }
+  .note.warn { border-left-color: var(--warn); }
+  code { font-size: 13px; color: var(--text); background: var(--raised); padding: 1px 5px; border-radius: 4px; }
+  .toolbar { position: sticky; top: 0; z-index: 5; display: flex; gap: 8px; align-items: center; padding: 10px 0; background: var(--bg); border-bottom: 1px solid var(--line-subtle); flex-wrap: wrap; }
+  .toolbar button { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--text); font: 600 14px var(--font); cursor: pointer; }
+  .toolbar button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .row { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+
+  /* frames */
+  .fit { position: relative; width: 100%; max-width: 1088px; aspect-ratio: 1280 / 800; overflow: hidden; border: 1px solid var(--line-subtle); border-radius: 10px; }
+  .screen { position: absolute; left: 0; top: 0; width: 1280px; height: 800px; transform-origin: 0 0; background: #0a1020 url("life-story/city-1280.png") center / cover no-repeat; font-size: 14px; }
+  .phone { position: relative; width: 360px; height: 740px; overflow: hidden; border: 1px solid var(--line-subtle); border-radius: 18px; background: #0a1020 url("life-story/city-360.png") center / cover no-repeat; font-size: 14px; flex: 0 0 auto; }
+  .dim::before { content: ""; position: absolute; inset: 0; background: rgba(5, 8, 18, 0.62); }
+  .cap { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
+
+  /* game blocks */
+  .block { position: absolute; background: var(--panel); border: 1px solid rgba(113, 131, 168, .45); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+  .turn { left: 320px; top: 12px; width: 640px; padding: 10px 14px 12px; }
+  .turn .q { display: flex; align-items: center; gap: 12px; }
+  .turn .qt { font-size: 19px; font-weight: 700; }
+  .turn .tn { font-size: 13px; color: var(--muted); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--text); font: 600 15px var(--font); white-space: nowrap; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn.small { min-height: 36px; padding: 0 14px; font-size: 13px; }
+  .menu-btn { position: absolute; right: 12px; top: 12px; width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; font-size: 22px; }
+  .chip-left { position: absolute; left: 12px; top: 12px; width: 300px; height: 52px; padding: 6px 12px; font-size: 13px; }
+
+  /* Budget_Bar */
+  .bb { margin-top: 10px; }
+  .bb-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 13px; }
+  .bb-head .left { font-weight: 700; color: var(--text); font-size: 14px; }
+  .bb-head .total { color: var(--muted); }
+  .bar { display: flex; height: 18px; border-radius: 6px; overflow: hidden; margin: 6px 0 6px; border: 1px solid var(--line-subtle); background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(113,131,168,.18) 6px 8px); }
+  .seg { height: 100%; position: relative; border-right: 2px solid var(--bg); font-size: 11px; font-weight: 700; color: #06121f; display: flex; align-items: center; padding-left: 6px; white-space: nowrap; overflow: hidden; }
+  .seg.committed { background-image: repeating-linear-gradient(90deg, rgba(6,18,31,.28) 0 3px, transparent 3px 7px); }
+  .seg.sh { background-color: var(--seg-sh); color: #eaf0fb; } .seg.rs { background-color: var(--seg-rs); } .seg.cp { background-color: var(--seg-cp); } .seg.sl { background-color: var(--seg-sl); }
+  .seg.draft { background-color: var(--accent); outline: 2px dashed var(--focus); outline-offset: -2px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 12px; color: var(--text2); margin: 0; padding: 0; list-style: none; }
+  .legend li { display: inline-flex; gap: 5px; align-items: center; color: var(--text2); }
+  .sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  .legend b { color: var(--text); font-weight: 600; }
+
+  /* narrow */
+  .ph-top { position: absolute; left: 8px; right: 8px; top: 8px; display: flex; gap: 6px; align-items: center; }
+  .ph-chip { flex: 1; padding: 6px 10px; font-size: 12px; position: static; }
+  .money { position: static; padding: 0 10px; height: 44px; display: flex; align-items: center; font-size: 13px; font-weight: 700; white-space: nowrap; }
+  .ph-menu { position: static; width: 44px; height: 44px; display: grid; place-items: center; font-size: 20px; }
+  .sheet { position: absolute; left: 0; right: 0; top: 60px; bottom: 0; background: var(--glass); border-top: 1px solid var(--line); border-radius: 16px 16px 0 0; padding: 16px; overflow: hidden; }
+  .sheet h4 { margin: 0 0 4px; font-size: 14px; color: var(--muted); letter-spacing: .06em; }
+  .card { border: 1px solid var(--line-subtle); background: rgba(26,37,64,.7); border-radius: 12px; padding: 10px 12px; margin-top: 10px; display: flex; gap: 10px; align-items: center; }
+  .card .ic { width: 32px; height: 32px; border-radius: 8px; background: var(--raised); display: grid; place-items: center; }
+  .card .nm { font-weight: 700; font-size: 14px; }
+  .card .st { font-size: 12px; color: var(--muted); }
+  .new { font-size: 11px; font-weight: 700; color: var(--accent-ink); background: var(--ok); border-radius: 999px; padding: 0 8px; margin-left: 6px; }
+
+  /* dialogs */
+  .dlg { position: absolute; background: var(--glass); border: 1px solid rgba(113, 131, 168, 0.45); border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.5); display: flex; flex-direction: column; overflow: hidden; }
+  .dlg .hd { padding: 18px 22px 6px; position: relative; }
+  .dlg .eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+  .dlg .title { font-size: 24px; font-weight: 700; margin: 2px 0 0; line-height: 1.25; }
+  .dlg .x { position: absolute; top: 14px; right: 16px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; color: var(--text); }
+  .dlg .bd { padding: 6px 22px 14px; overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
+  .dlg .ft { margin-top: auto; padding: 12px 22px; border-top: 1px solid var(--line-subtle); display: flex; justify-content: flex-end; gap: 10px; }
+  .who { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .who > div { background: var(--raised); border-radius: 10px; padding: 8px 12px; font-size: 13px; color: var(--text2); }
+  .who h5 { margin: 0 0 2px; font-size: 11px; letter-spacing: .08em; }
+  .who .b h5 { color: var(--ok); } .who .c h5 { color: var(--warn); }
+  .who ul { margin: 0; padding-left: 16px; } .who li { color: var(--text2); }
+  .field { border: 1px solid var(--line-subtle); border-left: 3px solid var(--accent); border-radius: 10px; padding: 10px 14px; background: rgba(26,37,64,.6); }
+  .field .lb { font-weight: 700; font-size: 15px; }
+  .slider { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+  .track { flex: 1; height: 6px; border-radius: 3px; background: var(--line-subtle); position: relative; }
+  .track .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 3px; }
+  .track .knob { position: absolute; top: 50%; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); transform: translate(-50%, -50%); }
+  .track .realmark { position: absolute; top: -5px; width: 2px; height: 16px; background: var(--text); }
+  .input { width: 120px; height: 42px; border-radius: 8px; border: 1px solid var(--line); background: #060b16; color: var(--text); text-align: right; padding: 0 10px; display: flex; align-items: center; justify-content: flex-end; font-size: 16px; }
+  .input.focus { outline: 3px solid var(--focus); outline-offset: 1px; }
+  .unit { font-size: 13px; color: var(--text2); }
+  .ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .cost { margin-top: 8px; font-size: 14px; color: var(--text); background: rgba(85,193,255,.08); border: 1px solid rgba(85,193,255,.35); border-radius: 8px; padding: 8px 10px; }
+  .cost.over { background: var(--risk-bg); border-color: var(--risk-line); color: var(--risk-text); }
+  .cost .mini { margin-top: 6px; }
+  .cost ul { margin: 4px 0 0; padding-left: 18px; } .cost li { color: inherit; }
+  .acts { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+  .effect { font-size: 13px; color: var(--text2); background: var(--raised); border-radius: 8px; padding: 8px 12px; }
+  .effect b { color: var(--text); }
+  .src { font-size: 12px; color: var(--muted); }
+  table.t { border-collapse: collapse; width: 100%; font-size: 14px; margin: 8px 0; }
+  table.t th, table.t td { border-bottom: 1px solid var(--line-subtle); padding: 6px 8px; text-align: left; vertical-align: top; color: var(--text2); }
+  table.t th { color: var(--text); }
+  table.t td:first-child { white-space: nowrap; color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="toolbar" role="toolbar" aria-label="Language">
+    <button type="button" data-set="zh" aria-pressed="true">繁體中文</button>
+    <button type="button" data-set="en" aria-pressed="false">English</button>
+    <span class="muted">設計稿：housing-tools Requirement 1.1 · 2026-11-25</span>
+  </div>
+
+  <h1 class="zh">預算條與兩個新政策：設計稿</h1>
+  <h1 class="en">Budget bar and two new tools: design proposal</h1>
+  <p class="lead zh">預算變成真正的限制以後，玩家要隨時看得到「今年還剩多少錢」，以及一次調整會花掉多少。這份設計稿有四個畫面：預算條（電腦版、手機版）、政策視窗裡的花費說明、包租代管視窗、囤房稅視窗。</p>
+  <p class="lead en">Now that the budget is the real limit, players need to see how much of this year's money is left, and what one change costs. Four screens: the Budget_Bar (wide and narrow), the cost lines of the Policy_Dialog, the sublease dialog and the holding-tax dialog.</p>
+  <div class="note warn">
+    <span class="zh">畫面上的 2015 年金額是遊戲裡真實歷史的數字；包租代管和囤房稅視窗裡的效果數字是示意，會在做完模擬規則後換成真的計算結果。</span>
+    <span class="en">The 2015 amounts are the game's real-track figures. The effect figures in the sublease and holding-tax dialogs are illustrative and will be replaced by the computed results once the rules exist.</span>
+  </div>
+
+  <!-- 1 -->
+  <h2><span class="zh">1. 預算條（電腦版，1280）</span><span class="en">1. Budget_Bar, wide (1280)</span></h2>
+  <p class="zh">放在季度列的第二行，跟「下一季」在同一個區塊，玩家每一季都會看到。左邊是剩下的錢（最重要的數字），右邊是全年總額。每段寫出政策名稱和金額，不只靠顏色分辨；斜線紋路代表「已承諾、之後幾季才會付」的錢（例如社宅分好幾年付款），灰色斜線是還沒用的錢。</p>
+  <p class="en">The second row of the turn bar, in the same block as Next quarter, so it is in view every quarter. Left: the money left (the key number); right: the year's total. Each segment is named in the legend with its amount, not by colour only; hatching marks money committed for later quarters (for example social housing paid over several years); grey hatching is money not used.</p>
+  <div class="fit"><div class="screen" data-scale>
+    <div class="block chip-left"><b>Rin</b> <span class="muted">· 18.4%</span></div>
+    <div class="block turn">
+      <div class="q">
+        <span class="qt"><span class="zh">目前季度：2015 Q1</span><span class="en">Displayed quarter: 2015 Q1</span></span>
+        <span class="tn"><span class="zh">第 2 回合，共 44</span><span class="en">Turn 2 of 44</span></span>
+        <span style="flex:1"></span>
+        <span class="btn primary"><span class="zh">下一季</span><span class="en">Next quarter</span></span>
+      </div>
+      <div class="bb">
+        <div class="bb-head">
+          <span class="left"><span class="zh">2015 年預算剩 NT$219,866,191</span><span class="en">2015 budget: NT$219,866,191 left</span></span>
+          <span class="total"><span class="zh">全年 NT$651,716,415</span><span class="en">of NT$651,716,415</span></span>
+        </div>
+        <div class="bar" role="img" aria-label="">
+          <div class="seg sh" style="width:21%"></div>
+          <div class="seg sh committed" style="width:18.6%"></div>
+          <div class="seg rs" style="width:26.7%"></div>
+          <div class="seg cp" style="width:0%"></div>
+        </div>
+        <ul class="legend">
+          <li><span class="sw" style="background:var(--seg-sh)"></span><span class="zh">社宅興建 <b>2.58 億</b>（其中 1.21 億之後才付）</span><span class="en">Social housing <b>NT$258M</b> (NT$121M paid later)</span></li>
+          <li><span class="sw" style="background:var(--seg-rs)"></span><span class="zh">租金補貼 <b>1.74 億</b></span><span class="en">Rent subsidy <b>NT$174M</b></span></li>
+          <li><span class="sw" style="background:var(--seg-cp)"></span><span class="zh">月票補貼 <b>0</b></span><span class="en">Commuter pass <b>0</b></span></li>
+          <li><span class="sw" style="background:var(--line-subtle)"></span><span class="zh">剩下 <b>2.20 億</b></span><span class="en">Left <b>NT$220M</b></span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="block menu-btn">☰</div>
+  </div></div>
+  <p class="cap zh">圖例金額用「億」，標題的剩餘金額寫到元，跟政策視窗裡的數字對得起來。包租代管和囤房稅加進來以後，圖例多兩項；囤房稅不花錢，而是改變下一年的總額（見第 4 節）。</p>
+  <p class="cap en">Legend amounts are rounded to millions; the heading gives the exact amount left, matching the dialogs. Sublease adds one legend item; the holding tax spends nothing but changes next year's total (section 4).</p>
+
+  <!-- 2 -->
+  <h2><span class="zh">2. 預算條（手機版，360）</span><span class="en">2. Budget_Bar, narrow (360)</span></h2>
+  <p class="zh">手機寬度放不下整條，所以在 ☰ 旁邊放一個「剩 2.2 億」的小標籤，點了會打開選單；選單最上面是完整的預算條，下面是政策卡片。</p>
+  <p class="en">Too narrow for the whole bar: a short “NT$220M left” label next to ☰ opens the menu, which starts with the full bar above the policy cards.</p>
+  <div class="row">
+    <div>
+      <div class="phone">
+        <div class="ph-top">
+          <div class="block ph-chip"><b>Rin</b> <span class="muted">18.4%</span></div>
+          <div class="block money"><span class="zh">剩 2.2 億</span><span class="en">NT$220M left</span></div>
+          <div class="block ph-menu">☰</div>
+        </div>
+      </div>
+      <p class="cap"><span class="zh">遊戲畫面</span><span class="en">Game screen</span></p>
+    </div>
+    <div>
+      <div class="phone dim">
+        <div class="ph-top" style="z-index:2">
+          <div class="block ph-chip"><b>Rin</b> <span class="muted">18.4%</span></div>
+          <div class="block money"><span class="zh">剩 2.2 億</span><span class="en">NT$220M left</span></div>
+          <div class="block ph-menu">✕</div>
+        </div>
+        <div class="sheet">
+          <h4><span class="zh">預算</span><span class="en">BUDGET</span></h4>
+          <div class="bb" style="margin:0">
+            <div class="bb-head"><span class="left"><span class="zh">2015 年剩 NT$219,866,191</span><span class="en">2015: NT$219,866,191 left</span></span></div>
+            <div class="bar"><div class="seg sh" style="width:21%"></div><div class="seg sh committed" style="width:18.6%"></div><div class="seg rs" style="width:26.7%"></div></div>
+            <ul class="legend" style="flex-direction:column">
+              <li><span class="sw" style="background:var(--seg-sh)"></span><span class="zh">社宅興建 <b>2.58 億</b></span><span class="en">Social housing <b>NT$258M</b></span></li>
+              <li><span class="sw" style="background:var(--seg-rs)"></span><span class="zh">租金補貼 <b>1.74 億</b></span><span class="en">Rent subsidy <b>NT$174M</b></span></li>
+              <li><span class="sw" style="background:var(--seg-cp)"></span><span class="zh">月票補貼 <b>0</b></span><span class="en">Commuter pass <b>0</b></span></li>
+              <li><span class="sw" style="background:var(--line-subtle)"></span><span class="zh">剩下 <b>2.20 億</b>（全年 6.52 億）</span><span class="en">Left <b>NT$220M</b> (of NT$652M)</span></li>
+            </ul>
+          </div>
+          <h4 style="margin-top:14px"><span class="zh">政策</span><span class="en">POLICY</span></h4>
+          <div class="card"><span class="ic">⌂</span><div><div class="nm"><span class="zh">社會住宅興建</span><span class="en">Social housing construction</span></div><div class="st"><span class="zh">照真實歷史</span><span class="en">Real track</span></div></div></div>
+          <div class="card"><span class="ic">$</span><div><div class="nm"><span class="zh">租金補貼</span><span class="en">Rent subsidy</span></div><div class="st"><span class="zh">照真實歷史</span><span class="en">Real track</span></div></div></div>
+          <div class="card"><span class="ic">⇄</span><div><div class="nm"><span class="zh">包租代管</span><span class="en">Sublease and management</span><span class="new"><span class="zh">新</span><span class="en">New</span></span></div><div class="st"><span class="zh">2017 年開始</span><span class="en">From 2017</span></div></div></div>
+          <div class="card"><span class="ic">%</span><div><div class="nm"><span class="zh">囤房稅</span><span class="en">Holding tax</span><span class="new"><span class="zh">新</span><span class="en">New</span></span></div><div class="st"><span class="zh">照真實歷史</span><span class="en">Real track</span></div></div></div>
+        </div>
+      </div>
+      <p class="cap"><span class="zh">打開選單</span><span class="en">Menu open</span></p>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <h2><span class="zh">3. 政策視窗：按「套用」之前就看到花費</span><span class="en">3. Policy_Dialog: the cost before Apply</span></h2>
+  <p class="zh">輸入數字後，欄位下面馬上出現一行藍框：這次要花多少、今年還剩多少。錢不夠時改成紅框，寫出還缺多少，並列出其他政策今年各花了多少，提示可以從哪裡挪。預算條上的這一段也會先用虛線預覽。</p>
+  <p class="en">As soon as a value is typed, a blue line under the field gives the cost of the change and what stays this year. When it does not fit, the line turns red, gives the amount missing and lists what the other tools spend this year, so the player sees where money could come from. The bar previews the change with a dashed segment.</p>
+  <div class="row">
+    <div class="fit" style="max-width:1088px"><div class="screen dim" data-scale>
+      <div class="dlg" style="left:180px; top:40px; width:920px; height:720px">
+        <div class="hd">
+          <div class="eyebrow"><span class="zh">從 2015 Q3 起生效</span><span class="en">Changes apply from 2015 Q3</span></div>
+          <div class="title"><span class="zh">社會住宅興建</span><span class="en">Social housing construction</span></div>
+          <div class="x">×</div>
+        </div>
+        <div class="bd">
+          <div class="bb" style="margin:0">
+            <div class="bb-head"><span class="left"><span class="zh">2015 年預算：套用後剩 NT$83,666,191</span><span class="en">2015 budget: NT$83,666,191 left after this change</span></span><span class="total"><span class="zh">現在剩 NT$219,866,191</span><span class="en">now NT$219,866,191</span></span></div>
+            <div class="bar"><div class="seg sh" style="width:21%"></div><div class="seg sh committed" style="width:18.6%"></div><div class="seg rs" style="width:26.7%"></div><div class="seg draft" style="width:20.9%"></div></div>
+          </div>
+          <div class="field">
+            <div class="lb"><span class="zh">社宅開工戶數 · 萬華</span><span class="en">Social housing units started · Wanhua</span></div>
+            <div class="slider">
+              <div class="track"><div class="fill" style="width:81%"></div><div class="realmark" style="left:0"></div><div class="knob" style="left:81%"></div></div>
+              <div class="input focus">100</div><span class="unit"><span class="zh">戶／季</span><span class="en">units per quarter</span></span>
+            </div>
+            <div class="ends"><span><span class="zh">下限 0</span><span class="en">lower limit 0</span></span><span><span class="zh">真實值 0</span><span class="en">real 0</span></span><span><span class="zh">預算最多 123</span><span class="en">budget allows 123</span></span></div>
+            <div class="cost"><span class="zh">這次調整今年要花 <b>NT$136,200,000</b>，今年還剩 <b>NT$83,666,191</b>。其餘 NT$643,800,000 在之後幾年付款。</span><span class="en">This change costs <b>NT$136,200,000</b> this year; <b>NT$83,666,191</b> stays. The other NT$643,800,000 is paid in later years.</span></div>
+            <div class="acts"><span class="btn small"><span class="zh">設成真實值</span><span class="en">Set to real value</span></span><span class="btn small primary"><span class="zh">套用</span><span class="en">Apply</span></span></div>
+          </div>
+          <div class="field" style="border-left-color:var(--risk-line)">
+            <div class="lb"><span class="zh">同一欄位輸入 300 時</span><span class="en">The same field with 300</span></div>
+            <div class="cost over"><span class="zh">今年的錢不夠：還缺 <b>NT$183,846,038</b>。今年其他政策的花費：租金補貼 NT$173,900,000、月票補貼 NT$0。可以先調低其他政策，或改成較少的戶數。</span><span class="en">Not enough money this year: <b>NT$183,846,038</b> missing. Other tools this year: rent subsidy NT$173,900,000, commuter pass NT$0. Lower another tool first, or start fewer units.</span></div>
+          </div>
+        </div>
+        <div class="ft"><span class="btn primary"><span class="zh">完成</span><span class="en">Done</span></span></div>
+      </div>
+    </div></div>
+  </div>
+  <p class="cap zh">示意金額：100 戶 × 單位成本 780 萬，依社宅的付款時程，第一年約付 17%。實作時由引擎的預算檢查算出。</p>
+  <p class="cap en">Illustrative: 100 units × NT$7.8M, of which about 17 % falls in the first year under the social housing cost schedule. Computed by the Engine's budget check when built.</p>
+
+  <!-- 4 -->
+  <h2><span class="zh">4. 包租代管視窗</span><span class="en">4. Sublease dialog</span></h2>
+  <p class="zh">跟租金補貼視窗一樣，一個城市一個欄位。上方的「誰受益／誰負擔」兩邊寫得一樣詳細。欄位下的效果說明寫出平均每戶省多少房租，以及資料的限制（媒合到入住的時間查不到實際資料）。</p>
+  <p class="en">Like the rent subsidy dialog, one field per city. Who benefits and who bears the cost are written with the same detail. Under the field, the effect line gives the average rent saved per household and states the data limit (no measured time from matching to move-in).</p>
+  <div class="fit"><div class="screen dim" data-scale>
+    <div class="dlg" style="left:180px; top:40px; width:920px; height:720px">
+      <div class="hd">
+        <div class="eyebrow"><span class="zh">從 2018 Q2 起生效</span><span class="en">Changes apply from 2018 Q2</span></div>
+        <div class="title"><span class="zh">社會住宅包租代管</span><span class="en">Sublease and rental management</span></div>
+        <div class="x">×</div>
+      </div>
+      <div class="bd">
+        <div class="who">
+          <div class="b"><h5><span class="zh">誰受益</span><span class="en">WHO BENEFITS</span></h5><ul>
+            <li><span class="zh">住進媒合房屋的租屋家庭：租金低於市價，下一季起生效。</span><span class="en">Renter households in matched homes: rent below market, from the next quarter.</span></li>
+            <li><span class="zh">出租的房東：有管理服務和稅務減免。</span><span class="en">Landlords who let through the programme: management service and tax relief.</span></li></ul></div>
+          <div class="c"><h5><span class="zh">誰負擔</span><span class="en">WHO BEARS THE COST</span></h5><ul>
+            <li><span class="zh">市政府預算：每戶每年約 NT$55,000 的管理費、保險等。</span><span class="en">City budget: about NT$55,000 per home per year in management fees, insurance and other costs.</span></li>
+            <li><span class="zh">其他政策：這裡花的錢，同一年就不能用在社宅或租金補貼。</span><span class="en">Other tools: money used here is not available for social housing or rent subsidy in the same year.</span></li></ul></div>
+        </div>
+        <div class="field">
+          <div class="lb"><span class="zh">每季媒合戶數 · 臺北</span><span class="en">Homes matched per quarter · Taipei</span></div>
+          <div class="slider">
+            <div class="track"><div class="fill" style="width:44%"></div><div class="realmark" style="left:22%"></div><div class="knob" style="left:44%"></div></div>
+            <div class="input focus">600</div><span class="unit"><span class="zh">戶／季</span><span class="en">homes per quarter</span></span>
+          </div>
+          <div class="ends"><span><span class="zh">下限 0</span><span class="en">lower limit 0</span></span><span><span class="zh">真實值 300（示意）</span><span class="en">real 300 (illustrative)</span></span><span><span class="zh">預算最多 1,360</span><span class="en">budget allows 1,360</span></span></div>
+          <div class="cost"><span class="zh">這次調整今年要花 <b>NT$12,375,000</b>，今年還剩 <b>NT$96,400,000</b>。</span><span class="en">This change costs <b>NT$12,375,000</b> this year; <b>NT$96,400,000</b> stays.</span></div>
+          <div class="effect" style="margin-top:8px"><span class="zh">多媒合的 300 戶，房租約為市價的 <b>80% 到 100%</b>（第 1 到 3 期是八成，第 4 期起是不超過估價的市價），平均每戶每月省 <b>約 NT$… 到 0</b>。從媒合到入住的實際時間查不到，先假設 1 季。</span><span class="en">The 300 extra homes rent at <b>80 % to 100 %</b> of market rent (80 % in phases 1 to 3; from phase 4, at most the appraised market rent), saving <b>about NT$… to 0</b> per household per month. No measured time from matching to move-in; 1 quarter is assumed.</span></div>
+          <div class="acts"><span class="btn small"><span class="zh">設成真實值</span><span class="en">Set to real value</span></span><span class="btn small primary"><span class="zh">套用</span><span class="en">Apply</span></span></div>
+        </div>
+        <div class="src"><span class="zh">來源：內政部 社會住宅包租代管第三期至第五期計畫執行要點（2025）；不動產資訊平台 包租代管計畫執行情形。</span><span class="en">Sources: MOI, sublease programme rules for phases 3 to 5 (2025); MOI real estate platform, sublease programme progress.</span></div>
+      </div>
+      <div class="ft"><span class="btn primary"><span class="zh">完成</span><span class="en">Done</span></span></div>
+    </div>
+  </div></div>
+
+  <div class="row" style="margin-top:16px">
+    <div>
+      <div class="phone dim">
+        <div class="dlg" style="left:0; top:0; right:0; bottom:0; border-radius:0">
+          <div class="hd"><div class="eyebrow"><span class="zh">從 2018 Q2 起生效</span><span class="en">From 2018 Q2</span></div><div class="title" style="font-size:20px;padding-right:44px"><span class="zh">社會住宅包租代管</span><span class="en">Sublease and rental management</span></div><div class="x">×</div></div>
+          <div class="bd">
+            <div class="bb" style="margin:0"><div class="bb-head"><span class="left"><span class="zh">2018 年：套用後剩 NT$96,400,000</span><span class="en">2018: NT$96,400,000 left after this</span></span></div>
+              <div class="bar"><div class="seg sh" style="width:30%"></div><div class="seg rs" style="width:35%"></div><div class="seg sl" style="width:8%"></div><div class="seg draft" style="width:6%"></div></div></div>
+            <div class="field">
+              <div class="lb"><span class="zh">每季媒合戶數 · 臺北</span><span class="en">Homes matched per quarter · Taipei</span></div>
+              <div class="slider"><div class="input focus" style="flex:1">600</div><span class="unit"><span class="zh">戶／季</span><span class="en">homes / qtr</span></span></div>
+              <div class="track" style="margin:14px 4px 4px"><div class="fill" style="width:44%"></div><div class="realmark" style="left:22%"></div><div class="knob" style="left:44%"></div></div>
+              <div class="ends"><span>0</span><span><span class="zh">真實值 300</span><span class="en">real 300</span></span><span><span class="zh">預算最多 1,360</span><span class="en">budget allows 1,360</span></span></div>
+              <div class="cost"><span class="zh">這次調整今年要花 <b>NT$12,375,000</b>，今年還剩 <b>NT$96,400,000</b>。</span><span class="en">This change costs <b>NT$12,375,000</b> this year; <b>NT$96,400,000</b> stays.</span></div>
+              <div class="acts"><span class="btn small"><span class="zh">設成真實值</span><span class="en">Set to real</span></span><span class="btn small primary"><span class="zh">套用</span><span class="en">Apply</span></span></div>
+            </div>
+            <div class="src"><span class="zh">誰受益、誰負擔與效果說明在欄位上方，可捲動。</span><span class="en">Who benefits, who bears the cost and the effect line are above, by scrolling.</span></div>
+          </div>
+          <div class="ft"><span class="btn primary"><span class="zh">完成</span><span class="en">Done</span></span></div>
+        </div>
+      </div>
+      <p class="cap"><span class="zh">手機版：視窗佔滿全螢幕，輸入框在拉桿上方，方便用拇指操作。囤房稅視窗相同排法。</span><span class="en">Narrow: the dialog fills the screen and the input sits above the slider for thumbs. The holding-tax dialog uses the same layout.</span></p>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <h2><span class="zh">5. 囤房稅視窗</span><span class="en">5. Holding-tax dialog</span></h2>
+  <p class="zh">囤房稅不花預算，而是改變稅收：多收的錢加進下一年的預算，少收則下一年變少。所以藍框改寫「下一年的預算會多／少多少」。稅率只能在當年的法定範圍內調整，拉桿兩端寫出法條。</p>
+  <p class="en">The holding tax spends no budget; it changes revenue, and revenue above or below real history moves next year's budget. The blue line therefore gives the change to next year's budget. Rates stay within the statutory range of the date, named at the slider ends.</p>
+  <div class="row">
+    <div class="fit"><div class="screen dim" data-scale>
+      <div class="dlg" style="left:180px; top:40px; width:920px; height:720px">
+        <div class="hd">
+          <div class="eyebrow"><span class="zh">從 2018 Q2 起生效</span><span class="en">Changes apply from 2018 Q2</span></div>
+          <div class="title"><span class="zh">囤房稅（非自住住家稅率）</span><span class="en">Holding tax (rates for homes not lived in by the owner)</span></div>
+          <div class="x">×</div>
+        </div>
+        <div class="bd">
+          <div class="who">
+            <div class="b"><h5><span class="zh">誰受益</span><span class="en">WHO BENEFITS</span></h5><ul>
+              <li><span class="zh">租屋家庭：空屋釋出到租屋市場，房租可能下降，有時間差。</span><span class="en">Renter households: vacant homes released to the rental market can lower rent, after a lag.</span></li>
+              <li><span class="zh">市政府預算：多收的稅加進下一年的預算。</span><span class="en">City budget: extra revenue is added to next year's budget.</span></li></ul></div>
+            <div class="c"><h5><span class="zh">誰負擔</span><span class="en">WHO BEARS THE COST</span></h5><ul>
+              <li><span class="zh">持有多戶或空屋的屋主：每年房屋稅變多。</span><span class="en">Owners of several or vacant homes: higher house tax each year.</span></li>
+              <li><span class="zh">房東可能把部分稅轉嫁到房租上（研究結果不一，用範圍表示）。</span><span class="en">Landlords may pass part of the tax on to rent (the research disagrees, so it is shown as a range).</span></li></ul></div>
+          </div>
+          <div class="field">
+            <div class="lb"><span class="zh">最高級距稅率 · 臺北</span><span class="en">Highest tier rate · Taipei</span></div>
+            <div class="slider">
+              <div class="track"><div class="fill" style="width:100%"></div><div class="realmark" style="left:100%"></div><div class="knob" style="left:100%"></div></div>
+              <div class="input">3.6</div><span class="unit">%</span>
+            </div>
+            <div class="ends"><span><span class="zh">法定下限 1.5%（房屋稅條例第 5 條）</span><span class="en">statutory lower limit 1.5 % (House Tax Act, Art. 5)</span></span><span><span class="zh">真實值 3.6%</span><span class="en">real 3.6 %</span></span><span><span class="zh">法定上限 3.6%</span><span class="en">statutory upper limit 3.6 %</span></span></div>
+          </div>
+          <div class="field">
+            <div class="lb"><span class="zh">最低級距稅率 · 臺北</span><span class="en">Lowest tier rate · Taipei</span></div>
+            <div class="slider">
+              <div class="track"><div class="fill" style="width:81%"></div><div class="realmark" style="left:43%"></div><div class="knob" style="left:81%"></div></div>
+              <div class="input focus">3.2</div><span class="unit">%</span>
+            </div>
+            <div class="ends"><span><span class="zh">法定下限 1.5%</span><span class="en">statutory lower limit 1.5 %</span></span><span><span class="zh">真實值 2.4%</span><span class="en">real 2.4 %</span></span><span><span class="zh">不能高於最高級距 3.6%</span><span class="en">not above the highest tier 3.6 %</span></span></div>
+            <div class="cost"><span class="zh">稅收變化：明年預算 <b>多約 NT$… </b>（依今年的房屋稅收入和空屋減少計算）。</span><span class="en">Revenue: next year's budget <b>about NT$… more</b> (from this year's house tax revenue and the fall in vacant homes).</span></div>
+            <div class="effect" style="margin-top:8px"><span class="zh">空屋預估減少 <b>約 …% 到 …%</b>（法國空屋稅的研究：減少 13%；台灣稅基不同，換算的假設寫在「細節與來源」），釋出的房子進入租屋市場。</span><span class="en">Vacant homes are expected to fall by <b>about …% to …%</b> (French vacancy tax study: −13 %; Taiwan's tax base differs, and the conversion is stated under Details and sources); released homes join the rental market.</span></div>
+            <div class="acts"><span class="btn small"><span class="zh">設成真實值</span><span class="en">Set to real value</span></span><span class="btn small primary"><span class="zh">套用</span><span class="en">Apply</span></span></div>
+          </div>
+        </div>
+        <div class="ft"><span class="btn primary"><span class="zh">完成</span><span class="en">Done</span></span></div>
+      </div>
+    </div></div>
+  </div>
+  <p class="cap zh">「…」的數字要等模擬規則寫好才能算。新北市的欄位同樣排在下面。2024 年 7 月起法定範圍改為 2% 到 4.8%，拉桿兩端會跟著改。</p>
+  <p class="cap en">The “…” figures need the rule first. The New Taipei fields follow below. From 2024-07 the statutory range is 2 % to 4.8 %, and the slider ends change with it.</p>
+
+  <!-- 6 -->
+  <h2><span class="zh">6. 新的畫面文字（請核准）</span><span class="en">6. New texts (for approval)</span></h2>
+  <table class="t">
+    <thead><tr><th>key</th><th>繁體中文</th><th>English</th></tr></thead>
+    <tbody>
+      <tr><td>budget.left</td><td>{year} 年預算剩 NT${left}</td><td>{year} budget: NT${left} left</td></tr>
+      <tr><td>budget.total</td><td>全年 NT${total}</td><td>of NT${total}</td></tr>
+      <tr><td>budget.short</td><td>剩 {amount}</td><td>{amount} left</td></tr>
+      <tr><td>budget.later</td><td>（其中 {amount} 之後才付）</td><td>({amount} paid later)</td></tr>
+      <tr><td>budget.unused</td><td>剩下</td><td>Left</td></tr>
+      <tr><td>cost.fits</td><td>這次調整今年要花 NT${cost}，今年還剩 NT${left}。</td><td>This change costs NT${cost} this year; NT${left} stays.</td></tr>
+      <tr><td>cost.laterYears</td><td>其餘 NT${amount} 在之後幾年付款。</td><td>The other NT${amount} is paid in later years.</td></tr>
+      <tr><td>cost.over</td><td>今年的錢不夠：還缺 NT${missing}。今年其他政策的花費：{list}。可以先調低其他政策，或改成較小的數值。</td><td>Not enough money this year: NT${missing} missing. Other tools this year: {list}. Lower another tool first, or choose a smaller value.</td></tr>
+      <tr><td>cost.revenue</td><td>稅收變化：明年預算多約 NT${amount}。／明年預算少約 NT${amount}。</td><td>Revenue: next year's budget about NT${amount} more. / about NT${amount} less.</td></tr>
+      <tr><td>tool.sublease</td><td>社會住宅包租代管</td><td>Sublease and rental management</td></tr>
+      <tr><td>tool.holdingTax</td><td>囤房稅（非自住住家稅率）</td><td>Holding tax (rates for homes not lived in by the owner)</td></tr>
+      <tr><td>field.unitsMatched</td><td>每季媒合戶數</td><td>Homes matched per quarter</td></tr>
+      <tr><td>field.lowestRate / highestRate</td><td>最低級距稅率／最高級距稅率</td><td>Lowest tier rate / Highest tier rate</td></tr>
+      <tr><td>limit.statutory</td><td>法定下限 {value}%／法定上限 {value}%</td><td>statutory lower limit {value} % / statutory upper limit {value} %</td></tr>
+      <tr><td>limit.tierOrder</td><td>不能高於最高級距 {value}%</td><td>not above the highest tier {value} %</td></tr>
+      <tr><td>card.new</td><td>新</td><td>New</td></tr>
+    </tbody>
+  </table>
+  <p class="muted zh">兩個新政策的「誰受益／誰負擔」與效果說明，以第 4、5 節畫面上的文字為草稿。</p>
+  <p class="muted en">The who-benefits, who-bears-the-cost and effect texts of the two new tools are the drafts shown in sections 4 and 5.</p>
+</main>
+<script>
+  const root = document.documentElement;
+  document.querySelectorAll('[data-set]').forEach((b) => b.addEventListener('click', () => {
+    root.dataset.lang = b.dataset.set;
+    root.lang = b.dataset.set === 'zh' ? 'zh-Hant' : 'en';
+    document.querySelectorAll('[data-set]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+  const fit = () => document.querySelectorAll('[data-scale]').forEach((s) => { s.style.transform = `scale(${s.parentElement.clientWidth / 1280})`; });
+  addEventListener('resize', fit); fit();
+</script>
+</body>
+</html>
