@@ -2,6 +2,7 @@ import type { TurnBarView, UiActions } from '../../types/view.ts';
 import { setAttr, setText } from '../component.ts';
 import type { Component, ComponentFactory } from '../component.ts';
 import { buildEngineErrorText, fillTemplate, UI_STRINGS, quarterLabel } from '../strings.ts';
+import { createBudgetBar } from '../budget/budget-bar.ts';
 import '../../styles/turn-bar.css';
 
 const T = UI_STRINGS.turnBar;
@@ -70,7 +71,9 @@ export const createTurnBar: ComponentFactory<TurnBarView> = (doc: Document, acti
   const importButton = makeButton(doc, 'turn-bar__button', T.importSaveCode, () => actions.openImport());
   save.append(exportButton, importButton);
 
-  root.append(disclosure, demo, planning, displayed, turn, complete, controls, engineError, storage, version, save);
+  // Budget_Bar: the second row of the Turn_Bar (housing-tools design, approved 2026-11-25).
+  const budget = createBudgetBar(doc);
+  root.append(disclosure, demo, planning, displayed, turn, complete, controls, budget.root, engineError, storage, version, save);
 
   function update(view: TurnBarView): void {
     setOptional(demo, view.demo ? T.demoLabel : null);
@@ -82,6 +85,7 @@ export const createTurnBar: ComponentFactory<TurnBarView> = (doc: Document, acti
     setText(turn, fillTemplate(T.turnNumber, { n: String(view.turn) }));
     setOptional(complete, view.complete ? T.complete : null);
 
+    budget.update(view.budget);
     next.disabled = !view.nextEnabled || view.busy || view.complete;
     fast.disabled = !view.fastForwardEnabled || view.busy || view.complete;
     setAttr(root, 'aria-busy', view.busy ? 'true' : null);

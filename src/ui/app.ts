@@ -27,6 +27,7 @@ import { createIndicatorSwitch, createLegend, createIndicatorText, createPriceTo
 import { createDistrictList } from './panels/district-list.ts';
 import { createDistrictPanel } from './panels/district-panel.ts';
 import { createPolicyCards } from './policy/policy-cards.ts';
+import { shortBudgetText } from './budget/budget-bar.ts';
 import { createQuarterBrief, type BriefStoryHook, type GoThere } from './brief/quarter-brief.ts';
 import { createCityReport } from './report/city-report.ts';
 import { createDistrictCard } from './district-card.ts';
@@ -396,6 +397,7 @@ export function createApp(doc: Document, host: HTMLElement, options: AppOptions)
     timeline.update({ quarters: g.timeline, areaNames: names });
     const q = g.turnBar.displayed ?? g.turnBar.planning;
     menu.setQuarter(q === null ? '' : quarterLabel(q));
+    menu.setBudget(shortBudgetText(g.turnBar.budget));
     menu.setAttention(policyCards.root.querySelector('.is-warning') !== null);
     districtCard.update({ panel: g.districtPanel, construction: g.policyPanel.construction });
   };

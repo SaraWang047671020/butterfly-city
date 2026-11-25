@@ -21,6 +21,9 @@ import { cityLabel, fillTemplate, quarterLabel, UI_STRINGS, unitLabel } from '..
 import { cardStatus, quickPreview, sliderValue } from './preview.ts';
 import '../../styles/policy.css';
 import { mainFocusTarget } from '../menu/menu.ts';
+import { createBudgetBar, exactTwd } from '../budget/budget-bar.ts';
+
+const BB = UI_STRINGS.budgetBar;
 
 const P = UI_STRINGS.policy;
 const C = UI_STRINGS.policyCards;
@@ -82,8 +85,8 @@ interface FieldParts {
 export function createPolicyCards(doc: Document, actions: UiActions): PolicyCards {
   const root = el(doc, 'nav', 'ui-policy-cards');
   root.setAttribute('aria-label', C.label);
-  // The annual budget is shared by every tool, so it is shown once above the cards.
-  const budgetLine = el(doc, 'p', 'ui-policy-cards__budget', root);
+  // The annual budget is shown by the Budget_Bar of the Turn_Bar (housing-tools Requirement 3.1), which is in view on
+  // wide screens and at the top of this menu on narrow ones.
   const cardsHost = el(doc, 'div', 'ui-policy-cards__list', root);
   const cardEls = new Map<string, HTMLButtonElement>();
 
@@ -94,6 +97,10 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
 
   // ---- dialog body, rebuilt when another tool opens, updated in place otherwise
   const body = el(doc, 'div', 'ui-policy-dialog');
+  // The year's Budget_Bar with the draft previewed as a dashed segment (housing-tools Requirement 3.2).
+  const dialogBudget = createBudgetBar(doc);
+  dialogBudget.root.classList.add('ui-policy-dialog__budget');
+  body.append(dialogBudget.root);
   const trade = el(doc, 'div', 'ui-policy-dialog__trade', body);
   const benefits = el(doc, 'div', 'ui-policy-dialog__benefits', trade);
   const costs = el(doc, 'div', 'ui-policy-dialog__costs', trade);
@@ -233,12 +240,7 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
       setText(parts.previewChange, fillTemplate(D.previewChange, { change: `${sign}${formatAmount(Math.abs(pv.change))}`, unit, ready: quarterLabel(pv.ready) }));
       const year = String(pv.year ?? '');
       const left = formatAmount(pv.left ?? 0);
-      setText(
-        parts.previewBudget,
-        pv.cost === null || pv.cost === 0
-          ? fillTemplate(D.previewLeft, { year, left })
-          : fillTemplate(pv.cost > 0 ? D.previewCostMore : D.previewCostLess, { year, cost: formatAmount(Math.abs(pv.cost)), left }),
-      );
+      setText(parts.previewBudget, costLine(f, props.policy) ?? fillTemplate(D.previewLeft, { year, left }));
       const y = pv.yearEnd;
       parts.preview.classList.toggle('is-overrun', y !== null && y.overrun !== null);
       setText(
@@ -251,7 +253,7 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
       );
       parts.previewYear.hidden = y === null;
     }
-    const msg = f.draft === null ? null : checkMessage(f.draft.check, name);
+    const msg = f.draft === null ? null : (overText(f, props.policy) ?? checkMessage(f.draft.check, name));
     setText(parts.message, msg ?? '');
     parts.message.hidden = msg === null;
     const rejected = f.draft !== null && !['ok', 'unchanged', 'pending-range'].includes(f.draft.check.status);
@@ -288,6 +290,12 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
       closeDialog();
       return;
     }
+    let draftCost: number | null = null;
+    for (const f of tool.fields) {
+      const c = draftCharges(f);
+      if (c !== null && c.year > 0) draftCost = Math.max(draftCost ?? 0, c.year);
+    }
+    dialogBudget.update(props.policy.budgetBar, draftCost);
     // District picker: tools whose fields are per district (social housing starts).
     const perDistrict = tool.fields.some((f) => f.limits.scope === 'city-year' || f.editable === 'select-district');
     picker.hidden = !perDistrict;
@@ -390,9 +398,6 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
         b.addEventListener('click', () => open(id, b));
         return b;
       });
-      const budget = props.policy.budget;
-      budgetLine.hidden = budget === null;
-      setText(budgetLine, budget === null ? '' : fillTemplate(C.budgetLeft, { amount: formatAmount(budget.remaining), year: String(budget.year) }));
       for (const t of tools) {
         const b = cardEls.get(t.id);
         if (b === undefined) continue;
@@ -433,6 +438,50 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
       }
     },
   };
+}
+
+/** The charges of a draft kept to the end of the year, or null when it has none (housing-tools Requirement 3.2). */
+function draftCharges(f: FieldView): { readonly year: number; readonly total: number } | null {
+  const check = f.draft?.check;
+  if (check === undefined || (check.status !== 'ok' && check.status !== 'pending-range')) return null;
+  if (check.costYear === undefined || check.costTotal === undefined) return null;
+  return { year: check.costYear, total: check.costTotal };
+}
+
+/**
+ * The cost line of a draft against the Budget_Bar, which counts the year with the current values kept to its end:
+ * what the change costs this year and what stays, the part paid in later years, or what is missing.
+ */
+function costLine(f: FieldView, policy: PolicyPanelView): string | null {
+  const c = draftCharges(f);
+  const bar = policy.budgetBar;
+  if (c === null || bar === null || c.year === 0) return null;
+  const left = bar.remaining - c.year;
+  if (left < 0) {
+    const others = bar.tools.filter((t) => t.tool !== f.tool);
+    const list = others.map((t) => fillTemplate(BB.listItem, { tool: toolName(t.tool), amount: exactTwd(t.spent + t.later) })).join(BB.listSeparator);
+    return fillTemplate(BB.costOver, { missing: exactTwd(-left), list });
+  }
+  if (c.year < 0) {
+    return fillTemplate(D.previewCostLess, { year: String(bar.year), cost: formatAmount(-c.year), left: formatAmount(left) });
+  }
+  const later = c.total - c.year;
+  return [
+    fillTemplate(BB.costFits, { cost: exactTwd(c.year), left: exactTwd(left) }),
+    later > 0 ? fillTemplate(BB.costLaterYears, { amount: exactTwd(later) }) : '',
+  ].filter((t) => t !== '').join(' ');
+}
+
+/**
+ * The rejection of a draft over the Annual_Budget, with what the other tools spend this year (housing-tools
+ * Requirement 3.2 and 3.3); null for any other check, which keeps its own message.
+ */
+function overText(f: FieldView, policy: PolicyPanelView): string | null {
+  const check = f.draft?.check;
+  if (check === undefined || check.status !== 'budget' || check.problem.reason !== 'annual-budget') return null;
+  const others = (policy.budgetBar?.tools ?? []).filter((t) => t.tool !== f.tool);
+  const list = others.map((t) => fillTemplate(BB.listItem, { tool: toolName(t.tool), amount: exactTwd(t.spent + t.later) })).join(BB.listSeparator);
+  return fillTemplate(BB.costOver, { missing: exactTwd(check.problem.over), list });
 }
 
 function activeTools(policy: PolicyPanelView): ActiveTool[] {

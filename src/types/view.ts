@@ -92,6 +92,23 @@ export interface BudgetFiguresView {
   readonly remaining: number;
 }
 
+/** One tool's share of the Annual_Budget of a year (housing-tools Requirement 3). */
+export interface BudgetToolView {
+  readonly tool: string;
+  /** Charges of the year in quarters already computed. */
+  readonly spent: number;
+  /** Charges of the year committed for its later quarters (for example social housing paid over time). */
+  readonly later: number;
+}
+
+/** The Budget_Bar of the Planning_Quarter's year (housing-tools Requirement 3.1). */
+export interface BudgetBarView {
+  readonly year: number;
+  readonly annualBudget: number;
+  readonly remaining: number;
+  readonly tools: readonly BudgetToolView[];
+}
+
 export type BudgetProblemView = {
   readonly reason: 'annual-budget' | 'tool-ceiling';
   readonly year: number;
@@ -118,9 +135,9 @@ export type EditCheckView =
   | { readonly status: 'unchanged'; readonly budget: BudgetFiguresView | null }
   | { readonly status: 'limit'; readonly limit: LimitProblem; readonly budget: BudgetFiguresView | null }
   | { readonly status: 'budget'; readonly problem: BudgetProblemView }
-  | { readonly status: 'pending-range'; readonly budget: BudgetFiguresView; readonly yearEnd?: YearEndView; readonly budgetBefore?: BudgetFiguresView }
+  | { readonly status: 'pending-range'; readonly budget: BudgetFiguresView; readonly yearEnd?: YearEndView; readonly budgetBefore?: BudgetFiguresView; readonly costYear?: number; readonly costTotal?: number }
   | { readonly status: 'engine'; readonly error: EngineError; readonly budget: BudgetFiguresView }
-  | { readonly status: 'ok'; readonly budget: BudgetFiguresView; readonly yearEnd?: YearEndView; readonly budgetBefore?: BudgetFiguresView };
+  | { readonly status: 'ok'; readonly budget: BudgetFiguresView; readonly yearEnd?: YearEndView; readonly budgetBefore?: BudgetFiguresView; readonly costYear?: number; readonly costTotal?: number };
 
 export interface FieldView {
   readonly key: FieldKey;
@@ -202,6 +219,8 @@ export interface CarriedProblemView {
 export interface PolicyPanelView {
   readonly domains: readonly { readonly domain: 'housing' | 'transit'; readonly tools: readonly ToolView[] }[];
   readonly budget: BudgetFiguresView | null;
+  /** The same year by tool, for the Budget_Bar in the menu and the dialogs; null when the game is complete. */
+  readonly budgetBar: BudgetBarView | null;
   readonly construction: readonly ConstructionRowView[];
   readonly carried: CarriedProblemView | null;
 }
@@ -218,6 +237,8 @@ export interface TurnBarView {
   readonly engineError: { readonly quarter: QuarterKey; readonly error: EngineError } | null;
   readonly nextEnabled: boolean;
   readonly fastForwardEnabled: boolean;
+  /** The Budget_Bar of the Planning_Quarter's year; null before a game or when it is complete. */
+  readonly budget: BudgetBarView | null;
 }
 
 export interface LegendView {

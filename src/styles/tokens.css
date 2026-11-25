@@ -42,6 +42,14 @@
   --color-risk-text: #ffa3aa;
   --color-risk-bg: #3b0f1a;
   --color-risk-line: #ff7b86;
+  /* Budget_Bar segments by tool (housing-tools design, approved 2026-11-25). Always named in the legend in words. */
+  --color-budget-social-housing: #3a70ba;
+  --color-budget-rent-subsidy: #2a98b0;
+  --color-budget-commuter-pass: #4dbb8c;
+  --color-budget-sublease: #b5d866;
+  --color-budget-holding-tax: #f1d35a;
+  --color-budget-hatch: rgba(6, 18, 31, 0.3);
+  --color-budget-unused-hatch: rgba(113, 131, 168, 0.18);
 
   /* Indicator_Class ramps (Design_Proposal section 5, provisional approval 2026-11-18) */
   --color-seq-0: #3a70ba;

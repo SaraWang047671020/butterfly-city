@@ -28,7 +28,8 @@ import type {
   ToolField,
   ToolRule,
 } from '../../types/simulation.ts';
-import { emptyLedger, checkBudget, checkLimit, commitQuarter, planBudget } from '../../simulation/budget.ts';
+import { emptyLedger, checkBudget, checkLimit, commitQuarter, planBudget, quarterIncrements } from '../../simulation/budget.ts';
+import { FIRST_QUARTER } from '../../simulation/constants.ts';
 import { runRange } from '../../simulation/engine.ts';
 import { nextQuarter, quarterYear } from '../../simulation/quarter.ts';
 import { followsRealTrack, playerTimeline, playerValue, withRealTrack, withValue } from './policy.ts';
@@ -229,7 +230,7 @@ function candidateValue(candidate: PolicyTimeline, t: FieldTarget, q: QuarterKey
 const AFFORD_CAP = 1e12;
 
 /**
- * The largest value of a field the Annual_Budget and the tool ceiling allow in the Planning_Quarter, with every
+ * The largest value of a field the Annual_Budget and the tool ceiling allow, kept to the end of the year, with every
  * other field as it is (housing-tools Requirement 2.2: a field without a Documented_Limit is limited by the budget
  * only). Used as the slider end; the check of an edit stays `checkEditSync`. Integer fields give an integer;
  * other fields are searched to 1 unit. Returns the current value when even that does not fit.
@@ -240,9 +241,13 @@ export function affordableValue(session: EditSession, target: FieldTarget, integ
   const ctx = context(session);
   const tools = session.registry.tools;
   const ledger = session.ledger ?? emptyLedger(planBudget(session.realTrack, session.params, tools, ctx));
+  // Kept to the end of the year, as the Budget_Bar and the year-end check count (housing-tools Requirement 3).
   const fits = (v: number): boolean => {
-    const setting = settingOf(playerTimeline(session.realTrack, withValue(session.diffs, session.realTrack, target, p, v)), p);
-    return setting !== undefined && checkBudget(setting, ledger, session.params, tools, ctx).ok;
+    const timeline = playerTimeline(session.realTrack, withValue(session.diffs, session.realTrack, target, p, v));
+    const setting = settingOf(timeline, p);
+    if (setting === undefined || !checkBudget(setting, ledger, session.params, tools, ctx).ok) return false;
+    const end = projectYear(timeline, ledger, p, session.params, tools, ctx);
+    return end === null || end.overrun === null;
   };
   const current = playerValue(session.realTrack, session.diffs, target, p) ?? 0;
   let lo = Math.max(0, current);
@@ -321,11 +326,36 @@ export function checkEditSync(session: EditSession, req: EditRequest): EditCheck
   const yearEnd = projectYear(playerTimeline(session.realTrack, candidate), ledger, p, session.params, tools, ctx);
   // The same quarter with the current values, so the Quick_Preview shows the cost of the edit alone.
   const before = budgetOf(session.diffs);
+  // The charges of the edit if the value is kept to the end of the year (housing-tools Requirement 3.2): the part
+  // that falls in this year and the whole charge, of which the rest is paid in later years.
+  const chargesOf = (diffs: PolicyDiffs): { year: number; total: number } => {
+    const timeline = playerTimeline(session.realTrack, diffs);
+    const year = quarterYear(p);
+    const out = { year: 0, total: 0 };
+    for (let q: QuarterKey = p; quarterYear(q) === year; q = nextQuarter(q)) {
+      const setting = settingOf(timeline, q);
+      if (setting !== undefined) {
+        const inc = quarterIncrements(ledger.plan, q, setting, tools, session.params, ctx);
+        for (const slots of Object.values(inc)) {
+          slots.forEach((v, slot) => {
+            out.total += v;
+            if (Math.floor(slot / 4) + quarterYear(FIRST_QUARTER) === year) out.year += v;
+          });
+        }
+      }
+      if (q.endsWith('Q4')) break;
+    }
+    return out;
+  };
+  const after = chargesOf(candidate);
+  const now = chargesOf(session.diffs);
   return {
     status: 'pending-range',
     budget: figures(budget),
     ...(yearEnd === null ? {} : { yearEnd }),
     ...(before.ok ? { budgetBefore: figures(before) } : {}),
+    costYear: after.year - now.year,
+    costTotal: after.total - now.total,
   };
 }
 
@@ -354,6 +384,8 @@ export function checkEditRange(session: EditSession, req: EditRequest): EditChec
     budget: sync.budget,
     ...(sync.yearEnd === undefined ? {} : { yearEnd: sync.yearEnd }),
     ...(sync.budgetBefore === undefined ? {} : { budgetBefore: sync.budgetBefore }),
+    ...(sync.costTotal === undefined ? {} : { costTotal: sync.costTotal }),
+    ...(sync.costYear === undefined ? {} : { costYear: sync.costYear }),
   };
 }
 

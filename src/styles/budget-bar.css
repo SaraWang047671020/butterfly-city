@@ -1,0 +1,107 @@
+/* Budget_Bar (housing-tools design, approved 2026-11-25). Tokens only. */
+.ui-budget {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.ui-budget[hidden] {
+  display: none;
+}
+
+.ui-budget__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0 var(--space-3);
+  margin: 0;
+  font-size: var(--font-size-xs);
+}
+
+.ui-budget__left {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.ui-budget__total {
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ui-budget__bar {
+  display: flex;
+  height: 14px;
+  overflow: hidden;
+  border: 1px solid var(--color-line-subtle);
+  border-radius: var(--radius-sm);
+  background: repeating-linear-gradient(135deg, transparent 0 6px, var(--color-budget-unused-hatch) 6px 8px);
+}
+
+.ui-budget__seg {
+  flex: 0 0 auto;
+  height: 100%;
+}
+
+.ui-budget__bar .ui-budget__seg + .ui-budget__seg {
+  box-shadow: inset 2px 0 0 var(--color-bg-page);
+}
+
+.ui-budget__seg--socialHousing { background-color: var(--color-budget-social-housing); }
+.ui-budget__seg--rentSubsidy { background-color: var(--color-budget-rent-subsidy); }
+.ui-budget__seg--commuterPass { background-color: var(--color-budget-commuter-pass); }
+.ui-budget__seg--sublease { background-color: var(--color-budget-sublease); }
+.ui-budget__seg--holdingTax { background-color: var(--color-budget-holding-tax); }
+
+.ui-budget__seg--later {
+  background-image: repeating-linear-gradient(90deg, var(--color-budget-hatch) 0 3px, transparent 3px 7px);
+}
+
+.ui-budget__seg--draft {
+  background-color: var(--color-accent);
+  outline: 2px dashed var(--color-focus);
+  outline-offset: -2px;
+}
+
+.ui-budget__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.ui-budget__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.ui-budget__item b {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.ui-budget__swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.ui-budget__swatch--left {
+  background: var(--color-line-subtle);
+}
+
+/* In the Turn_Bar: a full-width row under the quarter. */
+.turn-bar .ui-budget {
+  order: 9;
+  flex-basis: 100%;
+}

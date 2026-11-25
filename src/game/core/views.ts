@@ -19,6 +19,7 @@ import type {
   ValueRecord,
 } from '../../types/data-files.ts';
 import type {
+  BudgetBarView,
   Announcement,
   BriefItemView,
   BriefView,
@@ -53,6 +54,7 @@ import type {
   EngineError,
   EngineBaseline,
   ParameterTable,
+  PolicyTimeline,
   QuarterRanges,
   RuleContext,
   RuleRegistry,
@@ -61,7 +63,7 @@ import type {
   ToolField,
   ToolRule,
 } from '../../types/simulation.ts';
-import { emptyLedger, checkLimit, planBudget } from '../../simulation/budget.ts';
+import { commitQuarter, emptyLedger, checkLimit, planBudget } from '../../simulation/budget.ts';
 import { LAST_QUARTER, QUARTER_COUNT } from '../../simulation/constants.ts';
 import { run } from '../../simulation/engine.ts';
 import { roundHalfUp } from '../../simulation/numeric.ts';
@@ -704,6 +706,47 @@ function sumYear(slots: readonly number[], yearIndex: number): number {
   return sum;
 }
 
+/**
+ * The Budget_Bar of the Planning_Quarter's year (housing-tools Requirement 3.1), with the player's values kept to the
+ * end of the year, as the year-end check of an edit counts: per tool, the charges of the year in quarters already
+ * computed (`spent`) and in its other quarters (`later`). The Annual_Budget is the real spending of the year, so on
+ * the real track nothing is left at the end of the year: spending more on one tool means spending less on another.
+ */
+export function budgetBarView(
+  ledger: BudgetLedger,
+  planning: QuarterKey,
+  tools: readonly ToolRule[],
+  timeline: PolicyTimeline,
+  params: ParameterTable,
+  ctx: RuleContext,
+): BudgetBarView {
+  const year = quarterYear(planning);
+  const yearIndex = year - quarterYear(FIRST_QUARTER_KEY);
+  const annualBudget = ledger.plan.annualBudget[yearIndex] ?? 0;
+  const through = ledger.through === null ? -1 : quarterIndex(ledger.through);
+  let led = ledger;
+  for (let q = quarterIndex(planning); q < QUARTER_COUNT && quarterYear(quarterAt(q)) === year; q += 1) {
+    const setting = timeline.find((x) => x.quarter === quarterAt(q));
+    if (setting === undefined) break;
+    const c = commitQuarter(led, quarterAt(q), setting, tools, params, { budgetMode: 'record' }, ctx);
+    if (!c.ok) break;
+    led = c.value;
+  }
+  let committed = 0;
+  const rows = tools.map((t) => {
+    const slots = led.committed[t.id] ?? [];
+    let spent = 0;
+    let later = 0;
+    for (let i = yearIndex * 4; i < yearIndex * 4 + 4; i += 1) {
+      if (i <= through) spent += slots[i] ?? 0;
+      else later += slots[i] ?? 0;
+    }
+    committed += spent + later;
+    return { tool: t.id, spent, later };
+  });
+  return { year, annualBudget, remaining: annualBudget - committed, tools: rows };
+}
+
 function policyPanel(c: Ctx, ui: ControllerUiState): PolicyPanelView {
   const s = c.session;
   const complete = s.next === 'complete';
@@ -731,7 +774,8 @@ function policyPanel(c: Ctx, ui: ControllerUiState): PolicyPanelView {
   const construction: readonly ConstructionRowView[] =
     displayed === undefined ? [] : constructionEntries(displayed, c.names);
 
-  return { domains, budget, construction, carried: carriedView(ui.carried) };
+  const budgetBar = complete ? null : budgetBarView(ledger, planning, tools, p.timeline, s.params, rctx);
+  return { domains, budget, budgetBar, construction, carried: carriedView(ui.carried) };
 }
 
 // ---------------------------------------------------------------------------
@@ -833,7 +877,14 @@ function turnBar(session: GameSession | null, ui: ControllerUiState): TurnBarVie
     engineError: ui.engineError,
     nextEnabled: !idle,
     fastForwardEnabled: !idle,
+    budget: session === null || planning === null ? null : budgetBarOf(session, planning),
   };
+}
+
+function budgetBarOf(s: GameSession, planning: QuarterKey): BudgetBarView {
+  const rctx: RuleContext = { params: s.params, baseline: s.baseline, realTrack: s.realTrack, commute: s.commute };
+  const ledger = s.ledger ?? emptyLedger(planBudget(s.realTrack, s.params, s.registry.tools, rctx));
+  return budgetBarView(ledger, planning, s.registry.tools, playerTimeline(s.realTrack, s.diffs), s.params, rctx);
 }
 
 export function buildGameView(session: GameSession | null, ui: ControllerUiState, data: LoadedData): GameView {
@@ -880,6 +931,7 @@ export function buildGameView(session: GameSession | null, ui: ControllerUiState
           { domain: 'transit', tools: [] },
         ],
         budget: null,
+        budgetBar: null,
         construction: [],
         carried: null,
       },

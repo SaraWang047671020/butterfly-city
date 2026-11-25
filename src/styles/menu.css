@@ -34,6 +34,23 @@
   display: none;
 }
 
+/* The money left this year (housing-tools design): narrow screens only, like the quarter. */
+.ui-menu-budget {
+  display: none;
+  min-height: var(--target-comfortable);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-bg-panel) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-line) 40%, transparent);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
 .ui-menu-button {
   position: relative;
   display: grid;
@@ -274,6 +291,11 @@
 
   .ui-menu-quarter {
     display: inline-block;
+  }
+
+  .ui-menu-budget:not([hidden]) {
+    display: inline-flex;
+    align-items: center;
   }
 }
 

@@ -22,6 +22,8 @@ export interface GameMenu {
   isOpen(): boolean;
   /** The Displayed_Quarter next to ☰ on a narrow screen (user decision A, 2026-11-24). */
   setQuarter(text: string): void;
+  /** The money left this year next to ☰ on a narrow screen (housing-tools design, approved 2026-11-25). */
+  setBudget(text: string): void;
   /** Marks ☰ when a policy needs attention (text, not only colour). */
   setAttention(on: boolean): void;
 }
@@ -65,7 +67,14 @@ export function createGameMenu(doc: Document, inertRoots: () => readonly HTMLEle
   dot.className = 'ui-menu-button__dot';
   dot.setAttribute('aria-hidden', 'true');
   button.append(icon, dot);
-  wrap.append(quarter, button);
+  // The money left; a tap opens the menu, where the full Budget_Bar is. Keyboard and screen reader users reach the
+  // same bar through ☰, so this shortcut is not a second tab stop and is hidden from the accessibility tree.
+  const budget = doc.createElement('button');
+  budget.type = 'button';
+  budget.className = 'ui-menu-budget';
+  budget.tabIndex = -1;
+  budget.setAttribute('aria-hidden', 'true');
+  wrap.append(quarter, budget, button);
 
   const panel = doc.createElement('div');
   panel.className = 'ui-menu';
@@ -151,6 +160,9 @@ export function createGameMenu(doc: Document, inertRoots: () => readonly HTMLEle
   };
 
   button.addEventListener('click', () => (panel.hidden ? open() : close(true)));
+  budget.addEventListener('click', () => {
+    if (panel.hidden) open();
+  });
   closeButton.addEventListener('click', () => close(true));
 
   panel.addEventListener('keydown', (e) => {
@@ -199,6 +211,10 @@ export function createGameMenu(doc: Document, inertRoots: () => readonly HTMLEle
     isOpen: () => !panel.hidden,
     setQuarter(text) {
       if (quarter.textContent !== text) quarter.textContent = text;
+    },
+    setBudget(text) {
+      if (budget.textContent !== text) budget.textContent = text;
+      budget.hidden = text === '';
     },
     setAttention(on) {
       if (on === attention) return;

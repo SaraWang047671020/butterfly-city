@@ -48,14 +48,17 @@ describe('no Documented_Limit (housing-tools Requirement 2.2)', () => {
     expect(limits(buildNoMax()).upper).toBe(Number.POSITIVE_INFINITY);
   });
 
-  it('the slider ends at the largest value the budget of the year allows', () => {
+  it('the slider ends at the largest value the budget of the year allows, kept to the end of the year', () => {
     const s = buildNoMax();
     const end = affordableValue(s, TARGET, true);
     expect(Number.isInteger(end)).toBe(true);
     const at = checkEditSync(s, { target: TARGET, kind: 'value', text: String(end) });
     const over = checkEditSync(s, { target: TARGET, kind: 'value', text: String(end + 1) });
+    // Kept to the end of the year: the end fits with no overrun, one more does not (a rejection or a year-end overrun).
     expect(['pending-range', 'unchanged']).toContain(at.status);
-    expect(over.status).toBe('budget');
+    if (at.status === 'pending-range') expect(at.yearEnd?.overrun ?? null).toBeNull();
+    const overruns = over.status === 'budget' || (over.status === 'pending-range' && (over.yearEnd?.overrun ?? null) !== null);
+    expect(overruns).toBe(true);
   });
 });
 
