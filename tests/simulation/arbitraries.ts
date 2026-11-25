@@ -45,7 +45,7 @@ import type { ParameterEntry } from './fixtures/index.ts';
 // Small helpers
 // ---------------------------------------------------------------------------
 
-const TOOLS: readonly ToolId[] = ['socialHousing', 'commuterPass', 'rentSubsidy'];
+const TOOLS: readonly ToolId[] = ['socialHousing', 'commuterPass', 'rentSubsidy', 'sublease'];
 
 function dbl(min: number, max: number): fc.Arbitrary<number> {
   return fc.double({ min, max, noNaN: true, noDefaultInfinity: true });
@@ -328,12 +328,12 @@ export const arbCommuteMatrix: fc.Arbitrary<CommuteMatrix> = (() => {
 // Real_Policy_Track
 // ---------------------------------------------------------------------------
 
-const PER_QUARTER = DISTRICT_CODES.length + CITIES.length * 4; // 41 districts + 2 cities x 4 fields
+const PER_QUARTER = DISTRICT_CODES.length + CITIES.length * 5; // 41 districts + 2 cities x 5 fields
 
 /**
  * Real track for `quarters` quarters. Social housing units started 1 to 50 per district; commuter pass
  * fields only while the price is positive (subsidy below the price, so the real net price is positive);
- * rent subsidy households 0 to 3,000 and amount 0 to 20,000,000 per city.
+ * rent subsidy households 0 to 3,000 and amount 0 to 20,000,000 per city; sublease homes matched 0 to 500 per city.
  */
 export function arbRealTrack(quarters: number, pass: PassSetup = DEFAULT_PASS_SETUP): fc.Arbitrary<PolicyTimeline> {
   return fc
@@ -351,12 +351,14 @@ export function arbRealTrack(quarters: number, pass: PassSetup = DEFAULT_PASS_SE
         const passesSold: Record<AreaKey, number> = {};
         const households: Record<AreaKey, number> = {};
         const amount: Record<AreaKey, number> = {};
+        const unitsMatched: Record<AreaKey, number> = {};
         CITIES.forEach((city, c) => {
-          const k = base + DISTRICT_CODES.length + c * 4;
+          const k = base + DISTRICT_CODES.length + c * 5;
           subsidy[city] = price > 0 ? Math.floor((fr[k] ?? 0) * Math.floor(price * 0.9)) : 0;
           passesSold[city] = price > 0 ? 1 + Math.floor((fr[k + 1] ?? 0) * 500_000) : 0;
           households[city] = Math.floor((fr[k + 2] ?? 0) * 3000);
           amount[city] = Math.floor((fr[k + 3] ?? 0) * 20_000_000);
+          unitsMatched[city] = Math.floor((fr[k + 4] ?? 0) * 500);
         });
         out.push({
           quarter: quarterAt(q),
@@ -364,6 +366,7 @@ export function arbRealTrack(quarters: number, pass: PassSetup = DEFAULT_PASS_SE
             socialHousing: { unitsStarted },
             commuterPass: { subsidy, passesSold },
             rentSubsidy: { households, amount },
+            sublease: { unitsMatched },
           },
         });
       }
@@ -422,6 +425,7 @@ const EDITABLE: readonly { readonly tool: string; readonly field: string; readon
   { tool: 'commuterPass', field: 'subsidy', level: 'city' },
   { tool: 'rentSubsidy', field: 'households', level: 'city' },
   { tool: 'rentSubsidy', field: 'amount', level: 'city' },
+  { tool: 'sublease', field: 'unitsMatched', level: 'city' },
 ];
 
 function areasOf(level: 'district' | 'city'): readonly AreaKey[] {
@@ -454,7 +458,7 @@ export function arbPlayerTimeline(
       mode: modeArb,
       fr: fc.array(unit, { minLength: fracLen, maxLength: fracLen }),
       moves: fc.array(fc.tuple(unit, unit, unit, unit, unit), { minLength: 1, maxLength: 3 }),
-      help: fc.tuple(fc.integer({ min: 0, max: 3 }), unit, unit, unit),
+      help: fc.tuple(fc.integer({ min: 0, max: 4 }), unit, unit, unit),
     })
     .map(({ mode: m, fr, moves, help }) => {
       const timeline = real.map((s) => ({ quarter: s.quarter, tools: cloneTools(s.tools) }));

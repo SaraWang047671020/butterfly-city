@@ -1,6 +1,6 @@
 // Ghost count indicator rule (Requirement 10). Stage post-migration.
 // Collects the ghostGroups of every registry tool from the quarter's effects and passes them to
-// ghosts.ts, which builds the Baseline and the six group Causes. The running Scenario's parameter
+// ghosts.ts, which builds the Baseline and the seven group Causes. The running Scenario's parameter
 // table gives the Derived_Baseline count (Requirement 19.8).
 
 import type { DistrictCode } from '../../types/data-files.ts';

@@ -248,6 +248,70 @@
       "estimated": {
         "method": "Assumed 1. Data that would replace it: published administration cost of the commuter pass and rent subsidy programs."
       }
+    },
+    "sublease.unitCost": {
+      "kind": "scalar",
+      "value": 163950,
+      "unit": "TWD per home matched, over the 3-year contract",
+      "status": "secondary",
+      "source": {
+        "citation": "Executive Yuan, 百萬戶租屋家庭支持計畫 (2025-2032), sublease content, annex 7 unit prices: management fee 2,200 per month for 36 months, matching fee 14,500, notarisation 3,000, repair 14,500 and insurance 3,500 per year",
+        "url": "https://leasing-and-management.udd.gov.taipei/attachments/百萬戶租屋家庭支持計畫包租代管內容_行政院114年4月16日院臺建字第1141006421號函核定.pdf"
+      },
+      "range": {
+        "low": 112000,
+        "high": 237000,
+        "lowSource": {
+          "citation": "MOI, 社會住宅包租代管第三期至第五期計畫執行要點 (2025-08-27), annex 2 and annex 3: 代管 of a general household in New Taipei (matching 10,000, 1,500 per month, repair 8,000 per year, insurance 3,500 per year, notarisation 13,500)",
+          "url": "https://www.nlma.gov.tw/uploads/files/ef9ad3624c0da679f59fb6f16276844d.pdf"
+        },
+        "highSource": {
+          "citation": "MOI, 社會住宅包租代管第三期至第五期計畫執行要點 (2025-08-27), annex 2 and annex 3: 包租 of a disadvantaged household in Taipei (development 24,000, 4,000 per month, repair 15,000 per year, insurance 3,500 per year, notarisation 13,500)",
+          "url": "https://www.nlma.gov.tw/uploads/files/ef9ad3624c0da679f59fb6f16276844d.pdf"
+        }
+      },
+      "estimated": {
+        "method": "Programme budgeting unit prices for one 3-year contract: 2,200 x 36 + 14,500 + 3,000 x 3 + 14,500 x 3 + 3,500 x 3 = 163,950 TWD, about 55,000 per year. The rent of 包租 carries no gap paid by the government (S17 point 13: no rent margin). Renewal costs after 3 years are not counted. The range is the 3-year cost of the cheapest and the dearest fee row of phase 5."
+      }
+    },
+    "sublease.rentShare": {
+      "kind": "scalar",
+      "value": 0.85,
+      "unit": "ratio of market rent",
+      "status": "secondary",
+      "source": {
+        "citation": "MOI CPA, 第二期租屋服務事業辦理承租民間住宅並轉租或媒合承出租及其他服務注意事項 (2019-04-18), points 4 and 9: 包租 at most 80 percent and 代管 at most 90 percent of market rent; MOI 2025 rules point 14: from phase 4, at most the appraised market rent",
+        "url": "https://www.nlma.gov.tw/uploads/files/b0bd53cba25febb3d25599daa9091931.pdf"
+      },
+      "range": {
+        "low": 0.8,
+        "high": 1,
+        "lowSource": {
+          "citation": "MOI CPA 2019 rules, point 4: 包租 tenants rent at no more than 80 percent of market rent (phases 1 to 3)",
+          "url": "https://www.nlma.gov.tw/uploads/files/b0bd53cba25febb3d25599daa9091931.pdf"
+        },
+        "highSource": {
+          "citation": "MOI, 社會住宅包租代管第三期至第五期計畫執行要點 (2025-08-27), point 14: contract rent not above the appraised market rent (phases 4 and 5)",
+          "url": "https://www.nlma.gov.tw/uploads/files/ef9ad3624c0da679f59fb6f16276844d.pdf"
+        }
+      },
+      "estimated": {
+        "method": "Central value 0.85 between the 包租 rule of phases 1 to 3 (0.8), the 代管 rule (0.9) and the phase 4 and 5 rule (at most 1.0). The share of 包租 and 代管 among matched homes is not published by year. Discounts for disadvantaged households (50 to 70 percent) come from the rent subsidy and are not counted here."
+      }
+    },
+    "sublease.lag": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "quarters",
+      "status": "gap",
+      "assumption": "A matched home is lived in from the quarter after the match.",
+      "source": {
+        "citation": "MOI 2025 rules, point 11: document review within 7 working days and joint inspection within another 7 working days; no measured time from matching to move-in was found",
+        "url": "https://www.nlma.gov.tw/uploads/files/ef9ad3624c0da679f59fb6f16276844d.pdf"
+      },
+      "estimated": {
+        "method": "Assumed 1 quarter from the review rule (14 working days) plus the time to find a tenant. Data that would replace it: the average time from landlord registration to move-in in the programme records."
+      }
     }
   }
 }

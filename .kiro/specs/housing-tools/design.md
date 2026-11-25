@@ -46,6 +46,8 @@ The UI keeps the "lower limit · real · upper limit" line; an infinite upper li
 - **Cost**: `sublease.unitCost` per unit per quarter (service fees, the rent gap of 包租, insurance; research item 3, else `gap` with a range), spread by `sublease.costSchedule`.
 - **Life story**: `apply` gains `benefit: 'sublease'`; odds from units matched per track, as the rent subsidy; the real odds from the research, or `gap`. New Life_Event option texts drafted for approval.
 
+**Deviation (task 4.1, 2026-11-25): stock, not flow.** `subleaseUnitsMatched` counts homes newly matched in the quarter, not homes under contract. A flow effect would house a household for one quarter only. A contract lasts 3 years and can be renewed twice (S17), which is longer than the programme's span in the game (2017–2025), so the extra homes stay matched to the end of the game (`effect: 'stock'`). Cost: `sublease.unitCost` = 163,950 TWD per home over the 3-year contract (S19 unit prices, about 55,000 a year; range 112,000 to 237,000 from the phase 5 fee table), spread by `sublease.costSchedule` over 12 equal quarters; renewal costs are not counted (stated in the parameter's method). Only the rent burden moves (the programme sets the rent; no market rent delta). `sublease.rentShare` 0.85 (0.8 to 1.0) is a Scenario effect parameter.
+
 ## Holding_Tax_Tool (Requirement 5)
 
 `src/simulation/rules/holding-tax.ts`, city level, stock effect:

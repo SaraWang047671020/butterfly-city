@@ -1782,6 +1782,80 @@
       "estimated": {
         "method": "Three Taipei projects, fixture value."
       }
+    },
+    "sublease.costSchedule": {
+      "kind": "schedule",
+      "offsets": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "shares": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "unit": "share",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "gap",
+      "estimated": {
+        "method": "Fixture estimate."
+      },
+      "assumption": "Fixture assumption."
+    },
+    "sublease.lag": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "quarters",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "gap",
+      "estimated": {
+        "method": "Fixture estimate."
+      },
+      "assumption": "Fixture assumption."
+    },
+    "sublease.rentShare": {
+      "kind": "scalar",
+      "value": 0.85,
+      "unit": "ratio of market rent",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "secondary",
+      "range": {
+        "low": 0.8,
+        "high": 1,
+        "lowSource": {
+          "citation": "Test fixture",
+          "url": "https://example.org/fixture"
+        },
+        "highSource": {
+          "citation": "Test fixture",
+          "url": "https://example.org/fixture"
+        }
+      },
+      "estimated": {
+        "method": "Fixture estimate."
+      }
+    },
+    "sublease.unitCost": {
+      "kind": "scalar",
+      "value": 160000,
+      "unit": "TWD per home matched",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
     }
   }
 }

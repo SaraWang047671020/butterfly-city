@@ -68,6 +68,7 @@ import { LAST_QUARTER, QUARTER_COUNT } from '../../simulation/constants.ts';
 import { run } from '../../simulation/engine.ts';
 import { roundHalfUp } from '../../simulation/numeric.ts';
 import { scalar } from '../../simulation/params.ts';
+import { citySaving, SUBLEASE_RENT_SHARE_ID } from '../../simulation/rules/sublease.ts';
 import { quarterAt, quarterIndex, quarterYear } from '../../simulation/quarter.ts';
 import { affordableValue, refOf } from './checks.ts';
 import { constructionEntries } from './construction.ts';
@@ -643,7 +644,18 @@ function fieldView(p: PanelCtx, rule: ToolRule, field: ToolField, area: AreaKey,
     draft,
     applyEnabled: usable && draft !== null && draft.check.status === 'ok',
     setToRealEnabled: usable && real !== null && !followsRealTrack(s.diffs, target, p.planning),
+    ...(rule.id === 'sublease' ? { subleaseEffect: subleaseEffect(p, city) } : {}),
   };
+}
+
+/** The effect line of a sublease field: the largest saving per home, the rent-share range and the Lag. */
+function subleaseEffect(p: PanelCtx, city: string): NonNullable<FieldView['subleaseEffect']> {
+  const params = p.c.session.params;
+  const share = params[SUBLEASE_RENT_SHARE_ID];
+  const low = share?.kind === 'scalar' ? (share.range?.low ?? share.value) : 0;
+  const high = share?.kind === 'scalar' ? (share.range?.high ?? share.value) : 0;
+  const saving = citySaving(p.rctx, city as CityName, p.planning, low);
+  return { saving: Number.isFinite(saving) ? saving : 0, shareLow: low, shareHigh: high, lag: scalar(params, 'sublease.lag') };
 }
 
 function toolView(p: PanelCtx, id: PolicyToolId): ToolView {

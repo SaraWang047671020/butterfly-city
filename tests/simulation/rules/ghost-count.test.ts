@@ -59,22 +59,23 @@ describe('ghost count rule', () => {
     expect(breakdown.causes.every((c) => c.contribution === 0)).toBe(true);
   });
 
-  it('has Baseline, the six group Causes in order and the Bound_Adjustment, all 0 at zero differences', () => {
+  it('has Baseline, the seven group Causes in order and the Bound_Adjustment, all 0 at zero differences', () => {
     const { value, breakdown } = run(work(buildParams(), 100_000, [ZERO_GROUP]));
     expect(value).toBe(42);
-    expect(breakdown.causes).toHaveLength(8);
+    expect(breakdown.causes).toHaveLength(9);
     expect(breakdown.causes.map((c) => c.id)).toEqual([
       'baseline',
       'ghost-rent-housed',
       'ghost-rent-spillover',
       'ghost-rent-subsidy',
+      'ghost-rent-sublease',
       'ghost-commute',
       'ghost-overlap',
       'ghost-displaced',
       'bound',
     ]);
     expect(breakdown.causes[0]?.contribution).toBe(42);
-    expect(breakdown.causes.slice(1).map((c) => c.contribution)).toEqual([0, 0, 0, 0, 0, 0, 0]);
+    expect(breakdown.causes.slice(1).map((c) => c.contribution)).toEqual([0, 0, 0, 0, 0, 0, 0, 0]);
   });
 
   it('moves the rent-group and overlap Causes for a hand-worked rent difference', () => {
@@ -91,7 +92,7 @@ describe('ghost count rule', () => {
     const { value, breakdown } = run(work(buildParams(), 100_000, [group]));
     expect(value).toBe(41);
     expect(breakdown.causes[1]?.contribution).toBeCloseTo(-0.06, 9);
-    expect(breakdown.causes[5]?.contribution).toBeCloseTo(0.018, 9);
+    expect(breakdown.causes[6]?.contribution).toBeCloseTo(0.018, 9);
     // Bound_Adjustment = 41 - (42 - 0.06 + 0.018) = -0.958.
     expect(breakdown.causes.at(-1)?.contribution).toBeCloseTo(-0.958, 9);
   });
@@ -104,7 +105,7 @@ describe('ghost count rule', () => {
       migration: { net: { [D]: -2000 }, displaced: { [D]: 2000 }, movedIn: { [D]: 0 }, exits: 0 },
     });
     const { value, breakdown } = run(w);
-    expect(breakdown.causes[6]?.contribution).toBe(2);
+    expect(breakdown.causes[7]?.contribution).toBe(2);
     expect(value).toBe(44);
   });
 

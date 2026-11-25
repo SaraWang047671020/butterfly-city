@@ -15,6 +15,7 @@ const GHOST_GROUPS = [
   'ghost-rent-housed',
   'ghost-rent-spillover',
   'ghost-rent-subsidy',
+  'ghost-rent-sublease',
   'ghost-commute',
   'ghost-overlap',
   'ghost-displaced',

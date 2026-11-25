@@ -141,8 +141,10 @@ describe('engine errors', () => {
     // Rent subsidy: 2 cities x 5,000 households x 1 TWD x 3 months, charged in the quarter itself.
     const rentSubsidyQuarter = 2 * 5_000 * 3;
     // Real social housing charges of 2015 after the four-quarter Cost_Schedule: 1 + 3/4 + 2/4 + 1/4 quarters.
-    const annualBudget = realQuarter * 2.5 + 4 * rentSubsidyQuarter;
-    const committed = realQuarter + nTaipei * 70 * unitCost + rentSubsidyQuarter;
+    // Sublease: 2 cities x 100 homes x 160,000 TWD, on the same four-quarter Cost_Schedule.
+    const subleaseQuarter = 2 * 100 * 160_000;
+    const annualBudget = realQuarter * 2.5 + 4 * rentSubsidyQuarter + subleaseQuarter * 2.5;
+    const committed = realQuarter + nTaipei * 70 * unitCost + rentSubsidyQuarter + subleaseQuarter;
     expect(result.error.details).toEqual({
       year: 2015,
       annualBudget,

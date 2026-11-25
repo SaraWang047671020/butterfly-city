@@ -1,4 +1,4 @@
-// Rule_Registry (Requirement 16): 3 tool rules and 7 indicator rules in a fixed order.
+// Rule_Registry (Requirement 16): 4 tool rules and 7 indicator rules in a fixed order.
 // The registry order drives every iteration in the engine (tools, then indicators by stage).
 
 import type { ParameterSpec, RuleRegistry } from '../types/simulation.ts';
@@ -12,9 +12,10 @@ import { rentSubsidyRule } from './rules/rent-subsidy.ts';
 import { rentRule } from './rules/rent.ts';
 import { socialHousingStockRule } from './rules/social-housing-stock.ts';
 import { socialHousingRule } from './rules/social-housing.ts';
+import { subleaseRule } from './rules/sublease.ts';
 
 export const RULE_REGISTRY: RuleRegistry = Object.freeze({
-  tools: Object.freeze([socialHousingRule, commuterPassRule, rentSubsidyRule]),
+  tools: Object.freeze([socialHousingRule, commuterPassRule, rentSubsidyRule, subleaseRule]),
   indicators: Object.freeze([
     // pre-migration
     socialHousingStockRule,

@@ -15,7 +15,7 @@ import type { ValidationContext, ValidationError } from '../../src/data/validate
 import { serializeJson } from '../../scripts/pipeline/serialize.ts';
 import { FIXED_TYPE1_IDS, FIXED_TYPE3_IDS } from '../../scripts/pipeline/params/fixed-table.ts';
 import { MIGRATION_EXIT_SHARE_ID, MIGRATION_SHARE_ID, MIGRATION_THRESHOLD_ID } from '../../scripts/pipeline/params/migration-anchors.ts';
-import { COST_SCHEDULE_ID, SHARE_BOTH_ID } from '../../scripts/pipeline/params/derived.ts';
+import { COST_SCHEDULE_ID, SHARE_BOTH_ID, SUBLEASE_SCHEDULE_ID } from '../../scripts/pipeline/params/derived.ts';
 import { roundTo } from '../../scripts/pipeline/numeric.ts';
 import { decimalsOf } from '../../scripts/pipeline/params/params-file.ts';
 import type { Json } from './helpers.ts';
@@ -27,7 +27,7 @@ const JOB_PREFIX = 'commute.jobShare.';
 const real: Json = JSON.parse(fs.readFileSync('public/data/params.json', 'utf8'));
 const realIds: string[] = Object.keys(real.parameters);
 const districtCodes = realIds.filter((id) => id.startsWith(JOB_PREFIX)).map((id) => id.slice(JOB_PREFIX.length));
-const type3 = new Set<string>([...FIXED_TYPE3_IDS, MIGRATION_EXIT_SHARE_ID, MIGRATION_SHARE_ID, MIGRATION_THRESHOLD_ID, SHARE_BOTH_ID, COST_SCHEDULE_ID]);
+const type3 = new Set<string>([...FIXED_TYPE3_IDS, MIGRATION_EXIT_SHARE_ID, MIGRATION_SHARE_ID, MIGRATION_THRESHOLD_ID, SHARE_BOTH_ID, COST_SCHEDULE_ID, SUBLEASE_SCHEDULE_ID]);
 const sourceTypes: Record<string, 1 | 2 | 3> = {};
 for (const id of realIds) sourceTypes[id] = limitSourceType(id) ?? (FIXED_TYPE1_IDS.includes(id) ? 1 : type3.has(id) ? 3 : 2);
 

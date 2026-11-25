@@ -119,6 +119,7 @@ export type GhostGroupId =
   | 'ghost-rent-housed'
   | 'ghost-rent-spillover'
   | 'ghost-rent-subsidy'
+  | 'ghost-rent-sublease'
   | 'ghost-commute'
   | 'ghost-overlap'
   | 'ghost-displaced';
@@ -395,7 +396,7 @@ export interface CauseDraft {
 
 /** One entry per Rent_Group_Source of a district. */
 export interface GhostGroupContribution {
-  readonly source: 'housed' | 'spillover' | 'subsidy';
+  readonly source: 'housed' | 'spillover' | 'subsidy' | 'sublease';
   /** Persons in the group. */
   readonly persons: number;
   /** Burden change of the group in percentage points. */

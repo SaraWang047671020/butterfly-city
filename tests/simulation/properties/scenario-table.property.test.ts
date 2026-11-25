@@ -12,11 +12,12 @@ const VARYING = [
   'socialHousing.rentRatio',
   'commuterPass.elasticity',
   'rentSubsidy.passThrough',
+  'sublease.rentShare',
   'ghost.commuteThreshold',
   'ghost.shareCommuteWithin',
 ] as const;
 
-// Direction: the migration cost per minute is strongest at range.high; the other six at range.low.
+// Direction: the migration cost per minute is strongest at range.high; the other seven at range.low.
 const HIGH_IS_STRONGEST = 'migration.commuteCostPerMinute';
 
 const FIXED_NAMED = [
@@ -69,7 +70,7 @@ function checkTable(params: ParameterTable): void {
 describe('scenario tables', () => {
   // Feature: simulation-engine, Property 23: Scenario tables vary only ranged effect parameters
   // **Validates: Requirements 7.1, 19.2, 19.5, 4.12**
-  it('Property 23: only the seven ranged effect parameters vary between scenarios', () => {
+  it('Property 23: only the eight ranged effect parameters vary between scenarios', () => {
     fc.assert(
       fc.property(arbParams(), (params) => {
         checkTable(params);
@@ -78,7 +79,7 @@ describe('scenario tables', () => {
     );
   }, 120_000);
 
-  it('moves the seven effect parameters of the fixture table by direction', () => {
+  it('moves the eight effect parameters of the fixture table by direction', () => {
     const params = buildParams();
     const low = scenarioTable(params, 'low');
     const high = scenarioTable(params, 'high');

@@ -31,10 +31,11 @@ describe('social housing stock rule', () => {
       'socialHousing',
       'commuterPass',
       'rentSubsidy',
+      'sublease',
       'migration',
       'bound',
     ]);
-    expect(breakdown.causes.map((c) => c.contribution)).toEqual([500, 100, 0, 0, 0, 0]);
+    expect(breakdown.causes.map((c) => c.contribution)).toEqual([500, 100, 0, 0, 0, 0, 0]);
     expect(breakdown.causes[0]?.sourceIds).toEqual(['src.socialHousingStock']);
   });
 

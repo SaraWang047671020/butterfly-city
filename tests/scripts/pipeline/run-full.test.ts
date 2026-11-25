@@ -7,8 +7,7 @@ import { MemoryRawReader } from '../../../scripts/pipeline/raw-reader.ts';
 import { createDefaultSteps, runPipeline, type Step } from '../../../scripts/pipeline/run.ts';
 import fs from 'node:fs';
 import { FIXED_TYPE1_IDS, FIXED_TYPE3_IDS } from '../../../scripts/pipeline/params/fixed-table.ts';
-import { MIGRATION_EXIT_SHARE_ID, MIGRATION_SHARE_ID, MIGRATION_THRESHOLD_ID } from '../../../scripts/pipeline/params/migration-anchors.ts';
-import { COST_SCHEDULE_ID, SHARE_BOTH_ID } from '../../../scripts/pipeline/params/derived.ts';
+import { COMPUTED_TYPE3_IDS } from '../../../scripts/pipeline/params/params-file.ts';
 import { serializeJson } from '../../../scripts/pipeline/serialize.ts';
 import type { ScalarParameter } from '../../../src/types/simulation.ts';
 import type { CommuteMatrixFile, DistrictsFile, HistoryFile, ParamsFile, PolicyTrackFile } from '../../../src/types/data-files.ts';
@@ -47,7 +46,7 @@ function validParams(): { file: ParamsFile; sourceTypes: Map<string, 1 | 2 | 3> 
   }
   for (const code of DISTRICT_CODES) parameters[`commute.jobShare.${code}`] = { ...template, value: 1 / DISTRICT_CODES.length };
   const sorted = Object.fromEntries(Object.entries(parameters).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
-  const type3 = new Set([...FIXED_TYPE3_IDS, MIGRATION_EXIT_SHARE_ID, MIGRATION_SHARE_ID, MIGRATION_THRESHOLD_ID, SHARE_BOTH_ID, COST_SCHEDULE_ID]);
+  const type3 = new Set([...FIXED_TYPE3_IDS, ...COMPUTED_TYPE3_IDS]);
   const sourceTypes = new Map<string, 1 | 2 | 3>();
   for (const id of Object.keys(sorted)) sourceTypes.set(id, limitSourceType(id) ?? (FIXED_TYPE1_IDS.includes(id) ? 1 : type3.has(id) ? 3 : 2));
   return { file: { schemaVersion: 1, parameters: sorted } as ParamsFile, sourceTypes };

@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { DataError } from '../../../../scripts/pipeline/errors.ts';
-import { COST_SCHEDULE_ID, SHARE_BOTH_ID, deriveCostSchedule, deriveShareBoth } from '../../../../scripts/pipeline/params/derived.ts';
+import {
+  COST_SCHEDULE_ID,
+  SHARE_BOTH_ID,
+  SUBLEASE_SCHEDULE_ID,
+  deriveCostSchedule,
+  deriveShareBoth,
+} from '../../../../scripts/pipeline/params/derived.ts';
 import { OMITTED_OPTIONAL_IDS, idSetDiff } from '../../../../scripts/pipeline/params/engine-ids.ts';
 import { assembleParams, type ParamsBuild } from '../../../../scripts/pipeline/params/params-file.ts';
 import {
@@ -29,6 +35,7 @@ function fixtureEntries(): Map<string, ScalarParameter> {
     ['ghost.shareRent', scalar(0.4)],
     ['ghost.shareCommuteWithin', scalar(0.7, { range: { low: 0.6, high: 0.8, lowSource: src, highSource: src } })],
     ['socialHousing.lag', scalar(4, { unit: 'quarters' })],
+    ['sublease.unitCost', scalar(163950, { unit: 'TWD per home matched' })],
   ]);
 }
 
@@ -92,7 +99,15 @@ describe('deriveCostSchedule', () => {
 
 describe('assembleParams', () => {
   const inputs = { part1: fixtureEntries(), fixedType3: {}, anchors: {} };
-  const engineOk = new Set(['ghost.shareRent', 'ghost.shareCommuteWithin', 'socialHousing.lag', SHARE_BOTH_ID, COST_SCHEDULE_ID]);
+  const engineOk = new Set([
+    'ghost.shareRent',
+    'ghost.shareCommuteWithin',
+    'socialHousing.lag',
+    'sublease.unitCost',
+    SHARE_BOTH_ID,
+    COST_SCHEDULE_ID,
+    SUBLEASE_SCHEDULE_ID,
+  ]);
 
   it('derives, sorts and returns the table when the id set matches', () => {
     const b = assembleParams(inputs, engineOk);
@@ -127,7 +142,15 @@ describe('SOURCES.md section 12 on a small fixture', () => {
   it('renders counts, the id table, omitted ids and the gap rows', () => {
     const build: ParamsBuild = assembleParams(
       { part1: fixtureEntries(), fixedType3: {}, anchors: {} },
-      new Set(['ghost.shareRent', 'ghost.shareCommuteWithin', 'socialHousing.lag', SHARE_BOTH_ID, COST_SCHEDULE_ID]),
+      new Set([
+        'ghost.shareRent',
+        'ghost.shareCommuteWithin',
+        'socialHousing.lag',
+        'sublease.unitCost',
+        SHARE_BOTH_ID,
+        COST_SCHEDULE_ID,
+        SUBLEASE_SCHEDULE_ID,
+      ]),
     );
     const text = renderSourcesDoc({
       districtsFile: validDistrictsFile(),
@@ -140,7 +163,7 @@ describe('SOURCES.md section 12 on a small fixture', () => {
     });
     const section = text.slice(text.indexOf('## 12. Parameter table'));
     expect(section).toContain('## 12. Parameter table');
-    expect(section).toContain('holds 5 parameter ids');
+    expect(section).toContain('holds 7 parameter ids');
     expect(section).toContain('(3 ids)');
     expect(section).toContain('### Omitted optional ids');
     for (const id of OMITTED_OPTIONAL_IDS) expect(section).toContain(id);

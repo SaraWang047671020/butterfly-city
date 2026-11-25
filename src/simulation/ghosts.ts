@@ -50,6 +50,7 @@ const RENT_GROUPS: readonly { readonly id: GhostGroupId; readonly source: GhostG
   { id: 'ghost-rent-housed', source: 'housed' },
   { id: 'ghost-rent-spillover', source: 'spillover' },
   { id: 'ghost-rent-subsidy', source: 'subsidy' },
+  { id: 'ghost-rent-sublease', source: 'sublease' },
 ];
 
 function ghostValues(
@@ -133,7 +134,7 @@ const GHOST_OVERLAP_LINKS: CauseLinks = mergeLinks([], [
 ]);
 const GHOST_DISPLACED_LINKS: CauseLinks = mergeLinks([], ['ghost.size']);
 
-/** Builds the Ghost count and its CauseDraft: Baseline, then the six group Causes in order (Requirement 10.6). */
+/** Builds the Ghost count and its CauseDraft: Baseline, then the seven group Causes in order (Requirement 10.6). */
 export function ghostDraft(params: ParameterTable, input: GhostDraftInput): GhostResult {
   const size = scalar(params, 'ghost.size');
   const sigma = scalar(params, 'ghost.sensitivityRent');

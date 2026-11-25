@@ -32,11 +32,12 @@ describe('mean commute time rule', () => {
       'socialHousing',
       'commuterPass',
       'rentSubsidy',
+      'sublease',
       'migration',
       'bound',
     ]);
     // Every tool Cause is 0 in this spec.
-    expect(breakdown.causes.slice(1, 4).map((c) => c.contribution)).toEqual([0, 0, 0]);
+    expect(breakdown.causes.slice(1, 5).map((c) => c.contribution)).toEqual([0, 0, 0, 0]);
     expect(breakdown.causes[0]?.parameterIds).toHaveLength(41);
   });
 

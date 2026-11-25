@@ -30,7 +30,9 @@ const C = UI_STRINGS.policyCards;
 const D = UI_STRINGS.policyDialog;
 
 /** Decorative tool icons (hidden from assistive technology; the tool name is the accessible name). */
-const ICONS: Readonly<Record<string, string>> = { socialHousing: '⌂', rentSubsidy: '$', commuterPass: '⇆' };
+const ICONS: Readonly<Record<string, string>> = { socialHousing: '⌂', rentSubsidy: '$', commuterPass: '⇆', sublease: '⇄' };
+/** Tools added by the housing-tools spec, marked New on their card (approved design, section 2). */
+const NEW_TOOLS: ReadonlySet<string> = new Set(['sublease', 'holdingTax']);
 
 export interface PolicyCardsProps {
   readonly policy: PolicyPanelView;
@@ -76,6 +78,7 @@ interface FieldParts {
   readonly previewChange: HTMLElement;
   readonly previewBudget: HTMLElement;
   readonly previewYear: HTMLElement;
+  readonly effect: HTMLElement;
   readonly message: HTMLElement;
   readonly setToReal: HTMLButtonElement;
   readonly apply: HTMLButtonElement;
@@ -178,6 +181,7 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
     const previewChange = el(doc, 'p', 'ui-policy-dialog__preview-change', preview);
     const previewBudget = el(doc, 'p', 'ui-policy-dialog__preview-budget', preview);
     const previewYear = el(doc, 'p', 'ui-policy-dialog__preview-year', preview);
+    const effect = el(doc, 'p', 'ui-policy-dialog__effect', controls);
     const message = el(doc, 'p', 'ui-policy-dialog__message', controls);
     message.id = `${id}-message`;
     message.setAttribute('role', 'status');
@@ -198,7 +202,7 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
     input.addEventListener('input', () => actions.editField(key, input.value));
     apply.addEventListener('click', () => actions.applyField(key));
     setToReal.addEventListener('click', () => actions.setToReal(key));
-    return { root: fieldRoot, title, note, controls, slider, lower, real, upper, input, unit, preview, previewChange, previewBudget, previewYear, message, setToReal, apply, details };
+    return { root: fieldRoot, title, note, controls, slider, lower, real, upper, input, unit, preview, previewChange, previewBudget, previewYear, effect, message, setToReal, apply, details };
   };
 
   const updateField = (parts: FieldParts, f: FieldView, props: PolicyCardsProps): void => {
@@ -253,6 +257,9 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
       );
       parts.previewYear.hidden = y === null;
     }
+    const eff = subleaseEffectText(f);
+    setText(parts.effect, eff ?? '');
+    parts.effect.hidden = eff === null;
     const msg = f.draft === null ? null : (overText(f, props.policy) ?? checkMessage(f.draft.check, name));
     setText(parts.message, msg ?? '');
     parts.message.hidden = msg === null;
@@ -391,7 +398,8 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
         b.type = 'button';
         const icon = el(doc, 'span', 'ui-policy-card__icon', b, ICONS[id] ?? '•');
         icon.setAttribute('aria-hidden', 'true');
-        el(doc, 'span', 'ui-policy-card__name', b, toolName(id));
+        const name = el(doc, 'span', 'ui-policy-card__name', b, toolName(id));
+        if (NEW_TOOLS.has(id)) el(doc, 'span', 'ui-policy-card__new', name, C.newTool);
         const short = el(doc, 'span', 'ui-policy-card__short', b, (C.short as Readonly<Record<string, string>>)[id] ?? toolName(id));
         short.setAttribute('aria-hidden', 'true');
         el(doc, 'span', 'ui-policy-card__status', b);
@@ -438,6 +446,26 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
       }
     },
   };
+}
+
+/**
+ * The effect line of a sublease field (approved design, section 4): the extra homes of the value shown against the
+ * real value, the rent-share range and the largest saving per household; null when there are no extra homes.
+ */
+function subleaseEffectText(f: FieldView): string | null {
+  const e = f.subleaseEffect;
+  if (e === undefined || f.real === null) return null;
+  const shown = f.draft !== null && f.draft.check.status !== 'invalid-format' ? Number(f.draft.text) : f.player;
+  if (shown === null || !Number.isFinite(shown)) return null;
+  const n = shown - f.real.value;
+  if (!(n > 0)) return null;
+  return fillTemplate(D.subleaseEffect, {
+    n: formatAmount(n),
+    low: formatAmount(Math.round(e.shareLow * 100)),
+    high: formatAmount(Math.round(e.shareHigh * 100)),
+    saving: formatAmount(Math.round(e.saving)),
+    lag: formatAmount(e.lag),
+  });
 }
 
 /** The charges of a draft kept to the end of the year, or null when it has none (housing-tools Requirement 3.2). */

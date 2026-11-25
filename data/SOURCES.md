@@ -1022,6 +1022,26 @@ This section covers the parameter entries of type 1 (values taken from published
 - Inputs and steps (method): Derived from the 2022 program dates: applications opened on 2022-07-01 and the first payments were made in October 2022, which is one quarter later.
 - Data that would replace each assumption: The assumptions are those stated in the method text. A published measurement of the same quantity for Taipei City and New Taipei City would replace them.
 
+#### `sublease.unitCost`
+
+- Value: 163950 TWD per home matched, over the 3-year contract. Status: secondary.
+- Study or page cited: Executive Yuan, 百萬戶租屋家庭支持計畫 (2025-2032), sublease content, annex 7 unit prices: management fee 2,200 per month for 36 months, matching fee 14,500, notarisation 3,000, repair 14,500 and insurance 3,500 per year (https://leasing-and-management.udd.gov.taipei/attachments/百萬戶租屋家庭支持計畫包租代管內容_行政院114年4月16日院臺建字第1141006421號函核定.pdf).
+- Range: 112000 to 237000 TWD per home matched, over the 3-year contract.
+  - Low end 112000: MOI, 社會住宅包租代管第三期至第五期計畫執行要點 (2025-08-27), annex 2 and annex 3: 代管 of a general household in New Taipei (matching 10,000, 1,500 per month, repair 8,000 per year, insurance 3,500 per year, notarisation 13,500) (https://www.nlma.gov.tw/uploads/files/ef9ad3624c0da679f59fb6f16276844d.pdf).
+  - High end 237000: MOI, 社會住宅包租代管第三期至第五期計畫執行要點 (2025-08-27), annex 2 and annex 3: 包租 of a disadvantaged household in Taipei (development 24,000, 4,000 per month, repair 15,000 per year, insurance 3,500 per year, notarisation 13,500) (https://www.nlma.gov.tw/uploads/files/ef9ad3624c0da679f59fb6f16276844d.pdf).
+- Inputs and steps (method): Programme budgeting unit prices for one 3-year contract: 2,200 x 36 + 14,500 + 3,000 x 3 + 14,500 x 3 + 3,500 x 3 = 163,950 TWD, about 55,000 per year. The rent of 包租 carries no gap paid by the government (S17 point 13: no rent margin). Renewal costs after 3 years are not counted. The range is the 3-year cost of the cheapest and the dearest fee row of phase 5.
+- Data that would replace each assumption: The assumptions are those stated in the method text. A published measurement of the same quantity for Taipei City and New Taipei City would replace them.
+
+#### `sublease.rentShare`
+
+- Value: 0.85 ratio of market rent. Status: secondary.
+- Study or page cited: MOI CPA, 第二期租屋服務事業辦理承租民間住宅並轉租或媒合承出租及其他服務注意事項 (2019-04-18), points 4 and 9: 包租 at most 80 percent and 代管 at most 90 percent of market rent; MOI 2025 rules point 14: from phase 4, at most the appraised market rent (https://www.nlma.gov.tw/uploads/files/b0bd53cba25febb3d25599daa9091931.pdf).
+- Range: 0.8 to 1 ratio of market rent.
+  - Low end 0.8: MOI CPA 2019 rules, point 4: 包租 tenants rent at no more than 80 percent of market rent (phases 1 to 3) (https://www.nlma.gov.tw/uploads/files/b0bd53cba25febb3d25599daa9091931.pdf).
+  - High end 1: MOI, 社會住宅包租代管第三期至第五期計畫執行要點 (2025-08-27), point 14: contract rent not above the appraised market rent (phases 4 and 5) (https://www.nlma.gov.tw/uploads/files/ef9ad3624c0da679f59fb6f16276844d.pdf).
+- Inputs and steps (method): Central value 0.85 between the 包租 rule of phases 1 to 3 (0.8), the 代管 rule (0.9) and the phase 4 and 5 rule (at most 1.0). The share of 包租 and 代管 among matched homes is not published by year. Discounts for disadvantaged households (50 to 70 percent) come from the rent subsidy and are not counted here.
+- Data that would replace each assumption: The assumptions are those stated in the method text. A published measurement of the same quantity for Taipei City and New Taipei City would replace them.
+
 ### Type 2 entries: computed from our own data
 
 #### `socialHousing.lag`
@@ -1244,7 +1264,7 @@ Regression: least squares with an intercept of the adult full fare (TWD) on the 
 
 ## 12. Parameter table
 
-The file public/data/params.json holds 140 parameter ids. Parameter_Source_Type 1 is a value from published research (52 ids), type 2 is a value computed from the open data of this pipeline (76 ids), and type 3 is a gap value (12 ids).
+The file public/data/params.json holds 144 parameter ids. Parameter_Source_Type 1 is a value from published research (54 ids), type 2 is a value computed from the open data of this pipeline (76 ids), and type 3 is a gap value (14 ids).
 
 ### All parameter ids
 
@@ -1390,6 +1410,10 @@ The file public/data/params.json holds 140 parameter ids. Parameter_Source_Type 
 | `socialHousing.rentPerUnit` | 2 | TWD per m² per month per dwelling of stock difference | secondary | Diamond and McQuade (2019), Who Wants Affordable Housing in Their Backyard?, Journal of Political Economy 127(3), https://www.nber.org/papers/w22204 |
 | `socialHousing.rentRatio` | 1 | ratio of market rent | secondary | Tenant rent of the social housing sublease and management program: 80 percent of market rent, as reported by CNA (Kaohsiung program, 2021) and Money Weekly, https://www.cna.com.tw/news/aloc/202110270245.aspx |
 | `socialHousing.unitCost` | 2 | TWD per dwelling | secondary | Dongxin: total cost TWD 690000000 for 88 dwellings. Project totals and dwelling counts of Jingfeng, Dongxin and Peiying (budget), from three sources taken together: Storm Media (https://www.storm.mg/article/3088809), Central News Agency (https://www.cna.com.tw/news/aloc/202512040148.aspx), Control Yuan report (https://www.cy.gov.tw/AP_Home/Op_Upload/eDoc/%E5%87%BA%E7%89%88%E5%93%81/109/1090000021010801895p.pdf); table in data/config/social-housing-unit-cost-cases.csv, https://www.storm.mg/article/3088809 |
+| `sublease.costSchedule` | 3 | share of the cost of one matched home per quarter after the match | gap | Derived from sublease.unitCost (36 months of fees); see its source, https://leasing-and-management.udd.gov.taipei/attachments/百萬戶租屋家庭支持計畫包租代管內容_行政院114年4月16日院臺建字第1141006421號函核定.pdf |
+| `sublease.lag` | 3 | quarters | gap | MOI 2025 rules, point 11: document review within 7 working days and joint inspection within another 7 working days; no measured time from matching to move-in was found, https://www.nlma.gov.tw/uploads/files/ef9ad3624c0da679f59fb6f16276844d.pdf |
+| `sublease.rentShare` | 1 | ratio of market rent | secondary | MOI CPA, 第二期租屋服務事業辦理承租民間住宅並轉租或媒合承出租及其他服務注意事項 (2019-04-18), points 4 and 9: 包租 at most 80 percent and 代管 at most 90 percent of market rent; MOI 2025 rules point 14: from phase 4, at most the appraised market rent, https://www.nlma.gov.tw/uploads/files/b0bd53cba25febb3d25599daa9091931.pdf |
+| `sublease.unitCost` | 1 | TWD per home matched, over the 3-year contract | secondary | Executive Yuan, 百萬戶租屋家庭支持計畫 (2025-2032), sublease content, annex 7 unit prices: management fee 2,200 per month for 36 months, matching fee 14,500, notarisation 3,000, repair 14,500 and insurance 3,500 per year, https://leasing-and-management.udd.gov.taipei/attachments/百萬戶租屋家庭支持計畫包租代管內容_行政院114年4月16日院臺建字第1141006421號函核定.pdf |
 
 ### Omitted optional ids
 
@@ -1425,6 +1449,8 @@ The values below are game defaults or approximations chosen where no suitable me
 | `migration.weightTime` | 1 weight (dimensionless) | The commute-time term counts as much as each of the other two terms in the destination score. | The assumption is: The commute-time term counts as much as each of the other two terms in the destination score.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
 | `rentSubsidy.unitCost` | 1 TWD of budget per TWD of subsidy | One TWD of budget pays one TWD of subsidy, with no administration overhead. | The assumption is: One TWD of budget pays one TWD of subsidy, with no administration overhead.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
 | `socialHousing.costSchedule` | offset 0: 0.066667; offset 1: 0.066667; offset 2: 0.066667; offset 3: 0.066667; offset 4: 0.066667; offset 5: 0.066667; offset 6: 0.066667; offset 7: 0.066667; offset 8: 0.066667; offset 9: 0.066667; offset 10: 0.066667; offset 11: 0.066667; offset 12: 0.066667; offset 13: 0.066667; offset 14: 0.066662 (share of the project cost per quarter after the start) | Even payment: the cost of a project is paid in equal amounts in every quarter from start to completion. Payment schedules of completed projects would replace this assumption. | A published payment profile for the tool would replace the even payment assumption. |
+| `sublease.costSchedule` | offset 0: 0.083333; offset 1: 0.083333; offset 2: 0.083333; offset 3: 0.083333; offset 4: 0.083333; offset 5: 0.083333; offset 6: 0.083333; offset 7: 0.083333; offset 8: 0.083333; offset 9: 0.083333; offset 10: 0.083333; offset 11: 0.083337 (share of the cost of one matched home per quarter after the match) | Even payment: the one-off matching fee is spread over the contract like the monthly fees. Payment records of the programme would replace this assumption. | A published payment profile for the tool would replace the even payment assumption. |
+| `sublease.lag` | 1 quarters | A matched home is lived in from the quarter after the match. | The assumption is: A matched home is lived in from the quarter after the match.. A cited study or dataset that measures this quantity for Taipei City and New Taipei City would replace it. |
 
 ## 13. Low-use housing
 

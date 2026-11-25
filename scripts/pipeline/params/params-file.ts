@@ -13,7 +13,14 @@ import { DataError } from '../errors.ts';
 import { roundTo } from '../numeric.ts';
 import { fsCommittedReader, type CommittedReader } from '../policy/step.ts';
 import type { BuildState, Step } from '../run.ts';
-import { COST_SCHEDULE_ID, SHARE_BOTH_ID, deriveCostSchedule, deriveShareBoth } from './derived.ts';
+import {
+  COST_SCHEDULE_ID,
+  SHARE_BOTH_ID,
+  SUBLEASE_SCHEDULE_ID,
+  deriveCostSchedule,
+  deriveShareBoth,
+  deriveSubleaseSchedule,
+} from './derived.ts';
 import { engineIdSet, idSetDiff } from './engine-ids.ts';
 import { FIXED_TYPE1_IDS, FIXED_TYPE3_IDS, readFixedType3Params } from './fixed-table.ts';
 import { dwellingSizeId } from './housing.ts';
@@ -39,12 +46,13 @@ export interface ParamsBuild {
 }
 
 /** Type 3 ids that are not in the fixed table: anchors and derived entries. */
-const COMPUTED_TYPE3_IDS: readonly string[] = [
+export const COMPUTED_TYPE3_IDS: readonly string[] = [
   MIGRATION_THRESHOLD_ID,
   MIGRATION_SHARE_ID,
   MIGRATION_EXIT_SHARE_ID,
   SHARE_BOTH_ID,
   COST_SCHEDULE_ID,
+  SUBLEASE_SCHEDULE_ID,
 ];
 
 /** Decimals of ids that are not shares or rates (default 6): money and counts 0, minutes and pp 1, elasticity 2. */
@@ -55,6 +63,8 @@ const DECIMALS_BY_ID: Readonly<Record<string, number>> = {
   'socialHousing.unitCost': 0,
   'commuterPass.unitCost': 0,
   'rentSubsidy.unitCost': 0,
+  'sublease.lag': 0,
+  'sublease.unitCost': 0,
   'rentSubsidy.nationalBudget': 0,
   'rentSubsidy.nationalHouseholds': 0,
   'ghost.size': 0,
@@ -113,6 +123,7 @@ export function assembleParams(inputs: ParamsInputs, engine: ReadonlySet<string>
   for (const [id, e] of merged) if (e.kind === 'scalar') scalars.set(id, e);
   add(SHARE_BOTH_ID, deriveShareBoth(scalars), 3);
   add(COST_SCHEDULE_ID, deriveCostSchedule(scalars), 3);
+  add(SUBLEASE_SCHEDULE_ID, deriveSubleaseSchedule(scalars), 3);
 
   const parameters: Record<string, Entry> = {};
   for (const id of [...merged.keys()].sort(byCodePoint)) {

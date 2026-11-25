@@ -89,6 +89,8 @@ export interface RealTrackOptions {
   readonly households?: number;
   /** Total monthly subsidy in TWD, per city. */
   readonly amount?: Readonly<Record<CityName, number>>;
+  /** Sublease homes matched per city and quarter. */
+  readonly unitsMatched?: number;
 }
 
 export function buildRealTrack(options: RealTrackOptions = {}): PolicyTimeline {
@@ -102,16 +104,19 @@ export function buildRealTrack(options: RealTrackOptions = {}): PolicyTimeline {
     const passesSold: Record<AreaKey, number> = {};
     const households: Record<AreaKey, number> = {};
     const amountField: Record<AreaKey, number> = {};
+    const unitsMatched: Record<AreaKey, number> = {};
     for (const city of CITIES) {
       subsidy[city] = passPrice(q) > 0 ? (options.subsidy ?? 0) : 0;
       passesSold[city] = passPrice(q) > 0 ? (options.passesSold ?? 100_000) : 0;
       households[city] = options.households ?? 5_000;
       amountField[city] = amount[city];
+      unitsMatched[city] = options.unitsMatched ?? 100;
     }
     const tools: Record<string, ToolSetting> = {
       socialHousing: { unitsStarted },
       commuterPass: { subsidy, passesSold },
       rentSubsidy: { households, amount: amountField },
+      sublease: { unitsMatched },
     };
     out.push({ quarter: quarterAt(q), tools });
   }

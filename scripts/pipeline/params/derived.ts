@@ -11,6 +11,9 @@ import { DataError } from '../errors.ts';
 
 export const SHARE_BOTH_ID = 'ghost.shareBoth';
 export const COST_SCHEDULE_ID = 'socialHousing.costSchedule';
+export const SUBLEASE_SCHEDULE_ID = 'sublease.costSchedule';
+/** Quarters of one sublease contract (3 years, S19 of data/research/housing-tools-2026-11-24.md). */
+export const SUBLEASE_CONTRACT_QUARTERS = 12;
 
 const SHARE_RENT_ID = 'ghost.shareRent';
 const SHARE_COMMUTE_WITHIN_ID = 'ghost.shareCommuteWithin';
@@ -99,4 +102,32 @@ export function deriveCostSchedule(entries: EntryMap): ScheduleParameter {
       'Even payment: the cost of a project is paid in equal amounts in every quarter from start to completion. Payment schedules of completed projects would replace this assumption.',
   };
   return checked(COST_SCHEDULE_ID, entry);
+}
+
+/**
+ * `sublease.costSchedule`: the cost of one matched home is paid in equal shares over the 12 quarters of its 3-year
+ * contract (offsets 0 to 11); the last share absorbs the rounding. Read from `sublease.unitCost` for the source.
+ */
+export function deriveSubleaseSchedule(entries: EntryMap): ScheduleParameter {
+  const cost = scalar(entries, 'sublease.unitCost');
+  const n = SUBLEASE_CONTRACT_QUARTERS;
+  const offsets = Array.from({ length: n }, (_, i) => i);
+  const shares = offsets.map(() => 1 / n);
+  let head = 0;
+  for (let i = 0; i < n - 1; i += 1) head += shares[i] as number;
+  shares[n - 1] = 1 - head;
+  const entry: ScheduleParameter = {
+    kind: 'schedule',
+    offsets,
+    shares,
+    unit: 'share of the cost of one matched home per quarter after the match',
+    status: 'gap',
+    source: { citation: `Derived from sublease.unitCost (36 months of fees); see its source`, url: cost.source.url },
+    estimated: {
+      method: `Equal shares of 1/${n} at offsets 0 to ${n - 1}; the last share is 1 minus the sum of the others so the shares sum to 1`,
+    },
+    assumption:
+      'Even payment: the one-off matching fee is spread over the contract like the monthly fees. Payment records of the programme would replace this assumption.',
+  };
+  return checked(SUBLEASE_SCHEDULE_ID, entry);
 }

@@ -178,10 +178,12 @@ export const ZH: UiStrings = {
       'rentSubsidy.households': '補貼戶數',
       'rentSubsidy.amount': '每戶每月補貼金額',
       'commuterPass.subsidy': '每張月票每月補貼',
+      // housing-tools, approved 2026-11-25 (docs/design-proposal/housing-tools-proposal.html).
+      'sublease.unitsMatched': '每季媒合戶數',
     },
     tools: {
       socialHousing: '興建社會住宅',
-      sublease: '包租代管',
+      sublease: '社會住宅包租代管',
       rentSubsidy: '租金補貼',
       holdingTax: '空屋與多屋持有稅',
       commuterPass: '通勤月票補貼',
@@ -203,6 +205,11 @@ export const ZH: UiStrings = {
           '市府預算：每一戶開工時就會動用年度預算，早於任何效果出現。',
           '其他工具：用在這裡的錢，同一年就不能用在租金補貼或通勤月票補貼。',
         ],
+      },
+      // housing-tools section 4, approved 2026-11-25.
+      sublease: {
+        benefits: ['住進媒合房屋的租屋家庭：租金低於市價，下一季起生效。', '出租的房東：有管理服務和稅務減免。'],
+        costs: ['市政府預算：每戶每年約 NT$55,000 的管理費、保險等。', '其他政策：這裡花的錢，同一年就不能用在社宅或租金補貼。'],
       },
       rentSubsidy: {
         benefits: ['受補貼的租屋家戶：經過此工具顯示的延遲後，房租負擔可能下降。'],
@@ -272,6 +279,7 @@ export const ZH: UiStrings = {
       'socialHousing.rentRatio': '社宅租金占市場租金的比例',
       'commuterPass.elasticity': '通勤月票的需求彈性',
       'rentSubsidy.passThrough': '租金補貼轉嫁到房租的比例',
+      'sublease.rentShare': '包租代管房租占市價的比例',
       'ghost.commuteThreshold': '成為幽靈的通勤時間門檻',
       'ghost.shareCommuteWithin': '在本區工作的居民比例',
       'migration.commuteCostPerMinute': '每分鐘通勤時間對遷移的影響',
@@ -336,7 +344,11 @@ export const ZH: UiStrings = {
       socialHousing: '社宅',
       rentSubsidy: '租補',
       commuterPass: '月票',
+      // TODO(user text): housing-tools, drafted 2026-11-25, awaiting approval.
+      sublease: '包租',
     },
+    // housing-tools, approved 2026-11-25: the badge of a tool added by housing-tools.
+    newTool: '新',
   },
   // housing-tools 預算條與花費說明，2026-11-25 核准（docs/design-proposal/housing-tools-proposal.html）。
   budgetBar: {
@@ -373,6 +385,9 @@ export const ZH: UiStrings = {
     lowerEnd: '下限 {value}',
     upperEnd: '上限 {value}',
     budgetEnd: '預算最多 {value}',
+    // housing-tools section 4, approved 2026-11-25.
+    subleaseEffect:
+      '多媒合的 {n} 戶，房租約為市價的 {low}% 到 {high}%（第 1 到 3 期是八成，第 4 期起是不超過估價的市價），平均每戶每月省約 NT${saving} 到 0。從媒合到入住的實際時間查不到，先假設 {lag} 季。',
     benefits: '誰受益',
     costs: '誰承擔代價',
     details: '詳細資料與出處',

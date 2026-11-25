@@ -165,6 +165,16 @@ export interface FieldView {
   readonly draft: { readonly text: string; readonly check: EditCheckView } | null;
   readonly applyEnabled: boolean;
   readonly setToRealEnabled: boolean;
+  /**
+   * Sublease fields only (housing-tools Requirement 4): the largest average rent saved per matched home and month
+   * in the city (at the low end of the rent share), the low and high rent shares, and the Lag in quarters.
+   */
+  readonly subleaseEffect?: {
+    readonly saving: number;
+    readonly shareLow: number;
+    readonly shareHigh: number;
+    readonly lag: number;
+  };
 }
 
 export type ToolView =

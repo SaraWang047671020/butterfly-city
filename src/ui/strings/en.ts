@@ -181,10 +181,12 @@ export const EN = {
       'rentSubsidy.households': 'Subsidised households',
       'rentSubsidy.amount': 'Subsidy per household per month',
       'commuterPass.subsidy': 'Subsidy per pass per month',
+      // housing-tools, approved 2026-11-25 (docs/design-proposal/housing-tools-proposal.html).
+      'sublease.unitsMatched': 'Homes matched per quarter',
     },
     tools: {
       socialHousing: 'Social housing construction',
-      sublease: 'Sublease and rental management program',
+      sublease: 'Sublease and rental management',
       rentSubsidy: 'Rent subsidy',
       holdingTax: 'Vacant and multiple-home holding tax',
       commuterPass: 'Commuter pass subsidy',
@@ -206,6 +208,17 @@ export const EN = {
         costs: [
           'City budget: each unit started draws on the annual budget when it is committed, before any effect arrives.',
           'Other tools: money used here is not available for rent subsidy or commuter pass subsidy in the same year.',
+        ],
+      },
+      // housing-tools section 4, approved 2026-11-25.
+      sublease: {
+        benefits: [
+          'Renter households in matched homes: rent below market, from the next quarter.',
+          'Landlords who let through the programme: management service and tax relief.',
+        ],
+        costs: [
+          'City budget: about NT$55,000 per home per year in management fees, insurance and other costs.',
+          'Other tools: money used here is not available for social housing or rent subsidy in the same year.',
         ],
       },
       rentSubsidy: {
@@ -284,6 +297,7 @@ export const EN = {
       'socialHousing.rentRatio': 'Social housing rent as a share of market rent',
       'commuterPass.elasticity': 'Commuter pass demand elasticity',
       'rentSubsidy.passThrough': 'Share of rent subsidy passed into rents',
+      'sublease.rentShare': 'Sublease rent as a share of market rent',
       'ghost.commuteThreshold': 'Commute time threshold for a ghost',
       'ghost.shareCommuteWithin': 'Share of residents working within the district',
       'migration.commuteCostPerMinute': 'Migration response per minute of commute',
@@ -352,7 +366,11 @@ export const EN = {
       socialHousing: 'Housing',
       rentSubsidy: 'Rent aid',
       commuterPass: 'Pass',
+      // TODO(user text): housing-tools, drafted 2026-11-25, awaiting approval.
+      sublease: 'Sublease',
     },
+    // housing-tools, approved 2026-11-25: the badge of a tool added by housing-tools.
+    newTool: 'New',
   },
   // housing-tools Budget_Bar and cost lines, approved 2026-11-25 (docs/design-proposal/housing-tools-proposal.html).
   budgetBar: {
@@ -389,6 +407,9 @@ export const EN = {
     lowerEnd: 'lower limit {value}',
     upperEnd: 'upper limit {value}',
     budgetEnd: 'budget allows {value}',
+    // housing-tools section 4, approved 2026-11-25.
+    subleaseEffect:
+      'The {n} extra homes rent at {low} % to {high} % of market rent (80 % in phases 1 to 3; from phase 4, at most the appraised market rent), saving about NT${saving} to 0 per household per month. No measured time from matching to move-in; {lag} quarter is assumed.',
     benefits: 'Who benefits',
     costs: 'Who bears the cost',
     details: 'Details and sources',

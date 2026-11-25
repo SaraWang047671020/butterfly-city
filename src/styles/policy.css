@@ -80,6 +80,18 @@
   display: none;
 }
 
+/* housing-tools: the New badge of a tool added by that spec (approved design, section 2). */
+.ui-policy-card__new {
+  margin-inline-start: var(--space-2);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  vertical-align: middle;
+}
+
 .ui-policy-card__status {
   grid-area: status;
   font-size: var(--font-size-xs);
@@ -333,6 +345,13 @@
 
 .ui-policy-dialog__preview-year {
   margin-top: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* housing-tools: the effect line of a sublease field (approved design, section 4). */
+.ui-policy-dialog__effect {
+  margin: var(--space-2) 0 0;
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }

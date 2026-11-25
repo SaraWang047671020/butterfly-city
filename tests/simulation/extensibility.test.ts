@@ -150,7 +150,7 @@ describe('stub tool added through options.registry', () => {
         expect(breakdown).toBeDefined();
         if (breakdown === undefined) continue;
         const ids = breakdown.causes.filter((c) => c.kind === 'tool').map((c) => c.id);
-        expect(ids).toEqual(['socialHousing', 'commuterPass', 'rentSubsidy', 'stubTool']);
+        expect(ids).toEqual(['socialHousing', 'commuterPass', 'rentSubsidy', 'sublease', 'stubTool']);
 
         const stub = breakdown.causes.find((c) => c.id === 'stubTool');
         const want = q >= START_INDEX + LAG ? expected : 0;

@@ -114,6 +114,15 @@ function buildEntries(): Record<string, ParameterEntry> {
   });
   p['rentSubsidy.nationalBudget'] = scalar(30_000_000_000, { unit: 'TWD per year' });
   p['rentSubsidy.nationalHouseholds'] = scalar(500_000, { unit: 'households' });
+  p['sublease.lag'] = scalar(1, { unit: 'quarters' });
+  p['sublease.unitCost'] = scalar(160_000, { unit: 'TWD per home matched' });
+  p['sublease.rentShare'] = scalar(0.85, {
+    unit: 'ratio of market rent',
+    status: 'secondary',
+    range: [0.8, 1],
+    estimated: 'Programme rent rules, fixture value.',
+  });
+  p['sublease.costSchedule'] = schedule([0, 1, 2, 3], [0.25, 0.25, 0.25, 0.25]);
 
   for (const city of CITIES) {
     for (let q = 0; q < 44; q++) {
@@ -179,7 +188,7 @@ function buildEntries(): Record<string, ParameterEntry> {
   }
 
   // Budget ceilings: present for every tool and year, far above any fixture spending.
-  for (const tool of ['socialHousing', 'commuterPass', 'rentSubsidy']) {
+  for (const tool of ['socialHousing', 'commuterPass', 'rentSubsidy', 'sublease']) {
     for (let year = 2015; year <= 2025; year++) {
       p[`budget.ceiling.${tool}.${year}`] = scalar(1_000_000_000_000_000, { unit: 'TWD' });
     }

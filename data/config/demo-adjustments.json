@@ -1,6 +1,6 @@
 {
     "schemaVersion":  1,
-    "status":  "set with the real params.json (game-ui task 19.1, rent subsidy at 50% of real)",
+    "status":  "set with the real params.json (game-ui task 19.1, rent subsidy at 50% of real, sublease at half of real in 2017Q1)",
     "ghostThreshold":  1,
     "rentBurdenThreshold":  0.1,
     "base":  [
@@ -139,6 +139,21 @@
                      "area":  "New Taipei",
                      "kind":  "value",
                      "value":  1824
+                 },
+                 {
+                     "quarter":  "2017Q1",
+                     "tool":  "sublease",
+                     "field":  "unitsMatched",
+                     "area":  "Taipei",
+                     "kind":  "value",
+                     "value":  47
+                 },
+                 {
+                     "quarter":  "2017Q2",
+                     "tool":  "sublease",
+                     "field":  "unitsMatched",
+                     "area":  "Taipei",
+                     "kind":  "real-track"
                  },
                  {
                      "quarter":  "2019Q1",
@@ -309,6 +324,21 @@
                          "value":  1824
                      },
                      {
+                     "quarter":  "2017Q1",
+                     "tool":  "sublease",
+                     "field":  "unitsMatched",
+                     "area":  "Taipei",
+                     "kind":  "value",
+                     "value":  47
+                 },
+                 {
+                     "quarter":  "2017Q2",
+                     "tool":  "sublease",
+                     "field":  "unitsMatched",
+                     "area":  "Taipei",
+                     "kind":  "real-track"
+                 },
+                 {
                          "quarter":  "2019Q1",
                          "tool":  "commuterPass",
                          "field":  "subsidy",
