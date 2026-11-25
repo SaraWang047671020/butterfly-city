@@ -344,7 +344,7 @@ export const ZH: UiStrings = {
       socialHousing: '社宅',
       rentSubsidy: '租補',
       commuterPass: '月票',
-      // TODO(user text): housing-tools, drafted 2026-11-25, awaiting approval.
+      // housing-tools, approved 2026-11-25.
       sublease: '包租',
     },
     // housing-tools, approved 2026-11-25: the badge of a tool added by housing-tools.

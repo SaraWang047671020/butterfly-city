@@ -366,7 +366,7 @@ export const EN = {
       socialHousing: 'Housing',
       rentSubsidy: 'Rent aid',
       commuterPass: 'Pass',
-      // TODO(user text): housing-tools, drafted 2026-11-25, awaiting approval.
+      // housing-tools, approved 2026-11-25.
       sublease: 'Sublease',
     },
     // housing-tools, approved 2026-11-25: the badge of a tool added by housing-tools.
