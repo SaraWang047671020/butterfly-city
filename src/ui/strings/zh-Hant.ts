@@ -620,7 +620,7 @@ export const ZH: UiStrings = {
     inRealHistory: '真實歷史裡的{name}',
     supplySocialHousing: '{track}：出租 {supply} 戶 · 機會 {odds}%',
     supplyRentSubsidy: '{track}：補貼 {supply} 戶 · 機會 {odds}%',
-    // TODO(user text): housing-tools task 4.2, drafted 2026-11-25, awaiting approval (also matched, notMatched, oddsRuleSublease, twoMe sublease).
+    // housing-tools task 4.2, approved 2026-11-25 (also matched, notMatched, oddsRuleSublease, twoMe sublease).
     supplySublease: '{track}：媒合 {supply} 戶 · 機會 {odds}%',
     oddsShort: '{track} {odds}%',
     allocated: '抽中',

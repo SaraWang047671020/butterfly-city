@@ -655,7 +655,7 @@ export const EN = {
     inRealHistory: '{name} in real history',
     supplySocialHousing: '{track}: {supply} units let · chance {odds} %',
     supplyRentSubsidy: '{track}: {supply} households · chance {odds} %',
-    // TODO(user text): housing-tools task 4.2, drafted 2026-11-25, awaiting approval (also matched, notMatched, oddsRuleSublease, twoMe sublease).
+    // housing-tools task 4.2, approved 2026-11-25 (also matched, notMatched, oddsRuleSublease, twoMe sublease).
     supplySublease: '{track}: {supply} homes matched · chance {odds} %',
     oddsShort: '{track} {odds} %',
     allocated: 'allocated',
