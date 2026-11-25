@@ -22,6 +22,7 @@ import { cardStatus, quickPreview, sliderValue } from './preview.ts';
 import '../../styles/policy.css';
 import { mainFocusTarget } from '../menu/menu.ts';
 import { createBudgetBar, exactTwd } from '../budget/budget-bar.ts';
+import { formatNumber } from '../format/number.ts';
 
 const BB = UI_STRINGS.budgetBar;
 
@@ -30,7 +31,7 @@ const C = UI_STRINGS.policyCards;
 const D = UI_STRINGS.policyDialog;
 
 /** Decorative tool icons (hidden from assistive technology; the tool name is the accessible name). */
-const ICONS: Readonly<Record<string, string>> = { socialHousing: '⌂', rentSubsidy: '$', commuterPass: '⇆', sublease: '⇄' };
+const ICONS: Readonly<Record<string, string>> = { socialHousing: '⌂', rentSubsidy: '$', commuterPass: '⇆', sublease: '⇄', holdingTax: '%' };
 /** Tools added by the housing-tools spec, marked New on their card (approved design, section 2). */
 const NEW_TOOLS: ReadonlySet<string> = new Set(['sublease', 'holdingTax']);
 
@@ -232,10 +233,15 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
     parts.input.inputMode = f.countField ? 'numeric' : 'decimal';
     setText(parts.unit, unit);
     (parts.root.querySelector('label') as HTMLLabelElement).textContent = `${name} · ${areaName}`;
-    setText(parts.lower, fillTemplate(D.lowerEnd, { value: formatAmount(f.limits.lower) }));
-    setText(parts.upper, fillTemplate(Number.isFinite(f.limits.upper) ? D.upperEnd : D.budgetEnd, { value: formatAmount(f.sliderUpper) }));
+    const statutory = f.tool === 'holdingTax';
+    // Tax rates read with one decimal (1.5 %), as in the approved design; other fields as before.
+    const amount = (x: number): string => (statutory ? formatNumber(x, 1) : formatAmount(x));
+    setText(parts.lower, fillTemplate(statutory ? D.statutoryLower : D.lowerEnd, { value: amount(f.limits.lower) }));
+    const upperTpl =
+      f.tierCap !== undefined && f.tierCap !== null ? D.tierOrder : statutory ? D.statutoryUpper : Number.isFinite(f.limits.upper) ? D.upperEnd : D.budgetEnd;
+    setText(parts.upper, fillTemplate(upperTpl, { value: amount(f.sliderUpper) }));
     parts.real.hidden = f.real === null;
-    setText(parts.real, f.real === null ? '' : fillTemplate(D.realMark, { value: formatAmount(f.real.value) }));
+    setText(parts.real, f.real === null ? '' : fillTemplate(D.realMark, { value: amount(f.real.value) }));
 
     const pv = quickPreview(f, props.policy.budget, props.planning);
     parts.preview.hidden = pv === null || pv.change === 0;
@@ -244,7 +250,8 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
       setText(parts.previewChange, fillTemplate(D.previewChange, { change: `${sign}${formatAmount(Math.abs(pv.change))}`, unit, ready: quarterLabel(pv.ready) }));
       const year = String(pv.year ?? '');
       const left = formatAmount(pv.left ?? 0);
-      setText(parts.previewBudget, costLine(f, props.policy) ?? fillTemplate(D.previewLeft, { year, left }));
+      const revenue = f.draft !== null && !['ok', 'unchanged', 'pending-range'].includes(f.draft.check.status) ? null : revenueLine(f);
+      setText(parts.previewBudget, revenue ?? costLine(f, props.policy) ?? fillTemplate(D.previewLeft, { year, left }));
       const y = pv.yearEnd;
       parts.preview.classList.toggle('is-overrun', y !== null && y.overrun !== null);
       setText(
@@ -257,7 +264,9 @@ export function createPolicyCards(doc: Document, actions: UiActions): PolicyCard
       );
       parts.previewYear.hidden = y === null;
     }
-    const eff = subleaseEffectText(f);
+    // No effect line for a value that is rejected (it will not be applied).
+    const draftRejected = f.draft !== null && !['ok', 'unchanged', 'pending-range'].includes(f.draft.check.status);
+    const eff = draftRejected ? null : (subleaseEffectText(f) ?? holdingTaxEffectText(f));
     setText(parts.effect, eff ?? '');
     parts.effect.hidden = eff === null;
     const msg = f.draft === null ? null : (overText(f, props.policy) ?? checkMessage(f.draft.check, name));
@@ -466,6 +475,22 @@ function subleaseEffectText(f: FieldView): string | null {
     saving: formatAmount(Math.round(e.saving)),
     lag: formatAmount(e.lag),
   });
+}
+
+/** The revenue line of a holding-tax field (approved design, section 5); null for any other field or no change. */
+function revenueLine(f: FieldView): string | null {
+  const e = f.holdingTaxEffect;
+  if (e === undefined) return null;
+  const amount = Math.round(Math.abs(e.revenueYear));
+  if (amount === 0) return null;
+  return fillTemplate(e.revenueYear > 0 ? D.revenueMore : D.revenueLess, { amount: formatAmount(amount) });
+}
+
+/** The vacancy line of a holding-tax field WHEN the rates shown are higher than the real ones. */
+function holdingTaxEffectText(f: FieldView): string | null {
+  const e = f.holdingTaxEffect;
+  if (e === undefined || !(e.vacancyHigh > 0)) return null;
+  return fillTemplate(D.holdingTaxEffect, { low: formatNumber(e.vacancyLow, 1), high: formatNumber(e.vacancyHigh, 1) });
 }
 
 /** The charges of a draft kept to the end of the year, or null when it has none (housing-tools Requirement 3.2). */

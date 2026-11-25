@@ -11,8 +11,8 @@ const track = JSON.parse(readFileSync('public/data/policy-track.json', 'utf8')) 
 };
 
 describe('Documented_Limits', () => {
-  it('66 ids, 2 cities × 11 years × 3 fields, all in params.json', () => {
-    expect(limitIds()).toHaveLength(66);
+  it('154 ids, 2 cities × 11 years × (3 fields + 4 holding-tax rate bounds), all in params.json', () => {
+    expect(limitIds()).toHaveLength(154);
     for (const id of limitIds()) expect(params[id]?.value).toBeGreaterThan(0);
     expect(limitSourceType('limit.rentSubsidy.households.max.Taipei.2015')).toBe(2);
     expect(limitSourceType('limit.rentSubsidy.amount.max.Taipei.2015')).toBe(1);

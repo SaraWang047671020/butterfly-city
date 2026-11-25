@@ -55,12 +55,13 @@ describe('rent rule', () => {
       'commuterPass',
       'rentSubsidy',
       'sublease',
+      'holdingTax',
       'evt.rate',
       'migration',
       'bound',
     ]);
     expect(breakdown.causes[1]?.contribution).toBe(-4);
-    expect(breakdown.causes[5]?.contribution).toBe(-1);
+    expect(breakdown.causes[6]?.contribution).toBe(-1);
   });
 
   it('declares kind non-negative and stage pre-migration', () => {

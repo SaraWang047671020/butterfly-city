@@ -17,7 +17,9 @@ import {
   COST_SCHEDULE_ID,
   SHARE_BOTH_ID,
   SUBLEASE_SCHEDULE_ID,
+  HOLDING_TAX_SCHEDULE_ID,
   deriveCostSchedule,
+  deriveHoldingTaxSchedule,
   deriveShareBoth,
   deriveSubleaseSchedule,
 } from './derived.ts';
@@ -53,6 +55,7 @@ export const COMPUTED_TYPE3_IDS: readonly string[] = [
   SHARE_BOTH_ID,
   COST_SCHEDULE_ID,
   SUBLEASE_SCHEDULE_ID,
+  HOLDING_TAX_SCHEDULE_ID,
 ];
 
 /** Decimals of ids that are not shares or rates (default 6): money and counts 0, minutes and pp 1, elasticity 2. */
@@ -65,6 +68,11 @@ const DECIMALS_BY_ID: Readonly<Record<string, number>> = {
   'rentSubsidy.unitCost': 0,
   'sublease.lag': 0,
   'sublease.unitCost': 0,
+  'holdingTax.lag': 0,
+  'holdingTax.homes.Taipei': 0,
+  'holdingTax.homes.New Taipei': 0,
+  'holdingTax.assessedValue.Taipei': 0,
+  'holdingTax.assessedValue.New Taipei': 0,
   'rentSubsidy.nationalBudget': 0,
   'rentSubsidy.nationalHouseholds': 0,
   'ghost.size': 0,
@@ -124,6 +132,7 @@ export function assembleParams(inputs: ParamsInputs, engine: ReadonlySet<string>
   add(SHARE_BOTH_ID, deriveShareBoth(scalars), 3);
   add(COST_SCHEDULE_ID, deriveCostSchedule(scalars), 3);
   add(SUBLEASE_SCHEDULE_ID, deriveSubleaseSchedule(scalars), 3);
+  if (engine.has(HOLDING_TAX_SCHEDULE_ID)) add(HOLDING_TAX_SCHEDULE_ID, deriveHoldingTaxSchedule(), 3);
 
   const parameters: Record<string, Entry> = {};
   for (const id of [...merged.keys()].sort(byCodePoint)) {

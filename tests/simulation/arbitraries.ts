@@ -45,7 +45,7 @@ import type { ParameterEntry } from './fixtures/index.ts';
 // Small helpers
 // ---------------------------------------------------------------------------
 
-const TOOLS: readonly ToolId[] = ['socialHousing', 'commuterPass', 'rentSubsidy', 'sublease'];
+const TOOLS: readonly ToolId[] = ['socialHousing', 'commuterPass', 'rentSubsidy', 'sublease', 'holdingTax'];
 
 function dbl(min: number, max: number): fc.Arbitrary<number> {
   return fc.double({ min, max, noNaN: true, noDefaultInfinity: true });
@@ -367,6 +367,8 @@ export function arbRealTrack(quarters: number, pass: PassSetup = DEFAULT_PASS_SE
             commuterPass: { subsidy, passesSold },
             rentSubsidy: { households, amount },
             sublease: { unitsMatched },
+            // Rates stay on the real track in every generated timeline (not in EDITABLE): lowest <= highest always.
+            holdingTax: { lowestRate: { Taipei: 2.4, 'New Taipei': 1.5 }, highestRate: { Taipei: 3.6, 'New Taipei': 1.5 } },
           },
         });
       }

@@ -1,6 +1,6 @@
 {
     "schemaVersion":  1,
-    "status":  "set with the real params.json (game-ui task 19.1, rent subsidy at 50% of real, sublease at half of real in 2017Q1)",
+    "status":  "set with the real params.json (game-ui task 19.1, rent subsidy at 50% of real, sublease at half of real in 2017Q1, Taipei lowest holding tax tier 3 % in 2018Q1)",
     "ghostThreshold":  1,
     "rentBurdenThreshold":  0.1,
     "base":  [
@@ -152,6 +152,21 @@
                      "quarter":  "2017Q2",
                      "tool":  "sublease",
                      "field":  "unitsMatched",
+                     "area":  "Taipei",
+                     "kind":  "real-track"
+                 },
+                 {
+                     "quarter":  "2018Q1",
+                     "tool":  "holdingTax",
+                     "field":  "lowestRate",
+                     "area":  "Taipei",
+                     "kind":  "value",
+                     "value":  3
+                 },
+                 {
+                     "quarter":  "2018Q2",
+                     "tool":  "holdingTax",
+                     "field":  "lowestRate",
                      "area":  "Taipei",
                      "kind":  "real-track"
                  },
@@ -335,6 +350,21 @@
                      "quarter":  "2017Q2",
                      "tool":  "sublease",
                      "field":  "unitsMatched",
+                     "area":  "Taipei",
+                     "kind":  "real-track"
+                 },
+                 {
+                     "quarter":  "2018Q1",
+                     "tool":  "holdingTax",
+                     "field":  "lowestRate",
+                     "area":  "Taipei",
+                     "kind":  "value",
+                     "value":  3
+                 },
+                 {
+                     "quarter":  "2018Q2",
+                     "tool":  "holdingTax",
+                     "field":  "lowestRate",
                      "area":  "Taipei",
                      "kind":  "real-track"
                  },

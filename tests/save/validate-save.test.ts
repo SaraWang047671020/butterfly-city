@@ -160,7 +160,7 @@ describe('worst-case save (G8)', () => {
       demo: true,
       seed: 2 ** 31 - 1,
     } as unknown as Save;
-    expect(policy.length).toBeLessThanOrEqual(49);
+    expect(policy.length).toBeLessThanOrEqual(53);
     expect(encodeSave(save).length).toBeLessThanOrEqual(MAX_SAVE_CODE_LENGTH);
   });
 });

@@ -47,6 +47,8 @@ export const TRACK_FIELDS: Readonly<Record<string, { readonly tool: string; read
   rentSubsidyHouseholds: { tool: 'rentSubsidy', field: 'households' },
   rentSubsidyAmountPerHousehold: { tool: 'rentSubsidy', field: 'amount' },
   subleaseUnitsMatched: { tool: 'sublease', field: 'unitsMatched' },
+  holdingTaxRateLowestTier: { tool: 'holdingTax', field: 'lowestRate' },
+  holdingTaxRateHighestTier: { tool: 'holdingTax', field: 'highestRate' },
 };
 
 /** Policy series holding the commuter pass price; it becomes per-city, per-quarter parameters. */

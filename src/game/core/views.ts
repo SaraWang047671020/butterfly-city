@@ -69,6 +69,7 @@ import { run } from '../../simulation/engine.ts';
 import { roundHalfUp } from '../../simulation/numeric.ts';
 import { scalar } from '../../simulation/params.ts';
 import { citySaving, SUBLEASE_RENT_SHARE_ID } from '../../simulation/rules/sublease.ts';
+import { HT_FRENCH_SHARE_ID, HT_LOW_TIER_SHARE_ID, htLowUseId, revenueChange, vacancyChange } from '../../simulation/rules/holding-tax.ts';
 import { quarterAt, quarterIndex, quarterYear } from '../../simulation/quarter.ts';
 import { affordableValue, refOf } from './checks.ts';
 import { constructionEntries } from './construction.ts';
@@ -624,6 +625,15 @@ function fieldView(p: PanelCtx, rule: ToolRule, field: ToolField, area: AreaKey,
     sliderUpper = Math.max(info.lower, affordableValue(s, target, field.integer === true));
   }
 
+  // housing-tools: the lowest tier rate cannot be above the highest (approved text "not above the highest tier").
+  let tierCap: number | null = null;
+  if (rule.id === 'holdingTax' && field.id === 'lowestRate') {
+    const high = playerValue(s.realTrack, s.diffs, { tool: 'holdingTax', field: 'highestRate', area }, p.planning);
+    if (high !== null && high < sliderUpper) {
+      tierCap = high;
+      sliderUpper = Math.max(info.lower, high);
+    }
+  }
   const draft = ui.drafts.get(key) ?? null;
   const usable = editable === 'yes' && !ui.busy && !p.complete;
   return {
@@ -645,7 +655,39 @@ function fieldView(p: PanelCtx, rule: ToolRule, field: ToolField, area: AreaKey,
     applyEnabled: usable && draft !== null && draft.check.status === 'ok',
     setToRealEnabled: usable && real !== null && !followsRealTrack(s.diffs, target, p.planning),
     ...(rule.id === 'sublease' ? { subleaseEffect: subleaseEffect(p, city) } : {}),
+    ...(rule.id === 'holdingTax' ? { holdingTaxEffect: holdingTaxEffect(p, field.id, area as CityName, draft?.text ?? null), tierCap } : {}),
   };
+}
+
+/**
+ * The revenue and vacancy lines of a holding-tax field (approved design, section 5), for the value shown: the draft
+ * when it is a number, else the player's value; the other tier at the player's value.
+ */
+function holdingTaxEffect(p: PanelCtx, field: string, city: CityName, draftText: string | null): NonNullable<FieldView['holdingTaxEffect']> {
+  const s = p.c.session;
+  const q = p.planning;
+  const value = (f: string): number | null => playerValue(s.realTrack, s.diffs, { tool: 'holdingTax', field: f, area: city }, q);
+  const real = (f: string): number | null => {
+    const r = p.rctx.realTrack.find((x) => x.quarter === q)?.tools['holdingTax']?.[f]?.[city];
+    return typeof r === 'number' ? r : null;
+  };
+  const drafted = draftText === null || draftText.trim() === '' ? NaN : Number(draftText);
+  const shown = (f: string): number | null => (f === field && Number.isFinite(drafted) ? drafted : value(f));
+  const low = shown('lowestRate');
+  const high = shown('highestRate');
+  const rl = real('lowestRate');
+  const rh = real('highestRate');
+  if (low === null || high === null || rl === null || rh === null) return { revenueYear: 0, vacancyLow: 0, vacancyHigh: 0 };
+  const w = scalar(s.params, HT_LOW_TIER_SHARE_ID);
+  const dr = w * (low - rl) + (1 - w) * (high - rh);
+  const lowUse = scalar(s.params, htLowUseId(city, Math.min(2025, Math.max(2015, quarterYear(q)))));
+  const share = s.params[HT_FRENCH_SHARE_ID];
+  const range = share?.kind === 'scalar' ? (share.range ?? { low: share.value, high: share.value }) : { low: 1, high: 1 };
+  // The larger French share gives the smaller fall, so the high end of the range gives the low end of the fall.
+  const fall = (fs: number): number => (lowUse > 0 ? (-vacancyChange(p.rctx, city, q, dr, fs) / lowUse) * 100 : 0);
+  const a = fall(range.high);
+  const b = fall(range.low);
+  return { revenueYear: revenueChange(p.rctx, city, dr), vacancyLow: Math.min(a, b), vacancyHigh: Math.max(a, b) };
 }
 
 /** The effect line of a sublease field: the largest saving per home, the rent-share range and the Lag. */
@@ -745,7 +787,12 @@ export function budgetBarView(
     led = c.value;
   }
   let committed = 0;
-  const rows = tools.map((t) => {
+  // The holding tax spends nothing: its revenue above (or below) real history, charged as a negative amount into the
+  // next year, changes the year's total instead of appearing as a tool (approved design, section 2).
+  let revenue = 0;
+  const holding = led.committed['holdingTax'] ?? [];
+  for (let i = yearIndex * 4; i < yearIndex * 4 + 4; i += 1) revenue -= holding[i] ?? 0;
+  const rows = tools.filter((t) => t.id !== 'holdingTax').map((t) => {
     const slots = led.committed[t.id] ?? [];
     let spent = 0;
     let later = 0;
@@ -756,7 +803,7 @@ export function budgetBarView(
     committed += spent + later;
     return { tool: t.id, spent, later };
   });
-  return { year, annualBudget, remaining: annualBudget - committed, tools: rows };
+  return { year, annualBudget: annualBudget + revenue, remaining: annualBudget + revenue - committed, tools: rows };
 }
 
 function policyPanel(c: Ctx, ui: ControllerUiState): PolicyPanelView {

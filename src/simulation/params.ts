@@ -269,6 +269,8 @@ export const SCENARIO_EFFECT_PARAMETERS: readonly ScenarioEffectParameter[] = [
   { id: 'commuterPass.elasticity', direction: 'low-is-strongest' },
   { id: 'rentSubsidy.passThrough', direction: 'low-is-strongest' },
   { id: 'sublease.rentShare', direction: 'low-is-strongest' },
+  { id: 'holdingTax.vacancyEffect', direction: 'low-is-strongest' },
+  { id: 'holdingTax.passThrough', direction: 'low-is-strongest' },
   { id: 'ghost.commuteThreshold', direction: 'low-is-strongest' },
   { id: 'ghost.shareCommuteWithin', direction: 'low-is-strongest' },
   { id: 'migration.commuteCostPerMinute', direction: 'high-is-strongest' },

@@ -312,6 +312,189 @@
       "estimated": {
         "method": "Assumed 1 quarter from the review rule (14 working days) plus the time to find a tenant. Data that would replace it: the average time from landlord registration to move-in in the programme records."
       }
+    },
+    "holdingTax.homes.Taipei": {
+      "kind": "scalar",
+      "value": 93263,
+      "unit": "homes taxed as not lived in by the owner",
+      "status": "secondary",
+      "source": {
+        "citation": "Taipei City Revenue Service, 臺北市房屋稅查定 (table 20903-02-05), 2023 (民國112年): homes not lived in by the owner (非自住用) 93,263 taxed, assessed value 77,342,296,400 TWD, tax 2,164,201,049 TWD",
+        "url": "https://www-ws.gov.taipei/001/Upload/336/relfile/16016/102791/767cb5fc-9c78-4bd8-a345-4d53af4259ab.pdf"
+      },
+      "estimated": {
+        "method": "The 2023 count, before the 2024 reform, used for every year. Homes taxed at half rate (2,487) are left out."
+      }
+    },
+    "holdingTax.assessedValue.Taipei": {
+      "kind": "scalar",
+      "value": 829294,
+      "unit": "TWD of assessed house value per home",
+      "status": "secondary",
+      "source": {
+        "citation": "Taipei City Revenue Service, 臺北市房屋稅查定 (table 20903-02-05), 2023 (民國112年): homes not lived in by the owner (非自住用) 93,263 taxed, assessed value 77,342,296,400 TWD, tax 2,164,201,049 TWD",
+        "url": "https://www-ws.gov.taipei/001/Upload/336/relfile/16016/102791/767cb5fc-9c78-4bd8-a345-4d53af4259ab.pdf"
+      },
+      "estimated": {
+        "method": "77,342,296,400 TWD / 93,263 homes (2023), used for every year."
+      }
+    },
+    "holdingTax.lowTierShare": {
+      "kind": "scalar",
+      "value": 0.668,
+      "unit": "share of the homes taxed at the lowest tier",
+      "status": "secondary",
+      "source": {
+        "citation": "Taipei City Revenue Service, 臺北市房屋稅查定 (table 20903-02-05), 2023 (民國112年): homes not lived in by the owner (非自住用) 93,263 taxed, assessed value 77,342,296,400 TWD, tax 2,164,201,049 TWD",
+        "url": "https://www-ws.gov.taipei/001/Upload/336/relfile/16016/102791/767cb5fc-9c78-4bd8-a345-4d53af4259ab.pdf"
+      },
+      "estimated": {
+        "method": "From the Taipei 2023 effective rate of those homes: 2,164,201,049 / 77,342,296,400 = 2.798 %; with tiers of 2.4 % and 3.6 %, w = (3.6 - 2.798) / 1.2 = 0.668. Used for both cities."
+      }
+    },
+    "holdingTax.homes.New Taipei": {
+      "kind": "scalar",
+      "value": 157752,
+      "unit": "homes taxed as not lived in by the owner",
+      "status": "gap",
+      "assumption": "New Taipei has the same share of homes not lived in by the owner among its taxed buildings as Taipei (8.78 % in 2023).",
+      "source": {
+        "citation": "New Taipei Revenue Service, 新北巿最近5年房屋稅綜合統計表 (data.gov.tw 123302): 1,795,924 taxed buildings in 2023; the share from the Taipei table",
+        "url": "https://data.gov.tw/dataset/123302"
+      },
+      "estimated": {
+        "method": "1,795,924 x (93,263 / 1,061,753) = 157,752. The New Taipei table does not split homes by use. Data that would replace it: the New Taipei count of 非自住用 homes."
+      }
+    },
+    "holdingTax.assessedValue.New Taipei": {
+      "kind": "scalar",
+      "value": 541461,
+      "unit": "TWD of assessed house value per home",
+      "status": "gap",
+      "assumption": "The assessed value of a home not lived in by the owner stands to the mean of all taxed buildings as in Taipei (1.079).",
+      "source": {
+        "citation": "New Taipei Revenue Service, 新北巿最近5年房屋稅綜合統計表 (data.gov.tw 123302): 2023 taxed assessed value 901,317,422 thousand TWD for 1,795,924 buildings",
+        "url": "https://data.gov.tw/dataset/123302"
+      },
+      "estimated": {
+        "method": "501,869 TWD mean x (829,294 / 768,650 in Taipei) = 541,461. Data that would replace it: the New Taipei assessed value of 非自住用 homes."
+      }
+    },
+    "holdingTax.vacancyEffect": {
+      "kind": "scalar",
+      "value": -0.13,
+      "unit": "relative change of vacant homes for the French vacancy tax",
+      "status": "secondary",
+      "source": {
+        "citation": "Segú, M. (2020), The impact of taxing vacancy on housing markets: Evidence from France, Journal of Public Economics 185, 104079: the tax reduced vacancy by 13 % (1997 to 2001)",
+        "url": "https://ideas.repec.org/a/eee/pubeco/v185y2020ics0047272719301409.html"
+      },
+      "range": {
+        "low": -0.2,
+        "high": -0.07,
+        "lowSource": {
+          "citation": "project assumption: the paper reports an effect twice as high where vacancy was high at the start",
+          "url": "https://ideas.repec.org/a/eee/pubeco/v185y2020ics0047272719301409.html"
+        },
+        "highSource": {
+          "citation": "project assumption: about half of the central effect",
+          "url": "https://ideas.repec.org/a/eee/pubeco/v185y2020ics0047272719301409.html"
+        }
+      },
+      "estimated": {
+        "method": "The central effect of the paper. The range is an assumption around it."
+      }
+    },
+    "holdingTax.frenchTaxShareOfRent": {
+      "kind": "scalar",
+      "value": 0.06,
+      "unit": "French vacancy tax as a share of annual market rent",
+      "status": "gap",
+      "assumption": "The French tax (10 % to 15 % of the cadastral rental value in its first years) is about 6 % of the annual market rent, taking the cadastral rental value as about half of the market rent.",
+      "source": {
+        "citation": "Segú (2020), the rates of the French vacancy tax; the ratio of cadastral to market rent is a project assumption",
+        "url": "https://ideas.repec.org/a/eee/pubeco/v185y2020ics0047272719301409.html"
+      },
+      "range": {
+        "low": 0.04,
+        "high": 0.1,
+        "lowSource": {
+          "citation": "project assumption",
+          "url": "https://ideas.repec.org/a/eee/pubeco/v185y2020ics0047272719301409.html"
+        },
+        "highSource": {
+          "citation": "project assumption",
+          "url": "https://ideas.repec.org/a/eee/pubeco/v185y2020ics0047272719301409.html"
+        }
+      },
+      "estimated": {
+        "method": "Converts a Taiwanese rate change into a fraction of the French shock: (rate change x assessed value) / (annual rent x 0.06). Data that would replace it: a study of vacancy and the house tax in Taiwan."
+      }
+    },
+    "holdingTax.rentFlexibility": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "relative rent change per relative change of the rental stock",
+      "status": "gap",
+      "assumption": "One percent more rental homes lowers rents by one percent.",
+      "source": {
+        "citation": "Project assumption; no estimate for Taipei or New Taipei was found",
+        "url": ".kiro/specs/housing-tools/design.md"
+      },
+      "range": {
+        "low": 0.5,
+        "high": 2,
+        "lowSource": {
+          "citation": "project assumption",
+          "url": ".kiro/specs/housing-tools/design.md"
+        },
+        "highSource": {
+          "citation": "project assumption",
+          "url": ".kiro/specs/housing-tools/design.md"
+        }
+      },
+      "estimated": {
+        "method": "Assumed 1 with a range of 0.5 to 2. Data that would replace it: a price elasticity of rental demand for the two cities."
+      }
+    },
+    "holdingTax.passThrough": {
+      "kind": "scalar",
+      "value": 0.15,
+      "unit": "share of a tax change passed on to rent",
+      "status": "secondary",
+      "source": {
+        "citation": "Carroll, R. and Yinger, J. (1994), Is the property tax a benefit tax? The case of rental housing, National Tax Journal 47(2): a 1 dollar tax increase raises rents by about 0.15 dollar (as summarized in Yinger, notes on the incidence of the property tax)",
+        "url": "https://joyinger.expressions.syr.edu/pai735ecn635-notes-on-the-incidence-of-the-property-tax/"
+      },
+      "range": {
+        "low": 0,
+        "high": 0.5,
+        "lowSource": {
+          "citation": "project assumption: landlords bear the whole tax",
+          "url": "https://joyinger.expressions.syr.edu/pai735ecn635-notes-on-the-incidence-of-the-property-tax/"
+        },
+        "highSource": {
+          "citation": "project assumption: half passed on; the research disagrees",
+          "url": "https://joyinger.expressions.syr.edu/pai735ecn635-notes-on-the-incidence-of-the-property-tax/"
+        }
+      },
+      "estimated": {
+        "method": "Central value from Boston-area rental data. The range is an assumption; the dialog says the research disagrees."
+      }
+    },
+    "holdingTax.lag": {
+      "kind": "scalar",
+      "value": 4,
+      "unit": "quarters",
+      "status": "gap",
+      "assumption": "Owners respond to a new rate after the first yearly bill, about a year later.",
+      "source": {
+        "citation": "House tax is billed once a year (May); no measured time of the response of vacancy was found",
+        "url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=G0340102"
+      },
+      "estimated": {
+        "method": "Assumed 4 quarters. Data that would replace it: the time profile of vacancy after the 2024 reform."
+      }
     }
   }
 }

@@ -1,7 +1,8 @@
 import { limitSourceType } from '../../scripts/pipeline/params/limits.ts';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { COST_SCHEDULE_ID, SHARE_BOTH_ID, SUBLEASE_SCHEDULE_ID } from '../../scripts/pipeline/params/derived.ts';
+import { SHARE_BOTH_ID } from '../../scripts/pipeline/params/derived.ts';
+import { COMPUTED_TYPE3_IDS } from '../../scripts/pipeline/params/params-file.ts';
 import { engineIdSet } from '../../scripts/pipeline/params/engine-ids.ts';
 import { FIXED_TYPE1_IDS, FIXED_TYPE3_IDS } from '../../scripts/pipeline/params/fixed-table.ts';
 import { DISTRICTS } from '../../scripts/lib/districts.ts';
@@ -10,14 +11,7 @@ import type { ValidationContext } from '../../src/data/validate.ts';
 
 type Json = any;
 
-const COMPUTED_TYPE3 = [
-  'migration.threshold',
-  'migration.share',
-  'migration.exitShare',
-  SHARE_BOTH_ID,
-  COST_SCHEDULE_ID,
-  SUBLEASE_SCHEDULE_ID,
-];
+const COMPUTED_TYPE3: readonly string[] = COMPUTED_TYPE3_IDS;
 
 const real: Json = JSON.parse(readFileSync('public/data/params.json', 'utf8'));
 const ids = Object.keys(real.parameters);
@@ -45,18 +39,18 @@ const clone = (): Json => JSON.parse(JSON.stringify(real));
 const rules = (x: unknown, c: ValidationContext = ctx): string[] => validateParamsFile(x, c).map((e) => e.rule);
 
 describe('the committed params.json', () => {
-  it('has 144 ids and source types 54 / 76 / 14', () => {
-    expect(ids).toHaveLength(144);
+  it('has 265 ids and source types 169 / 76 / 20', () => {
+    expect(ids).toHaveLength(265);
     const counts = { 1: 0, 2: 0, 3: 0 };
     for (const id of ids) counts[typeOf(id)] += 1;
-    expect(counts).toEqual({ 1: 54, 2: 76, 3: 14 });
-    expect(EXPECTED_SOURCE_TYPE_COUNTS).toEqual({ 1: 54, 2: 76, 3: 14 });
+    expect(counts).toEqual({ 1: 169, 2: 76, 3: 20 });
+    expect(EXPECTED_SOURCE_TYPE_COUNTS).toEqual({ 1: 169, 2: 76, 3: 20 });
   });
 
-  it('has status counts 8 verified, 121 secondary, 15 gap', () => {
+  it('has status counts 96 verified, 148 secondary, 21 gap', () => {
     const status: Record<string, number> = {};
     for (const e of Object.values<Json>(real.parameters)) status[e.status] = (status[e.status] ?? 0) + 1;
-    expect(status).toEqual({ verified: 8, secondary: 121, gap: 15 });
+    expect(status).toEqual({ verified: 96, secondary: 148, gap: 21 });
   });
 
   it('passes the validator with no error', () => {
@@ -138,7 +132,7 @@ describe('validateParamsFile, one defect each', () => {
     expect(rules(real, { ...ctx, sourceTypes: st })).toContain('source-type');
   });
 
-  it('reports a source type count that differs from 54 / 76 / 14', () => {
+  it('reports a source type count that differs from 169 / 76 / 20', () => {
     const type2 = ids.find((id) => typeOf(id) === 2) as string;
     const st = { ...sourceTypes, [type2]: 1 as const };
     const errs = validateParamsFile(real, { ...ctx, sourceTypes: st });

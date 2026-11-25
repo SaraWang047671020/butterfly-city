@@ -180,12 +180,14 @@ export const ZH: UiStrings = {
       'commuterPass.subsidy': '每張月票每月補貼',
       // housing-tools, approved 2026-11-25 (docs/design-proposal/housing-tools-proposal.html).
       'sublease.unitsMatched': '每季媒合戶數',
+      'holdingTax.lowestRate': '最低級距稅率',
+      'holdingTax.highestRate': '最高級距稅率',
     },
     tools: {
       socialHousing: '興建社會住宅',
       sublease: '社會住宅包租代管',
       rentSubsidy: '租金補貼',
-      holdingTax: '空屋與多屋持有稅',
+      holdingTax: '囤房稅（非自住住家稅率）',
       commuterPass: '通勤月票補貼',
     },
     fieldUnits: {
@@ -205,6 +207,11 @@ export const ZH: UiStrings = {
           '市府預算：每一戶開工時就會動用年度預算，早於任何效果出現。',
           '其他工具：用在這裡的錢，同一年就不能用在租金補貼或通勤月票補貼。',
         ],
+      },
+      // housing-tools section 5, approved 2026-11-25.
+      holdingTax: {
+        benefits: ['租屋家庭：空屋釋出到租屋市場，房租可能下降，有時間差。', '市政府預算：多收的稅加進下一年的預算。'],
+        costs: ['持有多戶或空屋的屋主：每年房屋稅變多。', '房東可能把部分稅轉嫁到房租上（研究結果不一，用範圍表示）。'],
       },
       // housing-tools section 4, approved 2026-11-25.
       sublease: {
@@ -280,6 +287,9 @@ export const ZH: UiStrings = {
       'commuterPass.elasticity': '通勤月票的需求彈性',
       'rentSubsidy.passThrough': '租金補貼轉嫁到房租的比例',
       'sublease.rentShare': '包租代管房租占市價的比例',
+      // TODO(user text): housing-tools task 5, drafted 2026-11-25, awaiting approval.
+      'holdingTax.vacancyEffect': '空屋稅對空屋數的影響（法國研究）',
+      'holdingTax.passThrough': '房屋稅轉嫁到房租的比例',
       'ghost.commuteThreshold': '成為幽靈的通勤時間門檻',
       'ghost.shareCommuteWithin': '在本區工作的居民比例',
       'migration.commuteCostPerMinute': '每分鐘通勤時間對遷移的影響',
@@ -346,6 +356,8 @@ export const ZH: UiStrings = {
       commuterPass: '月票',
       // housing-tools, approved 2026-11-25.
       sublease: '包租',
+      // TODO(user text): housing-tools task 5, drafted 2026-11-25, awaiting approval.
+      holdingTax: '囤房稅',
     },
     // housing-tools, approved 2026-11-25: the badge of a tool added by housing-tools.
     newTool: '新',
@@ -386,6 +398,14 @@ export const ZH: UiStrings = {
     upperEnd: '上限 {value}',
     budgetEnd: '預算最多 {value}',
     // housing-tools section 4, approved 2026-11-25.
+    // housing-tools section 5, approved 2026-11-25.
+    statutoryLower: '法定下限 {value}%',
+    statutoryUpper: '法定上限 {value}%',
+    tierOrder: '不能高於最高級距 {value}%',
+    revenueMore: '稅收變化：明年預算多約 NT${amount}。',
+    revenueLess: '稅收變化：明年預算少約 NT${amount}。',
+    holdingTaxEffect:
+      '空屋預估減少約 {low}% 到 {high}%（法國空屋稅的研究：減少 13%；台灣稅基不同，換算的假設寫在「細節與來源」），釋出的房子進入租屋市場。',
     subleaseEffect:
       '多媒合的 {n} 戶，房租約為市價的 {low}% 到 {high}%（第 1 到 3 期是八成，第 4 期起是不超過估價的市價），平均每戶每月省約 NT${saving} 到 0。從媒合到入住的實際時間查不到，先假設 {lag} 季。',
     benefits: '誰受益',

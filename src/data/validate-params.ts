@@ -105,7 +105,7 @@ export function checkParameterEntry(
 // parity test is needed (Decision D33). `src/data` may import `src/simulation`; the reverse is forbidden.
 
 /** Expected number of ids per Parameter_Source_Type (Requirement 20, 52 + 76 + 12 = 140; housing-tools removed the 7 factor limits and added 44 type 1 and 22 type 2 Documented_Limits). */
-export const EXPECTED_SOURCE_TYPE_COUNTS: Readonly<Record<1 | 2 | 3, number>> = { 1: 54, 2: 76, 3: 14 };
+export const EXPECTED_SOURCE_TYPE_COUNTS: Readonly<Record<1 | 2 | 3, number>> = { 1: 169, 2: 76, 3: 20 };
 
 const GHOST_SIZE_ID = 'ghost.size';
 const SHARE_BOTH_ID = 'ghost.shareBoth';

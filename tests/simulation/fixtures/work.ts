@@ -36,7 +36,7 @@ export function effectOf(
 
 export const EMPTY_EFFECTS: ToolEffects = { deltas: {}, links: {} };
 
-/** Registry-ordered effects: socialHousing, commuterPass, rentSubsidy, sublease, with overrides. */
+/** Registry-ordered effects: socialHousing, commuterPass, rentSubsidy, sublease, holdingTax, with overrides. */
 export function toolEffects(
   overrides: Readonly<Record<string, ToolEffects>> = {},
 ): Readonly<Record<string, ToolEffects>> {
@@ -45,6 +45,7 @@ export function toolEffects(
     commuterPass: overrides['commuterPass'] ?? EMPTY_EFFECTS,
     rentSubsidy: overrides['rentSubsidy'] ?? EMPTY_EFFECTS,
     sublease: overrides['sublease'] ?? EMPTY_EFFECTS,
+    holdingTax: overrides['holdingTax'] ?? EMPTY_EFFECTS,
   };
 }
 

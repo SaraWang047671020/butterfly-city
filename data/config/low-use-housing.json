@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "notes": "housing-tools Requirement 5.3. Low-use (electricity) homes per city: MOI real estate platform E1040, current method; one value per year: 2015 to 2019 the yearly figure (Nov-Dec), from 2020 the second half (下半年). District tables exist (2009 to 2025) but were not retrieved: the platform serves them through an interactive query; the Engine allocates the city figure to districts by renter households (gap). Research: data/research/housing-tools-2026-11-24.md section 4b.",
+  "source": {
+    "citation": "MOI real estate information platform, 低度使用(用電)住宅 statistics (E1040), city counts, current method",
+    "url": "https://pip.moi.gov.tw/Publicize/Info/E1040"
+  },
+  "byCity": {
+    "Taipei": {
+      "2015": 59091,
+      "2016": 56109,
+      "2017": 55557,
+      "2018": 59801,
+      "2019": 61393,
+      "2020": 62671,
+      "2021": 58930,
+      "2022": 60434,
+      "2023": 61569,
+      "2024": 64676,
+      "2025": 58648
+    },
+    "New Taipei": {
+      "2015": 118651,
+      "2016": 118042,
+      "2017": 120356,
+      "2018": 133994,
+      "2019": 136477,
+      "2020": 131450,
+      "2021": 118165,
+      "2022": 120736,
+      "2023": 124649,
+      "2024": 128361,
+      "2025": 119168
+    }
+  }
+}

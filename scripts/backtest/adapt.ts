@@ -60,6 +60,8 @@ export const TRACK_FIELDS: Readonly<Record<string, { readonly tool: string; read
   rentSubsidyHouseholds: { tool: 'rentSubsidy', field: 'households' },
   rentSubsidyAmountPerHousehold: { tool: 'rentSubsidy', field: 'amount' },
   subleaseUnitsMatched: { tool: 'sublease', field: 'unitsMatched' },
+  holdingTaxRateLowestTier: { tool: 'holdingTax', field: 'lowestRate' },
+  holdingTaxRateHighestTier: { tool: 'holdingTax', field: 'highestRate' },
 };
 
 export const PASS_PRICE_SERIES = 'commuterPassPrice';

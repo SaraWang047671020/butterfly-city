@@ -12,6 +12,7 @@ import { DataError } from '../errors.ts';
 export const SHARE_BOTH_ID = 'ghost.shareBoth';
 export const COST_SCHEDULE_ID = 'socialHousing.costSchedule';
 export const SUBLEASE_SCHEDULE_ID = 'sublease.costSchedule';
+export const HOLDING_TAX_SCHEDULE_ID = 'holdingTax.costSchedule';
 /** Quarters of one sublease contract (3 years, S19 of data/research/housing-tools-2026-11-24.md). */
 export const SUBLEASE_CONTRACT_QUARTERS = 12;
 
@@ -130,4 +131,22 @@ export function deriveSubleaseSchedule(entries: EntryMap): ScheduleParameter {
       'Even payment: the one-off matching fee is spread over the contract like the monthly fees. Payment records of the programme would replace this assumption.',
   };
   return checked(SUBLEASE_SCHEDULE_ID, entry);
+}
+
+/**
+ * `holdingTax.costSchedule`: the revenue change of a quarter is moved 4 quarters on, into the next year's Annual_Budget
+ * (housing-tools Requirement 5.4). A slot after 2025Q4 is recorded in 2025Q4 by the Engine.
+ */
+export function deriveHoldingTaxSchedule(): ScheduleParameter {
+  const entry: ScheduleParameter = {
+    kind: 'schedule',
+    offsets: [4],
+    shares: [1],
+    unit: 'share of the revenue change of a quarter, by quarters after it',
+    status: 'gap',
+    source: { citation: 'product.md: revenue from the holding tax flows back into the budget; housing-tools Requirement 5.4 (next year)', url: '.kiro/steering/product.md' },
+    estimated: { method: 'All of the revenue change of a quarter at offset 4 (the same quarter of the next year).' },
+    assumption: 'The revenue of a year reaches the budget of the next year, in the same quarter one year later.',
+  };
+  return checked(HOLDING_TAX_SCHEDULE_ID, entry);
 }

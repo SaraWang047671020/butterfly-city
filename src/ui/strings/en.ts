@@ -183,12 +183,14 @@ export const EN = {
       'commuterPass.subsidy': 'Subsidy per pass per month',
       // housing-tools, approved 2026-11-25 (docs/design-proposal/housing-tools-proposal.html).
       'sublease.unitsMatched': 'Homes matched per quarter',
+      'holdingTax.lowestRate': 'Lowest tier rate',
+      'holdingTax.highestRate': 'Highest tier rate',
     },
     tools: {
       socialHousing: 'Social housing construction',
       sublease: 'Sublease and rental management',
       rentSubsidy: 'Rent subsidy',
-      holdingTax: 'Vacant and multiple-home holding tax',
+      holdingTax: 'Holding tax (rates for homes not lived in by the owner)',
       commuterPass: 'Commuter pass subsidy',
     },
     fieldUnits: {
@@ -208,6 +210,17 @@ export const EN = {
         costs: [
           'City budget: each unit started draws on the annual budget when it is committed, before any effect arrives.',
           'Other tools: money used here is not available for rent subsidy or commuter pass subsidy in the same year.',
+        ],
+      },
+      // housing-tools section 5, approved 2026-11-25.
+      holdingTax: {
+        benefits: [
+          'Renter households: vacant homes released to the rental market can lower rent, after a lag.',
+          "City budget: extra revenue is added to next year's budget.",
+        ],
+        costs: [
+          'Owners of several or vacant homes: higher house tax each year.',
+          'Landlords may pass part of the tax on to rent (the research disagrees, so it is shown as a range).',
         ],
       },
       // housing-tools section 4, approved 2026-11-25.
@@ -298,6 +311,9 @@ export const EN = {
       'commuterPass.elasticity': 'Commuter pass demand elasticity',
       'rentSubsidy.passThrough': 'Share of rent subsidy passed into rents',
       'sublease.rentShare': 'Sublease rent as a share of market rent',
+      // TODO(user text): housing-tools task 5, drafted 2026-11-25, awaiting approval.
+      'holdingTax.vacancyEffect': 'Effect of a vacancy tax on vacant homes (French study)',
+      'holdingTax.passThrough': 'Share of the house tax passed on to rent',
       'ghost.commuteThreshold': 'Commute time threshold for a ghost',
       'ghost.shareCommuteWithin': 'Share of residents working within the district',
       'migration.commuteCostPerMinute': 'Migration response per minute of commute',
@@ -368,6 +384,8 @@ export const EN = {
       commuterPass: 'Pass',
       // housing-tools, approved 2026-11-25.
       sublease: 'Sublease',
+      // TODO(user text): housing-tools task 5, drafted 2026-11-25, awaiting approval.
+      holdingTax: 'Holding tax',
     },
     // housing-tools, approved 2026-11-25: the badge of a tool added by housing-tools.
     newTool: 'New',
@@ -408,6 +426,14 @@ export const EN = {
     upperEnd: 'upper limit {value}',
     budgetEnd: 'budget allows {value}',
     // housing-tools section 4, approved 2026-11-25.
+    // housing-tools section 5, approved 2026-11-25.
+    statutoryLower: 'statutory lower limit {value} %',
+    statutoryUpper: 'statutory upper limit {value} %',
+    tierOrder: 'not above the highest tier {value} %',
+    revenueMore: "Revenue: next year's budget about NT${amount} more.",
+    revenueLess: "Revenue: next year's budget about NT${amount} less.",
+    holdingTaxEffect:
+      "Vacant homes are expected to fall by about {low} % to {high} % (French vacancy tax study: −13 %; Taiwan's tax base differs, and the conversion is stated under Details and sources); released homes join the rental market.",
     subleaseEffect:
       'The {n} extra homes rent at {low} % to {high} % of market rent (80 % in phases 1 to 3; from phase 4, at most the appraised market rent), saving about NT${saving} to 0 per household per month. No measured time from matching to move-in; {lag} quarter is assumed.',
     benefits: 'Who benefits',

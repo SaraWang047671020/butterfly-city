@@ -583,6 +583,419 @@
       },
       "assumption": "Fixture assumption."
     },
+    "holdingTax.assessedValue.New Taipei": {
+      "kind": "scalar",
+      "value": 541461,
+      "unit": "TWD of assessed house value per home",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "gap",
+      "estimated": {
+        "method": "Fixture estimate."
+      },
+      "assumption": "Fixture assumption."
+    },
+    "holdingTax.assessedValue.Taipei": {
+      "kind": "scalar",
+      "value": 829294,
+      "unit": "TWD of assessed house value per home",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.costSchedule": {
+      "kind": "schedule",
+      "offsets": [
+        4
+      ],
+      "shares": [
+        1
+      ],
+      "unit": "share",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "gap",
+      "estimated": {
+        "method": "Fixture estimate."
+      },
+      "assumption": "Fixture assumption."
+    },
+    "holdingTax.frenchTaxShareOfRent": {
+      "kind": "scalar",
+      "value": 0.06,
+      "unit": "French vacancy tax as a share of annual market rent",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "gap",
+      "estimated": {
+        "method": "Fixture estimate."
+      },
+      "assumption": "Fixture assumption.",
+      "range": {
+        "low": 0.04,
+        "high": 0.1,
+        "lowSource": {
+          "citation": "Test fixture",
+          "url": "https://example.org/fixture"
+        },
+        "highSource": {
+          "citation": "Test fixture",
+          "url": "https://example.org/fixture"
+        }
+      }
+    },
+    "holdingTax.homes.New Taipei": {
+      "kind": "scalar",
+      "value": 157752,
+      "unit": "homes taxed as not lived in by the owner",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "gap",
+      "estimated": {
+        "method": "Fixture estimate."
+      },
+      "assumption": "Fixture assumption."
+    },
+    "holdingTax.homes.Taipei": {
+      "kind": "scalar",
+      "value": 93263,
+      "unit": "homes taxed as not lived in by the owner",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lag": {
+      "kind": "scalar",
+      "value": 4,
+      "unit": "quarters",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "gap",
+      "estimated": {
+        "method": "Fixture estimate."
+      },
+      "assumption": "Fixture assumption."
+    },
+    "holdingTax.lowTierShare": {
+      "kind": "scalar",
+      "value": 0.668,
+      "unit": "share of the homes taxed at the lowest tier",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.New Taipei.2015": {
+      "kind": "scalar",
+      "value": 118651,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.New Taipei.2016": {
+      "kind": "scalar",
+      "value": 118042,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.New Taipei.2017": {
+      "kind": "scalar",
+      "value": 120356,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.New Taipei.2018": {
+      "kind": "scalar",
+      "value": 133994,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.New Taipei.2019": {
+      "kind": "scalar",
+      "value": 136477,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.New Taipei.2020": {
+      "kind": "scalar",
+      "value": 131450,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.New Taipei.2021": {
+      "kind": "scalar",
+      "value": 118165,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.New Taipei.2022": {
+      "kind": "scalar",
+      "value": 120736,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.New Taipei.2023": {
+      "kind": "scalar",
+      "value": 124649,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.New Taipei.2024": {
+      "kind": "scalar",
+      "value": 128361,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.New Taipei.2025": {
+      "kind": "scalar",
+      "value": 119168,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.Taipei.2015": {
+      "kind": "scalar",
+      "value": 59091,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.Taipei.2016": {
+      "kind": "scalar",
+      "value": 56109,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.Taipei.2017": {
+      "kind": "scalar",
+      "value": 55557,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.Taipei.2018": {
+      "kind": "scalar",
+      "value": 59801,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.Taipei.2019": {
+      "kind": "scalar",
+      "value": 61393,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.Taipei.2020": {
+      "kind": "scalar",
+      "value": 62671,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.Taipei.2021": {
+      "kind": "scalar",
+      "value": 58930,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.Taipei.2022": {
+      "kind": "scalar",
+      "value": 60434,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.Taipei.2023": {
+      "kind": "scalar",
+      "value": 61569,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.Taipei.2024": {
+      "kind": "scalar",
+      "value": 64676,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.lowUseHomes.Taipei.2025": {
+      "kind": "scalar",
+      "value": 58648,
+      "unit": "homes",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "holdingTax.passThrough": {
+      "kind": "scalar",
+      "value": 0.15,
+      "unit": "share of a tax change passed on to rent",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "secondary",
+      "range": {
+        "low": 0,
+        "high": 0.5,
+        "lowSource": {
+          "citation": "Test fixture",
+          "url": "https://example.org/fixture"
+        },
+        "highSource": {
+          "citation": "Test fixture",
+          "url": "https://example.org/fixture"
+        }
+      },
+      "estimated": {
+        "method": "Fixture estimate."
+      }
+    },
+    "holdingTax.rentFlexibility": {
+      "kind": "scalar",
+      "value": 1,
+      "unit": "relative rent change per relative change of the rental stock",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "gap",
+      "estimated": {
+        "method": "Fixture estimate."
+      },
+      "assumption": "Fixture assumption.",
+      "range": {
+        "low": 0.5,
+        "high": 2,
+        "lowSource": {
+          "citation": "Test fixture",
+          "url": "https://example.org/fixture"
+        },
+        "highSource": {
+          "citation": "Test fixture",
+          "url": "https://example.org/fixture"
+        }
+      }
+    },
+    "holdingTax.vacancyEffect": {
+      "kind": "scalar",
+      "value": -0.13,
+      "unit": "relative change of vacant homes for the French vacancy tax",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "secondary",
+      "range": {
+        "low": -0.2,
+        "high": -0.07,
+        "lowSource": {
+          "citation": "Test fixture",
+          "url": "https://example.org/fixture"
+        },
+        "highSource": {
+          "citation": "Test fixture",
+          "url": "https://example.org/fixture"
+        }
+      },
+      "estimated": {
+        "method": "Fixture estimate."
+      }
+    },
     "housing.dwellingSize": {
       "kind": "scalar",
       "value": 30,
@@ -627,6 +1040,886 @@
       "kind": "scalar",
       "value": 0.4,
       "unit": "share",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.New Taipei.2015": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.New Taipei.2016": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.New Taipei.2017": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.New Taipei.2018": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.New Taipei.2019": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.New Taipei.2020": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.New Taipei.2021": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.New Taipei.2022": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.New Taipei.2023": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.New Taipei.2024": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.New Taipei.2025": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.Taipei.2015": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.Taipei.2016": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.Taipei.2017": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.Taipei.2018": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.Taipei.2019": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.Taipei.2020": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.Taipei.2021": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.Taipei.2022": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.Taipei.2023": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.Taipei.2024": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.max.Taipei.2025": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.New Taipei.2015": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.New Taipei.2016": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.New Taipei.2017": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.New Taipei.2018": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.New Taipei.2019": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.New Taipei.2020": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.New Taipei.2021": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.New Taipei.2022": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.New Taipei.2023": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.New Taipei.2024": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.New Taipei.2025": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.Taipei.2015": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.Taipei.2016": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.Taipei.2017": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.Taipei.2018": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.Taipei.2019": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.Taipei.2020": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.Taipei.2021": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.Taipei.2022": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.Taipei.2023": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.Taipei.2024": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.highestRate.min.Taipei.2025": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.New Taipei.2015": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.New Taipei.2016": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.New Taipei.2017": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.New Taipei.2018": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.New Taipei.2019": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.New Taipei.2020": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.New Taipei.2021": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.New Taipei.2022": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.New Taipei.2023": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.New Taipei.2024": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.New Taipei.2025": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.Taipei.2015": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.Taipei.2016": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.Taipei.2017": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.Taipei.2018": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.Taipei.2019": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.Taipei.2020": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.Taipei.2021": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.Taipei.2022": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.Taipei.2023": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.Taipei.2024": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.max.Taipei.2025": {
+      "kind": "scalar",
+      "value": 100,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.New Taipei.2015": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.New Taipei.2016": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.New Taipei.2017": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.New Taipei.2018": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.New Taipei.2019": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.New Taipei.2020": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.New Taipei.2021": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.New Taipei.2022": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.New Taipei.2023": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.New Taipei.2024": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.New Taipei.2025": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.Taipei.2015": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.Taipei.2016": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.Taipei.2017": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.Taipei.2018": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.Taipei.2019": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.Taipei.2020": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.Taipei.2021": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.Taipei.2022": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.Taipei.2023": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.Taipei.2024": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
+      "source": {
+        "citation": "Test fixture",
+        "url": "https://example.org/fixture"
+      },
+      "status": "verified"
+    },
+    "limit.holdingTax.lowestRate.min.Taipei.2025": {
+      "kind": "scalar",
+      "value": 0,
+      "unit": "percent of assessed house value",
       "source": {
         "citation": "Test fixture",
         "url": "https://example.org/fixture"

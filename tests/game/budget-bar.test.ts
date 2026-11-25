@@ -46,7 +46,8 @@ describe('Budget_Bar', () => {
     const total = bar.tools.reduce((a, t) => a + t.spent + t.later, 0);
     expect(total + bar.remaining).toBeCloseTo(bar.annualBudget, 0);
     expect(Math.abs(bar.remaining)).toBeLessThan(1);
-    expect(bar.tools.map((t) => t.tool)).toEqual(RULE_REGISTRY.tools.map((t) => t.id));
+    // The holding tax spends nothing: it changes the year's total, so it has no segment.
+    expect(bar.tools.map((t) => t.tool)).toEqual(RULE_REGISTRY.tools.map((t) => t.id).filter((id) => id !== 'holdingTax'));
   });
 
   it('an edit costs its charges of the year kept to the end; lowering a tool frees money', () => {

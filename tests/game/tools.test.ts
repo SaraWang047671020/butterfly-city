@@ -9,13 +9,13 @@ import type { RuleRegistry, ToolRule } from '../../src/types/simulation.ts';
 const IDS: readonly PolicyToolId[] = ['socialHousing', 'sublease', 'rentSubsidy', 'holdingTax', 'commuterPass'];
 
 describe('toolStatus (19.6, 8.2)', () => {
-  it('real registry: holdingTax is coming soon, the other four active', () => {
+  it('real registry: all five tools are active', () => {
     const status = Object.fromEntries(IDS.map((id) => [id, toolStatus(RULE_REGISTRY, id)]));
     expect(status).toEqual({
       socialHousing: 'active',
       sublease: 'active',
       rentSubsidy: 'active',
-      holdingTax: 'coming-soon',
+      holdingTax: 'active',
       commuterPass: 'active',
     });
   });
@@ -24,7 +24,6 @@ describe('toolStatus (19.6, 8.2)', () => {
     const stub = { ...RULE_REGISTRY.tools[0]!, id: 'sublease' } as unknown as ToolRule;
     const registry: RuleRegistry = { ...RULE_REGISTRY, tools: [...RULE_REGISTRY.tools, stub] };
     expect(toolStatus(registry, 'sublease')).toBe('active');
-    expect(toolStatus(registry, 'holdingTax')).toBe('coming-soon');
   });
 
   it('a registry copy without one tool id makes that tool coming soon', () => {

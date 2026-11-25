@@ -406,7 +406,10 @@ export function checkLimit(
 
   // Documented_Limits only (housing-tools Requirement 2, simulation.md "Policy tool limits"). The factor ids are
   // kept for older parameter tables and test stubs; without any lower parameter the lower limit is 0.
-  const minId = `${base}.min`;
+  // The most specific documented minimum, as for the maximum below: area and year, then area, then the field.
+  const minYear = quarterYear(quarter);
+  const minIds = [`${base}.min.${limitArea(area, scope, ctx)}.${minYear}`, `${base}.min.${limitArea(area, scope, ctx)}`, `${base}.min`];
+  const minId = minIds.find((id) => optionalScalar(params, id) !== undefined) ?? `${base}.min`;
   const minValue = optionalScalar(params, minId);
   const lowerFactorId = `${base}.lowerFactor`;
   const lowerFactor = optionalScalar(params, lowerFactorId);

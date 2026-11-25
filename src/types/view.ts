@@ -169,6 +169,13 @@ export interface FieldView {
    * Sublease fields only (housing-tools Requirement 4): the largest average rent saved per matched home and month
    * in the city (at the low end of the rent share), the low and high rent shares, and the Lag in quarters.
    */
+  /**
+   * Holding-tax fields only (housing-tools Requirement 5): for the value shown, the revenue change of a year in TWD
+   * (added to the next year's budget) and the fall of the city's vacant homes in percent, low and high end.
+   */
+  readonly holdingTaxEffect?: { readonly revenueYear: number; readonly vacancyLow: number; readonly vacancyHigh: number };
+  /** The lowest tier rate field: the highest tier rate it cannot exceed, WHEN that is below the statutory maximum. */
+  readonly tierCap?: number | null;
   readonly subleaseEffect?: {
     readonly saving: number;
     readonly shareLow: number;

@@ -123,6 +123,18 @@ function buildEntries(): Record<string, ParameterEntry> {
     estimated: 'Programme rent rules, fixture value.',
   });
   p['sublease.costSchedule'] = schedule([0, 1, 2, 3], [0.25, 0.25, 0.25, 0.25]);
+  p['holdingTax.lag'] = scalar(1, { unit: 'quarters' });
+  p['holdingTax.costSchedule'] = schedule([4], [1]);
+  p['holdingTax.lowTierShare'] = scalar(0.5, { unit: 'share' });
+  p['holdingTax.vacancyEffect'] = scalar(-0.13, { unit: 'relative change', status: 'secondary', range: [-0.2, -0.07], estimated: 'Vacancy tax study, fixture value.' });
+  p['holdingTax.frenchTaxShareOfRent'] = scalar(0.06, { unit: 'share' });
+  p['holdingTax.rentFlexibility'] = scalar(1, { unit: 'ratio' });
+  p['holdingTax.passThrough'] = scalar(0.15, { unit: 'share', status: 'secondary', range: [0, 0.5], estimated: 'Incidence study, fixture value.' });
+  for (const city of CITIES) {
+    p[`holdingTax.homes.${city}`] = scalar(100_000, { unit: 'homes' });
+    p[`holdingTax.assessedValue.${city}`] = scalar(800_000, { unit: 'TWD' });
+    for (let year = 2015; year <= 2025; year++) p[`holdingTax.lowUseHomes.${city}.${year}`] = scalar(60_000, { unit: 'homes' });
+  }
 
   for (const city of CITIES) {
     for (let q = 0; q < 44; q++) {
@@ -188,7 +200,7 @@ function buildEntries(): Record<string, ParameterEntry> {
   }
 
   // Budget ceilings: present for every tool and year, far above any fixture spending.
-  for (const tool of ['socialHousing', 'commuterPass', 'rentSubsidy', 'sublease']) {
+  for (const tool of ['socialHousing', 'commuterPass', 'rentSubsidy', 'sublease', 'holdingTax']) {
     for (let year = 2015; year <= 2025; year++) {
       p[`budget.ceiling.${tool}.${year}`] = scalar(1_000_000_000_000_000, { unit: 'TWD' });
     }

@@ -26,6 +26,11 @@ export const FIXED_TYPE1_IDS: readonly string[] = [
   'rentSubsidy.lag',
   'sublease.unitCost',
   'sublease.rentShare',
+  'holdingTax.homes.Taipei',
+  'holdingTax.assessedValue.Taipei',
+  'holdingTax.lowTierShare',
+  'holdingTax.vacancyEffect',
+  'holdingTax.passThrough',
 ];
 
 /** Type 3 gap ids held as fixed values. `migration.threshold`, `.share`, `.exitShare`, `ghost.shareBoth`, `socialHousing.costSchedule` and `sublease.costSchedule` are computed elsewhere. */
@@ -38,6 +43,11 @@ export const FIXED_TYPE3_IDS: readonly string[] = [
   'commuterPass.unitCost',
   'rentSubsidy.unitCost',
   'sublease.lag',
+  'holdingTax.homes.New Taipei',
+  'holdingTax.assessedValue.New Taipei',
+  'holdingTax.frenchTaxShareOfRent',
+  'holdingTax.rentFlexibility',
+  'holdingTax.lag',
 ];
 
 export type FixedType1Params = Readonly<Record<string, ScalarParameter>>;
