@@ -311,7 +311,7 @@ export const EN = {
       'commuterPass.elasticity': 'Commuter pass demand elasticity',
       'rentSubsidy.passThrough': 'Share of rent subsidy passed into rents',
       'sublease.rentShare': 'Sublease rent as a share of market rent',
-      // TODO(user text): housing-tools task 5, drafted 2026-11-25, awaiting approval.
+      // housing-tools task 5, approved 2026-11-25.
       'holdingTax.vacancyEffect': 'Effect of a vacancy tax on vacant homes (French study)',
       'holdingTax.passThrough': 'Share of the house tax passed on to rent',
       'ghost.commuteThreshold': 'Commute time threshold for a ghost',
@@ -384,7 +384,7 @@ export const EN = {
       commuterPass: 'Pass',
       // housing-tools, approved 2026-11-25.
       sublease: 'Sublease',
-      // TODO(user text): housing-tools task 5, drafted 2026-11-25, awaiting approval.
+      // housing-tools task 5, approved 2026-11-25.
       holdingTax: 'Holding tax',
     },
     // housing-tools, approved 2026-11-25: the badge of a tool added by housing-tools.

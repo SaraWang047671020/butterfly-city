@@ -287,7 +287,7 @@ export const ZH: UiStrings = {
       'commuterPass.elasticity': '通勤月票的需求彈性',
       'rentSubsidy.passThrough': '租金補貼轉嫁到房租的比例',
       'sublease.rentShare': '包租代管房租占市價的比例',
-      // TODO(user text): housing-tools task 5, drafted 2026-11-25, awaiting approval.
+      // housing-tools task 5, approved 2026-11-25.
       'holdingTax.vacancyEffect': '空屋稅對空屋數的影響（法國研究）',
       'holdingTax.passThrough': '房屋稅轉嫁到房租的比例',
       'ghost.commuteThreshold': '成為幽靈的通勤時間門檻',
@@ -356,7 +356,7 @@ export const ZH: UiStrings = {
       commuterPass: '月票',
       // housing-tools, approved 2026-11-25.
       sublease: '包租',
-      // TODO(user text): housing-tools task 5, drafted 2026-11-25, awaiting approval.
+      // housing-tools task 5, approved 2026-11-25.
       holdingTax: '囤房稅',
     },
     // housing-tools, approved 2026-11-25: the badge of a tool added by housing-tools.

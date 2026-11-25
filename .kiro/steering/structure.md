@@ -14,7 +14,8 @@ butterflycity/
 ├── data/
 │   ├── raw/                   # downloaded open data (large files gitignored)
 │   ├── config/                # small committed tables (holding tax rates, commuter pass products, sublease phases, backtest cases,
-│   │                          #   Character_File characters.json, citizens.json, model-limits.json, banned-term lists)
+│   │                          #   Character_File characters.json, citizens.json, model-limits.json, banned-term lists; housing-tools:
+│   │                          #   policy-limits.json (Documented_Limits), low-use-housing.json, params-fixed.json rows)
 │   ├── SOURCES.md             # source, year, and license for every field
 │   └── DOWNLOAD.md            # how to obtain raw files that are not committed
 ├── scripts/                   # local Node scripts: data/raw -> public/data
@@ -38,7 +39,8 @@ butterflycity/
 │   ├── data/                  # fetch + validate public/data JSON
 │   ├── simulation/            # pure simulation engine (see simulation.md)
 │   │   ├── engine.ts          # step(state, policies, events, params) -> next state
-│   │   ├── rules/             # one file per rule
+│   │   ├── rules/             # one file per rule (five tools since housing-tools: social housing, sublease, rent subsidy,
+│   │   │                      #   holding tax, commuter pass; then the indicator rules)
 │   │   ├── budget.ts          # allocation and budget validation
 │   │   ├── lag.ts             # delayed policy effects pipeline
 │   │   ├── migration.ts       # inter-district population movement
@@ -57,6 +59,7 @@ butterflycity/
 │   │   ├── map/               # indicator switch, legend and indicator text (DOM), shown in the City report
 │   │   ├── panels/            # district list and detail, construction rows, policy text helpers
 │   │   ├── policy/            # Policy_Cards, Policy_Dialog and Quick_Preview (play-loop)
+│   │   ├── budget/            # Budget_Bar (housing-tools)
 │   │   ├── brief/             # Quarter_Brief (play-loop)
 │   │   ├── report/            # City report with its tabs (play-loop)
 │   │   ├── character/         # Character_Creation and the character chip (play-loop)
