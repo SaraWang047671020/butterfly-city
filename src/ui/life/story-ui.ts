@@ -7,7 +7,7 @@ import { realOdds } from '../../game/life/applications.ts';
 import type { CharacterView, ChooseResult } from '../../game/life/controller.ts';
 import type { LifeEventId } from '../../game/life/events.ts';
 import type { PersonalLedger } from '../../game/life/ledger.ts';
-import type { LifeDecision, PronounId } from '../../game/life/life-state.ts';
+import type { Benefit, LifeDecision, PronounId } from '../../game/life/life-state.ts';
 import { quarterStory, endingPart, type StoryFormat, type StoryLine } from '../../game/life/story.ts';
 import type { ChoicePayload, OptionView, PendingEvent } from '../../game/life/story-model.ts';
 
@@ -112,7 +112,7 @@ export function lineText(d: StoryUiDeps, line: StoryLine): string {
 // ---------------------------------------------------------------- odds bars (Application, decision B1)
 
 interface Bars {
-  readonly benefit: 'socialHousing' | 'rentSubsidy';
+  readonly benefit: Benefit;
   readonly odds: Readonly<Record<Track, number>>;
   readonly supply: Readonly<Record<Track, number>>;
   readonly draw: number | null;
@@ -128,14 +128,14 @@ function oddsBars(doc: Document, b: Bars, rule: string | null): HTMLElement {
     const fill = el(doc, 'div', 'ls-bar__fill', bar);
     fill.style.width = share(b.odds[t]);
     const track = t === 'player' ? L.yourCity : L.realHistory;
-    let label = fillTemplate(b.benefit === 'socialHousing' ? L.supplySocialHousing : L.supplyRentSubsidy, {
+    let label = fillTemplate(b.benefit === 'socialHousing' ? L.supplySocialHousing : b.benefit === 'sublease' ? L.supplySublease : L.supplyRentSubsidy, {
       track,
       supply: formatNumber(Math.round(b.supply[t]), 0),
       odds: formatNumber(b.odds[t] * 100, 1),
     });
     if (b.success !== null) {
-      const yes = b.benefit === 'socialHousing' ? L.allocated : L.approved;
-      const no = b.benefit === 'socialHousing' ? L.notAllocated : L.notApproved;
+      const yes = b.benefit === 'socialHousing' ? L.allocated : b.benefit === 'sublease' ? L.matched : L.approved;
+      const no = b.benefit === 'socialHousing' ? L.notAllocated : b.benefit === 'sublease' ? L.notMatched : L.notApproved;
       label = `${fillTemplate(L.oddsShort, { track, odds: formatNumber(b.odds[t] * 100, 1) })} · ${b.success[t] ? yes : no}`;
     }
     el(doc, 'span', 'ls-bar__label', bar, label);
@@ -150,9 +150,10 @@ function oddsBars(doc: Document, b: Bars, rule: string | null): HTMLElement {
   return box;
 }
 
-function oddsRule(d: StoryUiDeps, benefit: 'socialHousing' | 'rentSubsidy', city: City, quarter: QuarterKey): string {
+function oddsRule(d: StoryUiDeps, benefit: Benefit, city: City, quarter: QuarterKey): string {
   const year = Number(quarter.slice(0, 4));
-  return fillTemplate(benefit === 'socialHousing' ? L.oddsRuleSocialHousing : L.oddsRuleRentSubsidy, {
+  const rule = benefit === 'socialHousing' ? L.oddsRuleSocialHousing : benefit === 'sublease' ? L.oddsRuleSublease : L.oddsRuleRentSubsidy;
+  return fillTemplate(rule, {
     city: (UI_STRINGS.cityNames as Readonly<Record<string, string>>)[city] ?? city,
     year: String(year),
     real: formatNumber(realOdds(d.supply, benefit, city, year) * 100, 1),
@@ -187,7 +188,7 @@ export function twoMePanel(doc: Document, d: StoryUiDeps, name: string, quarter:
   const r = ledgers.real;
   const home = (t: Track) => {
     const l = ledgers[t];
-    const tpl = l.housing === 'social' ? T.social : l.housing === 'family' ? T.family : T.renting;
+    const tpl = l.housing === 'social' ? T.social : l.housing === 'sublease' ? T.sublease : l.housing === 'family' ? T.family : T.renting;
     return fillTemplate(tpl, { district: names.get(homes[t]) ?? homes[t] });
   };
   const row = (label: string, a: string, b: string, diff: string, why?: string) => {
@@ -283,6 +284,7 @@ function eventValues(d: StoryUiDeps, v: CharacterView, p: PendingEvent): Record<
     income: f.incomeYear === null ? '—' : money(f.incomeYear),
     incomePerPerson: f.incomePerPerson === null ? '—' : money(f.incomePerPerson),
     limit: f.limit === null ? '—' : money(f.limit),
+    rentShare: formatNumber(Math.round(d.supply.sublease.rentShare * 100), 0),
     years: f.years === null ? '—' : formatNumber(f.years, 0),
     amount: f.subsidyAmount === null ? '—' : money(f.subsidyAmount),
     offerOccupation: f.offer === null ? '' : occupationInSentence(occ(f.offer.occupation)),

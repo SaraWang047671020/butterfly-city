@@ -85,7 +85,8 @@ export function validateLifeEventFile(x: unknown): Result<LifeEventFile> {
     if (!isNum(e['priority']) || !isNum(e['cooldownQuarters']) || e['cooldownQuarters'] < 0) return fail(`event ${id}: priority and cooldownQuarters`);
     if (!isLocal(e['title']) || !isLocal(e['text'])) return fail(`event ${id}: title and text`);
     const options = e['options'];
-    if (!Array.isArray(options) || options.length < 2 || options.length > 5) return fail(`event ${id}: 2 to 5 options`);
+    // life-story 7.1 asks for 2 to 4; rentPressure has 6 since housing-tools task 4.2 (the approved sublease option).
+    if (!Array.isArray(options) || options.length < 2 || options.length > 6) return fail(`event ${id}: 2 to 6 options`);
     for (const o of options) {
       if (!isObj(o) || typeof o['id'] !== 'string' || !isObj(o['effect']) || !(EFFECT_KINDS as readonly string[]).includes(String(o['effect']['kind']))) {
         return fail(`event ${id}: option effect`);

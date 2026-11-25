@@ -1,7 +1,10 @@
 {
   "schemaVersion": 1,
-  "status": { "en": "approved", "zh-Hant": "approved" },
-  "notes": "life-story spec, Life_Event_File. Drafted by Claude Code on 2026-11-24; approved by the user on 2026-11-24 (「草稿核准」) in both languages (life-story Requirement 1.2). Triggers are code (src/game/life/events.ts); this file holds the texts, priorities, cooldowns and options. Placeholders are filled by the Template_Filler. Every option list starts with the option that keeps things as they are (Escape chooses it, Requirement 2.5).",
+  "status": {
+    "en": "approved",
+    "zh-Hant": "approved"
+  },
+  "notes": "life-story spec, Life_Event_File. Drafted by Claude Code on 2026-11-24; approved by the user on 2026-11-24 (「草稿核准」) in both languages (life-story Requirement 1.2). Triggers are code (src/game/life/events.ts); this file holds the texts, priorities, cooldowns and options. Placeholders are filled by the Template_Filler. Every option list starts with the option that keeps things as they are (Escape chooses it, Requirement 2.5). housing-tools task 4.2: subleaseOffer, subleaseEnd and the rent-pressure option sublease, approved by the user on 2026-11-25 (「草稿核准，30% 可以」).",
   "keepLabel": {
     "en": "Escape chooses “{option}”.",
     "zh-Hant": "按 Escape＝選「{option}」"
@@ -12,20 +15,86 @@
       "priority": 100,
       "forced": true,
       "cooldownQuarters": 0,
-      "title": { "en": "{name}'s social housing tenancy ends", "zh-Hant": "{name}的社會住宅租約到期" },
+      "title": {
+        "en": "{name}'s social housing tenancy ends",
+        "zh-Hant": "{name}的社會住宅租約到期"
+      },
       "text": {
         "en": "{name} has lived in social housing in {district} for {years} years. {reason} The tenancy ends next quarter.",
         "zh-Hant": "{name}在{district}的社會住宅住了 {years} 年。{reason}租約下一季到期。"
       },
       "reasons": {
-        "limit": { "en": "This is the longest tenancy the city allows for general households (6 years).", "zh-Hant": "這是市府給一般戶的最長租期（6 年）。" },
-        "income": { "en": "At renewal the household income ({income} a year) is above the city's limit ({limit}).", "zh-Hant": "續約時，家庭年所得（{income}）高於市府的門檻（{limit}）。" }
+        "limit": {
+          "en": "This is the longest tenancy the city allows for general households (6 years).",
+          "zh-Hant": "這是市府給一般戶的最長租期（6 年）。"
+        },
+        "income": {
+          "en": "At renewal the household income ({income} a year) is above the city's limit ({limit}).",
+          "zh-Hant": "續約時，家庭年所得（{income}）高於市府的門檻（{limit}）。"
+        }
       },
       "options": [
-        { "id": "sameDistrict", "effect": { "kind": "move", "tenure": "renting", "sameDistrict": true }, "title": { "en": "Rent a home in {district}", "zh-Hant": "在{district}租屋" }, "text": { "en": "The closest to things as they are: the same district, at its market rent.", "zh-Hant": "最接近原本的生活：同一區，照市場行情的房租。" } },
-        { "id": "rentPrivately", "effect": { "kind": "pickMove", "tenure": "renting" }, "title": { "en": "Rent a home in another district…", "zh-Hant": "到別區租房子…" }, "text": { "en": "Choose a district; the rent and commute of each are shown for both versions.", "zh-Hant": "選一個區，每一區的房租和通勤都會列出兩個版本。" } },
-        { "id": "applyAgain", "effect": { "kind": "apply", "benefit": "socialHousing" }, "title": { "en": "Apply for another social housing home", "zh-Hant": "再申請一次社會住宅" }, "text": { "en": "Only where the rules allow a new application. Until the result, {name} rents privately in the same district.", "zh-Hant": "只有規定允許再申請時才有這個選項。結果出來之前，{name}先在同一區租屋。" } },
-        { "id": "family", "effect": { "kind": "move", "tenure": "family" }, "title": { "en": "Move back in with family", "zh-Hant": "搬回家住" }, "text": { "en": "Only for an origin in Taipei or New Taipei.", "zh-Hant": "只有出身臺北或新北才有這個選項。" } }
+        {
+          "id": "sameDistrict",
+          "effect": {
+            "kind": "move",
+            "tenure": "renting",
+            "sameDistrict": true
+          },
+          "title": {
+            "en": "Rent a home in {district}",
+            "zh-Hant": "在{district}租屋"
+          },
+          "text": {
+            "en": "The closest to things as they are: the same district, at its market rent.",
+            "zh-Hant": "最接近原本的生活：同一區，照市場行情的房租。"
+          }
+        },
+        {
+          "id": "rentPrivately",
+          "effect": {
+            "kind": "pickMove",
+            "tenure": "renting"
+          },
+          "title": {
+            "en": "Rent a home in another district…",
+            "zh-Hant": "到別區租房子…"
+          },
+          "text": {
+            "en": "Choose a district; the rent and commute of each are shown for both versions.",
+            "zh-Hant": "選一個區，每一區的房租和通勤都會列出兩個版本。"
+          }
+        },
+        {
+          "id": "applyAgain",
+          "effect": {
+            "kind": "apply",
+            "benefit": "socialHousing"
+          },
+          "title": {
+            "en": "Apply for another social housing home",
+            "zh-Hant": "再申請一次社會住宅"
+          },
+          "text": {
+            "en": "Only where the rules allow a new application. Until the result, {name} rents privately in the same district.",
+            "zh-Hant": "只有規定允許再申請時才有這個選項。結果出來之前，{name}先在同一區租屋。"
+          }
+        },
+        {
+          "id": "family",
+          "effect": {
+            "kind": "move",
+            "tenure": "family"
+          },
+          "title": {
+            "en": "Move back in with family",
+            "zh-Hant": "搬回家住"
+          },
+          "text": {
+            "en": "Only for an origin in Taipei or New Taipei.",
+            "zh-Hant": "只有出身臺北或新北才有這個選項。"
+          }
+        }
       ]
     },
     {
@@ -33,131 +102,589 @@
       "priority": 95,
       "forced": true,
       "cooldownQuarters": 0,
-      "title": { "en": "The rent subsidy year ends", "zh-Hant": "租金補貼的年度結束" },
+      "title": {
+        "en": "The rent subsidy year ends",
+        "zh-Hant": "租金補貼的年度結束"
+      },
       "text": {
         "en": "{name}'s rent subsidy of {amount} a month ends with the calendar year. Households apply again each year.",
         "zh-Hant": "{name}每月 {amount} 的租金補貼隨著年度結束。每年都要重新申請。"
       },
       "options": [
-        { "id": "stop", "effect": { "kind": "none" }, "title": { "en": "Do not apply again", "zh-Hant": "不再申請" }, "text": { "en": "From next quarter {name} pays the full rent.", "zh-Hant": "從下一季起，{name}付全額房租。" } },
-        { "id": "apply", "effect": { "kind": "apply", "benefit": "rentSubsidy" }, "title": { "en": "Apply again", "zh-Hant": "再申請一次" }, "text": { "en": "Both versions of {name} apply and draw the same number. The result comes with the brief.", "zh-Hant": "兩個{name}都會申請，抽到同一個號碼，結果在季報公布。" } }
+        {
+          "id": "stop",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Do not apply again",
+            "zh-Hant": "不再申請"
+          },
+          "text": {
+            "en": "From next quarter {name} pays the full rent.",
+            "zh-Hant": "從下一季起，{name}付全額房租。"
+          }
+        },
+        {
+          "id": "apply",
+          "effect": {
+            "kind": "apply",
+            "benefit": "rentSubsidy"
+          },
+          "title": {
+            "en": "Apply again",
+            "zh-Hant": "再申請一次"
+          },
+          "text": {
+            "en": "Both versions of {name} apply and draw the same number. The result comes with the brief.",
+            "zh-Hant": "兩個{name}都會申請，抽到同一個號碼，結果在季報公布。"
+          }
+        }
       ]
     },
     {
       "id": "rentPressure",
       "priority": 90,
       "cooldownQuarters": 8,
-      "title": { "en": "The rent has taken more than 30 % of income for a year", "zh-Hant": "房租已經連續一年超過收入的 30%" },
+      "title": {
+        "en": "The rent has taken more than 30 % of income for a year",
+        "zh-Hant": "房租已經連續一年超過收入的 30%"
+      },
       "text": {
         "en": "For four quarters the rent has taken more than 30 % of {name}'s household income; this quarter it is {rentBurden} %. 30 % is the line the game uses for rent stress (its source is in the City report).",
         "zh-Hant": "連續四季，房租都超過{name}家庭收入的 30%；這一季是 {rentBurden}%。30% 是遊戲用來判斷房租壓力的線（來源在城市報告裡）。"
       },
       "options": [
-        { "id": "keep", "effect": { "kind": "none" }, "title": { "en": "Keep things as they are", "zh-Hant": "維持現狀" }, "text": { "en": "Stay in {district}.", "zh-Hant": "留在{district}。" } },
-        { "id": "cheaper", "effect": { "kind": "pickMove", "tenure": "renting" }, "title": { "en": "Move to a cheaper district…", "zh-Hant": "搬到比較便宜的區…" }, "text": { "en": "Districts are listed from the lowest rent; the commute of each is shown too.", "zh-Hant": "各區照房租由低到高排，也會列出通勤時間。" } },
-        { "id": "subsidy", "effect": { "kind": "apply", "benefit": "rentSubsidy" }, "title": { "en": "Apply for the rent subsidy", "zh-Hant": "申請租金補貼" }, "text": { "en": "Only when the household is eligible this year.", "zh-Hant": "只有今年符合資格時才有這個選項。" } },
-        { "id": "family", "effect": { "kind": "move", "tenure": "family" }, "title": { "en": "Move back in with family", "zh-Hant": "搬回家住" }, "text": { "en": "Only for an origin in Taipei or New Taipei.", "zh-Hant": "只有出身臺北或新北才有這個選項。" } },
-        { "id": "leave", "effect": { "kind": "leave" }, "title": { "en": "Leave Taipei and New Taipei", "zh-Hant": "離開雙北" }, "text": { "en": "{name}'s story in the two cities ends here, and the Ending is shown. The city game can go on.", "zh-Hant": "{name}在雙北的故事到這裡結束，接著顯示結局。城市的遊戲可以繼續。" } }
+        {
+          "id": "keep",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Keep things as they are",
+            "zh-Hant": "維持現狀"
+          },
+          "text": {
+            "en": "Stay in {district}.",
+            "zh-Hant": "留在{district}。"
+          }
+        },
+        {
+          "id": "cheaper",
+          "effect": {
+            "kind": "pickMove",
+            "tenure": "renting"
+          },
+          "title": {
+            "en": "Move to a cheaper district…",
+            "zh-Hant": "搬到比較便宜的區…"
+          },
+          "text": {
+            "en": "Districts are listed from the lowest rent; the commute of each is shown too.",
+            "zh-Hant": "各區照房租由低到高排，也會列出通勤時間。"
+          }
+        },
+        {
+          "id": "subsidy",
+          "effect": {
+            "kind": "apply",
+            "benefit": "rentSubsidy"
+          },
+          "title": {
+            "en": "Apply for the rent subsidy",
+            "zh-Hant": "申請租金補貼"
+          },
+          "text": {
+            "en": "Only when the household is eligible this year.",
+            "zh-Hant": "只有今年符合資格時才有這個選項。"
+          }
+        },
+        {
+          "id": "sublease",
+          "effect": {
+            "kind": "apply",
+            "benefit": "sublease"
+          },
+          "title": {
+            "en": "Register for the sublease programme",
+            "zh-Hant": "登記包租代管"
+          },
+          "text": {
+            "en": "Only when the household is eligible this year.",
+            "zh-Hant": "只有今年符合資格時才有這個選項。"
+          }
+        },
+        {
+          "id": "family",
+          "effect": {
+            "kind": "move",
+            "tenure": "family"
+          },
+          "title": {
+            "en": "Move back in with family",
+            "zh-Hant": "搬回家住"
+          },
+          "text": {
+            "en": "Only for an origin in Taipei or New Taipei.",
+            "zh-Hant": "只有出身臺北或新北才有這個選項。"
+          }
+        },
+        {
+          "id": "leave",
+          "effect": {
+            "kind": "leave"
+          },
+          "title": {
+            "en": "Leave Taipei and New Taipei",
+            "zh-Hant": "離開雙北"
+          },
+          "text": {
+            "en": "{name}'s story in the two cities ends here, and the Ending is shown. The city game can go on.",
+            "zh-Hant": "{name}在雙北的故事到這裡結束，接著顯示結局。城市的遊戲可以繼續。"
+          }
+        }
       ]
     },
     {
       "id": "socialHousingRound",
       "priority": 80,
       "cooldownQuarters": 4,
-      "title": { "en": "{city} social housing is taking applications", "zh-Hant": "{city}社會住宅開放申請" },
+      "title": {
+        "en": "{city} social housing is taking applications",
+        "zh-Hant": "{city}社會住宅開放申請"
+      },
       "text": {
         "en": "{city} is letting social housing units this quarter. {name}'s household income ({income} a year) is below the city's limit of {limit}.",
         "zh-Hant": "{city}這一季有社會住宅出租。{name}的家庭年所得（{income}）低於市府的門檻 {limit}。"
       },
       "options": [
-        { "id": "notNow", "effect": { "kind": "none" }, "title": { "en": "Not now", "zh-Hant": "先不要" }, "text": { "en": "Keep renting in {district}.", "zh-Hant": "繼續在{district}租屋。" } },
-        { "id": "apply", "effect": { "kind": "apply", "benefit": "socialHousing" }, "title": { "en": "Apply", "zh-Hant": "申請" }, "text": { "en": "Both versions of {name} apply and draw the same lottery number. The result comes with the brief.", "zh-Hant": "兩個{name}都會申請，抽到同一個號碼，結果在季報公布。" } }
+        {
+          "id": "notNow",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Not now",
+            "zh-Hant": "先不要"
+          },
+          "text": {
+            "en": "Keep renting in {district}.",
+            "zh-Hant": "繼續在{district}租屋。"
+          }
+        },
+        {
+          "id": "apply",
+          "effect": {
+            "kind": "apply",
+            "benefit": "socialHousing"
+          },
+          "title": {
+            "en": "Apply",
+            "zh-Hant": "申請"
+          },
+          "text": {
+            "en": "Both versions of {name} apply and draw the same lottery number. The result comes with the brief.",
+            "zh-Hant": "兩個{name}都會申請，抽到同一個號碼，結果在季報公布。"
+          }
+        }
       ]
     },
     {
       "id": "rentSubsidyWindow",
       "priority": 75,
       "cooldownQuarters": 4,
-      "title": { "en": "Rent subsidy applications are open", "zh-Hant": "租金補貼開放申請" },
+      "title": {
+        "en": "Rent subsidy applications are open",
+        "zh-Hant": "租金補貼開放申請"
+      },
       "text": {
         "en": "Households renting in {city} can apply for this year's rent subsidy. {name}'s income per person ({incomePerPerson} a month) is below the limit of {limit}.",
         "zh-Hant": "在{city}租屋的家庭可以申請今年的租金補貼。{name}家每人每月所得（{incomePerPerson}）低於門檻 {limit}。"
       },
       "options": [
-        { "id": "notNow", "effect": { "kind": "none" }, "title": { "en": "Not now", "zh-Hant": "先不要" }, "text": { "en": "Pay the full rent.", "zh-Hant": "付全額房租。" } },
-        { "id": "apply", "effect": { "kind": "apply", "benefit": "rentSubsidy" }, "title": { "en": "Apply", "zh-Hant": "申請" }, "text": { "en": "Both versions of {name} apply and draw the same number. The result comes with the brief.", "zh-Hant": "兩個{name}都會申請，抽到同一個號碼，結果在季報公布。" } }
+        {
+          "id": "notNow",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Not now",
+            "zh-Hant": "先不要"
+          },
+          "text": {
+            "en": "Pay the full rent.",
+            "zh-Hant": "付全額房租。"
+          }
+        },
+        {
+          "id": "apply",
+          "effect": {
+            "kind": "apply",
+            "benefit": "rentSubsidy"
+          },
+          "title": {
+            "en": "Apply",
+            "zh-Hant": "申請"
+          },
+          "text": {
+            "en": "Both versions of {name} apply and draw the same number. The result comes with the brief.",
+            "zh-Hant": "兩個{name}都會申請，抽到同一個號碼，結果在季報公布。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "subleaseOffer",
+      "priority": 85,
+      "cooldownQuarters": 8,
+      "fromYear": 2017,
+      "title": {
+        "en": "{city}'s sublease programme has homes to let",
+        "zh-Hant": "{city}的包租代管有房子可以租"
+      },
+      "text": {
+        "en": "{city} is letting private homes through the sublease programme this quarter, at no more than {rentShare} % of market rent. {name}'s household income ({income} a year) is below the limit of {limit}, so {name} can register as a tenant.",
+        "zh-Hant": "{city}這一季有民間房子透過包租代管出租，房租最多是市價的 {rentShare}%。{name}的家庭年所得（{income}）低於門檻 {limit}，可以登記承租。"
+      },
+      "options": [
+        {
+          "id": "notNow",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Not now",
+            "zh-Hant": "先不要"
+          },
+          "text": {
+            "en": "Keep renting in {district}.",
+            "zh-Hant": "繼續在{district}租屋。"
+          }
+        },
+        {
+          "id": "register",
+          "effect": {
+            "kind": "apply",
+            "benefit": "sublease"
+          },
+          "title": {
+            "en": "Register",
+            "zh-Hant": "登記承租"
+          },
+          "text": {
+            "en": "Both versions of {name} register and draw the same number. The result comes with the brief. A matched home can be in another district of {city}.",
+            "zh-Hant": "兩個{name}都會登記，抽到同一個號碼，結果在季報公布。媒合到的房子可能在{city}的別區。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "subleaseEnd",
+      "priority": 100,
+      "forced": true,
+      "cooldownQuarters": 0,
+      "title": {
+        "en": "{name}'s sublease tenancy ends",
+        "zh-Hant": "{name}的包租代管租約到期"
+      },
+      "text": {
+        "en": "{name} has lived in a sublease home in {district} for {years} years. The household income is now above the limit, so the contract cannot be renewed on the programme's terms. The tenancy ends next quarter.",
+        "zh-Hant": "{name}在{district}的包租代管房子住了 {years} 年。家庭所得已經超過門檻，續約不能再用包租代管的條件。租約下一季到期。"
+      },
+      "options": [
+        {
+          "id": "sameDistrict",
+          "effect": {
+            "kind": "move",
+            "tenure": "renting",
+            "sameDistrict": true
+          },
+          "title": {
+            "en": "Rent a home in {district}",
+            "zh-Hant": "在{district}租屋"
+          },
+          "text": {
+            "en": "The closest to things as they are: the same district, at its market rent.",
+            "zh-Hant": "最接近原本的生活：同一區，照市場行情的房租。"
+          }
+        },
+        {
+          "id": "rentPrivately",
+          "effect": {
+            "kind": "pickMove",
+            "tenure": "renting"
+          },
+          "title": {
+            "en": "Rent a home in another district…",
+            "zh-Hant": "到別區租房子…"
+          },
+          "text": {
+            "en": "Choose a district; the rent and commute of each are shown for both versions.",
+            "zh-Hant": "選一個區，每一區的房租和通勤都會列出兩個版本。"
+          }
+        },
+        {
+          "id": "family",
+          "effect": {
+            "kind": "move",
+            "tenure": "family"
+          },
+          "title": {
+            "en": "Move back in with family",
+            "zh-Hant": "搬回家住"
+          },
+          "text": {
+            "en": "Only for an origin in Taipei or New Taipei.",
+            "zh-Hant": "只有出身臺北或新北才有這個選項。"
+          }
+        }
       ]
     },
     {
       "id": "passLaunch",
       "priority": 70,
       "cooldownQuarters": 0,
-      "title": { "en": "A NT$1,280 monthly pass goes on sale", "zh-Hant": "1,280 元月票開賣" },
+      "title": {
+        "en": "A NT$1,280 monthly pass goes on sale",
+        "zh-Hant": "1,280 元月票開賣"
+      },
       "text": {
         "en": "From 16 April 2018 one monthly pass covers the MRT and buses of Taipei and New Taipei. {name} works in {work}. In 2016 about {share} % of commuters in {city} used public transport.",
         "zh-Hant": "2018 年 4 月 16 日起，一張月票就能搭雙北的捷運和公車。{name}在{work}上班。2016 年{city}約有 {share}% 的通勤者搭大眾運輸。"
       },
       "options": [
-        { "id": "keep", "effect": { "kind": "none" }, "title": { "en": "Keep commuting as before", "zh-Hant": "照原本的方式通勤" }, "text": { "en": "No transport line in the ledger (single fares and scooter costs are not modelled).", "zh-Hant": "帳本裡不列交通費（單程票和機車的花費不在模型裡）。" } },
-        { "id": "buy", "effect": { "kind": "buyPass" }, "title": { "en": "Buy the monthly pass", "zh-Hant": "買月票" }, "text": { "en": "From next quarter the pass price of each version, after its subsidy, is in the ledger.", "zh-Hant": "從下一季起，帳本會列出兩個版本各自扣掉補貼後的月票價格。" } }
+        {
+          "id": "keep",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Keep commuting as before",
+            "zh-Hant": "照原本的方式通勤"
+          },
+          "text": {
+            "en": "No transport line in the ledger (single fares and scooter costs are not modelled).",
+            "zh-Hant": "帳本裡不列交通費（單程票和機車的花費不在模型裡）。"
+          }
+        },
+        {
+          "id": "buy",
+          "effect": {
+            "kind": "buyPass"
+          },
+          "title": {
+            "en": "Buy the monthly pass",
+            "zh-Hant": "買月票"
+          },
+          "text": {
+            "en": "From next quarter the pass price of each version, after its subsidy, is in the ledger.",
+            "zh-Hant": "從下一季起，帳本會列出兩個版本各自扣掉補貼後的月票價格。"
+          }
+        }
       ]
     },
     {
       "id": "leaseEnd",
       "priority": 60,
       "cooldownQuarters": 8,
-      "title": { "en": "{name}'s lease ends next month", "zh-Hant": "{name}的租約下個月到期" },
+      "title": {
+        "en": "{name}'s lease ends next month",
+        "zh-Hant": "{name}的租約下個月到期"
+      },
       "text": {
         "en": "The landlord offers a new lease at the current rent of the district. What does {name} do?",
         "zh-Hant": "房東願意續約，租金照這一區現在的行情。{name}要怎麼做？"
       },
       "options": [
-        { "id": "renew", "effect": { "kind": "none" }, "title": { "en": "Renew the lease", "zh-Hant": "續約" }, "text": { "en": "Stay in {district}.", "zh-Hant": "留在{district}。" } },
-        { "id": "move", "effect": { "kind": "pickMove", "tenure": "renting" }, "title": { "en": "Move to another district…", "zh-Hant": "搬到別區…" }, "text": { "en": "Choose a district; the rent and commute of each are shown for both versions.", "zh-Hant": "選一個區，每一區的房租和通勤都會列出兩個版本。" } },
-        { "id": "family", "effect": { "kind": "move", "tenure": "family" }, "title": { "en": "Move back in with family", "zh-Hant": "搬回家住" }, "text": { "en": "Only for an origin in Taipei or New Taipei.", "zh-Hant": "只有出身臺北或新北才有這個選項。" } }
+        {
+          "id": "renew",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Renew the lease",
+            "zh-Hant": "續約"
+          },
+          "text": {
+            "en": "Stay in {district}.",
+            "zh-Hant": "留在{district}。"
+          }
+        },
+        {
+          "id": "move",
+          "effect": {
+            "kind": "pickMove",
+            "tenure": "renting"
+          },
+          "title": {
+            "en": "Move to another district…",
+            "zh-Hant": "搬到別區…"
+          },
+          "text": {
+            "en": "Choose a district; the rent and commute of each are shown for both versions.",
+            "zh-Hant": "選一個區，每一區的房租和通勤都會列出兩個版本。"
+          }
+        },
+        {
+          "id": "family",
+          "effect": {
+            "kind": "move",
+            "tenure": "family"
+          },
+          "title": {
+            "en": "Move back in with family",
+            "zh-Hant": "搬回家住"
+          },
+          "text": {
+            "en": "Only for an origin in Taipei or New Taipei.",
+            "zh-Hant": "只有出身臺北或新北才有這個選項。"
+          }
+        }
       ]
     },
     {
       "id": "longCommute",
       "priority": 55,
       "cooldownQuarters": 8,
-      "title": { "en": "A long way to work", "zh-Hant": "上班的路很遠" },
+      "title": {
+        "en": "A long way to work",
+        "zh-Hant": "上班的路很遠"
+      },
       "text": {
         "en": "For four quarters {name}'s trip to work has taken more than 60 minutes each way; now it is {commute} minutes.",
         "zh-Hant": "連續四季，{name}單程上班都超過 60 分鐘；現在是 {commute} 分鐘。"
       },
       "options": [
-        { "id": "keep", "effect": { "kind": "none" }, "title": { "en": "Keep things as they are", "zh-Hant": "維持現狀" }, "text": { "en": "Stay in {district} and keep the job in {work}.", "zh-Hant": "住在{district}，繼續在{work}上班。" } },
-        { "id": "closer", "effect": { "kind": "pickMove", "tenure": "renting" }, "title": { "en": "Move closer to work…", "zh-Hant": "搬到離公司近一點…" }, "text": { "en": "Districts are listed from the shortest commute; the rent of each is shown too.", "zh-Hant": "各區照通勤時間由短到長排，也會列出房租。" } },
-        { "id": "job", "effect": { "kind": "pickJob" }, "title": { "en": "Look for a job closer to home…", "zh-Hant": "找離家近的工作…" }, "text": { "en": "Choose an occupation and a work district.", "zh-Hant": "選一個職業和上班的區。" } }
+        {
+          "id": "keep",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Keep things as they are",
+            "zh-Hant": "維持現狀"
+          },
+          "text": {
+            "en": "Stay in {district} and keep the job in {work}.",
+            "zh-Hant": "住在{district}，繼續在{work}上班。"
+          }
+        },
+        {
+          "id": "closer",
+          "effect": {
+            "kind": "pickMove",
+            "tenure": "renting"
+          },
+          "title": {
+            "en": "Move closer to work…",
+            "zh-Hant": "搬到離公司近一點…"
+          },
+          "text": {
+            "en": "Districts are listed from the shortest commute; the rent of each is shown too.",
+            "zh-Hant": "各區照通勤時間由短到長排，也會列出房租。"
+          }
+        },
+        {
+          "id": "job",
+          "effect": {
+            "kind": "pickJob"
+          },
+          "title": {
+            "en": "Look for a job closer to home…",
+            "zh-Hant": "找離家近的工作…"
+          },
+          "text": {
+            "en": "Choose an occupation and a work district.",
+            "zh-Hant": "選一個職業和上班的區。"
+          }
+        }
       ]
     },
     {
       "id": "parentCare",
       "priority": 50,
       "cooldownQuarters": 0,
-      "title": { "en": "A parent needs more care", "zh-Hant": "家裡的長輩需要更多照顧" },
+      "title": {
+        "en": "A parent needs more care",
+        "zh-Hant": "家裡的長輩需要更多照顧"
+      },
       "text": {
         "en": "{name}'s parent needs help in daily life. The household decides where the parent will live.",
         "zh-Hant": "{name}的長輩日常生活需要人幫忙。家裡要決定長輩住在哪裡。"
       },
       "options": [
-        { "id": "elsewhere", "effect": { "kind": "none" }, "title": { "en": "Care is arranged elsewhere", "zh-Hant": "照顧另外安排" }, "text": { "en": "The parent stays where they live; {name}'s household does not change.", "zh-Hant": "長輩住在原本的地方，{name}的家庭不變。" } },
-        { "id": "joins", "effect": { "kind": "parentJoins" }, "title": { "en": "The parent moves in", "zh-Hant": "長輩搬來一起住" }, "text": { "en": "The household grows by one; the home size and rent follow the household size.", "zh-Hant": "家裡多一個人，房子大小和房租跟著家庭人數改變。" } }
+        {
+          "id": "elsewhere",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Care is arranged elsewhere",
+            "zh-Hant": "照顧另外安排"
+          },
+          "text": {
+            "en": "The parent stays where they live; {name}'s household does not change.",
+            "zh-Hant": "長輩住在原本的地方，{name}的家庭不變。"
+          }
+        },
+        {
+          "id": "joins",
+          "effect": {
+            "kind": "parentJoins"
+          },
+          "title": {
+            "en": "The parent moves in",
+            "zh-Hant": "長輩搬來一起住"
+          },
+          "text": {
+            "en": "The household grows by one; the home size and rent follow the household size.",
+            "zh-Hant": "家裡多一個人，房子大小和房租跟著家庭人數改變。"
+          }
+        }
       ]
     },
     {
       "id": "jobOffer",
       "priority": 40,
       "cooldownQuarters": 12,
-      "title": { "en": "A job offer", "zh-Hant": "一個工作機會" },
+      "title": {
+        "en": "A job offer",
+        "zh-Hant": "一個工作機會"
+      },
       "text": {
         "en": "{name} is offered a job as {offerOccupation} in {offerDistrict}. Mean pay in that industry is {offerWage} a month in {year}.",
         "zh-Hant": "{name}得到一個在{offerDistrict}當{offerOccupation}的機會。這個行業 {year} 年的平均月薪是 {offerWage}。"
       },
       "options": [
-        { "id": "decline", "effect": { "kind": "none" }, "title": { "en": "Decline", "zh-Hant": "婉拒" }, "text": { "en": "Keep the job in {work}.", "zh-Hant": "繼續在{work}的工作。" } },
-        { "id": "accept", "effect": { "kind": "changeJob", "fromOffer": true }, "title": { "en": "Accept", "zh-Hant": "接受" }, "text": { "en": "From this quarter {name} works in {offerDistrict}.", "zh-Hant": "從這一季起，{name}在{offerDistrict}上班。" } }
+        {
+          "id": "decline",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Decline",
+            "zh-Hant": "婉拒"
+          },
+          "text": {
+            "en": "Keep the job in {work}.",
+            "zh-Hant": "繼續在{work}的工作。"
+          }
+        },
+        {
+          "id": "accept",
+          "effect": {
+            "kind": "changeJob",
+            "fromOffer": true
+          },
+          "title": {
+            "en": "Accept",
+            "zh-Hant": "接受"
+          },
+          "text": {
+            "en": "From this quarter {name} works in {offerDistrict}.",
+            "zh-Hant": "從這一季起，{name}在{offerDistrict}上班。"
+          }
+        }
       ]
     },
     {
@@ -165,42 +692,129 @@
       "priority": 30,
       "cooldownQuarters": 12,
       "fromYear": 2016,
-      "title": { "en": "Someone special", "zh-Hant": "生命中的一個人" },
+      "title": {
+        "en": "Someone special",
+        "zh-Hant": "生命中的一個人"
+      },
       "text": {
         "en": "{name} has been seeing someone for a while. They talk about living together.",
         "zh-Hant": "{name}和一個人交往一段時間了，兩人聊到要不要住在一起。"
       },
       "options": [
-        { "id": "notNow", "effect": { "kind": "none" }, "title": { "en": "Not now", "zh-Hant": "現在還不要" }, "text": { "en": "{name}'s household does not change.", "zh-Hant": "{name}的家庭不變。" } },
-        { "id": "moveIn", "effect": { "kind": "partnerEditor" }, "title": { "en": "Move in together…", "zh-Hant": "搬來一起住…" }, "text": { "en": "Describe the partner: any gender, an occupation and a work district.", "zh-Hant": "設定伴侶：任何性別、職業和上班的區。" } }
+        {
+          "id": "notNow",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Not now",
+            "zh-Hant": "現在還不要"
+          },
+          "text": {
+            "en": "{name}'s household does not change.",
+            "zh-Hant": "{name}的家庭不變。"
+          }
+        },
+        {
+          "id": "moveIn",
+          "effect": {
+            "kind": "partnerEditor"
+          },
+          "title": {
+            "en": "Move in together…",
+            "zh-Hant": "搬來一起住…"
+          },
+          "text": {
+            "en": "Describe the partner: any gender, an occupation and a work district.",
+            "zh-Hant": "設定伴侶：任何性別、職業和上班的區。"
+          }
+        }
       ]
     },
     {
       "id": "marriage",
       "priority": 25,
       "cooldownQuarters": 8,
-      "title": { "en": "Getting married?", "zh-Hant": "要結婚嗎？" },
+      "title": {
+        "en": "Getting married?",
+        "zh-Hant": "要結婚嗎？"
+      },
       "text": {
         "en": "{name} and {partnerName} have lived together for {years} years. {lawFact}",
         "zh-Hant": "{name}和{partnerName}已經一起住了 {years} 年。{lawFact}"
       },
       "options": [
-        { "id": "notNow", "effect": { "kind": "none" }, "title": { "en": "Not now", "zh-Hant": "現在還不要" }, "text": { "en": "They keep living together as they are.", "zh-Hant": "兩人照現在這樣一起生活。" } },
-        { "id": "marry", "effect": { "kind": "marry" }, "title": { "en": "Marry", "zh-Hant": "結婚" }, "text": { "en": "Only where the law of the quarter allows it; the legal fact and its source are shown.", "zh-Hant": "只有當時的法律允許時才有這個選項；會列出法律事實和來源。" } }
+        {
+          "id": "notNow",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Not now",
+            "zh-Hant": "現在還不要"
+          },
+          "text": {
+            "en": "They keep living together as they are.",
+            "zh-Hant": "兩人照現在這樣一起生活。"
+          }
+        },
+        {
+          "id": "marry",
+          "effect": {
+            "kind": "marry"
+          },
+          "title": {
+            "en": "Marry",
+            "zh-Hant": "結婚"
+          },
+          "text": {
+            "en": "Only where the law of the quarter allows it; the legal fact and its source are shown.",
+            "zh-Hant": "只有當時的法律允許時才有這個選項；會列出法律事實和來源。"
+          }
+        }
       ]
     },
     {
       "id": "child",
       "priority": 20,
       "cooldownQuarters": 12,
-      "title": { "en": "A child?", "zh-Hant": "要有小孩嗎？" },
+      "title": {
+        "en": "A child?",
+        "zh-Hant": "要有小孩嗎？"
+      },
       "text": {
         "en": "{name}'s household talks about a child joining the family.",
         "zh-Hant": "{name}家裡聊到要不要有一個孩子。"
       },
       "options": [
-        { "id": "notNow", "effect": { "kind": "none" }, "title": { "en": "Not now", "zh-Hant": "現在還不要" }, "text": { "en": "The household does not change.", "zh-Hant": "家庭不變。" } },
-        { "id": "joins", "effect": { "kind": "childJoins" }, "title": { "en": "A child joins the household", "zh-Hant": "家裡多一個孩子" }, "text": { "en": "The household grows by one; the home size and rent follow the household size.", "zh-Hant": "家裡多一個人，房子大小和房租跟著家庭人數改變。" } }
+        {
+          "id": "notNow",
+          "effect": {
+            "kind": "none"
+          },
+          "title": {
+            "en": "Not now",
+            "zh-Hant": "現在還不要"
+          },
+          "text": {
+            "en": "The household does not change.",
+            "zh-Hant": "家庭不變。"
+          }
+        },
+        {
+          "id": "joins",
+          "effect": {
+            "kind": "childJoins"
+          },
+          "title": {
+            "en": "A child joins the household",
+            "zh-Hant": "家裡多一個孩子"
+          },
+          "text": {
+            "en": "The household grows by one; the home size and rent follow the household size.",
+            "zh-Hant": "家裡多一個人，房子大小和房租跟著家庭人數改變。"
+          }
+        }
       ]
     }
   ]

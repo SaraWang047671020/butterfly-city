@@ -26,6 +26,8 @@ export interface SupplyView {
   supply(benefit: Benefit, city: City, quarter: QuarterKey, track: Track): number;
   /** Mean quarterly real supply of the city over the game (used WHEN the real supply of the quarter is 0). */
   meanSupplyReal(benefit: Benefit, city: City): number;
+  /** The district of `city` where a new sublease tenant moves on `track` (seeded, weighted by the homes of the city). */
+  subleaseDistrict(city: City, quarter: QuarterKey, track: Track): string;
   /** The district of `city` where a new social housing tenant moves on `track` (most completions in `quarter`). */
   socialDistrict(city: City, quarter: QuarterKey, track: Track): string;
 }
@@ -48,7 +50,7 @@ export interface ApplicationOutcome {
   readonly odds: Readonly<Record<Track, number>>;
   readonly supply: Readonly<Record<Track, number>>;
   readonly success: Readonly<Record<Track, boolean>>;
-  /** Social housing: the district each track moves to on success. */
+  /** Social housing and sublease: the district each track moves to on success. */
   readonly home: Readonly<Record<Track, string | null>>;
 }
 
@@ -100,6 +102,9 @@ export function resolveTracks(character: Character, timeline: readonly LifeEntry
       if (d.benefit === 'socialHousing') {
         home[t] = ctx.view.socialDistrict(city, q, t);
         timelines[t].push({ quarter: from, decision: { kind: 'enterSocial', home: home[t]! } });
+      } else if (d.benefit === 'sublease') {
+        home[t] = ctx.view.subleaseDistrict(city, q, t);
+        timelines[t].push({ quarter: from, decision: { kind: 'enterSublease', home: home[t]! } });
       } else {
         timelines[t].push({ quarter: from, decision: { kind: 'subsidy', until: subsidyUntil(from) } });
       }

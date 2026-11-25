@@ -12,6 +12,7 @@ import {
   sharedDraw,
   subsidyMultiplier,
   subsidyUntil,
+  subleaseEnds,
   succeeds,
   tenancyEnds,
   trackOdds,
@@ -172,6 +173,7 @@ function view(real: (i: number) => number, factor: number): SupplyView {
     supply: (_b, _c, q, t) => real(idx(q)) * (t === 'player' ? factor : 1),
     meanSupplyReal: () => 300,
     socialDistrict: (_c, _q, t) => (t === 'player' ? '63000060' : '63000050'),
+    subleaseDistrict: () => '63000040',
   };
 }
 
@@ -181,7 +183,7 @@ const applyTimeline = fc.array(
   fc.record({ i: fc.integer({ min: 0, max: 42 }), benefit: fc.constantFrom('socialHousing' as const, 'rentSubsidy' as const) }),
   { maxLength: 8 },
 );
-const toTimeline = (xs: { i: number; benefit: 'socialHousing' | 'rentSubsidy' }[]): LifeEntry[] =>
+const toTimeline = (xs: { i: number; benefit: 'socialHousing' | 'rentSubsidy' | 'sublease' }[]): LifeEntry[] =>
   xs.map((x) => ({ quarter: quarterAt(x.i), decision: { kind: 'apply', benefit: x.benefit } }));
 
 describe('the two tracks', () => {
@@ -225,7 +227,7 @@ describe('the two tracks', () => {
     // Real supply 0 in every quarter: the real track never succeeds; huge player supply: the player track always does.
     const r = resolveTracks(character, toTimeline([{ i: 18, benefit: 'socialHousing' }]), ctxOf(view(() => 0, 1), 1));
     expect(r.outcomes[0]!.success).toEqual({ player: false, real: false });
-    const v: SupplyView = { supply: (_b, _c, _q, t) => (t === 'player' ? 1e6 : 0), meanSupplyReal: () => 300, socialDistrict: () => '63000060' };
+    const v: SupplyView = { supply: (_b, _c, _q, t) => (t === 'player' ? 1e6 : 0), meanSupplyReal: () => 300, socialDistrict: () => '63000060', subleaseDistrict: () => '63000040' };
     const r2 = resolveTracks(character, toTimeline([{ i: 18, benefit: 'socialHousing' }]), ctxOf(v, 1));
     expect(r2.outcomes[0]!.success).toEqual({ player: true, real: false });
     expect(trackState(character, r2, 'player', quarterAt(18)).tenure).toBe('renting');
@@ -281,5 +283,56 @@ describe('Personal_Ledger (Requirement 4.1)', () => {
         expect(personalLedger({ ...base, state: start, numbers: nums(rent, income) })).toEqual(a);
       }),
     );
+  });
+});
+
+// housing-tools task 4.2: the sublease Application.
+describe('sublease Application (housing-tools Requirement 4.4)', () => {
+  const hh = (incomeMonth: number, state: LifeState = start) => ({ city: 'Taipei' as City, incomeMonth, persons: 1, state });
+
+  it('is open to renting households below the social housing income limit, from 2017', () => {
+    expect(eligibility(S, 'sublease', hh(30000), '2016Q4')).toEqual({ ok: false, rule: 'tenure' });
+    expect(eligibility(S, 'sublease', hh(30000), '2018Q1')).toEqual({ ok: true });
+    expect(eligibility(S, 'sublease', hh(200000), '2018Q1')).toMatchObject({ ok: false, rule: 'income' });
+    expect(eligibility(S, 'sublease', hh(30000, { ...start, tenure: 'family' }), '2018Q1')).toEqual({ ok: false, rule: 'tenure' });
+  });
+
+  it('uses the assumed real odds of 30 % in every year', () => {
+    for (const y of [2017, 2020, 2025]) expect(realOdds(S, 'sublease', 'Taipei', y)).toBe(0.3);
+  });
+
+  it('a success moves the track into a sublease home from the next quarter, on that track only', () => {
+    const v: SupplyView = {
+      supply: (_b, _c, _q, t) => (t === 'player' ? 1e6 : 0),
+      meanSupplyReal: () => 300,
+      socialDistrict: () => '63000060',
+      subleaseDistrict: () => '63000040',
+    };
+    const r = resolveTracks(character, toTimeline([{ i: 12, benefit: 'sublease' }]), ctxOf(v, 1));
+    expect(r.outcomes[0]!.success).toEqual({ player: true, real: false });
+    expect(r.outcomes[0]!.home.player).toBe('63000040');
+    expect(trackState(character, r, 'player', quarterAt(13))).toMatchObject({ tenure: 'sublease', home: '63000040', subleaseSince: quarterAt(13) });
+    expect(trackState(character, r, 'real', quarterAt(13)).tenure).toBe('renting');
+  });
+
+  it('pays the programme share of the market rent', () => {
+    const l = personalLedger({
+      state: { ...start, tenure: 'sublease', subleaseSince: '2018Q1' },
+      quarter: '2018Q2',
+      numbers: { income: 40000, rent: 20000, commuteMinutes: 30, size: 30 } as unknown as CharacterNumbers,
+      city: 'Taipei',
+      supply: S,
+      subsidyAmount: null,
+      passNet: null,
+    });
+    expect(l.rent).toBeCloseTo(20000 * 0.85, 9);
+    expect(l.housing).toBe('sublease');
+  });
+
+  it('ends at a renewal when the income is above the limit, never before 3 years', () => {
+    const s: LifeState = { ...start, tenure: 'sublease', subleaseSince: '2018Q1' };
+    expect(subleaseEnds(S, hh(200000, s), '2019Q4')).toBeNull(); // not a renewal
+    expect(subleaseEnds(S, hh(30000, s), '2020Q4')).toBeNull(); // renewal, still eligible
+    expect(subleaseEnds(S, hh(200000, s), '2020Q4')).toBe('income');
   });
 });

@@ -48,6 +48,7 @@ export function personalLedger(i: LedgerInputs): PersonalLedger {
   if (state.tenure === 'family') rent = 0;
   else if (market === null) rent = null;
   else if (state.tenure === 'social') rent = market * (i.city === null ? 1 : i.supply.socialHousing.rentShare[i.city]);
+  else if (state.tenure === 'sublease') rent = market * i.supply.sublease.rentShare;
   else {
     if (subsidyActive(state, i.quarter) && i.subsidyAmount !== null) {
       subsidy = Math.min(market, i.subsidyAmount * subsidyMultiplier(i.supply, state, i.quarter));

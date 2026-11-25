@@ -54,7 +54,9 @@ const ctx = (o: Partial<EventContext> = {}): EventContext => ({
   partnerSince: null,
   eligible: () => false,
   socialRound: false,
+  subleaseRound: false,
   tenancyEnd: null,
+  subleaseEnd: null,
   marriageAllowed: true,
   ...o,
 });
@@ -318,5 +320,23 @@ describe('neutrality and copies (life-story task 6.1, Requirement 8.1)', () => {
     for (const name of ['life-events.json', 'life-story.json', 'application-supply.json']) {
       expect(readFileSync(resolve(ROOT, 'public/data', name), 'utf8'), name).toBe(readFileSync(resolve(ROOT, 'data/config', name), 'utf8'));
     }
+  });
+});
+
+// housing-tools task 4.2: the sublease Life_Events.
+describe('sublease Life_Events', () => {
+  it('offers a sublease home to an eligible renting household when the city matches homes', () => {
+    const eligible = (b: string) => b === 'sublease';
+    expect(TRIGGERS.subleaseOffer(ctx({ subleaseRound: true, eligible }))).toBe(true);
+    expect(TRIGGERS.subleaseOffer(ctx({ subleaseRound: false, eligible }))).toBe(false);
+    expect(TRIGGERS.subleaseOffer(ctx({ subleaseRound: true }))).toBe(false);
+    expect(TRIGGERS.subleaseOffer(ctx({ subleaseRound: true, eligible, state: { ...start, tenure: 'family' } }))).toBe(false);
+  });
+
+  it('ends the sublease tenancy only for a household in a sublease home', () => {
+    const inSublease = { ...start, tenure: 'sublease' as const, subleaseSince: '2018Q1' as const };
+    expect(TRIGGERS.subleaseEnd(ctx({ state: inSublease, subleaseEnd: 'income' }))).toBe(true);
+    expect(TRIGGERS.subleaseEnd(ctx({ state: inSublease, subleaseEnd: null }))).toBe(false);
+    expect(TRIGGERS.subleaseEnd(ctx({ subleaseEnd: 'income' }))).toBe(false);
   });
 });

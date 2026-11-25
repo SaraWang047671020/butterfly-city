@@ -13,7 +13,7 @@ const isObj = (x: unknown): x is Obj => typeof x === 'object' && x !== null && !
 const isNum = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x);
 
 /** A year table: keys 2015 to 2025, values that pass `ok`. */
-function byYear(x: unknown, ok: (v: number) => boolean, where: string): ByYear | string {
+function byYear(x: unknown, ok: (v: number) => boolean, where: string, allowEmpty = false): ByYear | string {
   if (!isObj(x)) return `${where}: not an object`;
   const out: Record<string, number> = {};
   for (const [k, v] of Object.entries(x)) {
@@ -21,7 +21,7 @@ function byYear(x: unknown, ok: (v: number) => boolean, where: string): ByYear |
     if (!isNum(v) || !ok(v)) return `${where}.${k}: invalid value`;
     out[k] = v;
   }
-  if (Object.keys(out).length === 0) return `${where}: empty`;
+  if (Object.keys(out).length === 0 && !allowEmpty) return `${where}: empty`;
   return out;
 }
 
@@ -50,14 +50,15 @@ export function validateApplicationSupply(x: unknown): Result<ApplicationSupply>
   const rs = x['rentSubsidy'];
   if (!isObj(sh) || !isObj(rs)) return fail('socialHousing and rentSubsidy required');
 
-  const odds = (block: Obj, where: string) => {
+  // `allowEmpty`: odds with no published year, only the fallback assumption (the sublease programme).
+  const odds = (block: Obj, where: string, allowEmpty = false) => {
     const r = block['realOdds'];
     if (!isObj(r)) return `${where}.realOdds missing`;
     const out: Record<string, { byYear: ByYear; fallback: number }> = {};
     for (const c of CITIES) {
       const e = r[c];
       if (!isObj(e)) return `${where}.realOdds.${c} missing`;
-      const t = byYear(e['byYear'], share, `${where}.realOdds.${c}`);
+      const t = byYear(e['byYear'], share, `${where}.realOdds.${c}`, allowEmpty);
       if (typeof t === 'string') return t;
       if (!isNum(e['fallback']) || !share(e['fallback'])) return `${where}.realOdds.${c}.fallback invalid`;
       if (typeof e['fallbackAssumption'] !== 'string') return `${where}.realOdds.${c}.fallbackAssumption missing`;
@@ -94,6 +95,22 @@ export function validateApplicationSupply(x: unknown): Result<ApplicationSupply>
   if (!isObj(turnover) || !isNum(turnover['value']) || turnover['value'] <= 0) return fail('socialHousing.turnoverQuarters invalid');
   const rentShare = sh['rentShare'];
   if (!isObj(rentShare) || !CITIES.every((c) => isNum(rentShare[c]) && share(rentShare[c] as number))) return fail('socialHousing.rentShare invalid');
+
+  // housing-tools Requirement 4.4: the sublease programme.
+  const sl = x['sublease'];
+  if (!isObj(sl)) return fail('sublease required');
+  const slOdds = odds(sl, 'sublease', true);
+  if (typeof slOdds === 'string') return fail(slOdds);
+  const slFrom = parseQuarter(String(sl['from']));
+  const slTen = sl['tenancy'];
+  if (slFrom === null) return fail('sublease.from invalid');
+  if (!isObj(slTen) || !isNum(slTen['leaseQuarters']) || !isNum(slTen['maxQuarters']) || slTen['leaseQuarters'] <= 0 || slTen['maxQuarters'] < slTen['leaseQuarters']) {
+    return fail('sublease.tenancy invalid');
+  }
+  const slShare = sl['rentShare'];
+  if (!isObj(slShare) || !isNum(slShare['value']) || !share(slShare['value'])) return fail('sublease.rentShare invalid');
+  const slShareSources = sourcesProblem(slShare['sources'], known, 'sublease.rentShare');
+  if (slShareSources !== null) return fail(slShareSources);
 
   const rsOdds = odds(rs, 'rentSubsidy');
   if (typeof rsOdds === 'string') return fail(rsOdds);
@@ -135,6 +152,13 @@ export function validateApplicationSupply(x: unknown): Result<ApplicationSupply>
         maxQuarters: ten['maxQuarters'],
         turnoverQuarters: turnover['value'],
         rentShare: { Taipei: rentShare['Taipei'] as number, 'New Taipei': rentShare['New Taipei'] as number },
+      },
+      sublease: {
+        realOdds: slOdds,
+        from: slFrom,
+        leaseQuarters: slTen['leaseQuarters'],
+        maxQuarters: slTen['maxQuarters'],
+        rentShare: slShare['value'],
       },
       rentSubsidy: {
         realOdds: rsOdds,

@@ -1,4 +1,4 @@
-// Applications of the Character for social housing and the rent subsidy (life-story Requirement 3, design
+// Applications of the Character for social housing, the rent subsidy and a sublease home (life-story Requirement 3, design
 // "Applications"). Pure. The odds of a track scale the real odds by the supply of that track:
 //   odds_t = min(1, oddsReal × supply_t ÷ supplyReal)
 // which is Requirement 3.2 (supply ÷ applicants) with the applicants implied by the published real odds. Both tracks
@@ -23,6 +23,16 @@ export interface ApplicationSupply {
     readonly maxQuarters: number;
     readonly turnoverQuarters: number;
     readonly rentShare: Readonly<Record<City, number>>;
+  };
+  /** housing-tools Requirement 4.4: homes of the sublease programme. */
+  readonly sublease: {
+    readonly realOdds: Readonly<Record<City, { readonly byYear: ByYear; readonly fallback: number }>>;
+    /** The first quarter of the programme. */
+    readonly from: QuarterKey;
+    readonly leaseQuarters: number;
+    readonly maxQuarters: number;
+    /** Rent as a share of market rent (the Engine's `sublease.rentShare`). */
+    readonly rentShare: number;
   };
   readonly rentSubsidy: {
     readonly realOdds: Readonly<Record<City, { readonly byYear: ByYear; readonly fallback: number }>>;
@@ -110,8 +120,12 @@ const isSingle = (state: LifeState): boolean => !state.members.some((m) => m.kin
 export function eligibility(s: ApplicationSupply, benefit: Benefit, h: Household, quarter: QuarterKey): Eligibility {
   if (h.incomeMonth === null) return { ok: false, rule: 'noIncome' };
   const year = yearOf(quarter);
-  if (benefit === 'socialHousing') {
-    if (h.state.tenure === 'social') return { ok: false, rule: 'tenure' };
+  if (benefit === 'socialHousing' || benefit === 'sublease') {
+    if (benefit === 'socialHousing' && h.state.tenure === 'social') return { ok: false, rule: 'tenure' };
+    // A sublease home is for a renting household, from the start of the programme; the income limit is the social housing one.
+    if (benefit === 'sublease' && (h.state.tenure !== 'renting' || quarterIndex(quarter) < quarterIndex(s.sublease.from))) {
+      return { ok: false, rule: 'tenure' };
+    }
     const limit = valueAtYear(s.socialHousing.incomeLimit[h.city], year) ?? 0;
     const value = h.incomeMonth * 12;
     return value < limit ? { ok: true } : { ok: false, rule: 'income', limit, value };
@@ -162,6 +176,28 @@ export function tenancyEnds(s: ApplicationSupply, h: Household, quarter: Quarter
   if (next >= s.socialHousing.maxQuarters) return 'limit';
   if (next % s.socialHousing.leaseQuarters === 0) {
     const asRenter = eligibility(s, 'socialHousing', { ...h, state: { ...h.state, tenure: 'renting' } }, quarter);
+    if (!asRenter.ok && asRenter.rule === 'income') return 'income';
+  }
+  return null;
+}
+
+/** Quarters in a sublease home in `quarter` (0 in the quarter of moving in); null when not in one. */
+export function subleaseQuarters(state: LifeState, quarter: QuarterKey): number | null {
+  if (state.tenure !== 'sublease' || state.subleaseSince === undefined) return null;
+  return quarterIndex(quarter) - quarterIndex(state.subleaseSince);
+}
+
+/**
+ * The sublease tenancy ends after `quarter` WHEN the maximum (three contracts) is reached, or at a renewal WHEN the
+ * household income is above the limit (S17: contracts of 3 years, renewed twice).
+ */
+export function subleaseEnds(s: ApplicationSupply, h: Household, quarter: QuarterKey): 'limit' | 'income' | null {
+  const q = subleaseQuarters(h.state, quarter);
+  if (q === null) return null;
+  const next = q + 1;
+  if (next >= s.sublease.maxQuarters) return 'limit';
+  if (next % s.sublease.leaseQuarters === 0) {
+    const asRenter = eligibility(s, 'sublease', { ...h, state: { ...h.state, tenure: 'renting' } }, quarterIndex(s.sublease.from) > quarterIndex(quarter) ? s.sublease.from : quarter);
     if (!asRenter.ok && asRenter.rule === 'income') return 'income';
   }
   return null;

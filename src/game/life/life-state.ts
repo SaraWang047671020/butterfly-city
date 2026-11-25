@@ -26,11 +26,13 @@ export interface Member {
 export interface LifeState {
   readonly home: string; // District_Code
   /** `social`: living in social housing (life-story Requirement 3.4), on one track only. */
-  readonly tenure: 'renting' | 'family' | 'social';
+  readonly tenure: 'renting' | 'family' | 'social' | 'sublease';
   readonly members: readonly Member[];
   readonly married: boolean;
   /** life-story: the quarter the household moved into social housing (tenure `social` only). */
   readonly socialSince?: QuarterKey;
+  /** housing-tools: the quarter the household moved into a sublease home (tenure `sublease` only). */
+  readonly subleaseSince?: QuarterKey;
   /** life-story: the household receives the rent subsidy up to and including this quarter. */
   readonly subsidyUntil?: QuarterKey;
   /** life-story: the quarter of the marriage (newlywed multiplier of the rent subsidy). */
@@ -52,7 +54,12 @@ export type MyLifeDecision =
   | { readonly kind: 'parentJoins'; readonly look: Look; readonly pronouns: PronounId }
   | { readonly kind: 'parentLeaves' };
 
-export type Benefit = 'socialHousing' | 'rentSubsidy';
+export type Benefit = 'socialHousing' | 'rentSubsidy' | 'sublease';
+
+export const BENEFITS: readonly Benefit[] = ['socialHousing', 'rentSubsidy', 'sublease'];
+
+/** The Benefit named by a Life_Event option (`effect.benefit`); social housing when it names none. */
+export const benefitOf = (x: unknown): Benefit => (x === 'rentSubsidy' || x === 'sublease' ? x : 'socialHousing');
 
 /**
  * Decisions of the life-story spec. `apply`, `buyPass` and `leave` come from Life_Events and apply to both tracks;
@@ -64,6 +71,7 @@ export type StoryDecision =
   | { readonly kind: 'buyPass' }
   | { readonly kind: 'leave' }
   | { readonly kind: 'enterSocial'; readonly home: string }
+  | { readonly kind: 'enterSublease'; readonly home: string }
   | { readonly kind: 'subsidy'; readonly until: QuarterKey };
 
 export type LifeDecision = MyLifeDecision | StoryDecision;
@@ -87,7 +95,7 @@ const self = (s: LifeState): Member | undefined => s.members.find((m) => m.kind 
 
 /** A move or leaving the cities ends social housing and the rent subsidy (life-story design, "Life_Events"). */
 function withoutBenefits(s: LifeState): LifeState {
-  const { socialSince: _social, subsidyUntil: _subsidy, ...rest } = s;
+  const { socialSince: _social, subsidyUntil: _subsidy, subleaseSince: _sublease, ...rest } = s;
   return rest;
 }
 
@@ -125,6 +133,9 @@ export function applyDecision(s: LifeState, d: LifeDecision, quarter?: QuarterKe
     case 'enterSocial':
       if (s.tenure === 'social') return s;
       return { ...withoutBenefits(s), home: d.home, tenure: 'social', ...(quarter === undefined ? {} : { socialSince: quarter }) };
+    case 'enterSublease':
+      if (s.tenure !== 'renting') return s;
+      return { ...withoutBenefits(s), home: d.home, tenure: 'sublease', ...(quarter === undefined ? {} : { subleaseSince: quarter }) };
     case 'subsidy':
       return s.tenure === 'renting' ? { ...s, subsidyUntil: d.until } : s;
   }

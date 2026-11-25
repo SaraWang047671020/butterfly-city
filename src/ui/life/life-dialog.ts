@@ -292,8 +292,8 @@ export function createLifeDialog(doc: Document, deps: LifeDialogDeps): LifeDialo
       if (v === null) return;
       chosen = null;
       home = v.planningLife.home;
-      // A move from social housing starts as renting (the dialog offers renting and family only).
-      tenure = v.planningLife.tenure === 'social' ? 'renting' : v.planningLife.tenure;
+      // A move from social housing or a sublease home starts as renting (the dialog offers renting and family only).
+      tenure = v.planningLife.tenure === 'social' || v.planningLife.tenure === 'sublease' ? 'renting' : v.planningLife.tenure;
       render();
       dialog.open({
         title: fillTemplate(pick(T('title')), { quarter: v.planning === null ? '' : quarterLabel(v.planning) }),

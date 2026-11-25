@@ -14,6 +14,8 @@ export const LIFE_EVENT_IDS = [
   'rentPressure',
   'socialHousingRound',
   'rentSubsidyWindow',
+  'subleaseOffer',
+  'subleaseEnd',
   'passLaunch',
   'leaseEnd',
   'longCommute',
@@ -65,6 +67,10 @@ export interface EventContext {
   readonly eligible: (benefit: Benefit) => boolean;
   /** Social housing is let in the Character's city this quarter on the Player_Version (completions last quarter). */
   readonly socialRound: boolean;
+  /** housing-tools: the city matches sublease homes in the Planning_Quarter on the Player_Version. */
+  readonly subleaseRound: boolean;
+  /** housing-tools: the sublease tenancy of the Player_Version ends after this quarter, and why. */
+  readonly subleaseEnd: 'limit' | 'income' | null;
   /** The social housing tenancy of the Player_Version ends after this quarter, and why. */
   readonly tenancyEnd: 'limit' | 'income' | null;
   /** The law of the Planning_Quarter allows the couple to marry (play-loop Requirement 3A.3). */
@@ -89,6 +95,8 @@ export const TRIGGERS: Readonly<Record<LifeEventId, Trigger>> = {
   socialHousingRound: (c) => c.state.tenure === 'renting' && (c.socialRound || c.planning.endsWith('Q2')) && c.eligible('socialHousing'),
   rentSubsidyWindow: (c) =>
     c.state.tenure === 'renting' && c.planning.endsWith('Q3') && c.state.subsidyUntil === undefined && c.eligible('rentSubsidy'),
+  subleaseOffer: (c) => c.state.tenure === 'renting' && c.subleaseRound && c.eligible('sublease'),
+  subleaseEnd: (c) => c.state.tenure === 'sublease' && c.subleaseEnd !== null,
   passLaunch: (c) => c.planning === PASS_QUARTER && c.state.pass !== true && (c.ledgers[c.ledgers.length - 1]?.commuteMinutes ?? null) !== null,
   leaseEnd: (c) => c.state.tenure === 'renting' && gap(c.lastMove, c.planning) >= 8,
   longCommute: (c) => lastN(c.ledgers, 4, (l) => l.commuteMinutes !== null && l.commuteMinutes > COMMUTE_LINE),

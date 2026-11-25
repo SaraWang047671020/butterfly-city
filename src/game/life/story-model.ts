@@ -3,11 +3,14 @@
 // Ending. Pure: everything comes from the Character, the seed, the timeline, the choices and a WorldPort that the
 // LifeController builds from the game session and the Data_Files (Requirement 7.2).
 import { quarterAt, quarterIndex } from '../../simulation/quarter.ts';
+import { hashSeed, mulberry32 } from '../random.ts';
 import type { QuarterKey } from '../../types/data-files.ts';
 import type { EventOption, LifeEventDef } from '../../data/life-text-loader.ts';
 import {
   eligibility,
   realOdds,
+  subleaseEnds,
+  subleaseQuarters,
   subsidyMultiplier,
   tenancyEnds,
   tenancyQuarters,
@@ -22,7 +25,7 @@ import {
 } from './applications.ts';
 import { jobOffer, pickEvent, type LifeEventId, type PastEvent } from './events.ts';
 import { personalLedger, type PersonalLedger } from './ledger.ts';
-import { applyDecision, type Benefit, type Character, type LifeDecision, type LifeEntry, type LifeState, type Look, type Member, type PronounId } from './life-state.ts';
+import { applyDecision, benefitOf, type Benefit, type Character, type LifeDecision, type LifeEntry, type LifeState, type Look, type Member, type PronounId } from './life-state.ts';
 import type { CharacterNumbers } from './numbers.ts';
 import type { DecadeRow, DecadeSummary, QuarterStoryInput } from './story.ts';
 import { decadeSummary } from './story.ts';
@@ -40,7 +43,7 @@ export interface WorldPort {
   social(code: string, qi: number, track: Track): { readonly completions: number; readonly stock: number };
   districtsOf(city: City): readonly string[];
   /** A Policy_Tool value of a city in a quarter on a track (the player's timeline or the Real_Policy_Track). */
-  policy(tool: 'rentSubsidy' | 'commuterPass', field: string, city: City, quarter: QuarterKey, track: Track): number | null;
+  policy(tool: 'rentSubsidy' | 'commuterPass' | 'sublease', field: string, city: City, quarter: QuarterKey, track: Track): number | null;
   /** The commuter pass price of a city in a quarter (Parameter_Table); null or 0 when none is sold. */
   passPrice(city: City, quarter: QuarterKey): number | null;
   cityOf(code: string): City | null;
@@ -140,19 +143,29 @@ function supplyView(i: StoryInputs): SupplyView {
     return total;
   };
   const rsSupply = (city: City, q: QuarterKey, t: Track): number => w.policy('rentSubsidy', 'households', city, q, t) ?? 0;
+  const slSupply = (city: City, q: QuarterKey, t: Track): number => w.policy('sublease', 'unitsMatched', city, q, t) ?? 0;
+  const supplyOf = (b: Benefit, city: City, q: QuarterKey, t: Track): number =>
+    b === 'socialHousing' ? shSupply(city, prevQ(q), t) : b === 'sublease' ? slSupply(city, q, t) : rsSupply(city, q, t);
   const means = new Map<string, number>();
   return {
-    supply: (b, city, q, t) => (b === 'socialHousing' ? shSupply(city, prevQ(q), t) : rsSupply(city, q, t)),
+    supply: supplyOf,
     meanSupplyReal(b, city) {
       const key = `${b}:${city}`;
       let m = means.get(key);
       if (m === undefined) {
         let total = 0;
-        for (let k = 0; k < 44; k++) total += b === 'socialHousing' ? shSupply(city, k - 1, 'real') : rsSupply(city, quarterAt(k), 'real');
+        for (let k = 0; k < 44; k++) total += supplyOf(b, city, quarterAt(k), 'real');
         m = total / 44;
         means.set(key, m);
       }
       return m;
+    },
+    subleaseDistrict(city, q, t) {
+      // Matched homes are private homes all over the city: a seeded district, the same for both tracks.
+      const codes = [...w.districtsOf(city)].sort();
+      const rand = mulberry32(hashSeed(`${i.seed}:sublease:${city}:${q}`));
+      void t;
+      return codes[Math.floor(rand() * codes.length)] ?? '';
     },
     socialDistrict(city, q, t) {
       const qi = prevQ(q);
@@ -216,7 +229,7 @@ export function decisionsOf(option: EventOption, state: LifeState, payload: Choi
     case 'changeJob':
       return offer === null ? null : [{ kind: 'changeJob', occupation: offer.occupation, workCode: offer.workCode }];
     case 'apply':
-      return [{ kind: 'apply', benefit: e['benefit'] === 'rentSubsidy' ? 'rentSubsidy' : 'socialHousing' }];
+      return [{ kind: 'apply', benefit: benefitOf(e['benefit']) }];
     case 'buyPass':
       return [{ kind: 'buyPass' }];
     case 'leave':
@@ -274,7 +287,12 @@ export function buildStoryModel(i: StoryInputs): StoryModel {
       choice: choice === null ? null : { event: choice.event, option: choice.option },
       outcome,
       subsidyAmounts: { player: amount('player'), real: amount('real') },
-      rentShare: states.player.tenure === 'social' && city !== null ? i.supply.socialHousing.rentShare[city] : null,
+      rentShare:
+        states.player.tenure === 'social' && city !== null
+          ? i.supply.socialHousing.rentShare[city]
+          : states.player.tenure === 'sublease' || outcome?.benefit === 'sublease'
+            ? i.supply.sublease.rentShare
+            : null,
       size: w.numbers(states.player, q, 'player').size,
     };
   });
@@ -302,22 +320,27 @@ function pendingEvent(
   const shown = w.computed[w.computed.length - 1]!;
   const socialRound =
     city !== null && w.districtsOf(city).some((code) => w.social(code, quarterIndex(shown), 'player').completions > 0);
+  // housing-tools: the city matches sublease homes in the Planning_Quarter on the Player_Version.
+  const subleaseRound = city !== null && (w.policy('sublease', 'unitsMatched', city, planning, 'player') ?? 0) > 0;
   const playerTimeline = resolved.timelines.player;
   const partnerEntry = lastOf(playerTimeline, planning, ['partnerIn']);
   const past: PastEvent[] = i.choices.map((c) => ({ quarter: c.quarter, event: c.event }));
   const ended = h === null ? null : tenancyEnds(i.supply, h, planning);
+  const subleaseEnded = h === null ? null : subleaseEnds(i.supply, h, planning);
   const id = pickEvent(i.events, {
     seed: i.seed,
     planning,
     state,
     ledgers: playerRows.map((r) => r.ledger),
     past,
-    lastMove: lastOf(playerTimeline, planning, ['move', 'enterSocial'])?.quarter ?? '2015Q1',
+    lastMove: lastOf(playerTimeline, planning, ['move', 'enterSocial', 'enterSublease'])?.quarter ?? '2015Q1',
     lastJobChange: lastOf(playerTimeline, planning, ['changeJob'])?.quarter ?? '2015Q1',
     partnerSince: state.members.some((m) => m.kind === 'partner') ? (partnerEntry?.quarter ?? '2015Q1') : null,
     eligible,
     socialRound,
+    subleaseRound,
     tenancyEnd: ended,
+    subleaseEnd: subleaseEnded,
     marriageAllowed: w.marriageAllowed(state, planning),
   });
   if (id === null) return null;
@@ -333,7 +356,7 @@ function pendingEvent(
       : id === 'rentSubsidyWindow' || id === 'subsidyEnds'
         ? incomeMultiple(i.supply, planning) * (valueAtYear(i.supply.rentSubsidy.minimumLivingExpense[city], year) ?? 0)
         : valueAtYear(i.supply.socialHousing.incomeLimit[city], year);
-  const tq = tenancyQuarters(state, planning);
+  const tq = tenancyQuarters(state, planning) ?? subleaseQuarters(state, planning);
   const facts: EventFacts = {
     district: state.home,
     work: me?.workCode ?? null,
@@ -344,7 +367,7 @@ function pendingEvent(
     incomePerPerson: numbers.income === null ? null : numbers.income / Math.max(1, state.members.length),
     limit,
     years: id === 'marriage' && partnerEntry !== undefined ? Math.floor((quarterIndex(planning) - quarterIndex(partnerEntry.quarter)) / 4) : tq === null ? null : Math.round((tq + 1) / 4),
-    reason: ended,
+    reason: ended ?? subleaseEnded,
     subsidyAmount: city === null ? null : w.policy('rentSubsidy', 'amount', city, planning, 'player'),
     offer,
   };
@@ -364,7 +387,7 @@ function pendingEvent(
     let elig: Eligibility | null = null;
     const e = option.effect;
     if (e.kind === 'apply') {
-      const b: Benefit = e['benefit'] === 'rentSubsidy' ? 'rentSubsidy' : 'socialHousing';
+      const b: Benefit = benefitOf(e['benefit']);
       const asRenter = h === null ? null : { ...h, state: { ...state, tenure: 'renting' as const } };
       elig = asRenter === null ? { ok: false, rule: 'noIncome' } : eligibility(i.supply, b, asRenter, planning);
       if (!elig.ok) block = 'ineligible';
@@ -374,7 +397,7 @@ function pendingEvent(
     const decisions = needsPayload(option) ? null : decisionsOf(option, state, {}, offer);
     let odds: OptionView['odds'] = null;
     if (e.kind === 'apply' && city !== null) {
-      const b: Benefit = e['benefit'] === 'rentSubsidy' ? 'rentSubsidy' : 'socialHousing';
+      const b: Benefit = benefitOf(e['benefit']);
       const supply = { player: view.supply(b, city, planning, 'player'), real: view.supply(b, city, planning, 'real') };
       const real = realOdds(i.supply, b, city, year);
       const mean = view.meanSupplyReal(b, city);

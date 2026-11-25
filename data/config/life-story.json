@@ -1,7 +1,10 @@
 {
   "schemaVersion": 1,
-  "status": { "en": "approved", "zh-Hant": "approved" },
-  "notes": "life-story spec, Life_Story_File. Drafted by Claude Code on 2026-11-24; approved by the user on 2026-11-24 (「草稿核准」) in both languages (life-story Requirement 1.2). Selection (design, 'Story and Ending'): the line of the quarter's Life_Event or Application result first, then the largest difference between the versions, then the situation; within a group the first template whose condition holds is used. Story text describes what happens and the comparison with real history, never a verdict (neutrality.md).",
+  "status": {
+    "en": "approved",
+    "zh-Hant": "approved"
+  },
+  "notes": "life-story spec, Life_Story_File. Drafted by Claude Code on 2026-11-24; approved by the user on 2026-11-24 (「草稿核准」) in both languages (life-story Requirement 1.2). Selection (design, 'Story and Ending'): the line of the quarter's Life_Event or Application result first, then the largest difference between the versions, then the situation; within a group the first template whose condition holds is used. Story text describes what happens and the comparison with real history, never a verdict (neutrality.md). housing-tools task 4.2: the sublease texts, approved by the user on 2026-11-25 (「草稿核准，30% 可以」).",
   "start": {
     "renting": {
       "en": "{name} starts the decade in a {size} m² home in {district}, working as {occupation} in {work}. The rent takes {rentBurden} % of the household income.",
@@ -25,6 +28,10 @@
       "rentSubsidy": {
         "en": "In your city {supplyPlayer} households in {city} receive the rent subsidy; in real history {supplyReal}. The chance was {oddsPlayer} % in your city and {oddsReal} % in real history.",
         "zh-Hant": "在你的城市，{city}有 {supplyPlayer} 戶領租金補貼，真實歷史是 {supplyReal} 戶。機會在你的城市是 {oddsPlayer}%，在真實歷史是 {oddsReal}%。"
+      },
+      "sublease": {
+        "en": "In your city {supplyPlayer} homes were matched in {city} this quarter through the sublease programme; in real history {supplyReal}. The chance was {oddsPlayer} % in your city and {oddsReal} % in real history (the number of applicants is not published, so the real chance is an assumption of the game).",
+        "zh-Hant": "這一季{city}在你的城市透過包租代管媒合了 {supplyPlayer} 戶，真實歷史是 {supplyReal} 戶。機會在你的城市是 {oddsPlayer}%，在真實歷史是 {oddsReal}%（申請人數沒有公開，真實歷史的機會是遊戲的假設）。"
       }
     },
     "draw": {
@@ -33,57 +40,223 @@
     },
     "result": {
       "both": {
-        "socialHousing": { "en": "{name} is allocated a social housing home in {homeDistrict} in both versions and moves in next quarter.", "zh-Hant": "兩個版本的{name}都抽中了，下一季搬進{homeDistrict}的社會住宅。" },
-        "rentSubsidy": { "en": "The rent subsidy is approved in both versions: {amountPlayer} a month in your city, {amountReal} in real history.", "zh-Hant": "兩個版本的租金補貼都核准了：你的城市每月 {amountPlayer}，真實歷史 {amountReal}。" }
+        "socialHousing": {
+          "en": "{name} is allocated a social housing home in {homeDistrict} in both versions and moves in next quarter.",
+          "zh-Hant": "兩個版本的{name}都抽中了，下一季搬進{homeDistrict}的社會住宅。"
+        },
+        "rentSubsidy": {
+          "en": "The rent subsidy is approved in both versions: {amountPlayer} a month in your city, {amountReal} in real history.",
+          "zh-Hant": "兩個版本的租金補貼都核准了：你的城市每月 {amountPlayer}，真實歷史 {amountReal}。"
+        },
+        "sublease": {
+          "en": "{name} is matched with a sublease home in {homeDistrict} in both versions and moves in next quarter, at {rentShare} % of market rent.",
+          "zh-Hant": "兩個版本的{name}都媒合到了，下一季搬進{homeDistrict}的包租代管房子，房租是市價的 {rentShare}%。"
+        }
       },
       "playerOnly": {
-        "socialHousing": { "en": "In your city {name} is allocated a social housing home in {homeDistrict} and moves in next quarter. In real history {name} is not allocated one and keeps renting in {district}.", "zh-Hant": "在你的城市，{name}抽中了，下一季搬進{homeDistrict}的社會住宅。在真實歷史裡沒有抽中，繼續在{district}租屋。" },
-        "rentSubsidy": { "en": "In your city the rent subsidy is approved ({amountPlayer} a month). In real history it is not.", "zh-Hant": "在你的城市，租金補貼核准了（每月 {amountPlayer}）。在真實歷史裡沒有核准。" }
+        "socialHousing": {
+          "en": "In your city {name} is allocated a social housing home in {homeDistrict} and moves in next quarter. In real history {name} is not allocated one and keeps renting in {district}.",
+          "zh-Hant": "在你的城市，{name}抽中了，下一季搬進{homeDistrict}的社會住宅。在真實歷史裡沒有抽中，繼續在{district}租屋。"
+        },
+        "rentSubsidy": {
+          "en": "In your city the rent subsidy is approved ({amountPlayer} a month). In real history it is not.",
+          "zh-Hant": "在你的城市，租金補貼核准了（每月 {amountPlayer}）。在真實歷史裡沒有核准。"
+        },
+        "sublease": {
+          "en": "In your city {name} is matched with a sublease home in {homeDistrict} and moves in next quarter. In real history {name} is not matched and keeps renting in {district}.",
+          "zh-Hant": "在你的城市，{name}媒合到了，下一季搬進{homeDistrict}的包租代管房子。在真實歷史裡沒有媒合到，繼續在{district}租屋。"
+        }
       },
       "realOnly": {
-        "socialHousing": { "en": "In real history {name} is allocated a social housing home in {homeDistrict}. In your city, with fewer units let, {name} is not allocated one and keeps renting in {district}.", "zh-Hant": "在真實歷史裡，{name}抽中了{homeDistrict}的社會住宅。在你的城市出租的戶數比較少，{name}沒有抽中，繼續在{district}租屋。" },
-        "rentSubsidy": { "en": "In real history the rent subsidy is approved ({amountReal} a month). In your city, with fewer subsidised households, it is not.", "zh-Hant": "在真實歷史裡，租金補貼核准了（每月 {amountReal}）。在你的城市補貼的戶數比較少，沒有核准。" }
+        "socialHousing": {
+          "en": "In real history {name} is allocated a social housing home in {homeDistrict}. In your city, with fewer units let, {name} is not allocated one and keeps renting in {district}.",
+          "zh-Hant": "在真實歷史裡，{name}抽中了{homeDistrict}的社會住宅。在你的城市出租的戶數比較少，{name}沒有抽中，繼續在{district}租屋。"
+        },
+        "rentSubsidy": {
+          "en": "In real history the rent subsidy is approved ({amountReal} a month). In your city, with fewer subsidised households, it is not.",
+          "zh-Hant": "在真實歷史裡，租金補貼核准了（每月 {amountReal}）。在你的城市補貼的戶數比較少，沒有核准。"
+        },
+        "sublease": {
+          "en": "In real history {name} is matched with a sublease home in {homeDistrict}. In your city, with fewer homes matched, {name} is not matched and keeps renting in {district}.",
+          "zh-Hant": "在真實歷史裡，{name}媒合到了{homeDistrict}的包租代管房子。在你的城市媒合的戶數比較少，{name}沒有媒合到，繼續在{district}租屋。"
+        }
       },
       "neither": {
-        "socialHousing": { "en": "{name} is not allocated a social housing home in either version.", "zh-Hant": "兩個版本的{name}都沒有抽中社會住宅。" },
-        "rentSubsidy": { "en": "The rent subsidy is not approved in either version.", "zh-Hant": "兩個版本的租金補貼都沒有核准。" }
+        "socialHousing": {
+          "en": "{name} is not allocated a social housing home in either version.",
+          "zh-Hant": "兩個版本的{name}都沒有抽中社會住宅。"
+        },
+        "rentSubsidy": {
+          "en": "The rent subsidy is not approved in either version.",
+          "zh-Hant": "兩個版本的租金補貼都沒有核准。"
+        },
+        "sublease": {
+          "en": "{name} is not matched with a sublease home in either version.",
+          "zh-Hant": "兩個版本的{name}都沒有媒合到包租代管的房子。"
+        }
       },
       "ineligible": {
-        "socialHousing": { "en": "{name}'s household is not eligible this year: {rule}", "zh-Hant": "{name}家今年不符合資格：{rule}" },
-        "rentSubsidy": { "en": "{name}'s household is not eligible this year: {rule}", "zh-Hant": "{name}家今年不符合資格：{rule}" }
+        "socialHousing": {
+          "en": "{name}'s household is not eligible this year: {rule}",
+          "zh-Hant": "{name}家今年不符合資格：{rule}"
+        },
+        "rentSubsidy": {
+          "en": "{name}'s household is not eligible this year: {rule}",
+          "zh-Hant": "{name}家今年不符合資格：{rule}"
+        },
+        "sublease": {
+          "en": "{name}'s household is not eligible this year: {rule}",
+          "zh-Hant": "{name}家今年不符合資格：{rule}"
+        }
       }
     }
   },
   "difference": [
-    { "id": "rentLower", "when": "rentPlayer < rentReal", "en": "{name} pays {rentDiff} less rent a month than in real history.", "zh-Hant": "{name}每個月的房租比真實歷史少 {rentDiff}。" },
-    { "id": "rentHigher", "when": "rentPlayer > rentReal", "en": "{name} pays {rentDiff} more rent a month than in real history.", "zh-Hant": "{name}每個月的房租比真實歷史多 {rentDiff}。" },
-    { "id": "leftMore", "when": "leftPlayer > leftReal", "en": "After rent and the pass, {name} has {leftDiff} more a month than in real history.", "zh-Hant": "扣掉房租和月票，{name}每個月剩下的錢比真實歷史多 {leftDiff}。" },
-    { "id": "leftLess", "when": "leftPlayer < leftReal", "en": "After rent and the pass, {name} has {leftDiff} less a month than in real history.", "zh-Hant": "扣掉房租和月票，{name}每個月剩下的錢比真實歷史少 {leftDiff}。" },
-    { "id": "commuteShorter", "when": "commutePlayer < commuteReal", "en": "{name}'s trip to work is {commuteDiff} minutes shorter than in real history.", "zh-Hant": "{name}上班的路比真實歷史短 {commuteDiff} 分鐘。" },
-    { "id": "commuteLonger", "when": "commutePlayer > commuteReal", "en": "{name}'s trip to work is {commuteDiff} minutes longer than in real history.", "zh-Hant": "{name}上班的路比真實歷史長 {commuteDiff} 分鐘。" },
-    { "id": "same", "when": "otherwise", "en": "This quarter {name}'s life is the same as in real history.", "zh-Hant": "這一季，{name}的生活和真實歷史一樣。" }
+    {
+      "id": "rentLower",
+      "when": "rentPlayer < rentReal",
+      "en": "{name} pays {rentDiff} less rent a month than in real history.",
+      "zh-Hant": "{name}每個月的房租比真實歷史少 {rentDiff}。"
+    },
+    {
+      "id": "rentHigher",
+      "when": "rentPlayer > rentReal",
+      "en": "{name} pays {rentDiff} more rent a month than in real history.",
+      "zh-Hant": "{name}每個月的房租比真實歷史多 {rentDiff}。"
+    },
+    {
+      "id": "leftMore",
+      "when": "leftPlayer > leftReal",
+      "en": "After rent and the pass, {name} has {leftDiff} more a month than in real history.",
+      "zh-Hant": "扣掉房租和月票，{name}每個月剩下的錢比真實歷史多 {leftDiff}。"
+    },
+    {
+      "id": "leftLess",
+      "when": "leftPlayer < leftReal",
+      "en": "After rent and the pass, {name} has {leftDiff} less a month than in real history.",
+      "zh-Hant": "扣掉房租和月票，{name}每個月剩下的錢比真實歷史少 {leftDiff}。"
+    },
+    {
+      "id": "commuteShorter",
+      "when": "commutePlayer < commuteReal",
+      "en": "{name}'s trip to work is {commuteDiff} minutes shorter than in real history.",
+      "zh-Hant": "{name}上班的路比真實歷史短 {commuteDiff} 分鐘。"
+    },
+    {
+      "id": "commuteLonger",
+      "when": "commutePlayer > commuteReal",
+      "en": "{name}'s trip to work is {commuteDiff} minutes longer than in real history.",
+      "zh-Hant": "{name}上班的路比真實歷史長 {commuteDiff} 分鐘。"
+    },
+    {
+      "id": "same",
+      "when": "otherwise",
+      "en": "This quarter {name}'s life is the same as in real history.",
+      "zh-Hant": "這一季，{name}的生活和真實歷史一樣。"
+    }
   ],
   "situation": [
-    { "id": "social", "when": "tenure = social", "en": "{name} lives in social housing in {district}, at {rentShare} % of the market rent.", "zh-Hant": "{name}住在{district}的社會住宅，房租是市場行情的 {rentShare}%。" },
-    { "id": "subsidy", "when": "subsidy", "en": "{name} rents in {district} with a rent subsidy of {amount} a month.", "zh-Hant": "{name}在{district}租屋，每月領 {amount} 的租金補貼。" },
-    { "id": "stressed", "when": "rentBurden > 30", "en": "{name} rents in {district}; the rent takes {rentBurden} % of the household income.", "zh-Hant": "{name}在{district}租屋，房租佔家庭收入的 {rentBurden}%。" },
-    { "id": "renting", "when": "tenure = renting", "en": "{name} rents in {district}; the rent takes {rentBurden} % of the household income.", "zh-Hant": "{name}在{district}租屋，房租佔家庭收入的 {rentBurden}%。" },
-    { "id": "family", "when": "tenure = family", "en": "{name} lives with family in {district} and pays no rent.", "zh-Hant": "{name}和家人住在{district}，不用付房租。" }
+    {
+      "id": "social",
+      "when": "tenure = social",
+      "en": "{name} lives in social housing in {district}, at {rentShare} % of the market rent.",
+      "zh-Hant": "{name}住在{district}的社會住宅，房租是市場行情的 {rentShare}%。"
+    },
+    {
+      "id": "sublease",
+      "when": "tenure = sublease",
+      "en": "{name} lives in a sublease home in {district}, at {rentShare} % of market rent.",
+      "zh-Hant": "{name}住在{district}的包租代管房子，房租是市價的 {rentShare}%。"
+    },
+    {
+      "id": "subsidy",
+      "when": "subsidy",
+      "en": "{name} rents in {district} with a rent subsidy of {amount} a month.",
+      "zh-Hant": "{name}在{district}租屋，每月領 {amount} 的租金補貼。"
+    },
+    {
+      "id": "stressed",
+      "when": "rentBurden > 30",
+      "en": "{name} rents in {district}; the rent takes {rentBurden} % of the household income.",
+      "zh-Hant": "{name}在{district}租屋，房租佔家庭收入的 {rentBurden}%。"
+    },
+    {
+      "id": "renting",
+      "when": "tenure = renting",
+      "en": "{name} rents in {district}; the rent takes {rentBurden} % of the household income.",
+      "zh-Hant": "{name}在{district}租屋，房租佔家庭收入的 {rentBurden}%。"
+    },
+    {
+      "id": "family",
+      "when": "tenure = family",
+      "en": "{name} lives with family in {district} and pays no rent.",
+      "zh-Hant": "{name}和家人住在{district}，不用付房租。"
+    }
   ],
   "ending": {
-    "title": { "en": "{name}'s decade, 2015 to 2025", "zh-Hant": "{name}的十年，2015–2025" },
+    "title": {
+      "en": "{name}'s decade, 2015 to 2025",
+      "zh-Hant": "{name}的十年，2015–2025"
+    },
     "versions": [
-      { "id": "left", "when": "left", "en": "In {quarter} {name} leaves Taipei and New Taipei. Over {quarters} quarters in the two cities the rent took {meanBurden} % of the household income on average.", "zh-Hant": "{quarter}，{name}離開了雙北。在雙北的 {quarters} 季裡，房租平均佔家庭收入的 {meanBurden}%。" },
-      { "id": "social", "when": "tenure = social", "en": "At the end of 2025 {name} lives in social housing in {district}, since {since}. Over the decade the rent took {meanBurden} % of the household income on average.", "zh-Hant": "2025 年底，{name}住在{district}的社會住宅，從 {since} 起。這十年，房租平均佔家庭收入的 {meanBurden}%。" },
-      { "id": "family", "when": "tenure = family", "en": "At the end of 2025 {name} lives with family in {district}. Over the decade the rent took {meanBurden} % of the household income on average.", "zh-Hant": "2025 年底，{name}和家人住在{district}。這十年，房租平均佔家庭收入的 {meanBurden}%。" },
-      { "id": "stressed", "when": "meanBurden > 30", "en": "At the end of 2025 {name} still rents in {district}. The rent took more than 30 % of the household income in {stressQuarters} of the {quarters} quarters.", "zh-Hant": "2025 年底，{name}仍在{district}租屋。{quarters} 季裡，有 {stressQuarters} 季房租超過家庭收入的 30%。" },
-      { "id": "renting", "when": "otherwise", "en": "At the end of 2025 {name} rents in {district}. Over the decade the rent took {meanBurden} % of the household income on average.", "zh-Hant": "2025 年底，{name}在{district}租屋。這十年，房租平均佔家庭收入的 {meanBurden}%。" }
+      {
+        "id": "left",
+        "when": "left",
+        "en": "In {quarter} {name} leaves Taipei and New Taipei. Over {quarters} quarters in the two cities the rent took {meanBurden} % of the household income on average.",
+        "zh-Hant": "{quarter}，{name}離開了雙北。在雙北的 {quarters} 季裡，房租平均佔家庭收入的 {meanBurden}%。"
+      },
+      {
+        "id": "social",
+        "when": "tenure = social",
+        "en": "At the end of 2025 {name} lives in social housing in {district}, since {since}. Over the decade the rent took {meanBurden} % of the household income on average.",
+        "zh-Hant": "2025 年底，{name}住在{district}的社會住宅，從 {since} 起。這十年，房租平均佔家庭收入的 {meanBurden}%。"
+      },
+      {
+        "id": "sublease",
+        "when": "tenure = sublease",
+        "en": "At the end of 2025, {name} lives in a sublease home in {district}, since {since}. Over the ten years the rent took {meanBurden} % of household income on average.",
+        "zh-Hant": "2025 年底，{name}住在{district}的包租代管房子，從 {since} 起。這十年，房租平均佔家庭收入的 {meanBurden}%。"
+      },
+      {
+        "id": "family",
+        "when": "tenure = family",
+        "en": "At the end of 2025 {name} lives with family in {district}. Over the decade the rent took {meanBurden} % of the household income on average.",
+        "zh-Hant": "2025 年底，{name}和家人住在{district}。這十年，房租平均佔家庭收入的 {meanBurden}%。"
+      },
+      {
+        "id": "stressed",
+        "when": "meanBurden > 30",
+        "en": "At the end of 2025 {name} still rents in {district}. The rent took more than 30 % of the household income in {stressQuarters} of the {quarters} quarters.",
+        "zh-Hant": "2025 年底，{name}仍在{district}租屋。{quarters} 季裡，有 {stressQuarters} 季房租超過家庭收入的 30%。"
+      },
+      {
+        "id": "renting",
+        "when": "otherwise",
+        "en": "At the end of 2025 {name} rents in {district}. Over the decade the rent took {meanBurden} % of the household income on average.",
+        "zh-Hant": "2025 年底，{name}在{district}租屋。這十年，房租平均佔家庭收入的 {meanBurden}%。"
+      }
     ],
     "gender": {
-      "heading": { "en": "Who the tools you used reach", "zh-Hant": "你用過的政策照顧到的人" },
-      "socialHousing": { "en": "Social housing tenant households: {share} % women ({scope}; {source}).", "zh-Hant": "社會住宅承租戶：女性 {share}%（{scope}；{source}）。" },
-      "rentSubsidy": { "en": "Rent subsidy, approved households: {share} % women ({scope}; {source}).", "zh-Hant": "租金補貼核定戶：女性 {share}%（{scope}；{source}）。" },
-      "commuterPass": { "en": "Public transport: {women} % of women's trips and {men} % of men's trips ({scope}; {source}).", "zh-Hant": "大眾運輸：女性有 {women}% 的行程搭大眾運輸，男性 {men}%（{scope}；{source}）。" }
+      "heading": {
+        "en": "Who the tools you used reach",
+        "zh-Hant": "你用過的政策照顧到的人"
+      },
+      "socialHousing": {
+        "en": "Social housing tenant households: {share} % women ({scope}; {source}).",
+        "zh-Hant": "社會住宅承租戶：女性 {share}%（{scope}；{source}）。"
+      },
+      "rentSubsidy": {
+        "en": "Rent subsidy, approved households: {share} % women ({scope}; {source}).",
+        "zh-Hant": "租金補貼核定戶：女性 {share}%（{scope}；{source}）。"
+      },
+      "commuterPass": {
+        "en": "Public transport: {women} % of women's trips and {men} % of men's trips ({scope}; {source}).",
+        "zh-Hant": "大眾運輸：女性有 {women}% 的行程搭大眾運輸，男性 {men}%（{scope}；{source}）。"
+      },
+      "sublease": {
+        "en": "Sublease tenants: {share} % women ({scope}; {source}).",
+        "zh-Hant": "包租代管承租人：女性 {share}%（{scope}；{source}）。"
+      }
     }
   }
 }

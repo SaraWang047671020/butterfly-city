@@ -105,7 +105,14 @@ function applicationParts(i: QuarterStoryInput, o: ApplicationOutcome, f: StoryF
   };
   parts.push({
     key: `application.result.${kind}.${o.benefit}`,
-    values: { name, district, homeDistrict: homeCode === null ? district : f.district(homeCode), amountPlayer: amount('player'), amountReal: amount('real') },
+    values: {
+      name,
+      district,
+      homeDistrict: homeCode === null ? district : f.district(homeCode),
+      amountPlayer: amount('player'),
+      amountReal: amount('real'),
+      rentShare: i.rentShare === null ? '—' : f.percent(i.rentShare * 100),
+    },
   });
   return parts;
 }
@@ -133,6 +140,7 @@ function situationPart(i: QuarterStoryInput, f: StoryFormat): StoryPart {
   const values = { name: i.name, district: f.district(s.home) };
   const burden = l.rentBurden === null ? '—' : f.percent(l.rentBurden);
   if (s.tenure === 'social') return { key: 'situation.social', values: { ...values, rentShare: i.rentShare === null ? '—' : f.percent(i.rentShare * 100) } };
+  if (s.tenure === 'sublease') return { key: 'situation.sublease', values: { ...values, rentShare: i.rentShare === null ? '—' : f.percent(i.rentShare * 100) } };
   if (s.tenure === 'family') return { key: 'situation.family', values };
   if (l.subsidy > 0) return { key: 'situation.subsidy', values: { ...values, amount: f.money(l.subsidy) } };
   if (l.rentBurden !== null && l.rentBurden > 30) return { key: 'situation.stressed', values: { ...values, rentBurden: burden } };
@@ -207,6 +215,9 @@ export function endingPart(name: string, s: DecadeSummary, f: StoryFormat): Stor
   if (s.final.tenure === 'social') {
     return { key: 'ending.versions.social', values: { ...values, since: s.final.socialSince === undefined ? '—' : f.quarter(s.final.socialSince) } };
   }
+  if (s.final.tenure === 'sublease') {
+    return { key: 'ending.versions.sublease', values: { ...values, since: s.final.subleaseSince === undefined ? '—' : f.quarter(s.final.subleaseSince) } };
+  }
   if (s.final.tenure === 'family') return { key: 'ending.versions.family', values };
   if (s.meanBurden !== null && s.meanBurden > 30) return { key: 'ending.versions.stressed', values };
   return { key: 'ending.versions.renting', values };
@@ -218,12 +229,12 @@ export const STORY_KEYS: readonly string[] = [
   'start.family',
   'choice',
   'application.draw',
-  ...(['socialHousing', 'rentSubsidy'] as const).flatMap((b) => [
+  ...(['socialHousing', 'rentSubsidy', 'sublease'] as const).flatMap((b) => [
     `application.odds.${b}`,
     ...['both', 'playerOnly', 'realOnly', 'neither', 'ineligible'].map((k) => `application.result.${k}.${b}`),
   ]),
   ...['rentLower', 'rentHigher', 'leftMore', 'leftLess', 'commuteShorter', 'commuteLonger', 'same'].map((k) => `difference.${k}`),
-  ...['social', 'subsidy', 'stressed', 'renting', 'family'].map((k) => `situation.${k}`),
-  ...['left', 'social', 'family', 'stressed', 'renting'].map((k) => `ending.versions.${k}`),
+  ...['social', 'sublease', 'subsidy', 'stressed', 'renting', 'family'].map((k) => `situation.${k}`),
+  ...['left', 'social', 'sublease', 'family', 'stressed', 'renting'].map((k) => `ending.versions.${k}`),
   'ending.title',
 ];
